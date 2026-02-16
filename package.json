@@ -1,0 +1,33 @@
+{
+    "name": "eleventy-tailwind-template",
+    "version": "1.0.0",
+    "description": "Eleventy + Tailwind CSS + Alpine.js starter template",
+    "scripts": {
+        "start": "npm run dev",
+        "dev:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --watch",
+        "dev:site": "npm run tokens && eleventy --serve",
+        "dev": "npm run tokens && concurrently \"npm:dev:site\" \"npm:dev:css\"",
+        "build:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --minify",
+        "build": "npm run tokens && eleventy && npm run build:css",
+        "clean": "rm -rf _site",
+        "tokens": "node scripts/generate-tailwind-from-tokens.js",
+        "init": "node scripts/init-project.js",
+        "validate": "node scripts/validate-config.js"
+    },
+    "keywords": [
+        "eleventy",
+        "tailwind",
+        "alpine",
+        "static-site"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "devDependencies": {
+        "@11ty/eleventy": "^2.0.1",
+        "@11ty/eleventy-img": "^4.0.2",
+        "autoprefixer": "^10.4.16",
+        "postcss": "^8.4.32",
+        "tailwindcss": "^3.4.0",
+        "concurrently": "^8.0.0"
+    }
+}

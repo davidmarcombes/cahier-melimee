@@ -1,0 +1,13 @@
+---
+layout: base
+---
+
+{% include "components/hero.njk" with { title: ('Welcome to ' ~ site.title), description: site.description, cta_url: '/en/contact/', cta_text: 'Contact us' } %}
+
+<section class="py-8">
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="p-6 border rounded">Feature 1</div>
+    <div class="p-6 border rounded">Feature 2</div>
+    <div class="p-6 border rounded">Feature 3</div>
+  </div>
+</section>

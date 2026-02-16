@@ -1,0 +1,32 @@
+{
+    "colors": {
+        "primary": {
+            "50": "#eff6ff",
+            "500": "#005af0",
+            "900": "#1e3a8a"
+        },
+        "secondary": {
+            "500": "#00dcc0"
+        }
+    },
+    "typography": {
+        "fonts": {
+            "sans": [
+                "Inter",
+                "system-ui",
+                "sans-serif"
+            ],
+            "display": [
+                "Outfit",
+                "sans-serif"
+            ]
+        },
+        "sizes": {
+            "base": "16px",
+            "scale": 1.25
+        }
+    },
+    "spacing": {
+        "unit": "4px"
+    }
+}

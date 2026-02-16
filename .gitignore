@@ -1,0 +1,65 @@
+# Dependencies
+node_modules/
+yarn.lock
+pnpm-lock.yaml
+
+# Lockfiles
+# Keep package-lock.json committed for reproducible npm installs in projects created from this template
+# (remove the next line if you prefer not to commit package-lock.json)
+# package-lock.json
+
+# Build output
+_site/
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Generated files
+tailwind.config.js
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+*.log
+
+# Cache
+.cache/
+.parcel-cache/
+.eleventy-cache/
+coverage/
+.nyc_output/
+.turbo/
+.sass-cache/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+
+# Debug
+debug/
+.pnpm-debug.log

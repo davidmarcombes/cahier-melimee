@@ -1,0 +1,12 @@
+{
+    "title": "Site Name",
+    "description": "Site description for SEO",
+    "url": "https://www.example.com",
+    "author": "Company Name",
+    "email": "contact@example.com",
+    "social": {
+        "twitter": "@handle",
+        "linkedin": "company-name",
+        "facebook": "company-name"
+    }
+}

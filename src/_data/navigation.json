@@ -1,0 +1,20 @@
+{
+    "en": [
+        {
+            "text": "Home",
+            "url": "/en/"
+        },
+        {
+            "text": "About",
+            "url": "/en/about/"
+        },
+        {
+            "text": "Services",
+            "url": "/en/services/"
+        },
+        {
+            "text": "Contact",
+            "url": "/en/contact/"
+        }
+    ]
+}

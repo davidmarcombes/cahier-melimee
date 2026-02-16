@@ -1,0 +1,2 @@
+# CI integration disabled by project owner request
+# If you need CI in the future, re-add a workflow under .github/workflows/
