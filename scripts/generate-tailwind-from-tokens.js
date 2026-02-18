@@ -60,8 +60,7 @@ module.exports = {
       keyframes: ${JSON.stringify(tokens.keyframes || {}, null, 2)}
     }
   },
-  // Add third-party plugins here if needed
-  plugins: []
+  plugins: [require('@tailwindcss/typography')]
 };
 `;
 

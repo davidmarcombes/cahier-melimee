@@ -1,0 +1,17 @@
+---
+pagination:
+  data: collections.seriesMeta
+  size: 1
+  alias: s
+layout: series-player
+tags: []
+permalink: "/fr/exercices/{{ s.series }}/"
+eleventyComputed:
+  series: "{{ s.series }}"
+  seriesTitle: "{{ s.seriesTitle }}"
+  level: "{{ s.level }}"
+  topic: "{{ s.topic }}"
+  subtopic: "{{ s.subtopic }}"
+  skill: "{{ s.skill }}"
+  difficulty: "{{ s.difficulty }}"
+---

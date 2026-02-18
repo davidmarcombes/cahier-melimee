@@ -1,389 +1,168 @@
-# Tailwind + Alpine.js + Nunjucks + Eleventy Template
+# Le Cahier de Mélimée
 
-A production-ready starter template for building fast, modern marketing websites and landing pages.
+Plateforme d'exercices scolaires **gratuite**, **anonyme** et **souveraine** pour les élèves du CP à la 3e.
 
-## Stack
+Pas de compte, pas de pub, pas de tracking. L'élève choisit un pseudonyme, résout des exercices, et progresse à son rythme.
 
-- **Eleventy 2.0** - Static site generator
-- **Tailwind CSS 3.4** - Utility-first CSS framework
-- **Alpine.js 3.x** - Lightweight JavaScript framework
-- **Eleventy** - Templating engine
-- **PostCSS** - CSS processing with Autoprefixer
-- **Eleventy Image** - Automatic image optimization
+## Principes
 
-## Features
+- **Anonymat radical** — Zéro donnée personnelle collectée. Identité par pseudonyme triple + clé visuelle.
+- **Gratuité réelle** — Pas de pub, pas d'abonnement, pas de revente de données.
+- **Souveraineté** — Open source, hébergé en France, aucune dépendance GAFAM.
+- **Sobriété** — Pages ultra-légères (< 14.6 KB par série), architecture minimale.
 
-✅ Design token system with JSON configuration  
-✅ Multilingual support out of the box  
-✅ Automatic image optimization (AVIF, WebP)  
-✅ Dark mode support  
-✅ SEO optimized with meta tags, sitemap, robots.txt  
-✅ Performance optimized (95+ Lighthouse scores)  
-✅ Accessible HTML5 semantic markup  
-✅ Blog-ready with post collections  
-✅ Component-based architecture  
-✅ Coding agent ready setup
+## Stack technique
 
-## Quick Start
+| Composant | Rôle |
+|-----------|------|
+| [Eleventy 2](https://www.11ty.dev/) | Générateur de site statique |
+| [Tailwind CSS 3.4](https://tailwindcss.com/) | Framework CSS utility-first |
+| [Alpine.js 3](https://alpinejs.dev/) | Interactivité côté client (validation, navigation) |
+| [Nunjucks](https://mozilla.github.io/nunjucks/) | Templating |
+| [@11ty/eleventy-img](https://www.11ty.dev/docs/plugins/image/) | Optimisation d'images (AVIF, WebP) |
+| [PocketBase](https://pocketbase.io/) | Backend pour identité anonyme et progression |
 
-### 1. Create New Project
+## Architecture
 
-```bash
-# Using degit (recommended - fastest)
-npx degit davidmarcombes/tane-template my-new-site
-# Equivalent to: npx degit github:davidmarcombes/tane-template my-new-site
-cd my-new-site
+Le site suit une règle **1000 / 10 / 3** :
 
-# Or using git clone  this will keep the git history)
-git clone https://github.com/davidmarcombes/tane-template.git my-new-site
-cd my-new-site
-rm -rf .git
-git init
+1. **1000s de `.md`** — Les exercices sont du pur contenu (front-matter + Markdown)
+2. **~10 layouts `.njk`** — Les représentations visuelles (calcul, problème, etc.)
+3. **2-3 composants Alpine** — Les moteurs centralisés (validation, navigation, filtres)
+
+Chaque série d'exercices génère **une seule page HTML**. Alpine.js affiche un exercice à la fois depuis un payload JSON embarqué au build. Zéro requête réseau entre les exercices.
+
+```
+src/
+├── _data/                  # Données globales (site.json, navigation.json)
+├── _layouts/               # Templates de page
+│   ├── base.njk            # Structure HTML de base
+│   ├── series-player.njk   # Moteur unique : une page par série
+│   └── page.njk            # Pages statiques
+├── _includes/components/   # Header, footer
+├── assets/
+│   ├── images/             # Logo, favicon (optimisés au build)
+│   └── js/app.js           # Alpine components (themeToggle, seriesPlayer, seriesBrowser)
+├── css/input.css           # Point d'entrée Tailwind
+├── fr/
+│   ├── index.md            # Accueil
+│   ├── exercices.njk       # Liste des séries avec filtres
+│   └── exercices/
+│       ├── exercices.json  # Defaults : permalink:false, layout:null
+│       ├── cp-maths-operations-bases-01/
+│       │   ├── cp-maths-operations-bases-01.json  # Métadonnées
+│       │   ├── index.njk                          # Point d'entrée
+│       │   ├── 01-addition-simple.md
+│       │   └── 02-soustraction-facile.md
+│       ├── ce1-maths-multiplication-tables-01/
+│       │   └── ...
+│       └── cm2-maths-fractions-bases-01/
+│           └── ...
+├── llm.md                  # Génère /llm.txt pour les LLM
+└── sitemap.xml.njk
 ```
 
-### 2. Install Dependencies
+## Développement
+
+### Prérequis
+
+- Node.js 18+
+- npm
+
+### Installation
 
 ```bash
+git clone https://github.com/davidmarcombes/cahier-melimee.git
+cd cahier-melimee
 npm install
 ```
 
-### 3. Configure Your Project
-
-#### Option A: Quick Setup (Recommended)
+### Commandes
 
 ```bash
-npm run init
+npm run dev        # Serveur local avec live reload (http://localhost:8080)
+npm run build      # Build de production
+npm run clean      # Supprimer _site/
+npm run tokens     # Regénérer tailwind.config.js depuis design-tokens.json
 ```
 
-This interactive script will:
-- Prompt for site name, client name, and brand colors
-- Update configuration files automatically
-- Set up your project in minutes
+### Design tokens
 
-#### Option B: Manual Setup
+Les couleurs, typographies et espacements sont définis dans `design-tokens.json`. Ne pas éditer `tailwind.config.js` directement — il est généré par `npm run tokens`.
 
-***Update the following files:**
+## Contribuer
 
-- `SITE.md` (project-specific documentation for agents)
-- `src/_data/site.json` (site metadata)
-- `src/_data/navigation.json` (menu structure)
-- `design-tokens.json` (design system source of truth)
+Toute aide est bienvenue : exercices, code, design, relecture.
 
-Check configuration:
+### Ajouter des exercices
 
-```bash
-npm run validate
+C'est la contribution la plus utile. Un exercice est un simple fichier Markdown :
+
+```markdown
+---
+type: number-check
+title: "Addition simple"
+answer: "7"
+operation: "3 + 4"
+---
+
+Combien font **3 + 4** ? Écris le résultat.
 ```
 
-Notes: `npm run validate` will scan the repo for common placeholder values. It treats placeholders in configuration files (e.g., `SITE.md` and files in `src/_data/`) as critical and exits with an error when they are present. Placeholders in documentation or example content are reported as warnings only.
+Pour créer une nouvelle série, suivre la convention de nommage `{level}-{topic}-{subtopic}-{name}-{num}` :
 
-### Generate Tailwind Config
+1. Créer un dossier dans `src/fr/exercices/` (ex: `cm1-maths-fractions-partage-01/`)
+2. Ajouter un fichier `cm1-maths-fractions-partage-01.json` avec les métadonnées :
+   ```json
+   {
+     "series": "cm1-maths-fractions-partage-01",
+     "seriesTitle": "Fractions et partage",
+     "level": "CM1",
+     "topic": "maths",
+     "subtopic": "fractions",
+     "difficulty": "moyen"
+   }
+   ```
+3. Ajouter un `index.njk` (point d'entrée de la série) :
+   ```yaml
+   ---
+   layout: series-player
+   permalink: /fr/exercices/cm1-maths-fractions-partage-01/
+   tags: []
+   ---
+   ```
+4. Ajouter les exercices en `.md` (préfixés `01-`, `02-`, etc.)
+5. `npm run build` et vérifier
+
+### Types d'exercices
+
+| `type` | Visuel | Cas d'usage |
+|--------|--------|-------------|
+| `number-check` | Carte blanche + opération en grand | Calcul mental, opérations |
+| `problem` | Carte ambrée + icône livre | Problèmes rédigés |
+
+### Améliorer le code
 
 ```bash
-npm run tokens
-```
-
-This generates `tailwind.config.js` from your design tokens.
-
-### Start Development
-
-```bash
+npm install
 npm run dev
+# Modifier, tester, soumettre une PR
 ```
 
-Site will be available at `http://localhost:8080` with live reload.
+Le code suit quelques conventions :
 
-## Project Structure
+- **Tailwind utility-first** — Pas de CSS custom sauf dans `input.css` sous `@layer components`
+- **Alpine.js minimal** — Composants déclaratifs dans `app.js`, état simple
+- **Mobile-first** — Tester sur petits écrans d'abord
+- **Dark mode** — Toute modification UI doit fonctionner en mode jour et nuit
+- **Budget taille** — Les pages série doivent rester sous 14.6 KB (fenêtre TCP initiale)
 
-```
-project-root/
-├── AGENTS.md              # AI assistant instructions (generic)
-├── SITE.md                # Project-specific documentation
-├── design-tokens.json     # Design system source of truth
-├── tailwind.config.js     # Generated from design tokens
-├── .eleventy.js           # Eleventy configuration
-├── package.json
-│
-└── src/
-    ├── _data/             # Global data
-    │   ├── site.json      # Site metadata
-    │   └── navigation.json # Menu structure
-    │
-    ├── _layouts/          # Page templates
-    │   ├── base.njk       # Base HTML (SEO, header, footer)
-    │   ├── home.njk       # Homepage layout
-    │   ├── page.njk       # Standard page layout
-    │   └── post.njk       # Blog post layout
-    │
-    ├── _includes/         # Reusable components
-    │   ├── components/    # UI components
-    │   ├── sections/      # Page sections
-    │   └── partials/      # Header, footer, nav
-    │
-    ├── css/
-    │   └── input.css      # Tailwind + custom styles
-    │
-    ├── assets/
-    │   ├── images/
-    │   └── fonts/
-    │
-    └── en/                # English content
-        ├── en.json        # Language config
-        ├── index.md       # Homepage
-        ├── about.md
-        ├── services.md
-        ├── contact.md
-        └── posts/         # Blog posts
-```
+### Règles
 
-## Essential Commands
+- **Zéro PII** — Ne jamais proposer de fonctionnalité qui collecte email, nom, âge ou IP
+- **Droit d'auteur** — Créer ses propres énoncés, ne pas copier de manuels scolaires
+- **Vérification humaine** — Les exercices générés par IA doivent être relus par un humain
 
-```bash
-npm run dev          # Development server with live reload
-npm run build        # Production build
-npm run clean        # Remove _site/ directory
-npm run tokens       # Generate Tailwind config from design tokens
-npm run init         # Initialize new project (interactive)
-npm run validate     # Validate configuration
-```
+## Licence
 
-## Documentation for AI Assistants
-
-This template includes documentation for AI coding assistants:
-
-- **`AGENTS.md`** - Generic stack instructions and conventions
-- **`SITE.md`** - Project-specific details (fill this out for each project)
-- **`CLAUDE.md`** - Redirects Claude Code to AGENTS.md
-
-When working with AI assistants like Claude Code, Google Gemini or GitHub Copilot, they'll automatically read these files to understand your project structure and conventions.
-
-## Common Tasks
-
-### Add a New Page
-
-1. Create `src/en/your-page.md`
-2. Add frontmatter:
-```yaml
----
-layout: page
-title: Your Page Title
-lang: en
-locale: en-US
-description: SEO description
----
-```
-3. Add to navigation in `src/_data/navigation.json`
-4. Create equivalent pages in other languages if multilingual
-
-### Add a Blog Post
-
-1. Create `src/en/posts/YYYY-MM-DD-post-slug.md`
-2. Add frontmatter:
-```yaml
----
-layout: post
-title: Post Title
-date: 2024-03-15
-tags: [tag1, tag2]
-lang: en
-locale: en-US
----
-```
-3. Post appears automatically in blog listing
-
-### Add a New Language
-
-1. Create `src/{lang}/` directory
-2. Add `src/{lang}/{lang}.json`:
-```json
-{
-  "lang": "fr",
-  "locale": "fr-FR"
-}
-```
-3. Copy all pages from `src/en/` to `src/{lang}/`
-4. Translate content
-5. Add navigation to `src/_data/navigation.json`
-6. Update hreflang alternates in `src/_layouts/base.njk`
-
-### Customize Design System
-
-1. Edit `design-tokens.json`
-2. Run `npm run tokens` to regenerate Tailwind config
-3. Rebuild: `npm run dev`
-
-### Add Custom Component
-
-1. Create `src/_includes/components/my-component.njk`
-2. Use Tailwind utilities for styling
-3. Add Alpine.js for interactivity if needed
-4. Include in pages: `{% include "components/my-component.njk" %}`
-
-## Deployment
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-Output is in `_site/` directory - deploy this folder.
-
-## Customization Checklist
-
-After running `npx degit` and `npm install`, update these files to customize your project:
-
-### 🔧 Essential Files (Update First)
-
-#### 1. `SITE.md`
-**What:** Project-specific documentation  
-**Update:** Fill in all `[bracketed]` placeholders with your project details
-- Client name, contact info
-- Brand guidelines and colors
-- Content structure
-- Features and integrations
-
-#### 2. `design-tokens.json`
-**What:** Design system (colors, fonts, spacing)  
-**Update:** Replace with your brand's design values
-```json
-{
-  "colors": {
-    "primary": { "500": "#YOUR-BRAND-COLOR" }
-  },
-  "typography": {
-    "fonts": {
-      "sans": ["Your-Font", "system-ui", "sans-serif"]
-    }
-  }
-}
-```
-
-#### 3. `src/_data/site.json`
-**What:** Site-wide metadata and company info  
-**Update:** Replace all placeholder values
-- `title`: Your site name
-- `description`: SEO description
-- `url`: Production URL
-- `email`, `phone`: Contact details
-- `social`: Social media handles
-
-#### 4. `src/_data/navigation.json`
-**What:** Menu structure for all languages  
-**Update:** Customize menu items and URLs
-- Update menu text for each language
-- Add/remove menu items as needed
-- Update URLs to match your page structure
-
-### 📝 Content Files (Update as Needed)
-
-#### 5. `src/en/index.md` (and other language versions)
-**What:** Homepage content  
-**Update:** Replace placeholder content with your copy
-
-#### 6. `src/en/about.md`, `services.md`, `contact.md`
-**What:** Main page content  
-**Update:** Add your actual content or delete if not needed
-
-#### 7. `src/en/llm.md` (LLM summary)
-**What:** Short plain-text summary used to generate `/llm.txt` for LLMs  
-**Update:** Replace the example summary with a concise overview of your
-site (audience, key features, tone, and any constraints). This file is
-rendered into plain text and included in the built site at `/llm.txt` so keep
-it short and maintain it when your site or content strategy changes.
-
-
-### 🎨 Assets (Replace Placeholders)
-
-#### 7. `src/assets/favicon.png`
-**What:** Browser favicon/icon  
-**Update:** Replace with your brand's favicon
-
-#### 8. `src/assets/images/logo.png`
-**What:** Site logo  
-**Update:** Add your actual logo file
-
-#### 9. `src/assets/images/` (other images)
-**What:** Hero images, backgrounds, etc.  
-**Update:** Replace placeholder images with your assets
-
-### ⚙️ Configuration (Optional Updates)
-
-#### 10. `package.json`
-**What:** Project metadata  
-**Update:** 
-- `name`: Your project name
-- `description`: Project description
-- `author`: Your name
-- `repository`: Your Git repo URL
-
-### 🗑️ Cleanup (Remove What You Don't Need)
-
-- **Remove unused languages:** Delete `src/fr/`, `src/de/` if single-language
-- **Remove blog:** Delete `src/en/posts/` if no blog needed
-
-### ✅ After Updates, Run:
-
-```bash
-npm run tokens    # Generate Tailwind config from design tokens
-npm run dev       # Start development server
-```
-
-## Browser Support
-
-- Chrome, Firefox, Safari, Edge (latest 2 versions)
-- iOS Safari 12+
-- Chrome Android
-- Progressive enhancement for older browsers
-
-## Performance
-
-Out of the box, expect:
-
-- **Lighthouse Desktop:** 95-100
-- **Lighthouse Mobile:** 90-95
-- **First Contentful Paint:** < 1s
-- **Time to Interactive:** < 2s
-
-Performance optimizations included:
-- Image optimization (AVIF, WebP)
-- CSS purging (unused classes removed)
-- HTML minification
-- Font preloading
-- Lazy loading images
-- Minimal JavaScript footprint
-
-## Accessibility
-
-WCAG 2.1 Level AA compliant:
-- Semantic HTML5
-- Proper heading hierarchy
-- Alt text on images
-- Keyboard navigation
-- Focus states
-- Color contrast ratios
-- Screen reader friendly
-
-## License
-
-MIT License
-
-## Credits
-
-Built with:
-- [Eleventy](https://www.11ty.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Alpine.js](https://alpinejs.dev/)
-- [Nunjucks](https://github.com/mozilla/nunjucks)
-- [Claude Code](https://claude.ai/)
-- [GitHub Copilot](https://github.com/features/copilot)
-- [Google Gemini](https://makersuite.google.com)
-
-## Support
-
-For issues or questions:
-- Create an issue in this repo
-- Email: [david@marcombes.fr]
-- Documentation: See `AGENTS.md` and `SITE.md`
-
----
+[EUPL v1.2](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12) (European Union Public Licence) — Copyleft, compatible avec la plupart des licences open source.

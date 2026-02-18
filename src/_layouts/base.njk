@@ -24,14 +24,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      [x-cloak] { display: none !important; }
+    </style>
+    <script>
+      (function() {
+        var stored = localStorage.getItem('theme');
+        if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+  <body class="min-h-screen flex flex-col bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
     {% include "components/header.njk" %}
 
-    <main class="max-w-6xl mx-auto px-4 py-8">
+    <main class="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">
       {{ content | safe }}
     </main>
 
     {% include "components/footer.njk" %}
+
+    <script defer src="/assets/js/app.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- PocketBase SDK -->
+    <script src="https://unpkg.com/pocketbase@latest/dist/pocketbase.umd.js"></script>
   </body>
 </html>

@@ -1,8 +1,8 @@
 {
-    "title": "Site Name",
-    "description": "Site description for SEO",
-    "url": "https://www.example.com",
-    "author": "Company Name",
+    "title": "Le Cahier de Mélimée",
+    "description": "Exercices éducatifs du CP à la 3e",
+    "url": "http://localhost:8080/",
+    "author": "Mélimée, Salto et la communauté",
     "email": "contact@example.com",
     "social": {
         "twitter": "@handle",

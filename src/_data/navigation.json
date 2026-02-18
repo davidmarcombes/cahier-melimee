@@ -1,20 +1,20 @@
 {
-    "en": [
+    "fr": [
         {
-            "text": "Home",
-            "url": "/en/"
+            "text": "Se lancer",
+            "url": "/fr/onboarding/"
         },
         {
-            "text": "About",
-            "url": "/en/about/"
+            "text": "Exercices",
+            "url": "/fr/exercices/"
         },
         {
-            "text": "Services",
-            "url": "/en/services/"
+            "text": "Blog",
+            "url": "/fr/blog/"
         },
         {
-            "text": "Contact",
-            "url": "/en/contact/"
+            "text": "Connexion",
+            "url": "/fr/connexion/"
         }
     ]
 }

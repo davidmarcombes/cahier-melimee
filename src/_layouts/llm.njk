@@ -18,7 +18,7 @@ Navigation:
 {%- if navigation and (navigation[lang] is defined) -%}
 {%- set nav = navigation[lang] -%}
 {%- else -%}
-{%- set nav = navigation.en -%}
+{%- set nav = navigation.fr -%}
 {%- endif -%}
 {%- for item in nav -%}
 - {{ item.text }} -> {{ item.url }}
@@ -31,13 +31,11 @@ Pages:
   {%- endif -%}
 {%- endfor -%}
 
-Posts:
-{%- if collections.posts -%}
-{%- for post in collections.posts -%}
-- {{ post.data.title or post.fileSlug }} ({{ post.date }}) -> {{ post.url }}
+Exercices:
+{%- if collections.exercices -%}
+{%- for ex in collections.exercices -%}
+- {{ ex.data.title or ex.fileSlug }} ({{ ex.data.series }})
 {%- endfor -%}
-{%- else -%}
-(no posts collection found)
 {%- endif -%}
 
 Instructions:

@@ -1,8 +1,8 @@
 ---
 layout: llm
 title: LLM summary
-lang: en
-locale: en-US
+lang: fr
+locale: fr-FR
 permalink: /llm.txt
 eleventyExcludeFromCollections: true
 ---

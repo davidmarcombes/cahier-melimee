@@ -2,7 +2,21 @@
 
 This file provides guidance for AI assistants working on this codebase.
 
+This project is an elementary school homework site, it provides a range of exercices for pupils to revise and train.
+
+The design is opiniated:
+- Open Source and Sovereign
+- Minimal running costs. Pages must be minimal in size;
+- High performance. Focus on content and features.
+
+
 **Project-specific instructions and content details are in `SITE.md`** - always read that file first to understand the specific site you're working on.
+
+## 🐸 The "Sovereign" Low-Footprint Architecture (1000/10/3 Rule)
+To maintain high performance and low maintenance, follow this hierarchy:
+1.  **Content (1000s of .md):** Pure data. Front-matter defines the logic; Markdown defines the story.
+2.  **Layouts (10s of .njk):** Visual representations (Pizzas, Lily Pads, Matrices, Graphs).
+3.  **Engines (2-3 Alpine components):** The centralized "Brains" that handle validation and state.
 
 ## Tech Stack
 
@@ -14,8 +28,14 @@ This file provides guidance for AI assistants working on this codebase.
 | **Nunjucks** | - | Templating engine |
 | **PostCSS** | 8.4.32 | CSS processing with Autoprefixer |
 | **@11ty/eleventy-img** | 4.0.2 | Image optimization |
+| **PocketBase** | Latest | Backend for User Progress and Auth |
+| **SVG Filters** | - | Hand-drawn "Brouillon" aesthetic via `#ink-filter` |
 
-## Design System
+## Licence
+
+**Licence :** EUPL v1.2 (European Union Public Licence). Tout code généré doit respecter le partage à l'identique (Copyleft).
+
+## Design System: "Brouillon" & Day/Night Mode
 
 **All design tokens are defined in `design-tokens.json`** at the project root.
 
@@ -30,6 +50,11 @@ This file contains:
 1. Update `design-tokens.json`
 2. Regenerate Tailwind config
 3. Rebuild CSS
+
+- **Theme Toggling:** Class-based approach with `.dark` class on `<html>`.
+- **Day (Cahier):** Bg: `#F9F9F7` (Paper feel), Ink: `#2D3436`.
+- **Night (Étang):** Bg: `#121212` (Water/Slate feel), Ink: `#E0E0E0`.
+- **Mascot:** Salto the Frog (Primary Accent Color).
 
 ### Design Tokens Structure
 
@@ -130,9 +155,79 @@ Every site should follow this organization:
 - `team.json` - Team members (optional)
 - `testimonials.json` - Customer testimonials (optional)
 
+## 🧠 Exercise Engines & Validation Logic
+
+### 1. Single-Answer Engine (`engine-single.njk`)
+Used for exercises where the `answer` in front-matter is a single string or number.
+- **Logic:** `userInput.trim().toLowerCase() == target.toLowerCase()`.
+- **Use Cases:** Simple input, Multiple choice, Clickable SVG hotspots (e.g., Graph bars).
+
+### 2. Multi-Answer Engine (`engine-multi.njk`)
+Used for matrices, vertical operations, or complex patterns.
+- **Logic:** `JSON.stringify(userInputs) == JSON.stringify(target)`.
+- **Target Data:** An Array or Object defined in Markdown front-matter.
+
+## 🔐 Sovereign Identity Flow
+The onboarding must be purely visual and anonymous. We do not collect emails, real names, or ages.
+
+### 1. Identity Selection (The Triple-Name)
+The user chooses from 4 pre-generated identities.
+
+Each identity is a 3-item name (e.g., petit-renard-roux, grande-chouette-bleue).
+
+Gender Balance: Offer 2 masculine-coded and 2 feminine-coded identities using distinct animals and colors to avoid gender bootstrapping.
+
+### 2. Unicity & Recognition (The Sticker)
+To ensure the username is unique across the platform, the system automatically assigns a sticker to the chosen identity.
+
+The user's full "ID" is the Triple-Name + Sticker ID.
+
+The user is instructed: "Remember your animal and your sticker!".
+
+### 3. The Visual Password (The Key)
+The user sets a password by choosing a sequence of 3 images.
+
+Entropy: Use a set of at least 8-10 icons per step to ensure sufficient combinations.
+
+Storage: The sequence is stored as a hashed string in PocketBase.
+
+### 4. Personal Space (The Permanent Link)
+Upon completion, the user is given a unique URL for their space.
+
+URL Format: https://cahier-melimee.fr/[triple-name]-[sticker-id].
+
+This link acts as their "front door" for future visits.
+
+
+⚖️ GDPR & Privacy Compliance
+Data Minimization: We store only progress, scores, and the visual credentials.
+
+Zero PII: No names, IPs, or contact info are linked to the identity.
+
+Security: This is "safe enough" for a platform where the only risk is losing access to a digital sticker book or math scores.
+
+## 📝 Front-Matter Schema for Exercises
+
+Every `.md` file in `src/fr/exercises/` must follow this contract:
+
+```yaml
+---
+layout: "layout-name"     # e.g., "lily-pads", "fraction-pizza"
+title: "Nom de l'exercice"
+engine: "single"          # "single" or "multi"
+answer: "15"              # Target value (String/Number for single, Array for multi)
+difficulty: "CP"          # Grade level
+subject: "maths"          # maths, logic, french
+lang: "fr"                # Only French is supported currently
+locale: "fr-FR"           # Required for 11ty localized data
+---
+
+## 🎨 Design System: "Brouillon" & Day/Night Mode
+
 ## Multilingual Support
 
 This stack supports multiple languages with parallel content directories.
+*IMPORTANT* The first version only suppots **FRENCH**
 
 ### Language Structure
 

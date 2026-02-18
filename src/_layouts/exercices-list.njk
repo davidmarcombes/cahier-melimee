@@ -1,0 +1,78 @@
+---
+layout: base
+---
+
+{% set seriesList = collections.exercices | groupBySeries %}
+
+<div x-data='seriesBrowser({{ seriesList | seriesListPayload | safe }})' class="py-4">
+  <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-6">{{ title }}</h1>
+
+  {{ content | safe }}
+
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-3 mb-8">
+    <select x-model="filters.level" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+      <option value="">Tous les niveaux</option>
+      <template x-for="v in options.level" :key="v">
+        <option :value="v" x-text="v"></option>
+      </template>
+    </select>
+
+    <select x-model="filters.topic" @change="filters.subtopic = ''" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+      <option value="">Toutes les matières</option>
+      <template x-for="v in options.topic" :key="v">
+        <option :value="v" x-text="v"></option>
+      </template>
+    </select>
+
+    <select x-model="filters.subtopic" x-show="subtopicOptions.length > 0" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+      <option value="">Tous les thèmes</option>
+      <template x-for="v in subtopicOptions" :key="v">
+        <option :value="v" x-text="v"></option>
+      </template>
+    </select>
+
+    <select x-model="filters.difficulty" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+      <option value="">Toutes difficultés</option>
+      <template x-for="v in options.difficulty" :key="v">
+        <option :value="v" x-text="v"></option>
+      </template>
+    </select>
+
+    <button x-show="hasActiveFilter" @click="resetFilters()" class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 underline">
+      Réinitialiser
+    </button>
+  </div>
+
+  <!-- Count -->
+  <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+    <span x-text="filtered.length"></span> série<span x-show="filtered.length > 1">s</span>
+  </p>
+
+  <!-- Series cards -->
+  <div class="grid gap-4 sm:grid-cols-2">
+    <template x-for="s in filtered" :key="s.series">
+      <a :href="s.seriesUrl" class="block p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-lg transition-all group">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-2" x-text="s.title"></h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">
+          <span x-text="s.topic"></span>
+          <span x-show="s.subtopic"> › <span x-text="s.subtopic"></span></span>
+        </p>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 text-xs font-bold uppercase rounded bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300" x-text="s.level"></span>
+          <span class="px-2 py-0.5 text-xs rounded"
+            :class="s.difficulty === 'difficile' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+              : s.difficulty === 'moyen' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+              : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'"
+            x-text="s.difficulty"></span>
+          <span class="ml-auto text-xs text-slate-400" x-text="s.count + ' exercice' + (s.count > 1 ? 's' : '')"></span>
+        </div>
+      </a>
+    </template>
+  </div>
+
+  <!-- Empty state -->
+  <div x-show="filtered.length === 0" class="text-center py-12 text-slate-400 dark:text-slate-500">
+    Aucune série ne correspond aux filtres sélectionnés.
+  </div>
+</div>

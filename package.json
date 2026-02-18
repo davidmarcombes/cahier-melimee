@@ -12,7 +12,10 @@
         "clean": "rm -rf _site",
         "tokens": "node scripts/generate-tailwind-from-tokens.js",
         "init": "node scripts/init-project.js",
-        "validate": "node scripts/validate-config.js"
+        "validate": "node scripts/validate-config.js",
+        "db:start": "./pocketbase/pocketbase serve",
+        "db:admin": "echo 'Go to http://127.0.0.1:8090/_/'",
+        "gennames": "node scripts/generate-names.js"
     },
     "keywords": [
         "eleventy",
@@ -25,9 +28,11 @@
     "devDependencies": {
         "@11ty/eleventy": "^2.0.1",
         "@11ty/eleventy-img": "^4.0.2",
+        "@tailwindcss/typography": "^0.5.19",
         "autoprefixer": "^10.4.16",
+        "concurrently": "^8.0.0",
+        "js-yaml": "^4.1.1",
         "postcss": "^8.4.32",
-        "tailwindcss": "^3.4.0",
-        "concurrently": "^8.0.0"
+        "tailwindcss": "^3.4.0"
     }
 }

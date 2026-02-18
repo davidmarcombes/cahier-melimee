@@ -1,0 +1,344 @@
+---
+layout: base
+---
+
+<div class="py-12">
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-4">{{ title }}</h1>
+    <div class="text-lg text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+      {{ content | safe }}
+    </div>
+  </div>
+
+  <div x-data="onboardingWizard()" x-cloak class="max-w-2xl mx-auto p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 min-h-[400px] flex flex-col transition-all duration-500">
+    <!-- Step 1: Identity Selection -->
+    <div 
+      x-show="step === 1" 
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0 transform translate-y-4"
+      x-transition:enter-end="opacity-100 transform translate-y-0"
+      class="flex-grow flex flex-col"
+    >
+      <h2 class="text-2xl font-bold mb-6 text-center">Choisis ton identité</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+        <template x-for="identity in identities" :key="identity.name">
+          <button 
+            @click="selectIdentity(identity)"
+            class="p-5 border-2 rounded-xl text-left transition-all hover:border-primary-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 group"
+            :class="selectedIdentity?.name === identity.name ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-slate-100 dark:border-slate-700'"
+          >
+            <div class="text-base font-bold group-hover:text-primary-600 dark:group-hover:text-primary-400" x-text="identity.name"></div>
+          </button>
+        </template>
+      </div>
+    </div>
+
+    <!-- Step 2: Assignment & URL -->
+    <div 
+      x-show="step === 2" 
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0 transform translate-y-4"
+      x-transition:enter-end="opacity-100 transform translate-y-0"
+      class="flex-grow flex flex-col"
+    >
+      <h2 class="text-2xl font-bold mb-2 text-center">Voici ton autocollant !</h2>
+      <p class="text-center text-slate-600 dark:text-slate-400 mb-8">Souviens-toi de ton animal et de ton autocollant.</p>
+      
+      <div class="flex-grow flex flex-col items-center justify-center p-8 bg-slate-50 dark:bg-slate-900/50 rounded-2xl mb-8">
+        <div class="text-7xl mb-4" x-text="assignedSticker"></div>
+        <div class="text-xl font-mono font-bold text-primary-600 dark:text-primary-400" x-text="fullId"></div>
+      </div>
+
+      <div class="bg-blue-50 dark:bg-blue-900/20 p-5 rounded-xl mb-8 border border-blue-100 dark:border-blue-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex-grow">
+          <p class="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-1">Ton lien secret :</p>
+          <code class="text-xs break-all text-blue-600 dark:text-blue-400 font-mono" x-text="workspaceUrl"></code>
+        </div>
+        <button 
+          @click="copyLink()" 
+          class="shrink-0 flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-700 rounded-lg text-sm font-bold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 transition-all active:scale-95"
+        >
+          <span x-show="!recentlyCopied">📋 Copier</span>
+          <span x-show="recentlyCopied" class="text-green-600 dark:text-green-400">✅ Copié !</span>
+        </button>
+      </div>
+
+      <div class="flex justify-between mt-auto">
+        <button @click="prevStep()" class="px-6 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Retour</button>
+        <button @click="nextStep()" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 shadow-md transition-all active:scale-95">Suivant</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Visual Password -->
+    <div 
+      x-show="step === 3" 
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0 transform translate-y-4"
+      x-transition:enter-end="opacity-100 transform translate-y-0"
+      class="flex-grow flex flex-col"
+    >
+      <h2 class="text-2xl font-bold mb-2 text-center">Crée ta clé secrète</h2>
+      <p class="text-center text-slate-600 dark:text-slate-400 mb-6">Choisis 3 images dans l'ordre.</p>
+      
+      <div class="flex justify-center gap-4 mb-8">
+        <template x-for="i in 3">
+          <div 
+            class="w-16 h-16 border-2 border-dashed rounded-xl flex items-center justify-center text-3xl transition-all"
+            :class="passwordSequence[i-1] ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 scale-110 shadow-sm' : 'border-slate-300 dark:border-slate-600'"
+            x-text="passwordSequence[i-1] || '?'"
+            @click="removeLastIcon(i-1)"
+          ></div>
+        </template>
+      </div>
+
+      <div class="grid grid-cols-5 gap-3 mb-8">
+        <template x-for="icon in passwordIcons" :key="icon">
+          <button 
+            @click="addPasswordIcon(icon)"
+            :disabled="passwordSequence.length >= 3"
+            class="aspect-square flex items-center justify-center text-2xl border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed transform active:scale-90"
+            x-text="icon"
+          ></button>
+        </template>
+      </div>
+
+      <div class="flex justify-between mt-auto">
+        <button @click="prevStep()" class="px-6 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Retour</button>
+        <button 
+          @click="submitOnboarding()" 
+          :disabled="passwordSequence.length < 3 || isSubmitting"
+          class="px-8 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          <span x-show="isSubmitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          Finaliser
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 4: Success -->
+    <div 
+      x-show="step === 4" 
+      x-transition:enter="transition ease-out duration-500"
+      x-transition:enter-start="opacity-0 scale-95"
+      x-transition:enter-end="opacity-100 scale-100"
+      class="flex-grow flex flex-col items-center justify-center"
+    >
+      <div class="text-center py-8">
+        <div class="text-7xl mb-6">🎉</div>
+        <h2 class="text-3xl font-bold mb-4">Bienvenue, <span class="text-primary-600 dark:text-primary-400" x-text="selectedIdentity?.name"></span> !</h2>
+        <p class="text-lg text-slate-600 dark:text-slate-400 mb-10">Ton cahier est prêt. Tu peux maintenant commencer tes exercices.</p>
+        
+        <a :href="'/cahier/' + slug" class="inline-block px-10 py-4 bg-primary-500 text-white text-lg font-bold rounded-2xl shadow-xl hover:bg-primary-600 transition-all transform hover:scale-105 active:scale-95">
+          Accéder à mon cahier
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function onboardingWizard() {
+  const pb = new PocketBase('http://localhost:8090');
+
+  return {
+    step: 1,
+    isSubmitting: false,
+    identities: [],
+    stickers: ['🌻', '🍬', '🌵', '🎈', '🎨', '🚀', '⭐', '⛄', '🧩', '🎸', '⚽', '🎒', '🎃', '⏰', '🎻', '🎩', '🚲', '🛹', '🛸', '🪁'],
+    passwordIcons: ['🍎', '🍌', '🍒', '🍓', '🍇', '🍍', '🍑', '🍐', '🍉', '🍋'],
+    
+    selectedIdentity: null,
+    assignedSticker: null,
+    passwordSequence: [],
+    slug: '',
+    recentlyCopied: false,
+
+    get fullId() {
+      // Don't repeat the sticker in the display string
+      return this.selectedIdentity ? this.selectedIdentity.name : '';
+    },
+
+    get workspaceUrl() {
+      return `https://melimee.site/cahier/${this.slug}`;
+    },
+
+    async init() {
+      console.log('Onboarding Wizard: Initializing diverse identity fetch...');
+      try {
+        // Step 1: Get total counts for each gender (very fast)
+        const [mCountRes, fCountRes] = await Promise.all([
+          pb.collection('identities').getList(1, 1, {
+            filter: 'usage_count < max_usage && gender = "M"',
+            requestKey: 'count-males'
+          }),
+          pb.collection('identities').getList(1, 1, {
+            filter: 'usage_count < max_usage && gender = "F"',
+            requestKey: 'count-females'
+          })
+        ]);
+
+        const totalM = mCountRes.totalItems;
+        const totalF = fCountRes.totalItems;
+        console.log('Available Identities:', { totalM, totalF });
+
+        // Step 2: Fetch 3 individual records from truly random offsets
+        const fetchDiverse = async (gender, total, count) => {
+          if (total === 0) return [];
+          const results = [];
+          const usedOffsets = new Set();
+          
+          for (let i = 0; i < count; i++) {
+            // Pick a random offset that hasn't been used in this batch
+            let randomPage;
+            let attempts = 0;
+            do {
+              randomPage = Math.floor(Math.random() * total) + 1;
+              attempts++;
+            } while (usedOffsets.has(randomPage) && attempts < 10);
+            
+            usedOffsets.add(randomPage);
+
+            try {
+              const res = await pb.collection('identities').getList(randomPage, 1, {
+                filter: `usage_count < max_usage && gender = "${gender}"`,
+                requestKey: `fetch-${gender}-${i}`
+              });
+              if (res.items.length > 0) results.push(res.items[0]);
+            } catch (e) {
+              console.warn(`Failed to fetch ${gender} at page ${randomPage}`, e);
+            }
+          }
+          return results;
+        };
+
+        const [mItems, fItems] = await Promise.all([
+          fetchDiverse('M', totalM, 3),
+          fetchDiverse('F', totalF, 3)
+        ]);
+
+        console.log('Fetch results:', { males: mItems.length, females: fItems.length });
+
+        let finalM = mItems;
+        let finalF = fItems;
+
+        // Fallbacks if DB is empty or fetch fails
+        if (finalM.length < 3) {
+          finalM = [...finalM, { name: 'petit-renard-roux' }, { name: 'vieux-lion-sage' }, { name: 'vif-dauphin-bleu' }].slice(0, 3);
+        }
+        if (finalF.length < 3) {
+          finalF = [...finalF, { name: 'grande-chouette-bleue' }, { name: 'petite-souris-verte' }, { name: 'vive-loutre-brillante' }].slice(0, 3);
+        }
+
+        // Shuffle final set
+        this.identities = [...finalM, ...finalF]
+          .sort(() => Math.random() - 0.5);
+
+      } catch (err) {
+        console.error('CRITICAL: Failed to fetch balanced identities:', err);
+        // Fallback names (3M, 3F)
+        this.identities = [
+          { name: 'petit-renard-roux' },
+          { name: 'vieux-lion-sage' },
+          { name: 'vif-dauphin-bleu' },
+          { name: 'grande-chouette-bleue' },
+          { name: 'petite-souris-verte' },
+          { name: 'vive-loutre-brillante' }
+        ].sort(() => Math.random() - 0.5);
+      }
+    },
+
+    async selectIdentity(identity) {
+      this.selectedIdentity = identity;
+      
+      try {
+        // Fetch pupils with this username to see which stickers are taken
+        const usedStickers = await pb.collection('pupils').getFullList({
+          filter: `username = "${identity.name}"`,
+          fields: 'sticker_id'
+        });
+        
+        const taken = usedStickers.map(p => p.sticker_id);
+        const available = this.stickers.filter(s => !taken.includes(s));
+        
+        if (available.length > 0) {
+          // Pick a random available sticker
+          this.assignedSticker = available[Math.floor(Math.random() * available.length)];
+        } else {
+          // If no stickers are left for this name (should be rare if max_usage is set right)
+          this.assignedSticker = this.stickers[Math.floor(Math.random() * this.stickers.length)];
+          console.warn('No unique stickers left for this identity');
+        }
+      } catch (err) {
+        console.error('Failed to check sticker uniqueness:', err);
+        // Fallback to purely random
+        this.assignedSticker = this.stickers[Math.floor(Math.random() * this.stickers.length)];
+      }
+
+      // Generate slug using the sticker itself (URL encoded or represented as index)
+      // To keep URLs clean, we'll use the index of the sticker in our master list
+      const stickerIndex = this.stickers.indexOf(this.assignedSticker);
+      this.slug = `${identity.name}-${stickerIndex}`;
+      
+      this.nextStep();
+    },
+
+    addPasswordIcon(icon) {
+      if (this.passwordSequence.length < 3) {
+        this.passwordSequence.push(icon);
+      }
+    },
+
+    removeLastIcon(index) {
+        if (index === this.passwordSequence.length - 1) {
+            this.passwordSequence.pop();
+        }
+    },
+
+    nextStep() {
+      if (this.step < 4) this.step++;
+    },
+
+    prevStep() {
+      if (this.step > 1) this.step--;
+    },
+
+    async copyLink() {
+      try {
+        await navigator.clipboard.writeText(this.workspaceUrl);
+        this.recentlyCopied = true;
+        setTimeout(() => this.recentlyCopied = false, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    },
+
+    async submitOnboarding() {
+      this.isSubmitting = true;
+      try {
+        const data = {
+          username: this.selectedIdentity.name,
+          sticker_id: this.assignedSticker,
+          visual_key: this.passwordSequence.join('-'),
+          slug: this.slug
+        };
+        
+        await pb.collection('pupils').create(data);
+        
+        // Increment usage count if it's a dynamic identity
+        if (this.selectedIdentity.id) {
+          await pb.collection('identities').update(this.selectedIdentity.id, {
+            'usage_count+': 1
+          });
+        }
+
+        this.nextStep();
+      } catch (error) {
+        console.error('Submission failed:', error);
+        alert('Erreur lors de l’inscription. Vérifie que PocketBase est lancé.');
+      } finally {
+        this.isSubmitting = false;
+      }
+    }
+  };
+}
+</script>

@@ -3,7 +3,12 @@ layout: base
 ---
 
 <article class="prose dark:prose-invert max-w-none">
+  <div class="mb-6">
+    <a href="/fr/blog/" class="text-sm text-slate-400 hover:text-primary-500 transition-colors">&larr; Blog</a>
+  </div>
   <h1>{{ title }}</h1>
-  <p class="text-sm text-slate-500">{{ date }}</p>
+  {% if date %}
+  <p class="text-sm text-slate-500 dark:text-slate-400">{{ date | date }}</p>
+  {% endif %}
   {{ content | safe }}
 </article>

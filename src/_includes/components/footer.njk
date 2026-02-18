@@ -1,11 +1,16 @@
 <footer class="border-t mt-12 py-8 bg-white dark:bg-slate-800">
-  <div class="max-w-6xl mx-auto px-4 text-sm text-slate-600 dark:text-slate-400">
-    <div class="flex justify-between items-center">
-      <div>© {{ site.title }} {{ site | year }}</div>
-      <div>
-        <a href="/sitemap.xml" class="mr-4">Sitemap</a>
-        <a href="/privacy/">Privacy</a>
-      </div>
-    </div>
+  <div class="max-w-6xl mx-auto px-4 text-sm text-slate-500 dark:text-slate-400 text-center space-y-3">
+    <nav class="flex flex-wrap justify-center gap-x-1 gap-y-1">
+      <a href="/fr/a-propos/" class="hover:text-primary-500 transition-colors">À propos</a>
+      <span class="text-slate-300 dark:text-slate-600" aria-hidden="true">&middot;</span>
+      <a href="/fr/blog/" class="hover:text-primary-500 transition-colors">Blog</a>
+      <span class="text-slate-300 dark:text-slate-600" aria-hidden="true">&middot;</span>
+      <a href="/fr/contribuer/" class="hover:text-primary-500 transition-colors">Contribuer</a>
+      <span class="text-slate-300 dark:text-slate-600" aria-hidden="true">&middot;</span>
+      <a href="/fr/mentions-legales/" class="hover:text-primary-500 transition-colors">Mentions légales</a>
+      <span class="text-slate-300 dark:text-slate-600" aria-hidden="true">&middot;</span>
+      <a href="/fr/confidentialite/" class="hover:text-primary-500 transition-colors">Confidentialité</a>
+    </nav>
+    <p class="text-xs text-slate-400 dark:text-slate-500">© Cahier Mélimée {{ site | year }}</p>
   </div>
 </footer>

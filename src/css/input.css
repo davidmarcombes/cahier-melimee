@@ -7,8 +7,13 @@
   .btn {
     @apply inline-block px-4 py-2 rounded font-semibold;
   }
+
   .btn-primary {
     @apply btn bg-primary-500 text-white;
+  }
+
+  .emoji {
+    @apply inline-block h-[1.2em] w-auto align-text-bottom;
   }
 }
 
