@@ -50,6 +50,26 @@
   .emoji {
     @apply inline-block h-[1.2em] w-auto align-text-bottom;
   }
+
+  /* Minimal prose — replaces @tailwindcss/typography (14K → ~1K) */
+  .prose { max-width: 65ch; line-height: 1.75; }
+  .prose > * + * { margin-top: 1.25em; }
+  .prose p { margin-top: 1.25em; margin-bottom: 1.25em; }
+  .prose strong { font-weight: 700; }
+  .prose a { color: #2a85bf; text-decoration: underline; }
+  .prose a:hover { color: #1e6a9e; }
+  .prose h1 { font-size: 2.25em; font-weight: 800; margin-top: 0; margin-bottom: 0.9em; line-height: 1.1; }
+  .prose h2 { font-size: 1.5em; font-weight: 700; margin-top: 2em; margin-bottom: 1em; line-height: 1.3; }
+  .prose h3 { font-size: 1.25em; font-weight: 600; margin-top: 1.6em; margin-bottom: 0.6em; line-height: 1.6; }
+  .prose hr { border-color: #e2e8f0; margin-top: 3em; margin-bottom: 3em; }
+  .prose ul { list-style-type: disc; padding-left: 1.625em; }
+  .prose ol { list-style-type: decimal; padding-left: 1.625em; }
+  .prose li { margin-top: 0.5em; margin-bottom: 0.5em; }
+  .prose blockquote { border-left: 4px solid #e2e8f0; padding-left: 1em; font-style: italic; }
+  .prose-invert a { color: #60a5fa; }
+  .prose-invert a:hover { color: #93bbfc; }
+  .prose-invert hr { border-color: #334155; }
+  .prose-invert blockquote { border-color: #334155; }
 }
 
 /* Make sure we have a sensible base font */

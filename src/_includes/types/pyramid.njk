@@ -1,0 +1,48 @@
+{# Pyramid visual #}
+<div x-show="cur.type === 'pyramid'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
+       x-show="cur.body" x-html="cur.body"></div>
+  <div class="flex flex-col items-center gap-1">
+    <template x-for="(row, r) in (cur.pyramid ? cur.pyramid.rows : [])" :key="'pr'+r">
+      <div class="flex justify-center gap-1">
+        <template x-for="(val, c) in row" :key="'pc'+r+'-'+c">
+          <div>
+            <div x-show="cur.pyramid && cur.pyramid.given[r] && cur.pyramid.given[r][c]"
+                 class="w-14 h-12 sm:w-16 sm:h-14 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-500 font-bold text-lg sm:text-xl text-content-default">
+              <span x-text="val"></span>
+            </div>
+            <input x-show="cur.pyramid && cur.pyramid.given[r] && !cur.pyramid.given[r][c]"
+                   type="text" inputmode="numeric"
+                   x-model="pyramidInputs[pyramidFlatIdx(r,c)]"
+                   @keydown.enter="check()"
+                   @input="pyramidErrors = []"
+                   :disabled="solved"
+                   class="w-14 h-12 sm:w-16 sm:h-14 text-center rounded-lg border-2 font-bold text-lg sm:text-xl transition-colors
+                     focus:outline-none focus:ring-2 focus:ring-primary-500
+                     bg-white dark:bg-slate-800 text-content-default"
+                   :class="{
+                     'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+                     'border-red-400 bg-red-50 dark:bg-red-900/20': pyramidIsError(r,c),
+                     'border-slate-200 dark:border-slate-600': !solved && !pyramidIsError(r,c)
+                   }"
+                   placeholder="?"
+            />
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
+</div>
+{# Pyramid verify button #}
+<div x-show="cur.type === 'pyramid'" class="flex items-center gap-3 mb-6">
+  <button
+    @click="check()"
+    :disabled="solved"
+    class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
+      disabled:opacity-40 disabled:cursor-not-allowed"
+    :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+  >
+    <span x-show="!solved">Vérifier</span>
+    <span x-show="solved">Bravo !</span>
+  </button>
+</div>

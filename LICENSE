@@ -1,21 +1,42 @@
-MIT License
+European Union Public Licence (EUPL) v.1.2
 
-Copyright (c) 2026
+La présente Union européenne licence publique (la «EUPL») s'applique à l'œuvre (telle que définie ci-dessous) qui est offerte sous les termes de la présente licence. Toute utilisation de l'œuvre autre que celle autorisée par la présente licence est interdite (dans la mesure où une telle utilisation est soumise à un droit détenu par le titulaire du droit d’auteur sur l'œuvre).
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+L'œuvre est offerte sous les termes de la présente licence lorsque le concédant (tel que défini ci-dessous) a inséré la mention suivante: «Sous licence EUPL» ou a exprimé par tout autre moyen sa volonté de la concéder sous licence EUPL.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Définitions
+Dans la présente licence, les termes suivants ont la signification suivante:
+- «La licence»: la présente licence.
+- «L'œuvre»: le logiciel et/ou tout autre contenu (tel que des documents, des jeux de données, etc.) mis à disposition sous les termes de la présente licence.
+- «L'œuvre dérivée»: l'œuvre ou l'adaptation d'une œuvre qui peut être créée par un licencié et qui incorpore l'œuvre originale ou des parties de celle-ci.
+- «Le concédant»: la personne physique ou morale qui concède l'œuvre sous licence.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Étendue des droits concédés par la licence
+Le concédant concède par la présente au licencié une licence mondiale, libre de redevance, non exclusive et pouvant donner lieu à l'octroi de sous-licences, pour:
+- utiliser l'œuvre dans toute circonstance et pour tout usage;
+- reproduire l'œuvre;
+- modifier l'œuvre et créer des œuvres dérivées basées sur l'œuvre;
+- communiquer au public, y compris le droit de mettre l'œuvre à disposition ou de la distribuer, ou d'en distribuer des copies;
+- prêter et louer l'œuvre ou des copies de celle-ci;
+- octroyer des sous-licences sur les droits relatifs à l'œuvre ou à des copies de celle-ci.
+
+3. Communication du code source
+Le concédant fournit l'œuvre sous forme de code source ou de code objet. Si elle est fournie sous forme de code objet, le concédant met à disposition une copie lisible par machine du code source de l'œuvre.
+
+4. Limitations du droit d’auteur
+Rien dans la présente licence n'a pour objet de restreindre les exceptions au droit d'auteur, les droits d'épuisement ou d'autres limitations à l'exercice exclusif des droits de propriété intellectuelle sur l'œuvre.
+
+5. Obligations du licencié
+L'exercice des droits concédés ci-dessus est soumis à plusieurs conditions:
+- Mention du droit d’auteur: le licencié doit conserver intactes toutes les mentions de droit d'auteur.
+- Mention de la licence: le licencié doit inclure une copie de la présente licence ou son URL.
+- Partage à l'identique: si le licencié distribue ou communique des copies de l'œuvre originale ou des œuvres dérivées, cette distribution ou communication doit se faire sous les termes de la présente licence (EUPL).
+
+6. Clause de non-responsabilité (No Warranty)
+L'œuvre est fournie «en l'état», sans garantie d'aucune sorte, expresse ou implicite, y compris, mais sans s'y limiter, les garanties de qualité marchande ou d'adéquation à un usage particulier.
+
+7. Clause de non-responsabilité (Exclusion of Liability)
+Sauf cas de dol ou de dommages corporels, le concédant ne sera en aucun cas responsable des dommages de toute nature découlant de l'utilisation ou de l'impossibilité d'utiliser l'œuvre.
+
+8. Loi applicable et for
+La présente licence est régie par la loi de l'État membre de l'Union européenne où le concédant a son siège ou sa résidence principale.

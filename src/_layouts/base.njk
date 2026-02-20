@@ -48,13 +48,14 @@
       Mode démo
     </div>
 
+    <!-- PocketBase SDK (sync so it's available to inline Alpine components) -->
+    <script src="https://unpkg.com/pocketbase@latest/dist/pocketbase.umd.js"></script>
     <script defer src="/assets/js/app.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- PocketBase SDK -->
-    <script src="https://unpkg.com/pocketbase@latest/dist/pocketbase.umd.js"></script>
     <script>
       // Global PocketBase availability check — resolves to true/false.
       // Components await this to decide between live and demo mode.
+      // Uses plain fetch (no SDK dependency) so it runs immediately without blocking.
       window.__pbAvailable = (async function() {
         try {
           const c = new AbortController();

@@ -1,15 +1,12 @@
 # CLAUDE.md
 
-**This project uses `AGENTS.md` for AI assistant documentation.**
+**This project uses `AGENTS.md` as the index for AI assistant documentation.**
 
-Please read `AGENTS.md` in the project root for complete instructions on:
-- Tech stack and architecture
-- Design system and tokens
-- Coding conventions
-- Project structure
-- Build commands
-- Content management
-- Multilingual support
+Read `AGENTS.md` for the core principles and links to detailed docs in `agents/`:
 
-All project-specific details are in `SITE.md`.
-
+- `agents/architecture.md` — Tech stack, directory structure, build commands
+- `agents/performance.md` — Size budgets, CLS, script loading, CSS discipline
+- `agents/exercises.md` — Exercise types, schemas, adding new types
+- `agents/identity.md` — Anonymous auth, PocketBase, GDPR
+- `agents/conventions.md` — CSS, templates, JS, accessibility
+- `agents/tools.md` — Agent tooling

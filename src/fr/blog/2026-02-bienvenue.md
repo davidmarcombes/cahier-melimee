@@ -18,8 +18,8 @@ Le code est ouvert sous licence EUPL v1.2. Hébergé en France, sans dépendance
 
 ## Ce qui arrive
 
-- De nouvelles séries d'exercices en maths et en français
+- De nouvelles séries d'exercices en maths
 - Un système de progression pour suivre ses résultats
 - Des exercices interactifs avec de nouveaux types de questions
 
-Bonne rentrée !
+A bientôt !

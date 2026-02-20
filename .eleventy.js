@@ -95,6 +95,11 @@ module.exports = function (eleventyConfig) {
       .sort((a, b) => a.inputPath.localeCompare(b.inputPath));
   });
 
+  // Extract unique exercise types from a series (for conditional template includes)
+  eleventyConfig.addFilter('extractTypes', function (exercises) {
+    return [...new Set(exercises.map(ex => ex.data.type || 'number-check'))];
+  });
+
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
   eleventyConfig.addFilter('seriesPayload', function (exercises) {
     const payload = exercises.map(ex => {

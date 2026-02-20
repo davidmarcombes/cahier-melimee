@@ -1,0 +1,42 @@
+{# Logic grid visual #}
+<div x-show="cur.type === 'logic-grid'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
+  <div class="prose dark:prose-invert text-sm max-w-none mb-4 text-slate-600 "
+       x-show="cur.body" x-html="cur.body"></div>
+  <div class="overflow-x-auto">
+    <table class="mx-auto border-collapse">
+      <thead>
+        <tr>
+          <th class="w-20 sm:w-24"></th>
+          <template x-for="(col, c) in (cur.grid ? cur.grid.columns : [])" :key="'gc'+c">
+            <th class="w-12 sm:w-14 px-1 py-2 text-center text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600" x-text="col"></th>
+          </template>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="(row, r) in (cur.grid ? cur.grid.rows : [])" :key="'gr'+r">
+          <tr>
+            <td class="px-2 py-2 text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600 whitespace-nowrap" x-text="row"></td>
+            <template x-for="(col, c) in (cur.grid ? cur.grid.columns : [])" :key="'gc'+r+'-'+c">
+              <td class="border border-slate-200 dark:border-slate-600 p-0">
+                <button
+                  @click="gridTap(r, c)" :disabled="solved"
+                  class="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-xl font-bold transition-colors select-none"
+                  :class="{
+                    'bg-green-50 dark:bg-green-900/20 text-green-600': solved && gridCellVal(r,c) === 2,
+                    'opacity-40': solved && gridCellVal(r,c) !== 2,
+                    'bg-red-50 dark:bg-red-900/20': !solved && gridIsError(r,c),
+                    'hover:bg-surface-subtle active:bg-slate-100 dark:active:bg-slate-600': !solved && !gridIsError(r,c),
+                    'cursor-not-allowed': solved
+                  }"
+                >
+                  <span x-show="gridCellVal(r,c) === 1" class="text-red-400">&#x2717;</span>
+                  <span x-show="gridCellVal(r,c) === 2" class="text-green-600 dark:text-green-400">&#x2713;</span>
+                </button>
+              </td>
+            </template>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+</div>

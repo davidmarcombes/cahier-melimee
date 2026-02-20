@@ -82,7 +82,7 @@ module.exports = {
       spacing: ${JSON.stringify(tokens.spacing || {}, null, 2)}
     }
   },
-  plugins: [require('@tailwindcss/typography')]
+  plugins: []
 };
 `;
 

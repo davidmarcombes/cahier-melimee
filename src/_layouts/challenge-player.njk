@@ -9,7 +9,7 @@ layout: base
 
 <div
   x-data='challengePlayer({{ { title: title, operator: operator, operandA: operandA, operandB: operandB, count: count, mode: mode or "" } | dump | safe }})'
-  class="max-w-xl mx-auto py-8"
+  x-cloak class="max-w-xl mx-auto py-8"
 >
   {# Header #}
   <div class="flex items-center justify-between mb-4 text-sm">

@@ -4,7 +4,7 @@ layout: base
 
 {% set seriesList = collections.exercices | groupBySeries | withDefis(collections.defis) %}
 
-<div x-data='seriesBrowser({{ seriesList | seriesListPayload | safe }})' class="py-4">
+<div x-data='seriesBrowser({{ seriesList | seriesListPayload | safe }})' x-cloak class="py-4">
   <h1 class="text-3xl font-extrabold text-content-default mb-6">{{ title }}</h1>
 
   {{ content | safe }}

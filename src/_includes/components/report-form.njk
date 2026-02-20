@@ -47,7 +47,6 @@
 
 <script>
 function reportForm() {
-  const pb = new PocketBase('http://localhost:8090');
   return {
     showForm: false,
     message: '',
@@ -64,6 +63,7 @@ function reportForm() {
         return;
       }
       try {
+        const pb = new PocketBase('http://localhost:8090');
         await pb.collection('reports').create({
           page_url: window.location.pathname,
           page_title: document.title,

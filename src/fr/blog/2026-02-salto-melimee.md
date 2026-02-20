@@ -4,4 +4,10 @@ date: 2026-02-18
 description: "La génèse des personnages."
 ---
 
-Mais qui sont ces deux zigotos
+## Mélimée
+
+Une petite fille qui parfois se mélange le méninges 
+
+## Salto
+
+C'est une grenouille bleu qui accompagne Mélimée dans son apprentissage. 

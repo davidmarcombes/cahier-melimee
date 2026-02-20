@@ -5,15 +5,16 @@ layout: base
 {#
   Series Player — Single-template engine.
   One set of HTML elements; Alpine.js swaps content dynamically from a JSON payload.
-  HTML size stays constant regardless of exercise count.
+  Type-specific blocks are conditionally included at build time to keep pages minimal.
 #}
 
 {% set exercises = collections.exercices | seriesExercises(series) %}
+{% set usedTypes = exercises | extractTypes %}
 
 <div
   x-data='seriesPlayer({{ exercises | seriesPayload | safe }})'
   @hashchange.window="syncFromHash()" @resize.window.debounce="updateMatchLines()"
-  class="max-w-xl mx-auto py-8"
+  x-cloak class="max-w-xl mx-auto py-8"
 >
   {# Series header #}
   <div class="flex items-center justify-between mb-4 text-sm">
@@ -30,351 +31,24 @@ layout: base
   {# Exercise title #}
   <h1 class="text-2xl font-bold text-content-default mb-4 text-center" x-text="cur.title"></h1>
 
-  {# Number-check visual #}
-  <div x-show="cur.type === 'number-check'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 mb-8">
-    {# Standard: operation = ? #}
-    <div x-show="cur.operation && !cur.operation.includes('?')" class="text-center mb-6">
-      <span class="text-5xl font-extrabold text-content-default tracking-wide" x-text="cur.operation + ' = ?'"></span>
-    </div>
-    {# Opération à trou: inline blank #}
-    <div x-show="cur.operation && cur.operation.includes('?')" class="flex items-center justify-center gap-2 mb-6 flex-wrap">
-      <span class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide whitespace-nowrap"
-            x-text="cur.operation.split('?')[0]"></span>
-      <input type="text" inputmode="numeric"
-             x-model="userInput" @keydown.enter="check()" :disabled="solved"
-             class="w-16 sm:w-20 h-14 sm:h-16 text-center text-3xl sm:text-4xl font-extrabold
-               rounded-xl border-2 transition-colors
-               focus:outline-none focus:ring-2 focus:ring-primary-500
-               bg-white dark:bg-slate-800 text-content-default"
-             :class="{
-               'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-               'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
-               'border-primary-300 dark:border-primary-600': !solved && !showError
-             }"
-             placeholder="?"
-      />
-      <span class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide whitespace-nowrap"
-            x-text="cur.operation.split('?')[1]"></span>
-    </div>
-    <div class="prose dark:prose-invert text-center text-lg max-w-none" x-html="cur.body"></div>
-  </div>
+  {# Type-specific visual blocks (only included when the series uses that type) #}
+  {% if 'number-check' in usedTypes %}{% include "types/number-check.njk" %}{% endif %}
+  {% if 'problem' in usedTypes %}{% include "types/problem.njk" %}{% endif %}
+  {% if 'matching' in usedTypes %}{% include "types/matching.njk" %}{% endif %}
+  {% if 'sequence' in usedTypes %}{% include "types/sequence.njk" %}{% endif %}
+  {% if 'bounding' in usedTypes %}{% include "types/bounding.njk" %}{% endif %}
+  {% if 'convert' in usedTypes %}{% include "types/convert.njk" %}{% endif %}
+  {% if 'logic-grid' in usedTypes %}{% include "types/logic-grid.njk" %}{% endif %}
+  {% if 'pyramid' in usedTypes %}{% include "types/pyramid.njk" %}{% endif %}
 
-  {# Problem visual #}
-  <div x-show="cur.type === 'problem'" class="bg-amber-50 dark:bg-amber-900/10 rounded-2xl shadow-lg border border-amber-200 dark:border-amber-800 p-8 mb-8">
-    <div class="flex items-start gap-4">
-      <span class="text-4xl shrink-0" aria-hidden="true">📖</span>
-      <div class="prose dark:prose-invert text-lg max-w-none" x-html="cur.body"></div>
-    </div>
-  </div>
+  {# Shared verify button for sequence/bounding/convert #}
+  {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
+    {% include "types/seq-verify.njk" %}
+  {% endif %}
 
-  {# Matching visual #}
-  <div x-show="cur.type === 'matching'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
-    <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
-         x-show="cur.body" x-html="cur.body"></div>
-
-    <div class="relative" x-ref="matchContainer">
-      {# SVG overlay for connection lines #}
-      <svg class="absolute inset-0 w-full h-full pointer-events-none overflow-visible" aria-hidden="true"
-           x-html="_matchLinesSvg"></svg>
-
-      {# Two columns #}
-      <div class="flex justify-between gap-4">
-        {# Left column #}
-        <div class="flex flex-col gap-3 w-5/12">
-          <template x-for="(label, i) in (cur.pairs ? cur.pairs.left : [])" :key="'l'+i">
-            <button
-              @click="matchTap('left', i)" :disabled="solved"
-              class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border-2 text-left font-semibold text-base transition-all active:scale-95 select-none flex-row-reverse"
-              :class="{
-                'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-md': matchLeftSelected(i),
-                'border-green-400 bg-green-50 dark:bg-green-900/20': !matchIsError('left',i) && matchLeftConnected(i) && !matchLeftSelected(i),
-                'border-red-400 bg-red-50 dark:bg-red-900/20': matchIsError('left',i),
-                'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-primary-300': !matchLeftSelected(i) && !matchLeftConnected(i),
-                'opacity-60 cursor-not-allowed': solved
-              }"
-            >
-              <span class="w-3 h-3 rounded-full shrink-0 border-2"
-                    :class="matchLeftSelected(i) || matchLeftConnected(i) ? 'bg-primary-500 border-primary-500' : 'border-slate-400'"
-                    :data-dot="'left'+i"></span>
-              <span x-text="label"></span>
-            </button>
-          </template>
-        </div>
-
-        {# Right column #}
-        <div class="flex flex-col gap-3 w-5/12">
-          <template x-for="(label, i) in (cur.pairs ? cur.pairs.right : [])" :key="'r'+i">
-            <button
-              @click="matchTap('right', i)" :disabled="solved"
-              class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border-2 text-right font-semibold text-base transition-all active:scale-95 select-none"
-              :class="{
-                'border-green-400 bg-green-50 dark:bg-green-900/20': !matchIsError('right',i) && matchRightConnected(i),
-                'border-red-400 bg-red-50 dark:bg-red-900/20': matchIsError('right',i),
-                'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-primary-300': !matchRightConnected(i),
-                'opacity-60 cursor-not-allowed': solved
-              }"
-            >
-              <span class="w-3 h-3 rounded-full shrink-0 border-2"
-                    :class="matchRightConnected(i) ? 'bg-primary-500 border-primary-500' : 'border-slate-400'"
-                    :data-dot="'right'+i"></span>
-              <span x-text="label"></span>
-            </button>
-          </template>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {# Matching verify button #}
-  <div x-show="cur.type === 'matching'" class="flex items-center gap-3 mb-6">
-    <button
-      @click="check()"
-      :disabled="solved || matchConnections.length < (cur.pairs ? cur.pairs.left.length : 0)"
-      class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
-        disabled:opacity-40 disabled:cursor-not-allowed"
-      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
-    >
-      <span x-show="!solved">Vérifier</span>
-      <span x-show="solved">Bravo !</span>
-    </button>
-  </div>
-
-  {# Sequence visual #}
-  <div x-show="cur.type === 'sequence'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
-    <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
-         x-show="cur.body" x-html="cur.body"></div>
-
-    <div class="flex flex-wrap justify-center items-center gap-2">
-      <template x-for="(n, i) in (cur.sequence ? cur.sequence.given : [])" :key="'sg'+i">
-        <div class="w-16 sm:w-20 h-12 sm:h-14 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 font-bold text-lg sm:text-xl text-content-default">
-          <span x-text="n"></span>
-        </div>
-      </template>
-      <template x-for="(ans, i) in (cur.sequence ? cur.sequence.answers : [])" :key="'sa'+i">
-        <input
-          type="text" inputmode="numeric"
-          x-model="seqInputs[i]"
-          @keydown.enter="check()"
-          @input="seqErrors = []"
-          :disabled="solved"
-          class="w-16 sm:w-20 h-12 sm:h-14 text-center rounded-xl border-2 font-bold text-lg sm:text-xl transition-colors
-            focus:outline-none focus:ring-2 focus:ring-primary-500
-            bg-surface-subtle text-content-default"
-          :class="{
-            'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-            'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(i),
-            'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(i)
-          }"
-          placeholder="?"
-        />
-      </template>
-    </div>
-  </div>
-
-  {# Bounding visual #}
-  <div x-show="cur.type === 'bounding'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
-    <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
-         x-show="cur.body" x-html="cur.body"></div>
-
-    <div class="flex flex-wrap justify-center items-center gap-3">
-      <input
-        type="text" inputmode="numeric"
-        x-model="seqInputs[0]"
-        @keydown.enter="check()"
-        @input="seqErrors = []"
-        :disabled="solved"
-        class="w-20 sm:w-24 h-14 sm:h-16 text-center rounded-xl border-2 font-bold text-xl sm:text-2xl transition-colors
-          focus:outline-none focus:ring-2 focus:ring-primary-500
-          bg-surface-subtle text-content-default"
-        :class="{
-          'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-          'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(0),
-          'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(0)
-        }"
-        placeholder="?"
-      />
-      <span class="text-2xl font-bold text-slate-400">&lt;</span>
-      <div class="w-20 sm:w-24 h-14 sm:h-16 flex items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-primary-700 font-bold text-xl sm:text-2xl text-primary-700 dark:text-primary-300">
-        <span x-text="cur.bounding ? cur.bounding.number : ''"></span>
-      </div>
-      <span class="text-2xl font-bold text-slate-400">&lt;</span>
-      <input
-        type="text" inputmode="numeric"
-        x-model="seqInputs[1]"
-        @keydown.enter="check()"
-        @input="seqErrors = []"
-        :disabled="solved"
-        class="w-20 sm:w-24 h-14 sm:h-16 text-center rounded-xl border-2 font-bold text-xl sm:text-2xl transition-colors
-          focus:outline-none focus:ring-2 focus:ring-primary-500
-          bg-surface-subtle text-content-default"
-        :class="{
-          'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-          'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(1),
-          'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(1)
-        }"
-        placeholder="?"
-      />
-    </div>
-  </div>
-
-  {# Convert visual #}
-  <div x-show="cur.type === 'convert'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
-    <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
-         x-show="cur.body" x-html="cur.body"></div>
-
-    <div class="space-y-3">
-      <template x-for="(item, i) in (cur.convert ? cur.convert.items : [])" :key="'cv'+i">
-        <div class="flex items-center gap-2 justify-center">
-          <span class="font-semibold text-lg text-content-default whitespace-nowrap" x-text="item.prompt"></span>
-          <span class="text-lg text-slate-400">=</span>
-          <input
-            type="text"
-            x-model="seqInputs[i]"
-            @keydown.enter="check()"
-            @input="seqErrors = []"
-            :disabled="solved"
-            class="w-24 sm:w-28 h-11 text-center rounded-xl border-2 font-semibold text-lg transition-colors
-              focus:outline-none focus:ring-2 focus:ring-primary-500
-              bg-surface-subtle text-content-default"
-            :class="{
-              'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-              'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(i),
-              'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(i)
-            }"
-            placeholder="?"
-          />
-          <span class="font-semibold text-lg text-content-subtle whitespace-nowrap"
-                x-show="item.unit" x-text="item.unit"></span>
-        </div>
-      </template>
-    </div>
-  </div>
-
-  {# Logic grid visual #}
-  <div x-show="cur.type === 'logic-grid'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
-    <div class="prose dark:prose-invert text-sm max-w-none mb-4 text-slate-600 "
-         x-show="cur.body" x-html="cur.body"></div>
-
-    <div class="overflow-x-auto">
-      <table class="mx-auto border-collapse">
-        <thead>
-          <tr>
-            <th class="w-20 sm:w-24"></th>
-            <template x-for="(col, c) in (cur.grid ? cur.grid.columns : [])" :key="'gc'+c">
-              <th class="w-12 sm:w-14 px-1 py-2 text-center text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600" x-text="col"></th>
-            </template>
-          </tr>
-        </thead>
-        <tbody>
-          <template x-for="(row, r) in (cur.grid ? cur.grid.rows : [])" :key="'gr'+r">
-            <tr>
-              <td class="px-2 py-2 text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600 whitespace-nowrap" x-text="row"></td>
-              <template x-for="(col, c) in (cur.grid ? cur.grid.columns : [])" :key="'gc'+r+'-'+c">
-                <td class="border border-slate-200 dark:border-slate-600 p-0">
-                  <button
-                    @click="gridTap(r, c)" :disabled="solved"
-                    class="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-xl font-bold transition-colors select-none"
-                    :class="{
-                      'bg-green-50 dark:bg-green-900/20 text-green-600': solved && gridCellVal(r,c) === 2,
-                      'opacity-40': solved && gridCellVal(r,c) !== 2,
-                      'bg-red-50 dark:bg-red-900/20': !solved && gridIsError(r,c),
-                      'hover:bg-surface-subtle active:bg-slate-100 dark:active:bg-slate-600': !solved && !gridIsError(r,c),
-                      'cursor-not-allowed': solved
-                    }"
-                  >
-                    <span x-show="gridCellVal(r,c) === 1" class="text-red-400">&#x2717;</span>
-                    <span x-show="gridCellVal(r,c) === 2" class="text-green-600 dark:text-green-400">&#x2713;</span>
-                  </button>
-                </td>
-              </template>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  {# Pyramid visual #}
-  <div x-show="cur.type === 'pyramid'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
-    <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
-         x-show="cur.body" x-html="cur.body"></div>
-
-    <div class="flex flex-col items-center gap-1">
-      <template x-for="(row, r) in (cur.pyramid ? cur.pyramid.rows : [])" :key="'pr'+r">
-        <div class="flex justify-center gap-1">
-          <template x-for="(val, c) in row" :key="'pc'+r+'-'+c">
-            <div>
-              <div x-show="cur.pyramid && cur.pyramid.given[r] && cur.pyramid.given[r][c]"
-                   class="w-14 h-12 sm:w-16 sm:h-14 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-500 font-bold text-lg sm:text-xl text-content-default">
-                <span x-text="val"></span>
-              </div>
-              <input x-show="cur.pyramid && cur.pyramid.given[r] && !cur.pyramid.given[r][c]"
-                     type="text" inputmode="numeric"
-                     x-model="pyramidInputs[pyramidFlatIdx(r,c)]"
-                     @keydown.enter="check()"
-                     @input="pyramidErrors = []"
-                     :disabled="solved"
-                     class="w-14 h-12 sm:w-16 sm:h-14 text-center rounded-lg border-2 font-bold text-lg sm:text-xl transition-colors
-                       focus:outline-none focus:ring-2 focus:ring-primary-500
-                       bg-white dark:bg-slate-800 text-content-default"
-                     :class="{
-                       'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-                       'border-red-400 bg-red-50 dark:bg-red-900/20': pyramidIsError(r,c),
-                       'border-slate-200 dark:border-slate-600': !solved && !pyramidIsError(r,c)
-                     }"
-                     placeholder="?"
-              />
-            </div>
-          </template>
-        </div>
-      </template>
-    </div>
-  </div>
-
-  {# Pyramid verify button #}
-  <div x-show="cur.type === 'pyramid'" class="flex items-center gap-3 mb-6">
-    <button
-      @click="check()"
-      :disabled="solved"
-      class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
-        disabled:opacity-40 disabled:cursor-not-allowed"
-      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
-    >
-      <span x-show="!solved">Vérifier</span>
-      <span x-show="solved">Bravo !</span>
-    </button>
-  </div>
-
-  {# Opération à trou verify button #}
-  <div x-show="cur.operation && cur.operation.includes('?')" class="flex items-center gap-3 mb-6">
-    <button
-      @click="check()"
-      :disabled="solved || !userInput.trim()"
-      class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
-        disabled:opacity-40 disabled:cursor-not-allowed"
-      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
-    >
-      <span x-show="!solved">Vérifier</span>
-      <span x-show="solved">Bravo !</span>
-    </button>
-  </div>
-
-  {# Sequence / bounding / convert verify button #}
-  <div x-show="cur.type === 'sequence' || cur.type === 'bounding' || cur.type === 'convert'" class="flex items-center gap-3 mb-6">
-    <button
-      @click="check()"
-      :disabled="solved || seqInputs.some(v => !v.trim())"
-      class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
-        disabled:opacity-40 disabled:cursor-not-allowed"
-      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
-    >
-      <span x-show="!solved">Vérifier</span>
-      <span x-show="solved">Bravo !</span>
-    </button>
-  </div>
-
-  {# Answer input + check button (hidden for matching/sequence) #}
-  <div x-show="cur.type !== 'matching' && cur.type !== 'sequence' && cur.type !== 'bounding' && cur.type !== 'convert' && cur.type !== 'logic-grid' && cur.type !== 'pyramid' && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6">
+  {# Answer input + check button (for number-check standard and problem) #}
+  {% if 'number-check' in usedTypes or 'problem' in usedTypes %}
+  <div x-show="(cur.type === 'number-check' || cur.type === 'problem') && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6">
     <input
       type="text"
       x-model="userInput"
@@ -403,6 +77,7 @@ layout: base
       <span x-show="solved">Bravo !</span>
     </button>
   </div>
+  {% endif %}
 
   {# Error feedback #}
   <div
@@ -412,12 +87,22 @@ layout: base
     x-transition:enter-end="opacity-100 translate-y-0"
     class="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300"
   >
+    {% if 'matching' in usedTypes %}
     <span x-show="cur.type === 'matching' && matchConnections.length < (cur.pairs ? cur.pairs.left.length : 0)">Relie tous les éléments avant de vérifier !</span>
     <span x-show="cur.type === 'matching' && matchConnections.length >= (cur.pairs ? cur.pairs.left.length : 0)">Certaines liaisons sont incorrectes. Essaie encore !</span>
+    {% endif %}
+    {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
     <span x-show="cur.type === 'sequence' || cur.type === 'bounding' || cur.type === 'convert'">Certains nombres ne sont pas corrects. Essaie encore !</span>
+    {% endif %}
+    {% if 'logic-grid' in usedTypes %}
     <span x-show="cur.type === 'logic-grid'">Certaines cases ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
+    {% if 'pyramid' in usedTypes %}
     <span x-show="cur.type === 'pyramid'">Certains nombres ne sont pas corrects. Essaie encore !</span>
-    <span x-show="cur.type !== 'matching' && cur.type !== 'sequence' && cur.type !== 'bounding' && cur.type !== 'convert' && cur.type !== 'logic-grid' && cur.type !== 'pyramid'">Ce n'est pas la bonne réponse. Essaie encore !</span>
+    {% endif %}
+    {% if 'number-check' in usedTypes or 'problem' in usedTypes %}
+    <span x-show="cur.type === 'number-check' || cur.type === 'problem'">Ce n'est pas la bonne réponse. Essaie encore !</span>
+    {% endif %}
   </div>
 
   {# Success feedback #}

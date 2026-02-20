@@ -3,9 +3,9 @@ layout: base
 ---
 
 <h1 class="text-3xl font-extrabold text-content-default mb-8">{{ title }}</h1>
-
+<div class="m-4"> 
 {{ content | safe }}
-
+</div>
 {% set posts = collections.posts %}
 {% if posts.length > 0 %}
 <div class="space-y-6">
