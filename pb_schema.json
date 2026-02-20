@@ -197,5 +197,59 @@
         "updateRule": "",
         "deleteRule": null,
         "options": {}
+    },
+    {
+        "id": "reports_collection",
+        "name": "reports",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "id": "report_page_url",
+                "name": "page_url",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": 500,
+                    "pattern": ""
+                }
+            },
+            {
+                "id": "report_page_title",
+                "name": "page_title",
+                "type": "text",
+                "required": false,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": 200,
+                    "pattern": ""
+                }
+            },
+            {
+                "id": "report_message",
+                "name": "message",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "min": 1,
+                    "max": 1000,
+                    "pattern": ""
+                }
+            }
+        ],
+        "indexes": [],
+        "listRule": null,
+        "viewRule": null,
+        "createRule": "",
+        "updateRule": null,
+        "deleteRule": null,
+        "options": {}
     }
 ]

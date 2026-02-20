@@ -2,7 +2,7 @@
 layout: base
 ---
 
-<h1 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-8">{{ title }}</h1>
+<h1 class="text-3xl font-extrabold text-content-default mb-8">{{ title }}</h1>
 
 {{ content | safe }}
 
@@ -10,15 +10,15 @@ layout: base
 {% if posts.length > 0 %}
 <div class="space-y-6">
   {% for post in posts %}
-  <a href="{{ post.url }}" class="block p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-lg transition-all group">
-    <h2 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-1">{{ post.data.title }}</h2>
-    <p class="text-sm text-slate-400 dark:text-slate-500 mb-2">{{ post.date | date }}</p>
+  <a href="{{ post.url }}" class="block p-5 bg-surface-subtle rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-lg transition-all group">
+    <h2 class="text-lg font-bold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-1">{{ post.data.title }}</h2>
+    <p class="text-sm text-content-subtle mb-2">{{ post.date | date }}</p>
     {% if post.data.description %}
-    <p class="text-slate-600 dark:text-slate-400">{{ post.data.description }}</p>
+    <p class="text-content-subtle">{{ post.data.description }}</p>
     {% endif %}
   </a>
   {% endfor %}
 </div>
 {% else %}
-<p class="text-slate-500 dark:text-slate-400">Aucun article pour le moment.</p>
+<p class="text-content-subtle">Aucun article pour le moment.</p>
 {% endif %}

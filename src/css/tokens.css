@@ -1,0 +1,14 @@
+/* Auto-generated from design-tokens.json */
+:root {
+  --color-surface-default: #ffffff;
+  --color-surface-subtle: #f8fafc;
+  --color-content-default: #1e293b;
+  --color-content-subtle: #64748b;
+}
+
+.dark {
+  --color-surface-default: #2e3940;
+  --color-surface-subtle: #3c6680;
+  --color-content-default: #f1f5f9;
+  --color-content-subtle: #bf812a;
+}

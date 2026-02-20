@@ -1,0 +1,82 @@
+{# Anonymous problem report form — sends to PocketBase reports collection #}
+<div x-data="reportForm()" class="mt-10 text-center">
+  <button
+    x-show="!showForm && !sent"
+    @click="showForm = true"
+    class="text-xs text-content-subtle hover:text-slate-600 dark:hover:text-slate-300 underline transition-colors"
+  >
+    Signaler un problème
+  </button>
+
+  <div
+    x-show="showForm && !sent"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 -translate-y-2"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    class="mt-2 max-w-md mx-auto text-left"
+  >
+    <textarea
+      x-model="message"
+      placeholder="Décris le problème…"
+      rows="3"
+      maxlength="1000"
+      class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
+        bg-surface-subtle text-content-default
+        border-slate-200 dark:border-slate-700"
+    ></textarea>
+    <div class="flex items-center gap-2 mt-2">
+      <button
+        @click="submit()"
+        :disabled="!message.trim() || sending"
+        class="px-4 py-1.5 text-sm font-bold rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <span x-show="!sending">Envoyer</span>
+        <span x-show="sending">Envoi…</span>
+      </button>
+      <button @click="showForm = false; message = ''" class="px-4 py-1.5 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+        Annuler
+      </button>
+      <span x-show="error" class="text-xs text-red-500" x-text="error"></span>
+    </div>
+  </div>
+
+  <p x-show="sent" class="text-xs text-green-600 dark:text-green-400">
+    Merci pour ton signalement !
+  </p>
+</div>
+
+<script>
+function reportForm() {
+  const pb = new PocketBase('http://localhost:8090');
+  return {
+    showForm: false,
+    message: '',
+    sending: false,
+    sent: false,
+    error: '',
+    async submit() {
+      this.error = '';
+      this.sending = true;
+      const live = await window.__pbAvailable;
+      if (!live) {
+        this.error = 'Mode démo — le signalement n\u2019a pas été envoyé.';
+        this.sending = false;
+        return;
+      }
+      try {
+        await pb.collection('reports').create({
+          page_url: window.location.pathname,
+          page_title: document.title,
+          message: this.message.trim()
+        });
+        this.sent = true;
+      } catch (err) {
+        this.error = 'Erreur d\u2019envoi.';
+        console.error(err);
+      } finally {
+        this.sending = false;
+      }
+    }
+  };
+}
+</script>

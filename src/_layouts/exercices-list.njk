@@ -2,37 +2,37 @@
 layout: base
 ---
 
-{% set seriesList = collections.exercices | groupBySeries %}
+{% set seriesList = collections.exercices | groupBySeries | withDefis(collections.defis) %}
 
 <div x-data='seriesBrowser({{ seriesList | seriesListPayload | safe }})' class="py-4">
-  <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-6">{{ title }}</h1>
+  <h1 class="text-3xl font-extrabold text-content-default mb-6">{{ title }}</h1>
 
   {{ content | safe }}
 
   <!-- Filters -->
   <div class="flex flex-wrap gap-3 mb-8">
-    <select x-model="filters.level" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+    <select x-model="filters.level" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
       <option value="">Tous les niveaux</option>
       <template x-for="v in options.level" :key="v">
         <option :value="v" x-text="v"></option>
       </template>
     </select>
 
-    <select x-model="filters.topic" @change="filters.subtopic = ''" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+    <select x-model="filters.topic" @change="filters.subtopic = ''" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
       <option value="">Toutes les matières</option>
       <template x-for="v in options.topic" :key="v">
         <option :value="v" x-text="v"></option>
       </template>
     </select>
 
-    <select x-model="filters.subtopic" x-show="subtopicOptions.length > 0" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+    <select x-model="filters.subtopic" x-show="subtopicOptions.length > 0" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
       <option value="">Tous les thèmes</option>
       <template x-for="v in subtopicOptions" :key="v">
         <option :value="v" x-text="v"></option>
       </template>
     </select>
 
-    <select x-model="filters.difficulty" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+    <select x-model="filters.difficulty" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
       <option value="">Toutes difficultés</option>
       <template x-for="v in options.difficulty" :key="v">
         <option :value="v" x-text="v"></option>
@@ -45,16 +45,16 @@ layout: base
   </div>
 
   <!-- Count -->
-  <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+  <p class="text-sm text-content-subtle mb-4">
     <span x-text="filtered.length"></span> série<span x-show="filtered.length > 1">s</span>
   </p>
 
   <!-- Series cards -->
   <div class="grid gap-4 sm:grid-cols-2">
     <template x-for="s in filtered" :key="s.series">
-      <a :href="s.seriesUrl" class="block p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-lg transition-all group">
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-2" x-text="s.title"></h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">
+      <a :href="s.seriesUrl" class="block p-5 bg-surface-subtle rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-lg transition-all group">
+        <h2 class="text-lg font-bold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-2" x-text="s.title"></h2>
+        <p class="text-sm text-content-subtle mb-3">
           <span x-text="s.topic"></span>
           <span x-show="s.subtopic"> › <span x-text="s.subtopic"></span></span>
         </p>
@@ -72,7 +72,7 @@ layout: base
   </div>
 
   <!-- Empty state -->
-  <div x-show="filtered.length === 0" class="text-center py-12 text-slate-400 dark:text-slate-500">
+  <div x-show="filtered.length === 0" class="text-center py-12 text-content-subtle">
     Aucune série ne correspond aux filtres sélectionnés.
   </div>
 </div>

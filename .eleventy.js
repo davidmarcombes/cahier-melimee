@@ -97,13 +97,89 @@ module.exports = function (eleventyConfig) {
 
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
   eleventyConfig.addFilter('seriesPayload', function (exercises) {
-    const payload = exercises.map(ex => ({
-      title: ex.data.title || '',
-      type: ex.data.type || 'number-check',
-      operation: ex.data.operation || '',
-      body: (ex.templateContent || '').trim(),
-      answer: String(ex.data.answer || '').trim().toLowerCase()
-    }));
+    const payload = exercises.map(ex => {
+      const item = {
+        title: ex.data.title || '',
+        type: ex.data.type || 'number-check',
+        operation: ex.data.operation || '',
+        body: (ex.templateContent || '').trim(),
+        answer: String(ex.data.answer || '').trim().toLowerCase(),
+        pairs: null,
+        sequence: null,
+        bounding: null,
+        convert: null,
+        grid: null,
+        pyramid: null
+      };
+      if (ex.data.pairs) {
+        const leftIndexed = ex.data.pairs.map((p, i) => ({ label: String(p.left), origIdx: i }));
+        const rightIndexed = ex.data.pairs.map((p, i) => ({ label: String(p.right), origIdx: i }));
+        // Fisher-Yates shuffle both columns independently
+        for (let i = leftIndexed.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [leftIndexed[i], leftIndexed[j]] = [leftIndexed[j], leftIndexed[i]];
+        }
+        for (let i = rightIndexed.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [rightIndexed[i], rightIndexed[j]] = [rightIndexed[j], rightIndexed[i]];
+        }
+        const left = leftIndexed.map(l => l.label);
+        const right = rightIndexed.map(r => r.label);
+        // answers[i] = index in shuffled right that matches shuffled left[i]
+        const answers = leftIndexed.map(l => rightIndexed.findIndex(r => r.origIdx === l.origIdx));
+        item.pairs = { left, right, answers };
+      }
+      if (ex.data.given && ex.data.answers) {
+        item.sequence = {
+          given: ex.data.given.map(n => String(n)),
+          answers: ex.data.answers.map(n => String(n))
+        };
+      }
+      if (ex.data.type === 'bounding' && ex.data.number != null && ex.data.answers) {
+        item.bounding = {
+          number: String(ex.data.number),
+          answers: ex.data.answers.map(n => String(n))
+        };
+      }
+      if (ex.data.type === 'logic-grid' && ex.data.columns && ex.data.rows && ex.data.solution) {
+        const cols = ex.data.columns.map(String);
+        const rows = ex.data.rows.map(String);
+        const solution = rows.map(r => cols.map(c => ex.data.solution[c] === r));
+        item.grid = { columns: cols, rows: rows, solution: solution };
+      }
+      if (ex.data.type === 'pyramid' && ex.data.pyramid) {
+        // Parse rows (bottom-to-top in front-matter)
+        const rawRows = ex.data.pyramid.map(r => r.map(v => v == null ? null : Number(v)));
+        const given = rawRows.map(r => r.map(v => v !== null));
+        // Constraint propagation: pyramid[r+1][c] = pyramid[r][c] + pyramid[r][c+1]
+        let changed = true;
+        while (changed) {
+          changed = false;
+          for (let r = 0; r < rawRows.length - 1; r++) {
+            for (let c = 0; c < rawRows[r].length - 1; c++) {
+              const l = rawRows[r][c], ri = rawRows[r][c + 1], p = rawRows[r + 1][c];
+              if (l !== null && ri !== null && p === null) { rawRows[r + 1][c] = l + ri; changed = true; }
+              if (p !== null && l !== null && ri === null) { rawRows[r][c + 1] = p - l; changed = true; }
+              if (p !== null && ri !== null && l === null) { rawRows[r][c] = p - ri; changed = true; }
+            }
+          }
+        }
+        // Reverse to top-to-bottom for display
+        const displayRows = [...rawRows].reverse();
+        const displayGiven = [...given].reverse();
+        item.pyramid = { rows: displayRows, given: displayGiven };
+      }
+      if (ex.data.type === 'convert' && ex.data.items) {
+        item.convert = {
+          items: ex.data.items.map(it => ({
+            prompt: String(it.prompt),
+            unit: it.unit ? String(it.unit) : ''
+          })),
+          answers: ex.data.items.map(it => String(it.answer).trim())
+        };
+      }
+      return item;
+    });
     // Escape single quotes so the JSON is safe inside a single-quoted HTML attribute
     return JSON.stringify(payload).replace(/'/g, '\\u0027');
   });
@@ -114,7 +190,7 @@ module.exports = function (eleventyConfig) {
       series: s.series, title: s.title, seriesUrl: s.seriesUrl,
       count: s.count, level: s.level, topic: s.topic,
       subtopic: s.subtopic, difficulty: s.difficulty
-    })));
+    }))).replace(/'/g, '\\u0027');
   });
 
   // Group exercises by series for the listing page (reads metadata from index.yaml)
@@ -152,6 +228,26 @@ module.exports = function (eleventyConfig) {
       g.exercises.sort((a, b) => a.inputPath.localeCompare(b.inputPath));
     }
     return Object.values(groups);
+  });
+
+  // Challenges collection (random operation défis)
+  eleventyConfig.addCollection('defis', function (collectionApi) {
+    return collectionApi.getFilteredByTag('defis');
+  });
+
+  // Merge défis into the series list so everything appears in one unified listing
+  eleventyConfig.addFilter('withDefis', function (seriesList, defisCollection) {
+    const defiItems = (defisCollection || []).map(item => ({
+      series: item.fileSlug,
+      title: item.data.title || '',
+      seriesUrl: item.url,
+      count: item.data.count || 10,
+      level: item.data.level || '',
+      topic: item.data.topic || '',
+      subtopic: item.data.subtopic || '',
+      difficulty: item.data.difficulty || ''
+    }));
+    return [...seriesList, ...defiItems];
   });
 
   // Ensure sitemap and robots are output (templates handle generation)

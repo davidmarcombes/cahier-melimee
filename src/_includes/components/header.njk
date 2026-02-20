@@ -1,4 +1,4 @@
-<header class="border-b bg-white dark:bg-slate-800" x-data="{ mobileOpen: false }">
+<header class="border-b bg-surface-chrome" x-data="{ mobileOpen: false }">
   <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
     <a href="/fr" class="flex items-center gap-2 shrink-0">
       {% image "src/assets/images/logo.png", site.title + " logo", "2rem", "h-8 w-auto", "eager" %}
@@ -13,7 +13,7 @@
       <button
         x-data="themeToggle()"
         @click="toggle()"
-        class="ml-2 p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        class="ml-2 p-2 rounded-lg text-content-subtle hover:text-content-default hover:bg-surface-subtle transition-colors"
         :aria-label="dark ? 'Passer en mode jour' : 'Passer en mode nuit'"
       >
         <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -30,7 +30,7 @@
       <button
         x-data="themeToggle()"
         @click="toggle()"
-        class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        class="p-2 rounded-lg text-content-subtle hover:text-content-default hover:bg-surface-subtle transition-colors"
         :aria-label="dark ? 'Passer en mode jour' : 'Passer en mode nuit'"
       >
         <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -42,7 +42,7 @@
       </button>
       <button
         @click="mobileOpen = !mobileOpen"
-        class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        class="p-2 rounded-lg text-content-subtle hover:text-content-default hover:bg-surface-subtle transition-colors"
         :aria-label="mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'"
       >
         <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -65,10 +65,10 @@
     x-transition:leave="transition ease-in duration-150"
     x-transition:leave-start="opacity-100 translate-y-0"
     x-transition:leave-end="opacity-0 -translate-y-2"
-    class="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3"
+    class="md:hidden border-t border-slate-200 dark:border-slate-700 bg-surface-chrome px-4 py-3"
   >
     {% for item in navigation[lang or 'fr'] %}
-      <a href="{{ item.url }}" class="block py-2 text-sm text-slate-700 dark:text-slate-300 hover:text-primary-500 transition-colors">{{ item.text }}</a>
+      <a href="{{ item.url }}" class="block py-2 text-sm text-content-default hover:text-primary-500 transition-colors">{{ item.text }}</a>
     {% endfor %}
   </nav>
 </header>

@@ -18,10 +18,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="{{ site.url }}/assets/images/share-image.jpg" />
 
-  <!-- Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- Fonts -->
 
     <link rel="stylesheet" href="/css/styles.css">
     <style>
@@ -36,7 +33,7 @@
       })();
     </script>
   </head>
-  <body class="min-h-screen flex flex-col bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+  <body class="min-h-screen flex flex-col bg-surface-default text-content-default">
     {% include "components/header.njk" %}
 
     <main class="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">
@@ -45,9 +42,30 @@
 
     {% include "components/footer.njk" %}
 
+    <!-- Demo mode indicator — shown when PocketBase is unavailable -->
+    <div id="demo-banner" style="display:none"
+      class="fixed bottom-4 right-4 px-3 py-1.5 text-xs font-bold rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700 shadow-sm z-50">
+      Mode démo
+    </div>
+
     <script defer src="/assets/js/app.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- PocketBase SDK -->
     <script src="https://unpkg.com/pocketbase@latest/dist/pocketbase.umd.js"></script>
+    <script>
+      // Global PocketBase availability check — resolves to true/false.
+      // Components await this to decide between live and demo mode.
+      window.__pbAvailable = (async function() {
+        try {
+          const c = new AbortController();
+          setTimeout(() => c.abort(), 2000);
+          const r = await fetch('http://localhost:8090/api/health', { signal: c.signal });
+          return r.ok;
+        } catch { return false; }
+      })();
+      window.__pbAvailable.then(ok => {
+        if (!ok) { const b = document.getElementById('demo-banner'); if (b) b.style.display = ''; }
+      });
+    </script>
   </body>
 </html>

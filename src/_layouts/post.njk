@@ -8,7 +8,7 @@ layout: base
   </div>
   <h1>{{ title }}</h1>
   {% if date %}
-  <p class="text-sm text-slate-500 dark:text-slate-400">{{ date | date }}</p>
+  <p class="text-sm text-content-subtle">{{ date | date }}</p>
   {% endif %}
   {{ content | safe }}
 </article>

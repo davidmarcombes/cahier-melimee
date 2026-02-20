@@ -1,3 +1,38 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('/assets/fonts/inter-roman-subset.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/assets/fonts/inter-italic-subset.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* BEGIN:design-tokens */
+@layer base {
+  :root {
+    --color-surface-default: #ffffff;
+    --color-surface-chrome: #f1f5f9;
+    --color-surface-subtle: #f8fafc;
+    --color-content-default: #1e293b;
+    --color-content-subtle: #64748b;
+  }
+  .dark {
+    --color-surface-default: #0f172a;
+    --color-surface-chrome: #1e293b;
+    --color-surface-subtle: #1e293b;
+    --color-content-default: #f8fafc;
+    --color-content-subtle: #94a3b8;
+  }
+}
+/* END:design-tokens */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,4 +55,5 @@
 /* Make sure we have a sensible base font */
 body {
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
+  @apply bg-surface-default text-content-default;
 }

@@ -4,13 +4,13 @@ layout: base
 
 <div class="py-12">
   <div class="text-center mb-12">
-    <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-4">{{ title }}</h1>
-    <div class="text-lg text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+    <h1 class="text-4xl font-extrabold text-content-default mb-4">{{ title }}</h1>
+    <div class="text-lg text-content-subtle max-w-xl mx-auto">
       {{ content | safe }}
     </div>
   </div>
 
-  <div x-data="onboardingWizard()" x-cloak class="max-w-2xl mx-auto p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 min-h-[400px] flex flex-col transition-all duration-500">
+  <div x-data="onboardingWizard()" x-cloak class="max-w-2xl mx-auto p-8 bg-surface-subtle rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 min-h-[400px] flex flex-col transition-all duration-500">
     <!-- Step 1: Identity Selection -->
     <div 
       x-show="step === 1" 
@@ -42,9 +42,9 @@ layout: base
       class="flex-grow flex flex-col"
     >
       <h2 class="text-2xl font-bold mb-2 text-center">Voici ton autocollant !</h2>
-      <p class="text-center text-slate-600 dark:text-slate-400 mb-8">Souviens-toi de ton animal et de ton autocollant.</p>
+      <p class="text-center text-content-subtle mb-8">Souviens-toi de ton animal et de ton autocollant.</p>
       
-      <div class="flex-grow flex flex-col items-center justify-center p-8 bg-slate-50 dark:bg-slate-900/50 rounded-2xl mb-8">
+      <div class="flex-grow flex flex-col items-center justify-center p-8 bg-surface-subtle rounded-2xl mb-8">
         <div class="text-7xl mb-4" x-text="assignedSticker"></div>
         <div class="text-xl font-mono font-bold text-primary-600 dark:text-primary-400" x-text="fullId"></div>
       </div>
@@ -56,7 +56,7 @@ layout: base
         </div>
         <button 
           @click="copyLink()" 
-          class="shrink-0 flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-700 rounded-lg text-sm font-bold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 transition-all active:scale-95"
+          class="shrink-0 flex items-center gap-2 px-4 py-2 bg-surface-subtle border border-blue-200 dark:border-blue-700 rounded-lg text-sm font-bold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 transition-all active:scale-95"
         >
           <span x-show="!recentlyCopied">📋 Copier</span>
           <span x-show="recentlyCopied" class="text-green-600 dark:text-green-400">✅ Copié !</span>
@@ -64,7 +64,7 @@ layout: base
       </div>
 
       <div class="flex justify-between mt-auto">
-        <button @click="prevStep()" class="px-6 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Retour</button>
+        <button @click="prevStep()" class="px-6 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-surface-subtle transition-colors">Retour</button>
         <button @click="nextStep()" class="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 shadow-md transition-all active:scale-95">Suivant</button>
       </div>
     </div>
@@ -78,7 +78,7 @@ layout: base
       class="flex-grow flex flex-col"
     >
       <h2 class="text-2xl font-bold mb-2 text-center">Crée ta clé secrète</h2>
-      <p class="text-center text-slate-600 dark:text-slate-400 mb-6">Choisis 3 images dans l'ordre.</p>
+      <p class="text-center text-content-subtle mb-6">Choisis 3 images dans l'ordre.</p>
       
       <div class="flex justify-center gap-4 mb-8">
         <template x-for="i in 3">
@@ -103,7 +103,7 @@ layout: base
       </div>
 
       <div class="flex justify-between mt-auto">
-        <button @click="prevStep()" class="px-6 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">Retour</button>
+        <button @click="prevStep()" class="px-6 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-surface-subtle transition-colors">Retour</button>
         <button 
           @click="submitOnboarding()" 
           :disabled="passwordSequence.length < 3 || isSubmitting"
@@ -126,7 +126,7 @@ layout: base
       <div class="text-center py-8">
         <div class="text-7xl mb-6">🎉</div>
         <h2 class="text-3xl font-bold mb-4">Bienvenue, <span class="text-primary-600 dark:text-primary-400" x-text="selectedIdentity?.name"></span> !</h2>
-        <p class="text-lg text-slate-600 dark:text-slate-400 mb-10">Ton cahier est prêt. Tu peux maintenant commencer tes exercices.</p>
+        <p class="text-lg text-content-subtle mb-10">Ton cahier est prêt. Tu peux maintenant commencer tes exercices.</p>
         
         <a :href="'/cahier/' + slug" class="inline-block px-10 py-4 bg-primary-500 text-white text-lg font-bold rounded-2xl shadow-xl hover:bg-primary-600 transition-all transform hover:scale-105 active:scale-95">
           Accéder à mon cahier
@@ -142,6 +142,7 @@ function onboardingWizard() {
 
   return {
     step: 1,
+    demoMode: false,
     isSubmitting: false,
     identities: [],
     stickers: ['🌻', '🍬', '🌵', '🎈', '🎨', '🚀', '⭐', '⛄', '🧩', '🎸', '⚽', '🎒', '🎃', '⏰', '🎻', '🎩', '🚲', '🛹', '🛸', '🪁'],
@@ -164,7 +165,11 @@ function onboardingWizard() {
 
     async init() {
       console.log('Onboarding Wizard: Initializing diverse identity fetch...');
+      const live = await window.__pbAvailable;
+      if (!live) this.demoMode = true;
       try {
+        if (this.demoMode) throw new Error('demo mode');
+
         // Step 1: Get total counts for each gender (very fast)
         const [mCountRes, fCountRes] = await Promise.all([
           pb.collection('identities').getList(1, 1, {
@@ -234,7 +239,8 @@ function onboardingWizard() {
           .sort(() => Math.random() - 0.5);
 
       } catch (err) {
-        console.error('CRITICAL: Failed to fetch balanced identities:', err);
+        console.error('Failed to fetch identities (demo mode):', err);
+        this.demoMode = true;
         // Fallback names (3M, 3F)
         this.identities = [
           { name: 'petit-renard-roux' },
@@ -315,15 +321,19 @@ function onboardingWizard() {
     async submitOnboarding() {
       this.isSubmitting = true;
       try {
+        if (this.demoMode) {
+          this.nextStep();
+          return;
+        }
         const data = {
           username: this.selectedIdentity.name,
           sticker_id: this.assignedSticker,
           visual_key: this.passwordSequence.join('-'),
           slug: this.slug
         };
-        
+
         await pb.collection('pupils').create(data);
-        
+
         // Increment usage count if it's a dynamic identity
         if (this.selectedIdentity.id) {
           await pb.collection('identities').update(this.selectedIdentity.id, {
@@ -334,7 +344,9 @@ function onboardingWizard() {
         this.nextStep();
       } catch (error) {
         console.error('Submission failed:', error);
-        alert('Erreur lors de l’inscription. Vérifie que PocketBase est lancé.');
+        // Gracefully proceed in demo mode rather than blocking the user
+        this.demoMode = true;
+        this.nextStep();
       } finally {
         this.isSubmitting = false;
       }

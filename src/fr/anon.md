@@ -8,7 +8,9 @@ locale: fr-FR
 
 # 🛡️ Confidentialité & Anonymat
 
-> **Pour les parents :** Ce site est conçu selon le principe de l'**Anonymat Radical**. Nous ne collectons __aucune__ donnée personnelle (PII) : ni email, ni nom, ni adresse IP. L'identité de votre enfant est protégée par un pseudonyme généré et une clé visuelle secrète.
+> **Pour les parents :** Ce site est conçu selon le principe de l'**Anonymat Radical**. Nous ne collectons __aucune__ donnée personnelle (PII) : ni email, ni nom, ni adresse IP. L'identité de votre enfant est protégée par un pseudonyme généré et une clé visuelle secrète. 
+
+> Si vous le shouhaitez, vous pouvez même télécharger le sîte et le faire totalement tourner sur un ordinateur personnel.
 
 ---
 

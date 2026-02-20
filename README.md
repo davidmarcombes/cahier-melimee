@@ -37,8 +37,14 @@ src/
 ├── _data/                  # Données globales (site.json, navigation.json)
 ├── _layouts/               # Templates de page
 │   ├── base.njk            # Structure HTML de base
-│   ├── series-player.njk   # Moteur unique : une page par série
-│   └── page.njk            # Pages statiques
+│   ├── series-player.njk   # Moteur d'exercices : une page par série
+│   ├── exercices-list.njk  # Liste des séries avec filtres
+│   ├── connexion-page.njk  # Page de connexion (pseudonyme + autocollant + clé visuelle)
+│   ├── onboarding.njk      # Assistant de création de compte
+│   ├── page.njk            # Pages statiques
+│   ├── post.njk            # Article de blog
+│   ├── blog-list.njk       # Liste des articles
+│   └── llm.njk             # Génère /llm.txt
 ├── _includes/components/   # Header, footer
 ├── assets/
 │   ├── images/             # Logo, favicon (optimisés au build)
@@ -46,12 +52,19 @@ src/
 ├── css/input.css           # Point d'entrée Tailwind
 ├── fr/
 │   ├── index.md            # Accueil
-│   ├── exercices.njk       # Liste des séries avec filtres
+│   ├── connexion.md        # Page de connexion
+│   ├── onboarding.md       # Création de compte
+│   ├── exercices.md        # Liste des séries (layout: exercices-list)
+│   ├── a-propos.md         # À propos
+│   ├── contribuer.md       # Guide de contribution
+│   ├── confidentialite.md  # Politique de confidentialité
+│   ├── mentions-legales.md # Mentions légales
+│   ├── blog/               # Articles de blog
 │   └── exercices/
 │       ├── exercices.json  # Defaults : permalink:false, layout:null
+│       ├── series-pages.njk # Pagination : génère une page par série
 │       ├── cp-maths-operations-bases-01/
-│       │   ├── cp-maths-operations-bases-01.json  # Métadonnées
-│       │   ├── index.njk                          # Point d'entrée
+│       │   ├── index.yaml              # Métadonnées (seriesTitle, level, topic…)
 │       │   ├── 01-addition-simple.md
 │       │   └── 02-soustraction-facile.md
 │       ├── ce1-maths-multiplication-tables-01/
@@ -68,6 +81,7 @@ src/
 
 - Node.js 18+
 - npm
+- pocketbase
 
 ### Installation
 
@@ -84,6 +98,8 @@ npm run dev        # Serveur local avec live reload (http://localhost:8080)
 npm run build      # Build de production
 npm run clean      # Supprimer _site/
 npm run tokens     # Regénérer tailwind.config.js depuis design-tokens.json
+npm run db:start   # Lancer PocketBase (http://localhost:8090)
+npm run gennames   # Générer les identités 3 mots (CSV vers stdout)
 ```
 
 ### Design tokens
@@ -112,27 +128,16 @@ Combien font **3 + 4** ? Écris le résultat.
 Pour créer une nouvelle série, suivre la convention de nommage `{level}-{topic}-{subtopic}-{name}-{num}` :
 
 1. Créer un dossier dans `src/fr/exercices/` (ex: `cm1-maths-fractions-partage-01/`)
-2. Ajouter un fichier `cm1-maths-fractions-partage-01.json` avec les métadonnées :
-   ```json
-   {
-     "series": "cm1-maths-fractions-partage-01",
-     "seriesTitle": "Fractions et partage",
-     "level": "CM1",
-     "topic": "maths",
-     "subtopic": "fractions",
-     "difficulty": "moyen"
-   }
-   ```
-3. Ajouter un `index.njk` (point d'entrée de la série) :
+2. Ajouter un fichier `index.yaml` avec les métadonnées :
    ```yaml
-   ---
-   layout: series-player
-   permalink: /fr/exercices/cm1-maths-fractions-partage-01/
-   tags: []
-   ---
+   seriesTitle: Fractions et partage
+   level: CM1
+   topic: maths
+   subtopic: fractions
+   difficulty: moyen
    ```
-4. Ajouter les exercices en `.md` (préfixés `01-`, `02-`, etc.)
-5. `npm run build` et vérifier
+3. Ajouter les exercices en `.md` (préfixés `01-`, `02-`, etc.)
+4. `npm run build` et vérifier — la page est générée automatiquement par `series-pages.njk`
 
 ### Types d'exercices
 

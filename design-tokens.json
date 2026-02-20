@@ -1,12 +1,43 @@
 {
     "colors": {
         "primary": {
-            "50": "#eff6ff",
-            "500": "#005af0",
-            "900": "#1e3a8a"
+            "500": "#2a85bf"
         },
-        "secondary": {
-            "500": "#00dcc0"
+        "accent": {
+            "500": "#bf812a"
+        },
+        "neutral": {
+            "500": "#3c6680"
+        },
+        "earth": {
+            "500": "#6a563b"
+        },
+        "dark": {
+            "500": "#2e3940"
+        },
+        "surface": {
+            "default": {
+                "light": "#ffffff",
+                "dark": "#0f172a"
+            },
+            "chrome": {
+                "light": "#f1f5f9",
+                "dark": "#1e293b"
+            },
+            "subtle": {
+                "light": "#f8fafc",
+                "dark": "#1e293b"
+            }
+        },
+        "content": {
+            "default": {
+                "light": "#1e293b",
+                "dark": "#f8fafc"
+            },
+            "subtle": {
+                "light": "#64748b",
+                "dark": "#94a3b8"
+            }
         }
     },
     "typography": {
@@ -17,16 +48,31 @@
                 "sans-serif"
             ],
             "display": [
-                "Outfit",
+                "Inter",
+                "system-ui",
                 "sans-serif"
             ]
         },
         "sizes": {
-            "base": "16px",
-            "scale": 1.25
+            "xs": "0.75rem",
+            "sm": "0.875rem",
+            "base": "1rem",
+            "lg": "1.25rem",
+            "xl": "1.563rem",
+            "2xl": "1.953rem"
         }
     },
     "spacing": {
-        "unit": "4px"
+        "base": "4px",
+        "scale": [
+            0,
+            4,
+            8,
+            12,
+            16,
+            24,
+            32,
+            64
+        ]
     }
 }

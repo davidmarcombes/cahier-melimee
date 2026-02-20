@@ -4,7 +4,8 @@ const fs = require('fs');
 const path = require('path');
 
 const tokensPath = path.join(__dirname, '..', 'design-tokens.json');
-const outputPath = path.join(__dirname, '..', 'tailwind.config.js');
+const tailwindConfigPath = path.join(__dirname, '..', 'tailwind.config.js');
+const inputCssPath = path.join(__dirname, '..', 'src', 'css', 'input.css');
 
 // Read design tokens
 let tokens;
@@ -12,63 +13,109 @@ try {
   tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
 } catch (error) {
   console.error('❌ Error reading design-tokens.json:', error.message);
-  console.error('Make sure design-tokens.json exists in the project root.');
   process.exit(1);
 }
 
-// Basic validation and defaults
-if (typeof tokens !== 'object' || tokens === null) {
-  console.error('❌ design-tokens.json must be an object');
-  process.exit(1);
+// Process colors to separate static colors from dynamic ones (light/dark)
+const tailwindColors = {};
+const lightVars = [];
+const darkVars = [];
+
+function processColors(obj, prefix = '') {
+  for (const [key, value] of Object.entries(obj)) {
+    const fullKey = prefix ? `${prefix}-${key}` : key;
+
+    if (typeof value === 'object' && value.light && value.dark) {
+      // Dynamic color (Semantic)
+      const varName = `--color-${fullKey}`;
+      lightVars.push(`${varName}: ${value.light};`);
+      darkVars.push(`${varName}: ${value.dark};`);
+
+      // Inject into Tailwind as a variable reference
+      let current = tailwindColors;
+      const parts = fullKey.split('-');
+      for (let i = 0; i < parts.length - 1; i++) {
+        current[parts[i]] = current[parts[i]] || {};
+        current = current[parts[i]];
+      }
+      current[parts[parts.length - 1]] = `var(${varName})`;
+    } else if (typeof value === 'object') {
+      // Nested palette
+      processColors(value, fullKey);
+    } else {
+      // Static color
+      let current = tailwindColors;
+      const parts = fullKey.split('-');
+      for (let i = 0; i < parts.length - 1; i++) {
+        current[parts[i]] = current[parts[i]] || {};
+        current = current[parts[i]];
+      }
+      current[parts[parts.length - 1]] = value;
+    }
+  }
 }
 
-if (!tokens.colors || Object.keys(tokens.colors).length === 0) {
-  console.warn('⚠️  No colors found in design-tokens.json - injecting a default primary color');
-  tokens.colors = { primary: { 500: '#005af0' } };
+if (tokens.colors) processColors(tokens.colors);
+
+// Generate CSS variables file
+const cssContent = `/* Auto-generated from design-tokens.json */
+:root {
+  ${lightVars.join('\n  ')}
 }
 
-if (!tokens.typography || !tokens.typography.fonts) {
-  console.warn('⚠️  No typography.fonts found - adding sensible defaults');
-  tokens.typography = tokens.typography || {};
-  tokens.typography.fonts = tokens.typography.fonts || {
-    sans: ['Inter', 'system-ui', 'sans-serif']
-  };
+.dark {
+  ${darkVars.join('\n  ')}
 }
+`;
 
-// Generate Tailwind config (with helpful comments)
+// Generate Tailwind config
 const config = `/** @type {import('tailwindcss').Config} */
 // This file is auto-generated from design-tokens.json
-// Do not edit manually - run 'npm run tokens' to regenerate
-// If you need customizations, update design-tokens.json or extend this generator
-
 module.exports = {
-  content: [
-    './src/**/*.{html,njk,md,js}',
-    './src/**/*.svg'
-  ],
+  content: ['./src/**/*.{html,njk,md,js,svg}'],
   darkMode: 'class',
   theme: {
     extend: {
-      // Colors are generated from design-tokens.json
-      colors: ${JSON.stringify(tokens.colors || {}, null, 2)},
-      // Font families (object mapping like { sans: ['Inter', ...] })
+      colors: ${JSON.stringify(tailwindColors, null, 2)},
       fontFamily: ${JSON.stringify(tokens.typography?.fonts || {}, null, 2)},
-      // Optional tokens
       fontSize: ${JSON.stringify(tokens.typography?.sizes || {}, null, 2)},
-      spacing: ${JSON.stringify(tokens.spacing || {}, null, 2)},
-      animation: ${JSON.stringify(tokens.animations || {}, null, 2)},
-      keyframes: ${JSON.stringify(tokens.keyframes || {}, null, 2)}
+      spacing: ${JSON.stringify(tokens.spacing || {}, null, 2)}
     }
   },
   plugins: [require('@tailwindcss/typography')]
 };
 `;
 
-// Write Tailwind config
+// Inject CSS variables directly into input.css between marker comments
+const cssVarsBlock = [
+  '/* BEGIN:design-tokens */',
+  '@layer base {',
+  '  :root {',
+  ...lightVars.map(v => `    ${v}`),
+  '  }',
+  '  .dark {',
+  ...darkVars.map(v => `    ${v}`),
+  '  }',
+  '}',
+  '/* END:design-tokens */'
+].join('\n');
+
 try {
-    fs.writeFileSync(outputPath, config);
-    console.log('✅ Generated tailwind.config.js from design-tokens.json');
+  let inputCss = fs.readFileSync(inputCssPath, 'utf8');
+  // Replace existing block if present, otherwise append after @font-face declarations
+  if (inputCss.includes('/* BEGIN:design-tokens */')) {
+    inputCss = inputCss.replace(
+      /\/\* BEGIN:design-tokens \*\/[\s\S]*?\/\* END:design-tokens \*\//,
+      cssVarsBlock
+    );
+  } else {
+    // Insert before @tailwind base
+    inputCss = inputCss.replace('@tailwind base;', cssVarsBlock + '\n\n@tailwind base;');
+  }
+  fs.writeFileSync(inputCssPath, inputCss);
+  fs.writeFileSync(tailwindConfigPath, config);
+  console.log('\u2705 Generated tailwind.config.js and injected CSS variables into input.css');
 } catch (error) {
-    console.error('❌ Error writing tailwind.config.js:', error.message);
-    process.exit(1);
+  console.error('\u274c Error writing files:', error.message);
+  process.exit(1);
 }
