@@ -3,19 +3,27 @@
     "version": "1.0.0",
     "description": "Eleventy + Tailwind CSS + Alpine.js starter template",
     "scripts": {
+        "help": "node -e \"const pkg=require('./package.json'); const fs=require('fs'); console.log('\\nAvailable npm scripts:'); Object.keys(pkg.scripts).sort().forEach(k=>console.log('  '+k)); console.log('\\nJavaScript tools (scripts/*.js):'); fs.readdirSync('scripts').filter(f=>f.endsWith('.js')).map(f=>f.replace(/\\.js$/, '')).sort().forEach(f=>console.log('  '+f));\"",
         "start": "npm run dev",
-        "dev:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --watch",
-        "dev:site": "npm run tokens && eleventy --serve",
         "dev": "npm run tokens && concurrently \"npm:dev:site\" \"npm:dev:css\"",
-        "build:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --minify",
+        "dev:site": "npm run tokens && eleventy --serve",
+        "dev:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --minify --watch",
         "build": "npm run tokens && eleventy && npm run build:css",
+        "build:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --minify",
         "clean": "rm -rf _site",
         "tokens": "node scripts/generate-tailwind-from-tokens.js",
         "init": "node scripts/init-project.js",
         "validate": "node scripts/validate-config.js",
         "db:start": "./pocketbase/pocketbase serve",
         "db:admin": "echo 'Go to http://127.0.0.1:8090/_/'",
-        "gennames": "node scripts/generate-names.js"
+        "spellcheck": "cspell \"src/**/*.md\"",
+        "generate:names": "node scripts/generate-names.js",
+        "generate:ids": "node scripts/generate-ids.js",
+        "generate:maths": "node scripts/generate-maths-ex.js",
+        "import:identities": "node scripts/import-identities.js",
+        "sim:server": "node scripts/sim-server.js",
+        "test:auth": "node scripts/test-auth.js",
+        "check:duplicates": "node scripts/check-duplicates.js"
     },
     "keywords": [
         "eleventy",
@@ -28,11 +36,18 @@
     "devDependencies": {
         "@11ty/eleventy": "^2.0.1",
         "@11ty/eleventy-img": "^4.0.2",
+        "@cspell/dict-fr-fr": "^2.3.2",
         "@tailwindcss/typography": "^0.5.19",
         "autoprefixer": "^10.4.16",
         "concurrently": "^8.0.0",
+        "cspell": "^9.6.4",
+        "html-minifier-terser": "^7.1.2",
         "js-yaml": "^4.1.1",
         "postcss": "^8.4.32",
         "tailwindcss": "^3.4.0"
+    },
+    "dependencies": {
+        "commander": "^14.0.3",
+        "inquirer": "^13.2.5"
     }
 }

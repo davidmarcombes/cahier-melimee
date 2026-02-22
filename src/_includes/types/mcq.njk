@@ -1,0 +1,27 @@
+{# MCQ — multiple choice question, click to answer #}
+<div x-show="cur.type === 'mcq'" class="space-y-4">
+  {# Question body #}
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm"></div>
+
+  {# Choices #}
+  <div class="grid gap-2">
+    <template x-for="(choice, i) in cur.mcqChoices" :key="i">
+      <button
+        @click="mcqTap(i)"
+        :disabled="solved"
+        class="w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all"
+        :class="{
+          'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300':
+            solved && i === cur.mcqAnswer,
+          'border-red-400 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 animate-shake':
+            mcqWrong === i,
+          'border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10':
+            !solved && mcqWrong !== i,
+          'opacity-50': solved && i !== cur.mcqAnswer
+        }"
+      >
+        <span x-text="choice"></span>
+      </button>
+    </template>
+  </div>
+</div>

@@ -47,7 +47,9 @@ src/
 │   └── llm.njk             # Génère /llm.txt
 ├── _includes/components/   # Header, footer
 ├── assets/
-│   ├── images/             # Logo, favicon (optimisés au build)
+│   ├── images/             # Logo, favicon (optimisés au build). Favicons are also
+│   │                       # mirrored to site root via Eleventy passthrough for
+│   │                       # maximum browser compatibility.
 │   └── js/app.js           # Alpine components (themeToggle, seriesPlayer, seriesBrowser)
 ├── css/input.css           # Point d'entrée Tailwind
 ├── fr/

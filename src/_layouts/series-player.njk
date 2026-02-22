@@ -40,6 +40,10 @@ layout: base
   {% if 'convert' in usedTypes %}{% include "types/convert.njk" %}{% endif %}
   {% if 'logic-grid' in usedTypes %}{% include "types/logic-grid.njk" %}{% endif %}
   {% if 'pyramid' in usedTypes %}{% include "types/pyramid.njk" %}{% endif %}
+  {% if 'true-false' in usedTypes %}{% include "types/true-false.njk" %}{% endif %}
+  {% if 'compare' in usedTypes %}{% include "types/compare.njk" %}{% endif %}
+  {% if 'multi-question' in usedTypes %}{% include "types/multi-question.njk" %}{% endif %}
+  {% if 'mcq' in usedTypes %}{% include "types/mcq.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -99,6 +103,12 @@ layout: base
     {% endif %}
     {% if 'pyramid' in usedTypes %}
     <span x-show="cur.type === 'pyramid'">Certains nombres ne sont pas corrects. Essaie encore !</span>
+    {% endif %}
+    {% if 'true-false' in usedTypes %}
+    <span x-show="cur.type === 'true-false'">Certaines réponses ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
+    {% if 'compare' in usedTypes %}
+    <span x-show="cur.type === 'compare'">Certains signes ne sont pas corrects. Essaie encore !</span>
     {% endif %}
     {% if 'number-check' in usedTypes or 'problem' in usedTypes %}
     <span x-show="cur.type === 'number-check' || cur.type === 'problem'">Ce n'est pas la bonne réponse. Essaie encore !</span>

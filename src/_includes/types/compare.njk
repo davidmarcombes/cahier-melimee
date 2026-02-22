@@ -1,0 +1,49 @@
+{# Compare — pick < or > between two numbers #}
+<div x-show="cur.type === 'compare'" class="space-y-3">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm mb-2"></div>
+
+  <template x-for="(c, i) in cur.comparisons" :key="i">
+    <div
+      class="flex items-center gap-3 py-3 px-4 rounded-xl border transition-colors"
+      :class="{
+        'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20': cmpErrors.includes(i),
+        'border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20': solved,
+        'border-slate-200 dark:border-slate-700 bg-surface-subtle': !cmpErrors.includes(i) && !solved
+      }"
+    >
+      <span class="text-lg font-mono text-content-default flex-1 text-right" x-text="c.left"></span>
+
+      <div class="flex gap-1 shrink-0">
+        <button
+          @click="if(!solved){cmpInputs[i]='<';cmpErrors=cmpErrors.filter(e=>e!==i)}"
+          :disabled="solved"
+          class="w-10 h-10 rounded-lg border-2 text-lg font-bold transition-all inline-flex items-center justify-center"
+          :class="cmpInputs[i]==='<'
+            ? (solved ? 'border-green-500 bg-green-500 text-white' : 'border-primary-500 bg-primary-500 text-white')
+            : 'border-slate-300 dark:border-slate-600 text-content-subtle hover:border-primary-400'"
+        >&lt;</button>
+        <button
+          @click="if(!solved){cmpInputs[i]='>';cmpErrors=cmpErrors.filter(e=>e!==i)}"
+          :disabled="solved"
+          class="w-10 h-10 rounded-lg border-2 text-lg font-bold transition-all inline-flex items-center justify-center"
+          :class="cmpInputs[i]==='>'
+            ? (solved ? 'border-green-500 bg-green-500 text-white' : 'border-primary-500 bg-primary-500 text-white')
+            : 'border-slate-300 dark:border-slate-600 text-content-subtle hover:border-primary-400'"
+        >&gt;</button>
+      </div>
+
+      <span class="text-lg font-mono text-content-default flex-1 text-left" x-text="c.right"></span>
+    </div>
+  </template>
+
+  {# Verify button #}
+  <div x-show="!solved" class="flex justify-center pt-2">
+    <button
+      @click="check()"
+      :disabled="cmpInputs.some(v => v === null)"
+      class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      Vérifier
+    </button>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(export NVM_DIR=\"$HOME/.nvm\")",
+      "Bash([ -s \"$NVM_DIR/nvm.sh\" ])",
+      "Bash(. \"$NVM_DIR/nvm.sh\")",
+      "Bash(npm run build:*)",
+      "Bash(node -e:*)",
+      "Bash(gzip:*)",
+      "Bash(identify:*)",
+      "Bash(ls:*)",
+      "Bash(npm install:*)",
+      "Bash(wc:*)",
+      "Bash(xargs:*)",
+      "Bash(export PATH=\"/home/david/.nvm/versions/node/v24.13.1/bin:$PATH\")",
+      "Bash(PATH=\"/home/david/.nvm/versions/node/v24.13.1/bin:/usr/bin:/bin:$PATH\" npx eleventy:*)",
+      "Bash(PATH=\"/home/david/.nvm/versions/node/v24.13.1/bin:/usr/bin:/bin:$PATH\" node:*)"
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{# Multi-question — shared context with individually validated sub-questions #}
+<div x-show="cur.type === 'multi-question'" class="space-y-4">
+  {# Context block (large number, statement, etc.) #}
+  <div x-show="cur.mqContext" class="text-center py-4">
+    <span class="text-3xl font-bold font-mono text-content-default tracking-wider" x-text="cur.mqContext"></span>
+  </div>
+
+  {# Body instructions #}
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm"></div>
+
+  {# Questions list #}
+  <div class="space-y-3">
+    <template x-for="(q, i) in cur.mqQuestions" :key="i">
+      <div
+        class="flex items-center gap-3 p-3 rounded-xl border transition-colors"
+        :class="{
+          'border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20': mqSolved[i],
+          'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20': mqErrors.includes(i),
+          'border-slate-200 dark:border-slate-700 bg-surface-subtle': !mqSolved[i] && !mqErrors.includes(i)
+        }"
+      >
+        <p class="flex-1 text-sm text-content-default" x-text="q.text"></p>
+        <input
+          type="text"
+          x-model="mqInputs[i]"
+          @keydown.enter="mqCheck(i)"
+          :disabled="mqSolved[i]"
+          :x-ref="'mqInput' + i"
+          placeholder="?"
+          class="w-24 px-3 py-2 text-center text-sm font-mono border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
+            bg-white dark:bg-slate-800 text-content-default"
+          :class="{
+            'border-green-500': mqSolved[i],
+            'border-red-400': mqErrors.includes(i),
+            'border-slate-200 dark:border-slate-700': !mqSolved[i] && !mqErrors.includes(i)
+          }"
+        />
+        <span x-show="mqSolved[i]" class="text-green-500 text-lg">&#x2714;</span>
+      </div>
+    </template>
+  </div>
+</div>

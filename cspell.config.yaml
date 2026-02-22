@@ -1,0 +1,22 @@
+version: "0.2"
+language: "en,fr"
+# Folders to ignore (like your output folder)
+ignorePaths:
+  - "_site/**"
+  - "node_modules/**"
+  - "package-lock.json"
+
+# Add project-specific words here so they don't count as typos
+words:
+  - "eleventy"
+  - "11ty"
+  - "nunjucks"
+  - "shortcode"
+  - "frontmatter"
+  - "melimee"
+  - "mélimée"
+
+# Specific patterns to ignore inside your Markdown files
+import:
+  - "@cspell/dict-node/cspell-ext.json"
+  - "@cspell/dict-software-terms/cspell-ext.json"

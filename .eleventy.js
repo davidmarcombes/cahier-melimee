@@ -2,10 +2,21 @@ const Image = require('@11ty/eleventy-img');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+// HTML minification using html-minifier-terser
+const htmlmin = require('html-minifier-terser');
 
 module.exports = function (eleventyConfig) {
   // Passthrough static assets
+  // Copy everything under src/assets so we can reference it at /assets/…
   eleventyConfig.addPassthroughCopy({ 'src/assets': 'assets' });
+  // Some browsers/OSes also look for icons at the site root; make sure
+  // the favicons are available there too. This guarantees the three
+  // files mentioned in the base layout are output during the build.
+  eleventyConfig.addPassthroughCopy({
+    'src/assets/images/favicon.ico': 'favicon.ico',
+    'src/assets/images/favicon-32x32.png': 'favicon-32x32.png',
+    'src/assets/images/apple-touch-icon.png': 'apple-touch-icon.png'
+  });
 
   // Shortcode for responsive images
   eleventyConfig.addNunjucksAsyncShortcode('image', async function (src, alt = '', sizes = '100vw', cls = '', loading = 'lazy') {
@@ -114,7 +125,13 @@ module.exports = function (eleventyConfig) {
         bounding: null,
         convert: null,
         grid: null,
-        pyramid: null
+        pyramid: null,
+        statements: null,
+        comparisons: null,
+        mqContext: null,
+        mqQuestions: null,
+        mcqChoices: null,
+        mcqAnswer: null
       };
       if (ex.data.pairs) {
         const leftIndexed = ex.data.pairs.map((p, i) => ({ label: String(p.left), origIdx: i }));
@@ -173,6 +190,37 @@ module.exports = function (eleventyConfig) {
         const displayRows = [...rawRows].reverse();
         const displayGiven = [...given].reverse();
         item.pyramid = { rows: displayRows, given: displayGiven };
+      }
+      if (ex.data.type === 'true-false' && ex.data.statements) {
+        item.statements = ex.data.statements.map(s => ({
+          text: s.text,
+          answer: !!s.answer
+        }));
+      }
+      if (ex.data.type === 'multi-question' && ex.data.questions) {
+        item.mqContext = ex.data.context ? String(ex.data.context) : '';
+        item.mqQuestions = ex.data.questions.map(q => ({
+          text: q.text,
+          answer: String(q.answer).trim().toLowerCase()
+        }));
+      }
+      if (ex.data.type === 'mcq' && ex.data.choices && ex.data.answer != null) {
+        const correct = String(ex.data.answer).trim();
+        const choices = ex.data.choices.map(String);
+        // Fisher-Yates shuffle
+        for (let i = choices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [choices[i], choices[j]] = [choices[j], choices[i]];
+        }
+        item.mcqChoices = choices;
+        item.mcqAnswer = choices.indexOf(correct);
+      }
+      if (ex.data.type === 'compare' && ex.data.comparisons) {
+        item.comparisons = ex.data.comparisons.map(c => ({
+          left: String(c.left),
+          right: String(c.right),
+          answer: Number(c.left) < Number(c.right) ? '<' : '>'
+        }));
       }
       if (ex.data.type === 'convert' && ex.data.items) {
         item.convert = {
@@ -253,6 +301,41 @@ module.exports = function (eleventyConfig) {
       difficulty: item.data.difficulty || ''
     }));
     return [...seriesList, ...defiItems];
+  });
+
+  // Transform to minify HTML in production builds
+  eleventyConfig.addTransform('htmlmin', async function(content, outputPath) {
+    if(outputPath && outputPath.endsWith('.html')) {
+      try {
+        return await htmlmin.minify(content, {
+          collapseWhitespace: true,
+          removeComments: true,
+          removeRedundantAttributes: true,
+          removeEmptyAttributes: true,
+          minifyCSS: true,
+          minifyJS: true,
+          useShortDoctype: true
+        });
+      } catch(e) {
+        // if minification fails, just return unminified content
+        console.warn('HTML minification failed for', outputPath, e.message);
+        return content;
+      }
+    }
+    return content;
+  });
+
+  // Warn when generated HTML exceeds 20 KB (useful for performance monitoring)
+  eleventyConfig.addTransform('sizeWarn', function(content, outputPath) {
+    if(outputPath && outputPath.endsWith('.html')) {
+      const size = Buffer.byteLength(content, 'utf8');
+      const limit = 20 * 1024; // bytes
+      if(size > limit) {
+        const kb = (size / 1024).toFixed(1);
+        console.warn(`⚠️  HTML file too large: ${outputPath} is ${kb} KB (limit 20 KB)`);
+      }
+    }
+    return content;
   });
 
   // Ensure sitemap and robots are output (templates handle generation)

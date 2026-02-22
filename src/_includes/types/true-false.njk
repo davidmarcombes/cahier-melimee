@@ -1,0 +1,64 @@
+{# Vrai / Faux — table of assertions with true/false radio buttons #}
+<div x-show="cur.type === 'true-false'" class="space-y-4">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm mb-2"></div>
+
+  <table class="w-full border-collapse text-sm">
+    <thead>
+      <tr>
+        <th class="text-left py-2 px-3 border-b-2 border-slate-300 dark:border-slate-600 text-content-default">Affirmation</th>
+        <th class="w-16 text-center py-2 px-3 border-b-2 border-slate-300 dark:border-slate-600 text-content-default">Vrai</th>
+        <th class="w-16 text-center py-2 px-3 border-b-2 border-slate-300 dark:border-slate-600 text-content-default">Faux</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="(st, i) in cur.statements" :key="i">
+        <tr
+          class="border-b border-slate-200 dark:border-slate-700 transition-colors"
+          :class="{
+            'bg-red-50 dark:bg-red-900/20': tfErrors.includes(i),
+            'bg-green-50 dark:bg-green-900/20': solved
+          }"
+        >
+          <td class="py-3 px-3 text-content-default" x-text="st.text"></td>
+          <td class="py-3 px-3 text-center">
+            <button
+              @click="if(!solved){tfInputs[i]=true;tfErrors=tfErrors.filter(e=>e!==i)}"
+              :disabled="solved"
+              class="w-8 h-8 rounded-full border-2 transition-all inline-flex items-center justify-center"
+              :class="tfInputs[i]===true
+                ? (solved ? 'border-green-500 bg-green-500 text-white' : 'border-primary-500 bg-primary-500 text-white')
+                : 'border-slate-300 dark:border-slate-600 hover:border-primary-400'"
+              aria-label="Vrai"
+            >
+              <span x-show="tfInputs[i]===true" class="text-xs font-bold">V</span>
+            </button>
+          </td>
+          <td class="py-3 px-3 text-center">
+            <button
+              @click="if(!solved){tfInputs[i]=false;tfErrors=tfErrors.filter(e=>e!==i)}"
+              :disabled="solved"
+              class="w-8 h-8 rounded-full border-2 transition-all inline-flex items-center justify-center"
+              :class="tfInputs[i]===false
+                ? (solved ? 'border-green-500 bg-green-500 text-white' : 'border-primary-500 bg-primary-500 text-white')
+                : 'border-slate-300 dark:border-slate-600 hover:border-primary-400'"
+              aria-label="Faux"
+            >
+              <span x-show="tfInputs[i]===false" class="text-xs font-bold">F</span>
+            </button>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  {# Verify button #}
+  <div x-show="!solved" class="flex justify-center pt-2">
+    <button
+      @click="check()"
+      :disabled="tfInputs.some(v => v === null)"
+      class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      Vérifier
+    </button>
+  </div>
+</div>

@@ -28,6 +28,10 @@ Layout: `challenge-player.njk`.
 | `convert` | `types/convert.njk` | Unit conversion exercises. |
 | `pyramid` | `types/pyramid.njk` | Addition pyramids — fill missing cells. |
 | `logic-grid` | `types/logic-grid.njk` | Logic grid puzzle — click cells to place marks. |
+| `true-false` | `types/true-false.njk` | Vrai/Faux table — tick true or false per assertion. |
+| `compare` | `types/compare.njk` | Compare numbers — pick < or > between two values. |
+| `multi-question` | `types/multi-question.njk` | Shared context + multiple sub-questions, each validated on Enter. |
+| `mcq` | `types/mcq.njk` | Multiple choice — click the correct answer among 3-5 shuffled choices. |
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
 
@@ -57,6 +61,20 @@ rows: ["X", "Y"]           # logic-grid
 solution: { A: "X" }       # logic-grid
 sequence: [2, null, 6]     # sequence (null = blank)
 bounds: [10, 20]           # bounding
+statements:                # true-false
+  - text: "Assertion"
+    answer: true           # true or false
+comparisons:               # compare
+  - left: 56673
+    right: 89939
+choices:                   # mcq (shuffled at build time)
+  - "correct answer"
+  - "wrong 1"
+  - "wrong 2"
+context: "267 543 109"     # multi-question shared context
+questions:                 # multi-question
+  - text: "Sub-question?"
+    answer: "answer"
 ---
 
 Markdown body shown as instructions.
