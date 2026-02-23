@@ -1,0 +1,42 @@
+﻿node.exe : [11ty] Problem writing Eleventy templates: 
+(more in DEBUG output)
+At C:\Program Files\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([11ty] Pro 
+   blem ...n DEBUG output):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[11ty] expected a single document in the stream, but 
+found more (via YAMLException)
+[11ty] 
+[11ty] Original error stack trace: YAMLException: 
+expected a single document in the stream, but found more
+[11ty]     at Object.load (E:\Code\cahier-melimee\node_m
+odules\js-yaml\lib\loader.js:1728:9)
+[11ty]     at Object.seriesMeta 
+(E:\Code\cahier-melimee\.eleventy.js:87:25)
+[11ty]     at TemplateMap.getUserConfigCollection (E:\Co
+de\cahier-melimee\node_modules\@11ty\eleventy\src\Templa
+teMap.js:674:47)
+[11ty]     at TemplateMap.setCollectionByTagName (E:\Cod
+e\cahier-melimee\node_modules\@11ty\eleventy\src\Templat
+eMap.js:386:50)
+[11ty]     at TemplateMap.initDependencyMap (E:\Code\cah
+ier-melimee\node_modules\@11ty\eleventy\src\TemplateMap.
+js:410:20)
+[11ty]     at TemplateMap.cache (E:\Code\cahier-melimee\
+node_modules\@11ty\eleventy\src\TemplateMap.js:459:16)
+[11ty]     at async TemplateWriter._createTemplateMap (E
+:\Code\cahier-melimee\node_modules\@11ty\eleventy\src\Te
+mplateWriter.js:330:5)
+[11ty]     at async TemplateWriter.generateTemplates (E:
+\Code\cahier-melimee\node_modules\@11ty\eleventy\src\Tem
+plateWriter.js:360:5)
+[11ty]     at async TemplateWriter.write (E:\Code\cahier
+-melimee\node_modules\@11ty\eleventy\src\TemplateWriter.
+js:407:23)
+[11ty]     at async Eleventy.executeBuild (E:\Code\cahie
+r-melimee\node_modules\@11ty\eleventy\src\Eleventy.js:11
+91:13)
+[11ty] Copied 21 files / Wrote 0 files in 0.35 seconds (v2.0.1)

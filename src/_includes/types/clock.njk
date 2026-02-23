@@ -1,0 +1,42 @@
+{# Analog Clock Display #}
+<div x-show="cur.type === 'clock'" class="flex flex-col items-center mb-8">
+  <div class="relative w-48 h-48 sm:w-64 sm:h-64">
+    <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm">
+      <!-- Clock Face -->
+      <circle cx="50" cy="50" r="48" fill="white" stroke="currentColor" stroke-width="2" class="fill-white dark:fill-slate-900 text-slate-400 dark:text-slate-600" />
+      
+      <!-- Hour Markers (Simplified Path) -->
+      <path d="M50 6V12 M72 11.9L69 17.1 M88.1 28L82.9 31 M94 50H88 M88.1 72L82.9 69 M72 88.1L69 82.9 M50 94V88 M28 88.1L31 82.9 M11.9 72L17.1 69 M6 50H12 M11.9 28L17.1 31 M28 11.9L31 17.1" 
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" class="text-slate-500 dark:text-slate-400" />
+
+      <!-- Minutes Markers (Simplified Path for 48 segments) -->
+      <path d="M50.5 6.02L50.45 9 M55.7 6.3L55.4 9.2 M60.8 7.1L60.2 10 M65.7 8.5L64.8 11.4 M72.1 11.9L70.4 14.4 M76.8 14.3L74.8 16.5 M81.1 17.3L78.7 19.1 M84.9 21.1L82.1 22.5 M88.1 28L85.6 30.6 M90.4 32L87.5 34.1 M92.2 36.4L89 38 M93.4 41.1L90.1 42.1 M94 50L91 50 M93.4 58.9L90.1 57.9 M92.2 63.6L89 62 M90.4 68L87.5 65.9 M88.1 72L85.6 69.4 M84.9 78.9L82.1 77.5 M81.1 82.7L78.7 80.9 M76.8 85.7L74.8 83.5 M72.1 88.1L70.4 85.6 M65.7 91.5L64.8 88.6 M60.8 92.9L60.2 90 M55.7 93.7L55.4 90.8 M50 94V91 M44.3 93.7L44.6 90.8 M39.2 92.9L39.8 90 M34.3 91.5L35.2 88.6 M27.9 88.1L29.6 85.6 M23.2 85.7L25.2 83.5 M18.9 82.7L21.3 80.9 M15.1 78.9L17.9 77.5 M11.9 72L14.4 69.4 M9.6 68L12.5 65.9 M7.8 63.6L11 62 M6.6 58.9L9.9 57.9 M6 50L9 50 M6.6 41.1L9.9 42.1 M7.8 36.4L11 38 M9.6 32L12.5 34.1 M11.9 28L14.4 30.6 M15.1 21.1L17.9 22.5 M18.9 17.3L21.3 19.1 M23.2 14.3L25.2 16.5 M27.9 11.9L29.6 14.4 M34.3 8.5L35.2 11.4 M39.2 7.1L39.8 10 M44.3 6.3L44.6 9.2" 
+            stroke="currentColor" stroke-width="0.5" stroke-linecap="round" class="text-slate-300 dark:text-slate-700" />
+
+      <!-- Hour Numbers -->
+      <g class="text-[8px] font-bold fill-slate-600 dark:fill-slate-400" style="text-anchor: middle;">
+        <text x="50" y="22">12</text>
+        <text x="78" y="53">3</text>
+        <text x="50" y="84">6</text>
+        <text x="22" y="53">9</text>
+      </g>
+
+      <!-- Hands -->
+      <line x1="50" y1="50" x2="50" y2="30" 
+            stroke="currentColor" stroke-width="3.5" stroke-linecap="round" 
+            class="text-slate-900 dark:text-slate-100 transition-transform duration-500 ease-in-out"
+            :transform="'rotate(' + (((cur.hour || 0) % 12) * 30 + ((cur.minute || 0) / 60) * 30) + ' 50 50)'" />
+      
+      <line x1="50" y1="50" x2="50" y2="18" 
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" 
+            class="text-primary-600 transition-transform duration-500 ease-in-out"
+            :transform="'rotate(' + ((cur.minute || 0) * 6) + ' 50 50)'" />
+      
+      <!-- Center Pin -->
+      <circle cx="50" cy="50" r="3" fill="currentColor" class="text-slate-900 dark:text-slate-100" />
+    </svg>
+  </div>
+
+  {# Instructions from body #}
+  <div class="mt-4 prose dark:prose-invert text-center px-4" x-html="cur.body"></div>
+</div>

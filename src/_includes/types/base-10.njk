@@ -1,0 +1,16 @@
+{# Base-10 Blocks Visualization #}
+<div x-show="cur.type === 'base-10'" class="flex flex-col items-center mb-6 w-full">
+  <div class="w-full overflow-x-auto">
+    <div class="min-w-max flex justify-center px-12 py-4">
+      <svg 
+        :viewBox="'0 0 ' + cur.base10.width + ' 140'"
+        class="h-auto max-h-48 sm:max-h-64 w-auto drop-shadow-md overflow-visible"
+        x-html="cur.base10.markup"
+      >
+      </svg>
+    </div>
+  </div>
+
+  {# Instructions from body #}
+  <div class="mt-4 prose dark:prose-invert text-center px-4 italic text-slate-500" x-html="cur.body"></div>
+</div>

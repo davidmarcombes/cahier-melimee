@@ -33,9 +33,9 @@ layout: base
     </select>
 
     <select x-model="filters.difficulty" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
-      <option value="">Toutes difficultés</option>
+      <option value="">Difficulté</option>
       <template x-for="v in options.difficulty" :key="v">
-        <option :value="v" x-text="v"></option>
+        <option :value="v" x-text="(v === 'difficile' ? '🐞 ' : v === 'moyen' ? '🐝 ' : '🦗 ') + v"></option>
       </template>
     </select>
 
@@ -44,28 +44,19 @@ layout: base
     </button>
   </div>
 
-  <!-- Count -->
-  <p class="text-sm text-content-subtle mb-4">
-    <span x-text="filtered.length"></span> série<span x-show="filtered.length > 1">s</span>
-  </p>
 
   <!-- Series cards -->
-  <div class="grid gap-4 sm:grid-cols-2">
+  <div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <template x-for="s in filtered" :key="s.series">
-      <a :href="s.seriesUrl" class="block p-5 bg-surface-subtle rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-lg transition-all group">
-        <h2 class="text-lg font-bold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-2" x-text="s.title"></h2>
-        <p class="text-sm text-content-subtle mb-3">
-          <span x-text="s.topic"></span>
-          <span x-show="s.subtopic"> › <span x-text="s.subtopic"></span></span>
-        </p>
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 text-xs font-bold uppercase rounded bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300" x-text="s.level"></span>
-          <span class="px-2 py-0.5 text-xs rounded"
-            :class="s.difficulty === 'difficile' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-              : s.difficulty === 'moyen' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-              : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'"
-            x-text="s.difficulty"></span>
-          <span class="ml-auto text-xs text-slate-400" x-text="s.count + ' exercice' + (s.count > 1 ? 's' : '')"></span>
+      <a :href="s.seriesUrl" :title="s.title + ' - Niveau ' + s.level + ' - Difficulté ' + s.difficulty" class="block p-3 bg-surface-subtle rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-md transition-all group">
+        <div class="flex justify-between items-start gap-2 mb-1">
+          <h2 class="text-sm font-extrabold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400 leading-tight line-clamp-1" x-text="s.title"></h2>
+          <span class="text-xs shrink-0" x-text="s.difficulty === 'difficile' ? '🐞' : s.difficulty === 'moyen' ? '🐝' : '🦗'"></span>
+        </div>
+        <div class="flex items-center gap-1.5 text-[11px] text-content-subtle">
+          <span class="font-bold text-primary-600 dark:text-primary-400 uppercase shrink-0" x-text="s.level"></span>
+          <span class="opacity-30 select-none">|</span>
+          <span class="truncate" x-text="s.topic + (s.subtopic ? ' › ' + s.subtopic : '')"></span>
         </div>
       </a>
     </template>

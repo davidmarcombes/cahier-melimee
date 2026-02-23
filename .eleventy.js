@@ -114,25 +114,75 @@ module.exports = function (eleventyConfig) {
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
   eleventyConfig.addFilter('seriesPayload', function (exercises) {
     const payload = exercises.map(ex => {
+      const answerRaw = ex.data.answer;
+      const answersList = Array.isArray(answerRaw)
+        ? answerRaw.map(v => String(v).trim().toLowerCase())
+        : [String(answerRaw || '').trim().toLowerCase()];
+
       const item = {
         title: ex.data.title || '',
         type: ex.data.type || 'number-check',
         operation: ex.data.operation || '',
         body: (ex.templateContent || '').trim(),
-        answer: String(ex.data.answer || '').trim().toLowerCase(),
-        pairs: null,
-        sequence: null,
-        bounding: null,
-        convert: null,
-        grid: null,
-        pyramid: null,
-        statements: null,
-        comparisons: null,
-        mqContext: null,
-        mqQuestions: null,
-        mcqChoices: null,
-        mcqAnswer: null
+        answers: answersList
       };
+
+      if (ex.data.type === 'fraction') {
+        item.fraction = {
+          shape: ex.data.shape || 'circle',
+          numerator: Number(ex.data.numerator) || 0,
+          denominator: Number(ex.data.denominator) || 1,
+          cols: Number(ex.data.cols) || null,
+          rows: Number(ex.data.rows) || null
+        };
+      }
+
+      if (ex.data.hour != null) item.hour = ex.data.hour;
+      if (ex.data.minute != null) item.minute = ex.data.minute;
+
+      if (ex.data.type === 'base-10') {
+        const b = {
+          number: Number(ex.data.number) || 0,
+          hundreds: ex.data.hundreds != null ? Number(ex.data.hundreds) : null,
+          tens: ex.data.tens != null ? Number(ex.data.tens) : null,
+          ones: ex.data.ones != null ? Number(ex.data.ones) : null
+        };
+        const h = b.hundreds !== null ? b.hundreds : Math.floor(b.number / 100);
+        const t = b.tens !== null ? b.tens : Math.floor((b.number % 100) / 10);
+        const u = b.ones !== null ? b.ones : (b.number % 10);
+
+        let svg = '';
+        let currentX = 10;
+        const baseY = 10;
+
+        // Hundreds (120x120 symbol)
+        for (let i = 0; i < h; i++) {
+          svg += `<use href="#block-hundred" x="${currentX}" y="${baseY}" width="120" height="120" />`;
+          currentX += 115;
+        }
+
+        if (h > 0 && (t > 0 || u > 0)) currentX += 10;
+
+        // Tens (20x120 symbol)
+        for (let i = 0; i < t; i++) {
+          svg += `<use href="#block-ten" x="${currentX}" y="${baseY}" width="20" height="120" />`;
+          currentX += 18;
+        }
+
+        if (t > 0 && u > 0) currentX += 10;
+
+        // Units (20x20 symbol)
+        const uCols = Math.ceil(u / 5);
+        for (let i = 0; i < u; i++) {
+          const row = i % 5;
+          const col = Math.floor(i / 5);
+          // Grounded at baseY + 105 (end of bar contents)
+          svg += `<use href="#block-unit" x="${currentX + col * 18}" y="${baseY + 100 - row * 12}" width="20" height="20" />`;
+        }
+        if (u > 0) currentX += uCols * 18;
+
+        item.base10 = { ...b, markup: svg, width: currentX + 20 };
+      }
       if (ex.data.pairs) {
         const leftIndexed = ex.data.pairs.map((p, i) => ({ label: String(p.left), origIdx: i }));
         const rightIndexed = ex.data.pairs.map((p, i) => ({ label: String(p.right), origIdx: i }));
@@ -233,8 +283,10 @@ module.exports = function (eleventyConfig) {
       }
       return item;
     });
-    // Escape single quotes so the JSON is safe inside a single-quoted HTML attribute
-    return JSON.stringify(payload).replace(/'/g, '\\u0027');
+    return JSON.stringify(payload)
+      .replace(/&quot;/g, '\\"') // Unescape HTML quotes that break JSON if decoded by browser
+      .replace(/&apos;/g, "\\u0027") // Unescape HTML apostrophes
+      .replace(/'/g, '\\u0027'); // Escape single quotes
   });
 
   // Convert grouped series list to a JSON payload for the seriesBrowser component
@@ -304,8 +356,8 @@ module.exports = function (eleventyConfig) {
   });
 
   // Transform to minify HTML in production builds
-  eleventyConfig.addTransform('htmlmin', async function(content, outputPath) {
-    if(outputPath && outputPath.endsWith('.html')) {
+  eleventyConfig.addTransform('htmlmin', async function (content, outputPath) {
+    if (outputPath && outputPath.endsWith('.html')) {
       try {
         return await htmlmin.minify(content, {
           collapseWhitespace: true,
@@ -316,7 +368,7 @@ module.exports = function (eleventyConfig) {
           minifyJS: true,
           useShortDoctype: true
         });
-      } catch(e) {
+      } catch (e) {
         // if minification fails, just return unminified content
         console.warn('HTML minification failed for', outputPath, e.message);
         return content;
@@ -326,11 +378,11 @@ module.exports = function (eleventyConfig) {
   });
 
   // Warn when generated HTML exceeds 20 KB (useful for performance monitoring)
-  eleventyConfig.addTransform('sizeWarn', function(content, outputPath) {
-    if(outputPath && outputPath.endsWith('.html')) {
+  eleventyConfig.addTransform('sizeWarn', function (content, outputPath) {
+    if (outputPath && outputPath.endsWith('.html')) {
       const size = Buffer.byteLength(content, 'utf8');
       const limit = 20 * 1024; // bytes
-      if(size > limit) {
+      if (size > limit) {
         const kb = (size / 1024).toFixed(1);
         console.warn(`⚠️  HTML file too large: ${outputPath} is ${kb} KB (limit 20 KB)`);
       }
