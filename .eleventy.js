@@ -4,6 +4,10 @@ const path = require('path');
 const yaml = require('js-yaml');
 // HTML minification using html-minifier-terser
 const htmlmin = require('html-minifier-terser');
+const UpgradeHelper = require("@11ty/eleventy-upgrade-help");
+
+
+
 
 module.exports = function (eleventyConfig) {
   // Passthrough static assets
@@ -389,6 +393,10 @@ module.exports = function (eleventyConfig) {
     }
     return content;
   });
+
+
+  // add this LAST
+  // eleventyConfig.addPlugin(UpgradeHelper);
 
   // Ensure sitemap and robots are output (templates handle generation)
 
