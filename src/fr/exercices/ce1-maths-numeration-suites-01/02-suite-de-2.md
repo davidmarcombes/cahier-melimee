@@ -1,6 +1,6 @@
 ---
 type: sequence
 title: "Suite de nombres"
-given: [100, 105, 110]
-answers: [115, 120, 125]
+given: [10, 12, 14]
+answers: [16, 18, 20]
 ---

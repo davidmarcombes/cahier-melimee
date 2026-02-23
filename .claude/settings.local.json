@@ -14,7 +14,8 @@
       "Bash(xargs:*)",
       "Bash(export PATH=\"/home/david/.nvm/versions/node/v24.13.1/bin:$PATH\")",
       "Bash(PATH=\"/home/david/.nvm/versions/node/v24.13.1/bin:/usr/bin:/bin:$PATH\" npx eleventy:*)",
-      "Bash(PATH=\"/home/david/.nvm/versions/node/v24.13.1/bin:/usr/bin:/bin:$PATH\" node:*)"
+      "Bash(PATH=\"/home/david/.nvm/versions/node/v24.13.1/bin:/usr/bin:/bin:$PATH\" node:*)",
+      "Bash(npx @11ty/eleventy:*)"
     ]
   }
 }
