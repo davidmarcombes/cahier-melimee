@@ -109,7 +109,7 @@ layout: base
 
 <script>
 function connexionForm() {
-  const pb = new PocketBase('http://localhost:8090');
+  const pb = new PocketBase('{{ pocketbase.url }}');
   const demoStickers = ['🌻', '🍬', '🌵', '🎈', '🎨', '🚀'];
   return {
     step: 1,

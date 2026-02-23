@@ -138,7 +138,7 @@ layout: base
 
 <script>
 function onboardingWizard() {
-  const pb = new PocketBase('http://localhost:8090');
+  const pb = new PocketBase('{{ pocketbase.url }}');
 
   return {
     step: 1,
