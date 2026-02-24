@@ -4,6 +4,6 @@
   class="p-2 rounded-lg text-content-subtle hover:text-content-default hover:bg-surface-subtle transition-colors"
   :aria-label="dark ? 'Passer en mode jour' : 'Passer en mode nuit'"
 >
-  <svg x-show="!dark" class="h-5 w-5" fill="currentColor"><use href="#icon-moon"/></svg>
-  <svg x-show="dark" x-cloak class="h-5 w-5" fill="currentColor"><use href="#icon-sun"/></svg>
+  <span x-show="!dark" aria-hidden="true">🌙</span>
+  <span x-show="dark" x-cloak aria-hidden="true">☀️</span>
 </button>

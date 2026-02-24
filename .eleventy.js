@@ -422,7 +422,7 @@ module.exports = function (eleventyConfig) {
     return Object.values(groups);
   });
 
-  // Applications collection (renamed from défis)
+  // Applications collection (renamed from d\u00e9fis)
   eleventyConfig.addCollection('applications', function (collectionApi) {
     return collectionApi.getFilteredByTag('applications');
   });
@@ -454,24 +454,88 @@ module.exports = function (eleventyConfig) {
     return content;
   });
 
-  // Warn when generated HTML exceeds 20 KB (useful for performance monitoring)
-  eleventyConfig.addTransform('sizeWarn', function (content, outputPath) {
+  // Collect per-page size breakdown for the post-build report
+  const pageSizes = [];
+  eleventyConfig.addTransform('sizeReport', function (content, outputPath) {
     if (outputPath && outputPath.endsWith('.html')) {
-      const size = Buffer.byteLength(content, 'utf8');
-      const limit = 20 * 1024; // bytes
-      if (size > limit) {
-        const kb = (size / 1024).toFixed(1);
-        console.warn(`⚠️  HTML file too large: ${outputPath} is ${kb} KB (limit 20 KB)`);
-      }
+      const total = Buffer.byteLength(content, 'utf8');
+      const measure = (re) => (content.match(re) || [])
+        .reduce((sum, m) => sum + Buffer.byteLength(m, 'utf8'), 0);
+
+      pageSizes.push({
+        path: outputPath,
+        kb: (total / 1024).toFixed(1),
+        svgBytes: measure(/<svg[\s\S]*?<\/svg>/gi),
+        jsBytes: measure(/<script[\s\S]*?<\/script>/gi),
+        imgBytes: measure(/src="data:image\/[^"]*"/gi),
+        cssBytes: measure(/<style[\s\S]*?<\/style>/gi)
+      });
     }
     return content;
   });
 
+  // Post-build page size report
+  eleventyConfig.on('eleventy.after', () => {
+    const sorted = pageSizes.sort((a, b) => b.kb - a.kb);
+    const fmt = b => (b / 1024).toFixed(1) + 'k';
+    const row = ({ path: p, kb, svgBytes, jsBytes, imgBytes, cssBytes }) => {
+      const short = p.replace(process.cwd(), '').replace('/_site', '');
+      console.log(
+        short.padEnd(70) +
+        (kb + 'k').padStart(8) +
+        fmt(svgBytes).padStart(8) +
+        fmt(jsBytes).padStart(8) +
+        fmt(imgBytes).padStart(8) +
+        fmt(cssBytes).padStart(8)
+      );
+    };
 
-  // add this LAST
-  // eleventyConfig.addPlugin(UpgradeHelper);
+    const header = () => {
+      console.log('\u2500'.repeat(110));
+      console.log('Page'.padEnd(70) + 'Total'.padStart(8) + 'SVG'.padStart(8) + 'JS'.padStart(8) + 'IMG'.padStart(8) + 'CSS'.padStart(8));
+      console.log('\u2500'.repeat(110));
+    };
 
-  // Ensure sitemap and robots are output (templates handle generation)
+    const top10 = sorted.slice(0, 10);
+    const bottom5 = sorted.slice(-5);
+    const middle = sorted.slice(10, -5);
+
+    console.log('\n\ud83d\udcca Page size report');
+
+    console.log('\n\ud83d\udd34 Top 10 largest:');
+    header();
+    top10.forEach(row);
+
+    if (middle.length > 0) {
+      const avg = key => middle.reduce((a, p) => a + (key === 'kb' ? parseFloat(p[key]) : p[key]), 0) / middle.length;
+      console.log(`\n\u26aa ${middle.length} pages not shown \u2014 averages:`);
+      header();
+      console.log(
+        `(avg ${middle.length} pages)`.padEnd(70) +
+        fmt(avg('kb') * 1024).padStart(8) +
+        fmt(avg('svgBytes')).padStart(8) +
+        fmt(avg('jsBytes')).padStart(8) +
+        fmt(avg('imgBytes')).padStart(8) +
+        fmt(avg('cssBytes')).padStart(8)
+      );
+    }
+
+    console.log('\n\ud83d\udfe2 5 smallest:');
+    header();
+    bottom5.forEach(row);
+
+    const total = key => pageSizes.reduce((a, p) => a + (key === 'kb' ? p.kb * 1024 : p[key]), 0);
+    console.log('\n\ud83d\udce6 Site totals:');
+    header();
+    console.log(
+      `${pageSizes.length} pages`.padEnd(70) +
+      fmt(total('kb')).padStart(8) +
+      fmt(total('svgBytes')).padStart(8) +
+      fmt(total('jsBytes')).padStart(8) +
+      fmt(total('imgBytes')).padStart(8) +
+      fmt(total('cssBytes')).padStart(8)
+    );
+  });
 
   return {
     dir: {
