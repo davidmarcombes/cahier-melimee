@@ -5,10 +5,11 @@ pagination:
   alias: s
 layout: series-player
 tags: []
-permalink: "/fr/exercices/{{ s.series }}/"
+permalink: "/fr/{{ s.folder }}/{{ s.series }}/"
 eleventyComputed:
   series: "{{ s.series }}"
   seriesTitle: "{{ s.seriesTitle }}"
+  folder: "{{ s.folder }}"
   level: "{{ s.level }}"
   topic: "{{ s.topic }}"
   subtopic: "{{ s.subtopic }}"

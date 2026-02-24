@@ -1,4 +1,13 @@
 <header class="border-b bg-surface-chrome" x-data="{ mobileOpen: false }">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="icon-moon" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+    </symbol>
+    <symbol id="icon-sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <circle cx="10" cy="10" r="4"/>
+      <path d="M10 2v3M10 15v3M2 10h3M15 10h3M4.4 4.4l2.1 2.1M13.5 13.5l2.1 2.1M15.6 4.4l-2.1 2.1M4.4 15.6l2.1-2.1"/>
+    </symbol>
+  </svg>
   <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
     <a href="/fr" class="flex items-center gap-2 shrink-0">
       {% image "src/assets/images/logo.png", site.title + " logo", "2rem", "h-8 w-auto", "eager" %}

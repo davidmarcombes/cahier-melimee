@@ -99,7 +99,26 @@ function seriesPlayer(exercises) {
       ].join(" ");
     },
 
+    regenerateAll() {
+      if (!window.AppGenerators) return;
+      const expanded = [];
+      for (const ex of this.exercises) {
+        if (!ex._gen) { expanded.push(ex); continue; }
+        const gen = window.AppGenerators[ex._gen.name];
+        if (!gen) { expanded.push(ex); continue; }
+        const count = ex._gen.count || 1;
+        for (let i = 0; i < count; i++) {
+          expanded.push({ ...ex, ...gen.generate(ex._gen.params) });
+        }
+      }
+      this.exercises = expanded;
+      this.solvedFlags = this.exercises.map(() => false);
+    },
+
+    get hasGenerators() { return this.exercises.some(e => e._gen) },
+
     init() {
+      this.regenerateAll();
       this.syncFromHash();
       const _ia = this.cur.sequence || this.cur.bounding || this.cur.convert;
       this.seqInputs = (_ia ? _ia.answers.map(() => '') : []);
@@ -266,9 +285,6 @@ function seriesPlayer(exercises) {
     syncFromHash() { const h = parseInt(window.location.hash.replace('#', ''), 10); if (h >= 1 && h <= this.exercises.length) { this.currentIndex = h - 1 } }
   }
 }
-
-/* Challenge player — random operation generator */
-function challengePlayer(config) { return { config, solvedCount: 0, userInput: '', showError: false, justSolved: false, currentA: 0, currentB: 0, currentAnswer: 0, currentOperation: '', init() { this.nextProblem() }, get allDone() { return this.solvedCount >= this.config.count }, rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min }, nextProblem() { const op = this.config.operator; let a = this.rand(this.config.operandA.min, this.config.operandA.max); let b = this.rand(this.config.operandB.min, this.config.operandB.max); if (op === '-') { if (a < b) { const t = a; a = b; b = t } } else if (op === '/') { b = this.rand(this.config.operandB.min, this.config.operandB.max); if (b === 0) b = 1; const q = this.rand(this.config.operandA.min, this.config.operandA.max); a = q * b } this.currentA = a; this.currentB = b; let result; switch (op) { case '+': result = a + b; break; case '-': result = a - b; break; case '*': result = a * b; break; case '/': result = a / b; break }const d = op === '*' ? '\u00d7' : op === '/' ? '\u00f7' : op; const m = this.config.mode; const doTrou = m === 'trou' || (m === 'mixed' && Math.random() < 0.5); if (doTrou) { const hideA = Math.random() < 0.5; if (hideA) { this.currentAnswer = a; this.currentOperation = '? ' + d + ' ' + b + ' = ' + result } else { this.currentAnswer = b; this.currentOperation = a + ' ' + d + ' ? = ' + result } } else { this.currentAnswer = result; this.currentOperation = a + ' ' + d + ' ' + b } }, check() { if (this.justSolved || !this.userInput.trim()) return; if (parseInt(this.userInput.trim(), 10) === this.currentAnswer) { this.justSolved = true; this.showError = false; this.solvedCount++; if (this.solvedCount < this.config.count) { setTimeout(() => { this.justSolved = false; this.userInput = ''; this.nextProblem(); this.$nextTick(() => { const isTrou = this.currentOperation.includes('?'); const ref = isTrou ? this.$refs.trouInput : this.$refs.input; if (ref) ref.focus() }) }, 1200) } } else { this.showError = true; setTimeout(() => { this.showError = false }, 2000) } }, restart() { this.solvedCount = 0; this.userInput = ''; this.showError = false; this.justSolved = false; this.nextProblem(); this.$nextTick(() => { const isTrou = this.currentOperation.includes('?'); const ref = isTrou ? this.$refs.trouInput : this.$refs.input; if (ref) ref.focus() }) } } }
 
 /* Series browser — listing page filter */
 function seriesBrowser(allSeries) { const unique = (key) => [...new Set(allSeries.map(s => s[key]).filter(Boolean))].sort(); return { allSeries, filters: { level: '', topic: '', subtopic: '', difficulty: '' }, options: { level: unique('level'), topic: unique('topic'), difficulty: unique('difficulty') }, get subtopicOptions() { const pool = this.filters.topic ? this.allSeries.filter(s => s.topic === this.filters.topic) : this.allSeries; return [...new Set(pool.map(s => s.subtopic).filter(Boolean))].sort() }, get filtered() { return this.allSeries.filter(s => (!this.filters.level || s.level === this.filters.level) && (!this.filters.topic || s.topic === this.filters.topic) && (!this.filters.subtopic || s.subtopic === this.filters.subtopic) && (!this.filters.difficulty || s.difficulty === this.filters.difficulty)) }, get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') }, resetFilters() { this.filters = { level: '', topic: '', subtopic: '', difficulty: '' } } } }

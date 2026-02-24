@@ -1,8 +1,15 @@
 ---
 type: number-check
 title: "Table de 6"
-answer: "42"
-operation: "6 x 7"
+templateEngineOverride: md
+repeat: 5
+vars:
+  - name: a
+    min: 1
+    max: 10
+answer: "{{ a * 6 }}"
+operation: "6 x {{ a }}"
 ---
 
-Combien font **6 x 7** ?
+Combien font **6 x {{ a }}** ?
+

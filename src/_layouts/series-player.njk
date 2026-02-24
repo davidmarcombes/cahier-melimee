@@ -8,8 +8,16 @@ layout: base
   Type-specific blocks are conditionally included at build time to keep pages minimal.
 #}
 
-{% set exercises = collections.exercices | seriesExercises(series) %}
+{% set exercises = collections[folder or "exercices"] | seriesExercises(series) %}
 {% set usedTypes = exercises | extractTypes %}
+{% set hasGenerators = false %}
+{% for ex in exercises %}{% if ex.data.generator %}{% set hasGenerators = true %}{% endif %}{% endfor %}
+
+{% if hasGenerators %}
+<script src="/assets/js/generators.js"></script>
+{% endif %}
+
+{% if 'base-10' in usedTypes %}{% include "svg-defs.njk" %}{% endif %}
 
 <div
   x-data='seriesPlayer({{ exercises | seriesPayload | safe }})'
@@ -139,9 +147,15 @@ layout: base
   >
     <div class="p-6 rounded-2xl bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800">
       <p class="text-lg font-bold text-primary-700 dark:text-primary-300 mb-3">Série terminée !</p>
-      <a href="/fr/exercices/" class="inline-block px-6 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-all active:scale-95">
-        Retour aux exercices
-      </a>
+      <div class="flex gap-3 justify-center">
+        <button x-show="hasGenerators" @click="regenerateAll(); goTo(0)"
+          class="px-6 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-all active:scale-95">
+          Recommencer
+        </button>
+        <a href="/fr/exercices/" class="px-6 py-2 border border-slate-300 dark:border-slate-600 text-content-default rounded-xl hover:bg-surface-subtle transition-all">
+          Retour aux exercices
+        </a>
+      </div>
     </div>
   </div>
 

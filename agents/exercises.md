@@ -1,22 +1,24 @@
 # Exercises
 
-## Two Exercise Systems
+## Unified Player System
 
-### 1. Series Player (`seriesPlayer` in app.js)
+All exercises (static and generated) use a single engine: `seriesPlayer` in `app.js`.
 
-Multi-exercise sequences grouped in a folder. Each series has:
+Each series lives in a folder under `src/fr/exercices/` or `src/fr/applications/`:
 - `index.yaml` — series metadata (seriesTitle, level, topic, subtopic, difficulty)
 - `01-name.md`, `02-name.md`, ... — individual exercises with `type` in front-matter
 
 Layout: `series-player.njk` with per-type partials in `src/_includes/types/`.
 
-### 2. Challenge Player (`challengePlayer` in app.js)
+### Static exercises
+Defined entirely in front-matter (answer, operation, type-specific fields).
 
-Random operation generators (défis). Single `.md` file with config in front-matter.
+### Generated exercises (applications)
+Use `generator` + `repeat` + optional `params` in front-matter. At build time, `seriesPayload` emits a lightweight placeholder with `_gen` metadata. At runtime, `regenerateAll()` expands placeholders and generates fresh numbers on each page load.
 
-Layout: `challenge-player.njk`.
+Generators live in `src/assets/js/generators.js` (single source, dual export: `window.AppGenerators` for browser, `module.exports` for Node.js).
 
-## Exercise Types (Series)
+## Exercise Types
 
 | Type | Partial | Description |
 |------|---------|-------------|
@@ -46,9 +48,26 @@ Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
 4. Add type handling in `.eleventy.js` `seriesPayload` filter if needed
 5. Create sample content in `src/fr/exercices/`
 
+## Adding a New Generator
+
+1. Add the generator function in `src/assets/js/generators.js` (single source for both build and runtime)
+2. Generators must return seriesPayload-compatible items:
+   ```javascript
+   { type: 'number-check', operation: '5 + 3', answers: ['8'] }
+   ```
+4. Create an `.md` file in `src/fr/applications/{series}/` with:
+   ```yaml
+   type: number-check
+   generator: "yourGenerator"
+   repeat: 10
+   params:
+     min: 1
+     max: 100
+   ```
+
 ## Front-Matter Schema
 
-### Series exercise (`.md` in a series folder)
+### Static exercise (`.md` in a series folder)
 
 ```yaml
 ---
@@ -59,11 +78,9 @@ answer: 42                 # Expected answer (number or string)
 columns: ["A", "B"]        # logic-grid
 rows: ["X", "Y"]           # logic-grid
 solution: { A: "X" }       # logic-grid
-sequence: [2, null, 6]     # sequence (null = blank)
-bounds: [10, 20]           # bounding
 statements:                # true-false
   - text: "Assertion"
-    answer: true           # true or false
+    answer: true
 comparisons:               # compare
   - left: 56673
     right: 89939
@@ -80,18 +97,20 @@ questions:                 # multi-question
 Markdown body shown as instructions.
 ```
 
-### Challenge (défi)
+### Generated exercise (application)
 
 ```yaml
 ---
-layout: challenge-player
-title: "Additions rapides"
-operator: "+"              # +, -, *, /
-operandA: { min: 1, max: 20 }
-operandB: { min: 1, max: 20 }
-count: 10
-mode: ""                   # "", "trou", or "mixed"
+type: number-check
+title: "Addition simple"
+generator: "additionSimple"
+repeat: 10
+params:
+  minA: 10
+  maxA: 99
 ---
+
+Instructions shown above each exercise.
 ```
 
 ### Series metadata (`index.yaml`)
