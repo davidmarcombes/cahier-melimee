@@ -1,9 +1,6 @@
 id: "41c73e82"
 created_at: "2026-02-25T11:40:50.294Z"
 seriesTitle: "Les blocs de base 10"
-level: "CE1"
-topic: "Mathématiques"
-subtopic: "Numération"
-difficulty: "Facile"
+difficulty: facile
 skill: "Représenter des nombres jusqu'à 999"
 description: "Dans ces exercices, tu dois compter les centaines (plaques), les dizaines (barres) et les unités (petits cubes) pour trouver le nombre."

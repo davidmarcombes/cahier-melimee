@@ -16,7 +16,8 @@
       "Bash(PATH=\"/home/david/.nvm/versions/node/v24.13.1/bin:/usr/bin:/bin:$PATH\" npx eleventy:*)",
       "Bash(PATH=\"/home/david/.nvm/versions/node/v24.13.1/bin:/usr/bin:/bin:$PATH\" node:*)",
       "Bash(npx @11ty/eleventy:*)",
-      "Bash(del \"e:\\\\Code\\\\cahier-melimee\\\\src\\\\_data\\\\generators.js\")"
+      "Bash(del \"e:\\\\Code\\\\cahier-melimee\\\\src\\\\_data\\\\generators.js\")",
+      "Bash(findstr:*)"
     ]
   }
 }

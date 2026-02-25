@@ -286,5 +286,45 @@ function seriesPlayer(exercises) {
   }
 }
 
-/* Series browser — listing page filter */
-function seriesBrowser(allSeries) { const unique = (key) => [...new Set(allSeries.map(s => s[key]).filter(Boolean))].sort(); return { allSeries, filters: { level: '', topic: '', subtopic: '', difficulty: '' }, options: { level: unique('level'), topic: unique('topic'), difficulty: unique('difficulty') }, get subtopicOptions() { const pool = this.filters.topic ? this.allSeries.filter(s => s.topic === this.filters.topic) : this.allSeries; return [...new Set(pool.map(s => s.subtopic).filter(Boolean))].sort() }, get filtered() { return this.allSeries.filter(s => (!this.filters.level || s.level === this.filters.level) && (!this.filters.topic || s.topic === this.filters.topic) && (!this.filters.subtopic || s.subtopic === this.filters.subtopic) && (!this.filters.difficulty || s.difficulty === this.filters.difficulty)) }, get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') }, resetFilters() { this.filters = { level: '', topic: '', subtopic: '', difficulty: '' } } } }
+/* Exercise store — loads CSV on demand, caches in sessionStorage */
+document.addEventListener('alpine:init', () => {
+  const LEVELS = { '1': 'CP', '2': 'CE1', '3': 'CE2', '4': 'CM1', '5': 'CM2' };
+  const DIFFS = { '1': 'facile', '2': 'moyen', '3': 'difficile' };
+  const FOLDERS = { e: 'exercices', a: 'applications' };
+
+  Alpine.store('exercises', {
+    data: null,
+    loading: false,
+
+    async load() {
+      if (this.data) return;
+      const cached = sessionStorage.getItem('ex');
+      if (cached) {
+        try {
+          const d = JSON.parse(cached);
+          if (Array.isArray(d) && d.length && d[0].title) { this.data = d; return; }
+          sessionStorage.removeItem('ex');
+        } catch(e) { sessionStorage.removeItem('ex'); }
+      }
+
+      this.loading = true;
+      try {
+        const res = await fetch('/fr/exercices/data.csv');
+        if (!res.ok) { console.error('CSV fetch failed:', res.status); this.loading = false; return; }
+        const text = await res.text();
+        const rows = text.replace(/\r/g, '').trim().split('\n');
+        if (!rows[0] || !rows[0].startsWith('id,')) { console.error('CSV header invalid:', rows[0]); this.loading = false; return; }
+        this.data = rows.slice(1).filter(r => r).map(row => {
+          const [id, l, s, t, title, d, f] = row.split(',');
+          return {
+            id, level: LEVELS[l] || l, subject: s, topic: t, title,
+            difficulty: DIFFS[d] || d,
+            seriesUrl: '/fr/' + (FOLDERS[f] || 'exercices') + '/' + id + '/'
+          };
+        });
+        sessionStorage.setItem('ex', JSON.stringify(this.data));
+      } catch(e) { console.error('CSV load error:', e); }
+      this.loading = false;
+    }
+  });
+});

@@ -400,83 +400,33 @@ module.exports = function (eleventyConfig) {
       .replace(/'/g, "\\u0027"); // Escape single quotes
   });
 
-  // Convert grouped series list to a JSON payload for the seriesBrowser component
-  eleventyConfig.addFilter('seriesListPayload', function (seriesList) {
-    return JSON.stringify(seriesList.map(s => ({
-      series: s.series, title: s.title, seriesUrl: s.seriesUrl,
-      count: s.count, level: s.level, topic: s.topic,
-      subtopic: s.subtopic, difficulty: s.difficulty
-    }))).replace(/'/g, '\\u0027');
+  // Convert seriesMeta to compact CSV for the listing page
+  const LEVEL_CODES = { CP: '1', CE1: '2', CE2: '3', CM1: '4', CM2: '5' };
+  const DIFF_CODES = { facile: '1', moyen: '2', difficile: '3' };
+  const csvWarnings = [];
+
+  eleventyConfig.addFilter('csvPayload', function (seriesMeta) {
+    csvWarnings.length = 0;
+    const lines = ['id,l,s,t,title,d,f'];
+    for (const s of seriesMeta) {
+      const l = LEVEL_CODES[s.level] || '?';
+      const subj = (s.topic || '').charAt(0).toUpperCase() || '?';
+      const t = s.subtopic || '';
+      const d = DIFF_CODES[s.difficulty] || '?';
+      const f = s.folder === 'applications' ? 'a' : 'e';
+      const title = (s.seriesTitle || '').replace(/,/g, ' ');
+      if (t.length > 12) csvWarnings.push(`topic > 12 chars: "${t}" in ${s.series}`);
+      if (title.includes(',')) csvWarnings.push(`title had comma (replaced): "${s.seriesTitle}" in ${s.series}`);
+      const line = `${s.id},${l},${subj},${t},${title},${d},${f}`;
+      if (line.length > 64) csvWarnings.push(`line > 64 chars (${line.length}): ${line}`);
+      lines.push(line);
+    }
+    return lines.join('\n');
   });
 
-  // Group exercises or applications by series for the listing page
-  eleventyConfig.addFilter('groupBySeries', function (collection) {
-    const metaCache = {};
-    const groups = {};
-
-    for (const item of collection) {
-      const dirPath = path.dirname(item.inputPath).replace(/\\/g, '/');
-
-      // Determine folder type and relative path within it
-      let folder, relPath;
-      const exIdx = dirPath.indexOf('/fr/exercices/');
-      const appIdx = dirPath.indexOf('/fr/applications/');
-      if (exIdx !== -1) {
-        folder = 'exercices';
-        relPath = dirPath.substring(exIdx + '/fr/exercices/'.length);
-      } else if (appIdx !== -1) {
-        folder = 'applications';
-        relPath = dirPath.substring(appIdx + '/fr/applications/'.length);
-      } else {
-        continue;
-      }
-
-      // Skip items at the root (like series-pages.njk)
-      if (!relPath) continue;
-
-      const s = relPath; // Unique key is the relative path
-
-      if (!groups[s]) {
-        if (!metaCache[s]) {
-          try {
-            metaCache[s] = yaml.load(
-              fs.readFileSync(path.join(dirPath.replace(/\//g, path.sep), 'index.yaml'), 'utf8')
-            );
-          } catch { metaCache[s] = {}; }
-        }
-        const meta = metaCache[s];
-        const parts = relPath.split('/');
-
-        groups[s] = {
-          series: s,
-          title: meta.seriesTitle || path.basename(dirPath),
-          level: (parts[0] || '').toUpperCase(),
-          topic: parts[1] || '',
-          subtopic: parts[2] || '',
-          skill: meta.skill || '',
-          difficulty: meta.difficulty || '',
-          count: 0,
-          seriesUrl: meta.id ? `/fr/${folder}/${meta.id}/` : '#',
-          exercises: []
-        };
-      }
-      groups[s].count++;
-      groups[s].exercises.push(item);
-    }
-    for (const g of Object.values(groups)) {
-      g.exercises.sort((a, b) => a.inputPath.localeCompare(b.inputPath));
-    }
-    return Object.values(groups);
-  });
-
-  // Applications collection (renamed from d\u00e9fis)
+  // Applications collection
   eleventyConfig.addCollection('applications', function (collectionApi) {
     return collectionApi.getFilteredByTag('applications');
-  });
-
-  // Merge multiple collections into the series list
-  eleventyConfig.addFilter('withMoreSeries', function (seriesList, extraGrouped) {
-    return [...seriesList, ...(extraGrouped || [])];
   });
 
   // Transform to minify HTML in production builds
@@ -531,6 +481,15 @@ module.exports = function (eleventyConfig) {
       console.error('='.repeat(70) + '\x1b[0m');
       missingSeriesIds.forEach(p => console.error(`  \x1b[31m- ${p}\x1b[0m`));
       console.error('\x1b[31m\nRun: npm run generate:ids\x1b[0m\n');
+    }
+
+    // Warn about CSV data issues
+    if (csvWarnings.length > 0) {
+      console.warn('\n\x1b[33m' + '='.repeat(70));
+      console.warn('  CSV DATA WARNINGS:');
+      console.warn('='.repeat(70) + '\x1b[0m');
+      csvWarnings.forEach(w => console.warn(`  \x1b[33m- ${w}\x1b[0m`));
+      console.warn('');
     }
 
     const sorted = pageSizes.sort((a, b) => b.kb - a.kb);

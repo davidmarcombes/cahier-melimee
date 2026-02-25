@@ -2,69 +2,93 @@
 layout: base
 ---
 
-{% set appGrouped = collections.applications | groupBySeries %}
-{% set seriesList = collections.exercices | groupBySeries | withMoreSeries(appGrouped) %}
+<div x-data="{
+  filters: JSON.parse(sessionStorage.getItem('exf') || '{&quot;level&quot;:&quot;&quot;,&quot;topic&quot;:&quot;&quot;,&quot;difficulty&quot;:&quot;&quot;}'),
+  limit: 12,
+  get all() { return $store.exercises.data || [] },
+  get options() {
+    const u = (k) => [...new Set(this.all.map(s => s[k]).filter(Boolean))].sort();
+    return { level: u('level'), topic: u('topic'), difficulty: u('difficulty') }
+  },
+  get filtered() {
+    return this.all.filter(s =>
+      (!this.filters.level || s.level === this.filters.level) &&
+      (!this.filters.topic || s.topic === this.filters.topic) &&
+      (!this.filters.difficulty || s.difficulty === this.filters.difficulty)
+    )
+  },
+  get visible() { return this.filtered.slice(0, this.limit) },
+  get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') },
+  resetFilters() { this.filters = { level: '', topic: '', difficulty: '' }; this.limit = 12 }
+}" x-init="$store.exercises.load(); $watch('filters', v => { this.limit = 12; sessionStorage.setItem('exf', JSON.stringify(v)) })" x-cloak class="py-4">
 
-<div x-data='seriesBrowser({{ seriesList | seriesListPayload | safe }})' x-cloak class="py-4">
   <h1 class="text-3xl font-extrabold text-content-default mb-6">{{ title }}</h1>
 
   {{ content | safe }}
 
-  <!-- Filters -->
-  <div class="flex flex-wrap gap-3 mb-8">
-    <select x-model="filters.level" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
-      <option value="">Tous les niveaux</option>
-      <template x-for="v in options.level" :key="v">
-        <option :value="v" x-text="v"></option>
-      </template>
-    </select>
-
-    <select x-model="filters.topic" @change="filters.subtopic = ''" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
-      <option value="">Toutes les matières</option>
-      <template x-for="v in options.topic" :key="v">
-        <option :value="v" x-text="v"></option>
-      </template>
-    </select>
-
-    <select x-model="filters.subtopic" x-show="subtopicOptions.length > 0" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
-      <option value="">Tous les thèmes</option>
-      <template x-for="v in subtopicOptions" :key="v">
-        <option :value="v" x-text="v"></option>
-      </template>
-    </select>
-
-    <select x-model="filters.difficulty" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
-      <option value="">Difficulté</option>
-      <template x-for="v in options.difficulty" :key="v">
-        <option :value="v" x-text="(v === 'difficile' ? '🐞 ' : v === 'moyen' ? '🐝 ' : '🦗 ') + v"></option>
-      </template>
-    </select>
-
-    <button x-show="hasActiveFilter" @click="resetFilters()" class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 underline">
-      Réinitialiser
-    </button>
+  {# Loading state #}
+  <div x-show="$store.exercises.loading" class="text-center py-12 text-content-subtle">
+    Chargement...
   </div>
 
+  <template x-if="$store.exercises.data">
+    <div>
+      {# Filters #}
+      <div class="flex flex-wrap gap-3 mb-8">
+        <select x-model="filters.level" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
+          <option value="">Tous les niveaux</option>
+          <template x-for="v in options.level" :key="v">
+            <option :value="v" x-text="v"></option>
+          </template>
+        </select>
 
-  <!-- Series cards -->
-  <div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-    <template x-for="s in filtered" :key="s.series">
-      <a :href="s.seriesUrl" :title="s.title + ' - Niveau ' + s.level + ' - Difficulté ' + s.difficulty" class="block p-3 bg-surface-subtle rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-md transition-all group">
-        <div class="flex justify-between items-start gap-2 mb-1">
-          <h2 class="text-sm font-extrabold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400 leading-tight line-clamp-1" x-text="s.title"></h2>
-          <span class="text-xs shrink-0" x-text="s.difficulty === 'difficile' ? '🐞' : s.difficulty === 'moyen' ? '🐝' : '🦗'"></span>
-        </div>
-        <div class="flex items-center gap-1.5 text-[11px] text-content-subtle">
-          <span class="font-bold text-primary-600 dark:text-primary-400 uppercase shrink-0" x-text="s.level"></span>
-          <span class="opacity-30 select-none">|</span>
-          <span class="truncate" x-text="s.topic + (s.subtopic ? ' › ' + s.subtopic : '')"></span>
-        </div>
-      </a>
-    </template>
-  </div>
+        <select x-model="filters.topic" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
+          <option value="">Tous les th&#232;mes</option>
+          <template x-for="v in options.topic" :key="v">
+            <option :value="v" x-text="v"></option>
+          </template>
+        </select>
 
-  <!-- Empty state -->
-  <div x-show="filtered.length === 0" class="text-center py-12 text-content-subtle">
-    Aucune série ne correspond aux filtres sélectionnés.
-  </div>
+        <select x-model="filters.difficulty" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
+          <option value="">Difficult&#233;</option>
+          <template x-for="v in options.difficulty" :key="v">
+            <option :value="v" x-text="(v === 'difficile' ? '&#x1F41E; ' : v === 'moyen' ? '&#x1F41D; ' : '&#x1F997; ') + v"></option>
+          </template>
+        </select>
+
+        <button x-show="hasActiveFilter" @click="resetFilters()" class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 underline">
+          R&#233;initialiser
+        </button>
+      </div>
+
+      {# Series cards #}
+      <div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <template x-for="s in visible" :key="s.id">
+          <a :href="s.seriesUrl" :title="s.title + ' - Niveau ' + s.level + ' - Difficult&#233; ' + s.difficulty" class="block p-3 bg-surface-subtle rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-md transition-all group">
+            <div class="flex justify-between items-start gap-2 mb-1">
+              <h2 class="text-sm font-extrabold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400 leading-tight line-clamp-1" x-text="s.title"></h2>
+              <span class="text-xs shrink-0" x-text="s.difficulty === 'difficile' ? '&#x1F41E;' : s.difficulty === 'moyen' ? '&#x1F41D;' : '&#x1F997;'"></span>
+            </div>
+            <div class="flex items-center gap-1.5 text-[11px] text-content-subtle">
+              <span class="font-bold text-primary-600 dark:text-primary-400 uppercase shrink-0" x-text="s.level"></span>
+              <span class="opacity-30 select-none">|</span>
+              <span class="truncate" x-text="s.topic"></span>
+            </div>
+          </a>
+        </template>
+      </div>
+
+      {# Show more button #}
+      <div x-show="limit < filtered.length" class="text-center mt-6">
+        <button @click="limit += 12" class="px-6 py-2 text-sm font-medium border border-slate-300 dark:border-slate-600 text-content-default rounded-xl hover:bg-surface-subtle transition-all">
+          Voir plus
+        </button>
+      </div>
+
+      {# Empty state #}
+      <div x-show="filtered.length === 0" class="text-center py-12 text-content-subtle">
+        Aucune s&#233;rie ne correspond aux filtres s&#233;lectionn&#233;s.
+      </div>
+    </div>
+  </template>
 </div>
