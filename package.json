@@ -23,7 +23,10 @@
         "import:identities": "node scripts/import-identities.js",
         "sim:server": "node scripts/sim-server.js",
         "test:auth": "node scripts/test-auth.js",
-        "check:duplicates": "node scripts/check-duplicates.js"
+        "check:duplicates": "node scripts/check-duplicates.js",
+        "validate:exercises": "node scripts/validate-exercises.js",
+        "lint": "eslint . && prettier --check .",
+        "format": "prettier --write ."
     },
     "keywords": [
         "eleventy",
@@ -38,18 +41,23 @@
         "@11ty/eleventy-img": "^4.0.2",
         "@11ty/eleventy-upgrade-help": "^3.0.2",
         "@cspell/dict-fr-fr": "^2.3.2",
+        "@eslint/js": "^10.0.1",
         "@tailwindcss/typography": "^0.5.19",
         "autoprefixer": "^10.4.16",
         "concurrently": "^8.0.0",
         "cspell": "^9.6.4",
         "dotenv": "^17.3.1",
+        "eslint": "^10.0.2",
+        "globals": "^17.3.0",
         "html-minifier-terser": "^7.1.2",
         "js-yaml": "^4.1.1",
         "postcss": "^8.4.32",
+        "prettier": "^3.8.1",
         "tailwindcss": "^3.4.0"
     },
     "dependencies": {
         "commander": "^14.0.3",
+        "he": "^1.2.0",
         "inquirer": "^13.2.5"
     }
 }

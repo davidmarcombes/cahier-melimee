@@ -11,6 +11,24 @@ const UpgradeHelper = require("@11ty/eleventy-upgrade-help");
 
 
 module.exports = function (eleventyConfig) {
+  // Virtual template: sitemap (keeps src/ root free of .njk files)
+  eleventyConfig.addTemplate('sitemap.xml.njk',
+    `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for page in collections.all %}
+  {% if page.url and page.url != '/404/' %}
+  <url>
+    <loc>{{ site.url }}{{ page.url }}</loc>
+    {% if page.date %}
+  <lastmod>{{ page.date | date }}</lastmod>
+    {% endif %}
+  </url>
+  {% endif %}
+{% endfor %}
+</urlset>`,
+    { layout: null, permalink: '/sitemap.xml', eleventyExcludeFromCollections: true }
+  );
+
   // Passthrough static assets
   // Copy everything under src/assets so we can reference it at /assets/…
   eleventyConfig.addPassthroughCopy({ 'src/assets': 'assets' });
@@ -70,6 +88,8 @@ module.exports = function (eleventyConfig) {
     if (isNaN(d)) return '';
     return d.toISOString().slice(0, 10);
   });
+
+
 
   // Blog posts collection (newest first)
   eleventyConfig.addCollection('posts', function (collectionApi) {

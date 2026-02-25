@@ -1,0 +1,10 @@
+_site/
+node_modules/
+dist/
+_docs/
+tailwind.config.js
+*.njk
+*.md
+*.yaml
+*.yml
+package-lock.json
