@@ -99,17 +99,15 @@ async function run() {
     const data = { ...options, ...answers };
     const finalCategory = data.customCategory || data.category;
     const baseDir = path.resolve(__dirname, '../src/fr/exercices/');
-    const folderBase = `${data.level}-maths-${finalCategory}-${data.name}`;
-    const targetDir = getUniqueDirPath(path.join(baseDir, folderBase));
+    const targetDir = getUniqueDirPath(
+        path.join(baseDir, data.level, 'maths', finalCategory, data.name)
+    );
 
     // Création du dossier
     fs.mkdirSync(targetDir, { recursive: true });
 
-    // 4. index.yaml
+    // 4. index.yaml (level/topic/subtopic derived from directory path)
     const yamlContent = `type: ${data.type}
-topic: maths
-level: ${data.level}
-subtopic: ${finalCategory}
 seriesTitle: "${data.name.replace(/-/g, ' ')}"
 difficulty: ${data.difficulty}\n`;
     fs.writeFileSync(path.join(targetDir, 'index.yaml'), yamlContent);

@@ -5,7 +5,7 @@ pagination:
   alias: s
 layout: series-player
 tags: []
-permalink: "/fr/{{ s.folder }}/{{ s.series }}/"
+permalink: "/fr/{{ s.folder }}/{{ s.id }}/"
 eleventyComputed:
   series: "{{ s.series }}"
   seriesTitle: "{{ s.seriesTitle }}"
@@ -15,4 +15,5 @@ eleventyComputed:
   subtopic: "{{ s.subtopic }}"
   skill: "{{ s.skill }}"
   difficulty: "{{ s.difficulty }}"
+  id: "{{ s.id }}"
 ---

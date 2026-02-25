@@ -40,8 +40,15 @@ project-root/
     ├── assets/          # Images, fonts, JS
     │   └── js/app.js    # Alpine components (seriesPlayer, challengePlayer, etc.)
     └── fr/              # French content (only language currently)
-        ├── exercices/   # Exercise series (subdirectories with index.yaml + *.md)
-        └── defis/       # Challenge exercises
+        ├── exercices/   # Exercise series (nested: {level}/maths/{topic}/{leaf}/)
+        │   ├── exercices.json   # Data cascade (tags, permalink: false)
+        │   ├── series-pages.njk # Pagination template
+        │   ├── ce1/maths/       # CE1 exercises
+        │   ├── ce2/maths/       # CE2 exercises
+        │   ├── cm1/maths/       # CM1 exercises
+        │   ├── cm2/maths/       # CM2 exercises
+        │   └── cp/maths/        # CP exercises
+        └── applications/ # Generated exercise series (same nested structure)
 ```
 
 ## Configuration Files

@@ -81,6 +81,23 @@ module.exports = function (eleventyConfig) {
     return collectionApi.getFilteredByGlob('src/fr/exercices/**/*.md');
   });
 
+  // Recursively find all index.yaml files under a directory
+  function findIndexYamls(dir) {
+    const results = [];
+    if (!fs.existsSync(dir)) return results;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        results.push(...findIndexYamls(path.join(dir, entry.name)));
+      } else if (entry.name === 'index.yaml') {
+        results.push(path.join(dir, entry.name));
+      }
+    }
+    return results;
+  }
+
+  // Track series missing IDs for the post-build warning
+  const missingSeriesIds = [];
+
   // Build list of unique series for both exercices and applications
   eleventyConfig.addCollection('seriesMeta', function () {
     const folders = ['exercices', 'applications'];
@@ -88,34 +105,46 @@ module.exports = function (eleventyConfig) {
 
     folders.forEach(folder => {
       const dir = path.join('src/fr', folder);
-      if (!fs.existsSync(dir)) return;
+      const yamlFiles = findIndexYamls(dir);
 
-      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        if (!entry.isDirectory()) continue;
-        const yamlPath = path.join(dir, entry.name, 'index.yaml');
-        if (!fs.existsSync(yamlPath)) continue;
-
+      for (const yamlPath of yamlFiles) {
         const meta = yaml.load(fs.readFileSync(yamlPath, 'utf8'));
+        const seriesDir = path.dirname(yamlPath);
+        const relPath = path.relative(dir, seriesDir).replace(/\\/g, '/');
+        // relPath e.g. "ce1/maths/logique/grille-01"
+        const parts = relPath.split('/');
+        // parts[0]=level, parts[1]=subject(maths), parts[2]=topic
+
+        if (!meta.id) {
+          missingSeriesIds.push(path.join(folder, relPath).replace(/\\/g, '/'));
+          continue; // No page generated without an ID
+        }
+
         result.push({
-          series: entry.name,
-          seriesTitle: meta.seriesTitle || entry.name,
-          level: meta.level || '',
-          topic: meta.topic || '',
-          subtopic: meta.subtopic || '',
+          series: relPath,
+          id: meta.id,
+          seriesTitle: meta.seriesTitle || path.basename(seriesDir),
+          level: (parts[0] || '').toUpperCase(),
+          topic: parts[1] || '',
+          subtopic: parts[2] || '',
           skill: meta.skill || '',
           difficulty: meta.difficulty || '',
-          folder: folder // To distinguish between exercices and applications
+          folder: folder
         });
       }
     });
     return result;
   });
 
-  // Get exercises for a specific series (matched by directory name), sorted by filename
+  // Get exercises for a specific series (matched by relative path), sorted by filename
   eleventyConfig.addFilter('seriesExercises', function (collection, seriesName) {
     if (!seriesName) return [];
+    const normalized = seriesName.replace(/\\/g, '/');
     return collection
-      .filter(item => path.basename(path.dirname(item.inputPath)) === seriesName)
+      .filter(item => {
+        const dir = path.dirname(item.inputPath).replace(/\\/g, '/');
+        return dir.endsWith('/' + normalized);
+      })
       .sort((a, b) => a.inputPath.localeCompare(b.inputPath));
   });
 
@@ -386,30 +415,48 @@ module.exports = function (eleventyConfig) {
     const groups = {};
 
     for (const item of collection) {
-      const dirPath = path.dirname(item.inputPath);
-      const s = path.basename(dirPath);
-      const parentDir = path.basename(path.dirname(dirPath));
+      const dirPath = path.dirname(item.inputPath).replace(/\\/g, '/');
 
-      // parentDir should be 'exercices' or 'applications'
-      if (s === 'exercices' || s === 'applications') continue;
+      // Determine folder type and relative path within it
+      let folder, relPath;
+      const exIdx = dirPath.indexOf('/fr/exercices/');
+      const appIdx = dirPath.indexOf('/fr/applications/');
+      if (exIdx !== -1) {
+        folder = 'exercices';
+        relPath = dirPath.substring(exIdx + '/fr/exercices/'.length);
+      } else if (appIdx !== -1) {
+        folder = 'applications';
+        relPath = dirPath.substring(appIdx + '/fr/applications/'.length);
+      } else {
+        continue;
+      }
+
+      // Skip items at the root (like series-pages.njk)
+      if (!relPath) continue;
+
+      const s = relPath; // Unique key is the relative path
 
       if (!groups[s]) {
         if (!metaCache[s]) {
           try {
-            metaCache[s] = yaml.load(fs.readFileSync(path.join(dirPath, 'index.yaml'), 'utf8'));
+            metaCache[s] = yaml.load(
+              fs.readFileSync(path.join(dirPath.replace(/\//g, path.sep), 'index.yaml'), 'utf8')
+            );
           } catch { metaCache[s] = {}; }
         }
         const meta = metaCache[s];
+        const parts = relPath.split('/');
+
         groups[s] = {
           series: s,
-          title: meta.seriesTitle || s,
-          level: meta.level || '',
-          topic: meta.topic || '',
-          subtopic: meta.subtopic || '',
+          title: meta.seriesTitle || path.basename(dirPath),
+          level: (parts[0] || '').toUpperCase(),
+          topic: parts[1] || '',
+          subtopic: parts[2] || '',
           skill: meta.skill || '',
           difficulty: meta.difficulty || '',
           count: 0,
-          seriesUrl: `/fr/${parentDir}/${s}/`,
+          seriesUrl: meta.id ? `/fr/${folder}/${meta.id}/` : '#',
           exercises: []
         };
       }
@@ -474,8 +521,18 @@ module.exports = function (eleventyConfig) {
     return content;
   });
 
-  // Post-build page size report
+  // Post-build page size report + missing ID warning
   eleventyConfig.on('eleventy.after', () => {
+    // Warn about series missing IDs
+    if (missingSeriesIds.length > 0) {
+      console.error('\n\x1b[31m' + '='.repeat(70));
+      console.error('  WARNING: The following series are MISSING "id" in index.yaml');
+      console.error('  No pages were generated for them!');
+      console.error('='.repeat(70) + '\x1b[0m');
+      missingSeriesIds.forEach(p => console.error(`  \x1b[31m- ${p}\x1b[0m`));
+      console.error('\x1b[31m\nRun: npm run generate:ids\x1b[0m\n');
+    }
+
     const sorted = pageSizes.sort((a, b) => b.kb - a.kb);
     const fmt = b => (b / 1024).toFixed(1) + 'k';
     const row = ({ path: p, kb, svgBytes, jsBytes, imgBytes, cssBytes }) => {
