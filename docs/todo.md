@@ -1,5 +1,8 @@
 # List of things to address
 
+## Clean up
+- [_] topic and subtopic not needed any more in index.yaml ?
+
 ## Images
 - [✓] Salto identity ok
 - [_] Mélimée must be prepared, in particulare share_image.png is BAD
