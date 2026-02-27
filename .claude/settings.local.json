@@ -26,7 +26,15 @@
       "Bash(git mv:*)",
       "Bash(git rm:*)",
       "Bash(node:*)",
-      "Bash(npx tailwindcss:*)"
+      "Bash(npx tailwindcss:*)",
+      "WebFetch(domain:groupe-reussite.fr)",
+      "WebFetch(domain:www.jai20enmaths.com)",
+      "WebFetch(domain:www.kidsvacances.fr)",
+      "WebFetch(domain:educationetdevenir.fr)",
+      "WebFetch(domain:www.superprof.fr)",
+      "WebFetch(domain:www.octomap.fr)",
+      "Bash(git add:*)",
+      "Bash(git rebase:*)"
     ]
   }
 }
