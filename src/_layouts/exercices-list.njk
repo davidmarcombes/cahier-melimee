@@ -35,21 +35,21 @@ layout: base
     <div>
       {# Filters #}
       <div class="flex flex-wrap gap-3 mb-8">
-        <select x-model="filters.level" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
+        <select x-model="filters.level" aria-label="Filtrer par niveau" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
           <option value="">Tous les niveaux</option>
           <template x-for="v in options.level" :key="v">
             <option :value="v" x-text="v"></option>
           </template>
         </select>
 
-        <select x-model="filters.topic" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
+        <select x-model="filters.topic" aria-label="Filtrer par thème" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
           <option value="">Tous les th&#232;mes</option>
           <template x-for="v in options.topic" :key="v">
             <option :value="v" x-text="v"></option>
           </template>
         </select>
 
-        <select x-model="filters.difficulty" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
+        <select x-model="filters.difficulty" aria-label="Filtrer par difficulté" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
           <option value="">Difficult&#233;</option>
           <template x-for="v in options.difficulty" :key="v">
             <option :value="v" x-text="(v === 'difficile' ? '&#x1F41E; ' : v === 'moyen' ? '&#x1F41D; ' : '&#x1F997; ') + v"></option>

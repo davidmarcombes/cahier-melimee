@@ -1,0 +1,6 @@
+{# Graduated ruler visual #}
+<div x-show="cur.type === 'ruler'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
+       x-show="cur.body" x-html="cur.body"></div>
+  <svg viewBox="0 0 500 90" class="w-full text-content-default" x-html="rulerSvg"></svg>
+</div>

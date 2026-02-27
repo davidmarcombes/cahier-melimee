@@ -80,6 +80,44 @@ function seriesPlayer(exercises) {
     },
 
 
+    /* Ruler SVG */
+    get rulerSvg() {
+      if (this.cur.type !== 'ruler' || !this.cur.ruler) return '';
+      const r = this.cur.ruler, W = 420, PAD = 40, Y = 60;
+      const range = r.max - r.min;
+      if (range <= 0) return '';
+      const uw = W / range;
+      const divs = r.divisions || 1;
+      const subs = r.subdivisions || 0;
+      let s = `<line x1="${PAD}" y1="${Y}" x2="${PAD + W}" y2="${Y}" stroke="currentColor" stroke-width="2"/>`;
+      for (let u = 0; u <= range; u++) {
+        const x = PAD + u * uw;
+        s += `<line x1="${x}" y1="${Y - 18}" x2="${x}" y2="${Y}" stroke="currentColor" stroke-width="2"/>`;
+        s += `<text x="${x}" y="${Y + 16}" text-anchor="middle" fill="currentColor" font-size="12" font-weight="500">${r.min + u}</text>`;
+        if (u < range) {
+          for (let d = 1; d < divs; d++) {
+            s += `<line x1="${x + d * uw / divs}" y1="${Y - 12}" x2="${x + d * uw / divs}" y2="${Y}" stroke="currentColor" stroke-width="1.5"/>`;
+          }
+          if (subs > 0) {
+            for (let d = 0; d < divs; d++) {
+              for (let sub = 1; sub < subs; sub++) {
+                const xs = x + (d + sub / subs) * uw / divs;
+                s += `<line x1="${xs}" y1="${Y - 7}" x2="${xs}" y2="${Y}" stroke="currentColor" stroke-width="1"/>`;
+              }
+            }
+          }
+        }
+      }
+      if (r.markers) {
+        r.markers.forEach(m => {
+          const x = PAD + (m.value - r.min) * uw;
+          s += `<polygon points="${x},${Y - 22} ${x - 6},${Y - 34} ${x + 6},${Y - 34}" class="fill-red-500 dark:fill-red-400"/>`;
+          s += `<text x="${x}" y="${Y - 38}" text-anchor="middle" fill="currentColor" font-size="14" font-weight="700" class="fill-red-600 dark:fill-red-400">${m.label}</text>`;
+        });
+      }
+      return s;
+    },
+
     polarToCartesian(centerX, centerY, radius, angleInDegrees) {
       const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
       return {

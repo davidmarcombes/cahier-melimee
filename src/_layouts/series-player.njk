@@ -56,6 +56,7 @@ needsPocketBase: true
   {% if 'clock' in usedTypes %}{% include "types/clock.njk" %}{% endif %}
   {% if 'fraction' in usedTypes %}{% include "types/fraction.njk" %}{% endif %}
   {% if 'base-10' in usedTypes %}{% include "types/base-10.njk" %}{% endif %}
+  {% if 'ruler' in usedTypes %}{% include "types/ruler.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -63,8 +64,8 @@ needsPocketBase: true
   {% endif %}
 
   {# Answer input + check button (for number-check, problem, clock, fraction and base-10) #}
-  {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes %}
-  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10') && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6">
+  {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes %}
+  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler') && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6">
     <input
       type="text"
       x-model="userInput"
@@ -122,8 +123,8 @@ needsPocketBase: true
     {% if 'compare' in usedTypes %}
     <span x-show="cur.type === 'compare'">Certains signes ne sont pas corrects. Essaie encore !</span>
     {% endif %}
-    {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes %}
-    <span x-show="cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10'">Ce n'est pas la bonne réponse. Essaie encore !</span>
+    {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes %}
+    <span x-show="cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler'">Ce n'est pas la bonne réponse. Essaie encore !</span>
     {% endif %}
   </div>
 

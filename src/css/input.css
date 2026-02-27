@@ -17,18 +17,18 @@
 /* BEGIN:design-tokens */
 @layer base {
   :root {
-    --color-surface-default: #ffffff;
-    --color-surface-chrome: #f1f5f9;
-    --color-surface-subtle: #f8fafc;
-    --color-content-default: #1e293b;
-    --color-content-subtle: #64748b;
+    --sf: #ffffff;
+    --sc: #f1f5f9;
+    --ss: #f8fafc;
+    --ct: #1e293b;
+    --cs: #475569;
   }
   .dark {
-    --color-surface-default: #0f172a;
-    --color-surface-chrome: #1e293b;
-    --color-surface-subtle: #1e293b;
-    --color-content-default: #f8fafc;
-    --color-content-subtle: #94a3b8;
+    --sf: #0f172a;
+    --sc: #1e293b;
+    --ss: #1e293b;
+    --ct: #f8fafc;
+    --cs: #94a3b8;
   }
 }
 /* END:design-tokens */
@@ -72,8 +72,6 @@
   .prose-invert blockquote { border-color: #334155; }
 }
 
-/* Make sure we have a sensible base font */
 body {
-  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
-  @apply bg-surface-default text-content-default;
+  @apply font-sans bg-surface-default text-content-default;
 }

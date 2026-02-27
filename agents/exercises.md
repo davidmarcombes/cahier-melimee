@@ -36,6 +36,7 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `compare` | `types/compare.njk` | Compare numbers — pick < or > between two values. |
 | `multi-question` | `types/multi-question.njk` | Shared context + multiple sub-questions, each validated on Enter. |
 | `mcq` | `types/mcq.njk` | Multiple choice — click the correct answer among 3-5 shuffled choices. |
+| `ruler` | `types/ruler.njk` | Graduated ruler with markers — read a value. SVG via `rulerSvg` getter. |
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
 
@@ -90,6 +91,13 @@ choices:                   # mcq (shuffled at build time)
   - "correct answer"
   - "wrong 1"
   - "wrong 2"
+min: 0                     # ruler — range start (integer)
+max: 10                    # ruler — range end (integer)
+divisions: 10              # ruler — divisions per unit
+subdivisions: 0            # ruler — optional subdivisions per division
+markers:                   # ruler — labeled points on the ruler
+  - label: "A"
+    value: 2.7
 context: "267 543 109"     # multi-question shared context
 questions:                 # multi-question
   - text: "Sub-question?"

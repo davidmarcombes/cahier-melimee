@@ -400,6 +400,19 @@ module.exports = function (eleventyConfig) {
           });
         }
 
+        if (ex.data.type === 'ruler') {
+          item.ruler = {
+            min: Number(interpolate(String(ex.data.min ?? 0))),
+            max: Number(interpolate(String(ex.data.max ?? 10))),
+            divisions: Number(interpolate(String(ex.data.divisions ?? 1))),
+            subdivisions: Number(interpolate(String(ex.data.subdivisions ?? 0))),
+            markers: (ex.data.markers || []).map(m => ({
+              label: interpolate(String(m.label || '')),
+              value: Number(interpolate(String(m.value)))
+            }))
+          };
+        }
+
         if (ex.data.type === 'convert' && ex.data.items) {
           item.convert = {
             items: ex.data.items.map(it => ({
@@ -472,14 +485,14 @@ module.exports = function (eleventyConfig) {
   });
 
   // Collect per-page size breakdown for the post-build report
-  const pageSizes = [];
+  const pageSizeMap = new Map();
   eleventyConfig.addTransform('sizeReport', function (content, outputPath) {
     if (outputPath && outputPath.endsWith('.html')) {
       const total = Buffer.byteLength(content, 'utf8');
       const measure = (re) => (content.match(re) || [])
         .reduce((sum, m) => sum + Buffer.byteLength(m, 'utf8'), 0);
 
-      pageSizes.push({
+      pageSizeMap.set(outputPath, {
         path: outputPath,
         kb: (total / 1024).toFixed(1),
         svgBytes: measure(/<svg[\s\S]*?<\/svg>/gi),
@@ -512,6 +525,7 @@ module.exports = function (eleventyConfig) {
       console.warn('');
     }
 
+    const pageSizes = [...pageSizeMap.values()];
     const sorted = pageSizes.sort((a, b) => b.kb - a.kb);
     const fmt = b => (b / 1024).toFixed(1) + 'k';
     const row = ({ path: p, kb, svgBytes, jsBytes, imgBytes, cssBytes }) => {

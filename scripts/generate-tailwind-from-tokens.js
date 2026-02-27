@@ -21,13 +21,22 @@ const tailwindColors = {};
 const lightVars = [];
 const darkVars = [];
 
+// Short CSS variable names to reduce output size
+const varAliases = {
+  'surface-default': 'sf',
+  'surface-chrome': 'sc',
+  'surface-subtle': 'ss',
+  'content-default': 'ct',
+  'content-subtle': 'cs',
+};
+
 function processColors(obj, prefix = '') {
   for (const [key, value] of Object.entries(obj)) {
     const fullKey = prefix ? `${prefix}-${key}` : key;
 
     if (typeof value === 'object' && value.light && value.dark) {
-      // Dynamic color (Semantic)
-      const varName = `--color-${fullKey}`;
+      // Dynamic color (Semantic) — use short alias if available
+      const varName = `--${varAliases[fullKey] || 'color-' + fullKey}`;
       lightVars.push(`${varName}: ${value.light};`);
       darkVars.push(`${varName}: ${value.dark};`);
 

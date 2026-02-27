@@ -66,6 +66,26 @@ const generators = {
             const b = rand(params.minB ?? 1, params.maxB ?? 5);
             return { type: 'number-check', operation: `${a} - ${b}`, answers: [String(a - b)] };
         }
+    },
+
+    ruler: {
+        generate: (params = {}) => {
+            const min = params.min ?? 0;
+            const max = params.max ?? 10;
+            const divisions = params.divisions ?? 1;
+            const subdivisions = params.subdivisions ?? 0;
+            const label = params.label ?? 'A';
+            const step = subdivisions > 0 ? 1 / (divisions * subdivisions) : 1 / divisions;
+            const totalSteps = Math.round((max - min) / step);
+            const idx = rand(1, totalSteps - 1);
+            const value = Math.round((min + idx * step) * 10000) / 10000;
+            const answer = Number.isInteger(value) ? String(value) : String(value).replace('.', ',');
+            return {
+                type: 'ruler', title: `Lis la valeur indiqu\u00e9e par ${label}`,
+                ruler: { min, max, divisions, subdivisions, markers: [{ label, value }] },
+                answers: [answer]
+            };
+        }
     }
 };
 
