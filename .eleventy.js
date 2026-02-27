@@ -3,6 +3,7 @@ const Image = require('@11ty/eleventy-img');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+const pathPrefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
 // HTML minification using html-minifier-terser
 const htmlmin = require('html-minifier-terser');
 const UpgradeHelper = require("@11ty/eleventy-upgrade-help");
@@ -30,6 +31,7 @@ module.exports = function (eleventyConfig) {
   );
 
   // Passthrough static assets
+  eleventyConfig.addPassthroughCopy({ 'src/.htaccess': '.htaccess' });
   // Copy everything under src/assets so we can reference it at /assets/…
   eleventyConfig.addPassthroughCopy({ 'src/assets': 'assets' });
   // Some browsers/OSes also look for icons at the site root; make sure
@@ -51,7 +53,7 @@ module.exports = function (eleventyConfig) {
       widths: [320, 640, 1024, 1600],
       formats: ['avif', 'webp', 'png'],
       outputDir: './_site/assets/images/',
-      urlPath: '/assets/images/'
+      urlPath: `${pathPrefix}/assets/images/`
     });
 
     let imageAttributes = {
@@ -67,7 +69,7 @@ module.exports = function (eleventyConfig) {
 
   // Shortcode for inline emojis/icons (SVG, GIF, PNG)
   eleventyConfig.addShortcode('emoji', function (name, alt = '') {
-    return `<img src="/assets/images/${name}" alt="${alt}" class="emoji" loading="lazy" decoding="async">`;
+    return `<img src="${pathPrefix}/assets/images/${name}" alt="${alt}" class="emoji" loading="lazy" decoding="async">`;
   });
 
   // Basic passthrough copy for fonts
@@ -588,6 +590,7 @@ module.exports = function (eleventyConfig) {
   });
 
   return {
+    pathPrefix: process.env.PATH_PREFIX || '/',
     dir: {
       input: 'src',
       output: '_site',

@@ -1,6 +1,6 @@
 <header class="border-b bg-surface-chrome" x-data="{ mobileOpen: false }">
   <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-    <a href="/fr" class="flex items-center gap-2 shrink-0">
+    <a href="{{ '/fr' | url }}" class="flex items-center gap-2 shrink-0">
       {% image "src/assets/images/logo.png", site.title + " logo", "2rem", "h-8 w-auto", "eager" %}
       <span class="font-semibold text-sm sm:text-base">{{ site.title }}</span>
     </a>
@@ -8,7 +8,7 @@
     {# Desktop nav #}
     <nav class="hidden md:flex items-center gap-4">
       {% for item in navigation[lang or 'fr'] %}
-        <a href="{{ item.url }}"
+        <a href="{{ item.url | url }}"
            {% if page.url == item.url %}aria-current="page"{% endif %}
            class="text-sm hover:text-primary-500 transition-colors">{{ item.text }}</a>
       {% endfor %}
@@ -47,7 +47,7 @@
     class="md:hidden border-t border-slate-200 dark:border-slate-700 bg-surface-chrome px-4 py-3"
   >
     {% for item in navigation[lang or 'fr'] %}
-      <a href="{{ item.url }}"
+      <a href="{{ item.url | url }}"
          {% if page.url == item.url %}aria-current="page"{% endif %}
          @click="mobileOpen = false"
          class="block py-3 text-sm text-content-default hover:text-primary-500 transition-colors">{{ item.text }}</a>

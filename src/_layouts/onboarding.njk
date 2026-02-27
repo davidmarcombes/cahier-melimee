@@ -129,7 +129,7 @@ needsPocketBase: true
         <h2 class="text-3xl font-bold mb-4">Bienvenue, <span class="text-primary-600 dark:text-primary-400" x-text="selectedIdentity?.name"></span> !</h2>
         <p class="text-lg text-content-subtle mb-10">Ton cahier est prêt. Tu peux maintenant commencer tes exercices.</p>
         
-        <a :href="'/cahier/' + slug" class="inline-block px-10 py-4 bg-primary-500 text-white text-lg font-bold rounded-2xl shadow-xl hover:bg-primary-600 transition-all transform hover:scale-105 active:scale-95">
+        <a :href="(window.__pathPrefix || '/') + 'cahier/' + slug" class="inline-block px-10 py-4 bg-primary-500 text-white text-lg font-bold rounded-2xl shadow-xl hover:bg-primary-600 transition-all transform hover:scale-105 active:scale-95">
           Accéder à mon cahier
         </a>
       </div>

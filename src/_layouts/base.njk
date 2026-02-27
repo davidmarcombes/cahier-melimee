@@ -9,9 +9,9 @@
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
 
     <!-- Favicons & social images -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/x-icon" sizes="16x16" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ '/favicon-32x32.png' | url }}">
+    <link rel="icon" type="image/x-icon" sizes="16x16" href="{{ '/favicon.ico' | url }}">
+    <link rel="apple-touch-icon" href="{{ '/apple-touch-icon.png' | url }}">
     <meta name="theme-color" content="#ffffff">
 
     <!-- Open Graph / Twitter -->
@@ -22,12 +22,14 @@
     <meta name="twitter:card" content="summary_large_image" />
 
 
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="{{ '/css/styles.css' | url }}">
     <style>[x-cloak] { display: none !important; }</style>
 
+    <!-- Path prefix for JS runtime fetches -->
+    <script>window.__pathPrefix = '{{ '/' | url }}';</script>
     <!-- Dark mode initialization script — runs before styles so no flash of wrong theme on load -->
     <script>
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) 
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches))
       { document.documentElement.classList.add('dark'); }
     </script>
 
@@ -53,7 +55,7 @@
     <!-- PocketBase SDK (sync so it's available to inline Alpine components) -->
     <script src="https://unpkg.com/pocketbase@latest/dist/pocketbase.umd.js"></script>
     {% endif %}
-    <script defer src="/assets/js/app.js"></script>
+    <script defer src="{{ '/assets/js/app.js' | url }}"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     {% if needsPocketBase %}
     <script>

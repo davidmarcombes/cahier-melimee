@@ -97,14 +97,14 @@ needsPocketBase: true
       <div class="text-6xl mb-4">👋</div>
       <h2 class="text-2xl font-bold text-content-default mb-2">Content de te revoir !</h2>
       <p class="text-content-subtle mb-6" x-text="pupilRecord.username"></p>
-      <a :href="'/cahier/' + pupilRecord.slug" class="inline-block px-8 py-3 bg-primary-500 text-white font-bold rounded-xl shadow-md hover:bg-primary-600 transition-all active:scale-95">
+      <a :href="(window.__pathPrefix || '/') + 'cahier/' + pupilRecord.slug" class="inline-block px-8 py-3 bg-primary-500 text-white font-bold rounded-xl shadow-md hover:bg-primary-600 transition-all active:scale-95">
         Accéder à mon cahier
       </a>
     </div>
   </div>
 
   <p class="text-center mt-6 text-sm text-content-subtle">
-    Pas encore inscrit ? <a href="/fr/onboarding/" class="text-primary-500 hover:underline">Crée ton identité</a>
+    Pas encore inscrit ? <a href="{{ '/fr/onboarding/' | url }}" class="text-primary-500 hover:underline">Crée ton identité</a>
   </p>
 </div>
 

@@ -4,6 +4,9 @@
     "description": "Eleventy + Tailwind CSS + Alpine.js starter template",
     "scripts": {
         "help": "node -e \"const pkg=require('./package.json'); const fs=require('fs'); console.log('\\nAvailable npm scripts:'); Object.keys(pkg.scripts).sort().forEach(k=>console.log('  '+k)); console.log('\\nJavaScript tools (scripts/*.js):'); fs.readdirSync('scripts').filter(f=>f.endsWith('.js')).map(f=>f.replace(/\\.js$/, '')).sort().forEach(f=>console.log('  '+f));\"",
+        "env:dev": "node scripts/set-env.js dev",
+        "env:prod": "node scripts/set-env.js prod",
+        "env:test": "node scripts/set-env.js test",
         "start": "npm run dev",
         "dev": "npm run tokens && concurrently \"npm:dev:site\" \"npm:dev:css\"",
         "dev:site": "npm run tokens && eleventy --serve",
@@ -25,6 +28,8 @@
         "test:auth": "node scripts/test-auth.js",
         "check:duplicates": "node scripts/check-duplicates.js",
         "validate:exercises": "node scripts/validate-exercises.js",
+        "slides": "npx @marp-team/marp-cli docs/slides.md --pdf --theme docs/marp_melimee.css -o docs/slides.pdf",
+        "serve:local": "node scripts/serve-subpath.js",
         "lint": "eslint . && prettier --check .",
         "format": "prettier --write ."
     },

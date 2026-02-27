@@ -6,6 +6,7 @@
 section {
   position: relative;
   font-family: 'Outfit', sans-serif;
+  padding-top: 130px;
   background-color: #fcfaf5;
   /* Subtle paper/parchment tint */
   background-image: radial-gradient(#d1d1d1 0.5px, transparent 0.5px);
@@ -46,20 +47,25 @@ section::after {
 }
 
 section h1 {
+  position: absolute;
+  top: 55px;
+  left: 70px;
+  right: 70px;
+  margin: 0 0 0 0;
   color: #2a85bf;
   font-size: 2.0rem;
-  margin-bottom: 10px;
 }
 
 /* Accent line under H1 */
 section h1::after {
   content: "";
   display: block;
-  width: 120px;
+  width: 200px;
   height: 5px;
-  background: #2a85bf;
+  background: linear-gradient(to right, #2a85bf, #ffffff);
   border-radius: 10px;
   margin-top: 8px;
+  margin-bottom: 20px;
 }
 
 section h2 {

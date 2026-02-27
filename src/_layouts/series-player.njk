@@ -15,7 +15,7 @@ needsPocketBase: true
 {% for ex in exercises %}{% if ex.data.generator %}{% set hasGenerators = true %}{% endif %}{% endfor %}
 
 {% if hasGenerators %}
-<script src="/assets/js/generators.js"></script>
+<script src="{{ '/assets/js/generators.js' | url }}"></script>
 {% endif %}
 
 {% if 'base-10' in usedTypes %}{% include "svg-defs.njk" %}{% endif %}
@@ -27,7 +27,7 @@ needsPocketBase: true
 >
   {# Series header #}
   <div class="flex items-center justify-between mb-4 text-sm">
-    <a href="/fr/exercices/" class="text-slate-400 hover:text-primary-500 transition-colors text-lg" aria-label="Retour aux exercices">&#x2B05;&#xFE0F;</a>
+    <a href="{{ '/fr/exercices/' | url }}" class="text-slate-400 hover:text-primary-500 transition-colors text-lg" aria-label="Retour aux exercices">&#x2B05;&#xFE0F;</a>
     <span class="text-slate-400" x-text="(currentIndex + 1) + ' / ' + exercises.length"></span>
   </div>
 
@@ -154,7 +154,7 @@ needsPocketBase: true
           class="px-6 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-all active:scale-95">
           Recommencer
         </button>
-        <a href="/fr/exercices/" class="px-6 py-2 border border-slate-300 dark:border-slate-600 text-content-default rounded-xl hover:bg-surface-subtle transition-all">
+        <a href="{{ '/fr/exercices/' | url }}" class="px-6 py-2 border border-slate-300 dark:border-slate-600 text-content-default rounded-xl hover:bg-surface-subtle transition-all">
           Retour aux exercices
         </a>
       </div>

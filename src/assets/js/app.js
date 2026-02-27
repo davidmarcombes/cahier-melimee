@@ -340,14 +340,15 @@ document.addEventListener('alpine:init', () => {
       if (cached) {
         try {
           const d = JSON.parse(cached);
-          if (Array.isArray(d) && d.length && d[0].title) { this.data = d; return; }
+          const prefix = window.__pathPrefix || '/';
+          if (Array.isArray(d) && d.length && d[0].title && d[0].seriesUrl && d[0].seriesUrl.startsWith(prefix)) { this.data = d; return; }
           sessionStorage.removeItem('ex');
         } catch(e) { sessionStorage.removeItem('ex'); }
       }
 
       this.loading = true;
       try {
-        const res = await fetch('/fr/exercices/data.csv');
+        const res = await fetch((window.__pathPrefix || '/') + 'fr/exercices/data.csv');
         if (!res.ok) { console.error('CSV fetch failed:', res.status); this.loading = false; return; }
         const text = await res.text();
         const rows = text.replace(/\r/g, '').trim().split('\n');
@@ -357,7 +358,7 @@ document.addEventListener('alpine:init', () => {
           return {
             id, level: LEVELS[l] || l, subject: s, topic: t, title,
             difficulty: DIFFS[d] || d,
-            seriesUrl: '/fr/' + (FOLDERS[f] || 'exercices') + '/' + id + '/'
+            seriesUrl: (window.__pathPrefix || '/') + 'fr/' + (FOLDERS[f] || 'exercices') + '/' + id + '/'
           };
         });
         sessionStorage.setItem('ex', JSON.stringify(this.data));

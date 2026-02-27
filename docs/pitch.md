@@ -6,6 +6,15 @@ html: true
 
 ---
 
+<!-- 
+Theme CSS: docs/marp_melimee.css
+Registered in .vscode/settings.json via markdown.marp.themes 
+{
+  "markdown.marp.themes": [
+    "./docs/marp_melimee.css"
+  ]
+}
+-->
 # Le Cahier de Mélimée
 
 ### **Des exercices gratuits, sans pub, sans tracking…  avec Salto !** 
@@ -82,7 +91,7 @@ Apprendre, c’est comprendre… puis s’entraîner régulièrement
 
 ### **Une stack légère et open source**
 - **Frontend** : Site statique (11ty) + Alpine.js pour l’interactivité.
-- **Backend** : PocketBase (pour la gestion des exercices/progression).
+- **Backend** : PocketBase (identité anonyme et suivi de progression).
 - **Hors ligne** : Tout est téléchargeable (ZIP avec base de données locale).
 - **Illustrations** : Salto et Mélimée en SVG pour un rendu léger.
 
@@ -95,7 +104,7 @@ Apprendre, c’est comprendre… puis s’entraîner régulièrement
 # **Prochaines Étapes 🚀**
 
 ### **Où en est le projet ?**
-- [x] Prototype exercices fonctionnel.
+- [x] Prototype exercices fonctionnel (51 séries, 17 types, du CP au CM2).
 - [x] Prototype backend et inscription.
 - [x] Design minimaliste et mascotte Salto.
 - [ ] **Finaliser la version bêta** (tests utilisateurs).
@@ -109,6 +118,7 @@ Apprendre, c’est comprendre… puis s’entraîner régulièrement
 ### **Au début les maths**
 🔹 Large banque d'exercices
 🔹 Progressivement du CP au collège
+🔹 Version hors ligne
 
 ### **Ensuite parcours utilisateur**
 🔹 Valorisation des efforts, système de points, progression

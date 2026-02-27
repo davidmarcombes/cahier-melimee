@@ -6,14 +6,14 @@ eleventyExcludeFromCollections: true
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=/fr/">
+    <meta http-equiv="refresh" content="0; url={{ '/fr/' | url }}">
     <title>Redirection...</title>
-    <link rel="canonical" href="/fr/">
+    <link rel="canonical" href="{{ '/fr/' | url }}">
     <script>
-        window.location.href = "/fr/";
+        window.location.href = "{{ '/fr/' | url }}";
     </script>
 </head>
 <body>
-    <p>Redirection vers <a href="/fr/">le Cahier de Mélimée</a>...</p>
+    <p>Redirection vers <a href="{{ '/fr/' | url }}">le Cahier de Mélimée</a>...</p>
 </body>
 </html>
