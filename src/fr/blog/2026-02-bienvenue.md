@@ -1,25 +1,29 @@
 ---
-title: "Bienvenue sur le Cahier de Mélimée"
+title: "Le Cahier de Mélimée est en ligne !"
 date: 2026-02-16
-description: "Le cahier d'exercices anonyme et souverain est en ligne. Découvrez le projet."
+description: "Des exercices de maths gratuits, sans pub, sans tracking, du CP à la 3e. Salto est prêt, et toi ?"
 ---
 
-Le Cahier de Mélimée est en ligne !
+Le Cahier de Mélimée est en ligne, et Salto n'attend que toi !
 
-## Un cahier pas comme les autres
+## Pourquoi ce cahier ?
 
-Pas de compte, pas de pub, pas de tracking. Juste des exercices du CP à la 3e, accessibles à tous, gratuitement.
+Les écarts se creusent, les outils en ligne coûtent cher ou sont bourrés de pubs. On s'est dit : pourquoi ne pas construire quelque chose de mieux ?
 
-Chaque élève choisit un pseudonyme, résout des exercices et progresse à son rythme — sans jamais donner son nom, son email ou son âge.
+Le Cahier de Mélimée, c'est simple : des exercices de maths du CP à la 3e, alignés sur les programmes. Pas de compte, pas de pub, pas de tracking. Tu choisis un pseudonyme, tu t'entraînes, tu progresses -- sans jamais donner ton nom, ton email ou ton âge.
 
-## Open source et souverain
+## La méthode
 
-Le code est ouvert sous licence EUPL v1.2. Hébergé en France, sans dépendance aux GAFAM. Toute contribution est bienvenue : exercices, code, design ou relecture.
+Des exercices courts et ciblés, un objectif précis par session. L'idée, c'est de pratiquer un peu chaque jour -- 5 à 15 minutes suffisent. L'erreur n'est pas une sanction, c'est un repère. Chacun avance à son rythme.
+
+## Gratuit, ouvert, souverain
+
+Pas d'abonnement, pas de mode premium, pas de business model toxique. Le code est ouvert sous licence EUPL v1.2, hébergé en France, sans dépendance aux GAFAM. Tout est vérifiable, rien n'est caché.
 
 ## Ce qui arrive
 
-- De nouvelles séries d'exercices en maths
-- Un système de progression pour suivre ses résultats
-- Des exercices interactifs avec de nouveaux types de questions
+- Une large banque d'exercices de maths, du CP au collège
+- Un système de progression pour valoriser les efforts
+- Une version hors ligne, téléchargeable en un clic
 
-A bientôt !
+Envie de participer ? Tout est sur [GitHub](https://github.com/davidmarcombes/cahier-melimee) -- développeurs, enseignants, designers, testeurs, contradicteurs : Salto cherche des complices !
