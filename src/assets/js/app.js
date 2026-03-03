@@ -28,6 +28,14 @@ function seriesPlayer(exercises) {
     mqErrors: [],
     mcqSelected: null,
     mcqWrong: null,
+    testMode: new URLSearchParams(window.location.search).has('test'),
+    exerciseFlags: exercises.map(() => false),
+    showValidationPanel: false,
+    testerName: '',
+    testNotes: '',
+    testSending: false,
+    testSent: false,
+    testError: '',
 
     /* Fraction Helpers */
     get fractionShapes() {
@@ -165,6 +173,7 @@ function seriesPlayer(exercises) {
       if (this.cur.statements) { this.tfInputs = this.cur.statements.map(() => null) }
       if (this.cur.comparisons) { this.cmpInputs = this.cur.comparisons.map(() => null) }
       if (this.cur.mqQuestions) { this.mqInputs = this.cur.mqQuestions.map(() => ''); this.mqSolved = this.cur.mqQuestions.map(() => false) }
+      if (this.testMode) { this.$watch('allSolved', v => { if (v) this.showValidationPanel = true; }); }
     },
     get cur() { return this.exercises[this.currentIndex] || {} },
     get solved() { return this.solvedFlags[this.currentIndex] },
@@ -286,6 +295,36 @@ function seriesPlayer(exercises) {
       if (this.solved) return;
       if (i === this.cur.mcqAnswer) { this.mcqSelected = i; this.mcqWrong = null; this.solvedFlags[this.currentIndex] = true; this.showError = false; if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) } }
       else { this.mcqWrong = i; this.mcqSelected = null; setTimeout(() => { this.mcqWrong = null }, 1500) }
+    },
+
+    toggleFlag(i) { this.exerciseFlags[i] = !this.exerciseFlags[i]; },
+
+    async submitValidation() {
+      if (!this.testerName.trim()) return;
+      this.testSending = true;
+      this.testError = '';
+      const live = await window.__pbAvailable();
+      if (!live) {
+        this.testError = 'Mode démo — la validation n\'a pas été envoyée.';
+        this.testSending = false;
+        return;
+      }
+      try {
+        const pb = new PocketBase(window.__pbUrl);
+        const seriesId = window.location.pathname.replace(/\/$/, '').split('/').pop();
+        await pb.collection('validations').create({
+          series_id: seriesId,
+          tester: this.testerName.trim(),
+          exercise_flags: this.exerciseFlags.map((f, i) => ({ ex: i + 1, status: f ? 'problem' : 'ok' })),
+          notes: this.testNotes.trim()
+        });
+        this.testSent = true;
+      } catch (err) {
+        this.testError = 'Erreur d\'envoi. Réessayez.';
+        console.error(err);
+      } finally {
+        this.testSending = false;
+      }
     },
 
     mqCheck(i) {

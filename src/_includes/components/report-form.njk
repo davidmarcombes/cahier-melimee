@@ -56,7 +56,7 @@ function reportForm() {
     async submit() {
       this.error = '';
       this.sending = true;
-      const live = await window.__pbAvailable;
+      const live = await window.__pbAvailable();
       if (!live) {
         this.error = 'Mode démo — le signalement n\u2019a pas été envoyé.';
         this.sending = false;

@@ -37,6 +37,18 @@ needsPocketBase: true
          :style="'width:' + Math.round((solvedCount / exercises.length) * 100) + '%'"></div>
   </div>
 
+  {# Test mode banner #}
+  <div x-show="testMode"
+       class="mb-4 flex items-center justify-between px-4 py-2 rounded-xl
+              bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700
+              text-amber-800 dark:text-amber-300 text-sm font-medium">
+    <span>🔍 Mode test</span>
+    <button @click="showValidationPanel = true"
+            class="px-3 py-1 rounded-lg bg-amber-200 dark:bg-amber-800 hover:bg-amber-300 dark:hover:bg-amber-700 transition-colors text-xs font-semibold">
+      Valider la série
+    </button>
+  </div>
+
   {# Exercise title #}
   <h1 class="text-2xl font-bold text-content-default mb-4 text-center" x-text="cur.title"></h1>
 
@@ -57,6 +69,17 @@ needsPocketBase: true
   {% if 'fraction' in usedTypes %}{% include "types/fraction.njk" %}{% endif %}
   {% if 'base-10' in usedTypes %}{% include "types/base-10.njk" %}{% endif %}
   {% if 'ruler' in usedTypes %}{% include "types/ruler.njk" %}{% endif %}
+
+  {# Test mode — per-exercise flag #}
+  <div x-show="testMode" class="flex justify-end mt-3 mb-2">
+    <button @click="toggleFlag(currentIndex)"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all"
+            :class="exerciseFlags[currentIndex]
+              ? 'border-red-400 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+              : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:border-red-300 hover:text-red-500'">
+      <span x-text="exerciseFlags[currentIndex] ? '⚠️ Problème signalé' : '✓ OK'"></span>
+    </button>
+  </div>
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -158,6 +181,53 @@ needsPocketBase: true
           Retour aux exercices
         </a>
       </div>
+    </div>
+  </div>
+
+  {# Test mode — validation panel #}
+  <div x-show="testMode && showValidationPanel"
+       x-transition
+       class="mt-6 p-5 rounded-2xl border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 space-y-4">
+
+    <h2 class="font-bold text-amber-900 dark:text-amber-200 text-lg">Validation de la série</h2>
+
+    <div x-show="exerciseFlags.some(f => f)"
+         class="text-sm text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-2">
+      <span x-text="exerciseFlags.filter(Boolean).length + ' exercice(s) signalé(s) : '"></span>
+      <template x-for="(flag, i) in exerciseFlags" :key="i">
+        <span x-show="flag" class="font-mono mr-1" x-text="'#' + (i + 1)"></span>
+      </template>
+    </div>
+    <div x-show="!exerciseFlags.some(f => f)"
+         class="text-sm text-green-700 dark:text-green-300">
+      ✓ Aucun exercice signalé
+    </div>
+
+    <div class="space-y-3" x-show="!testSent">
+      <input type="text"
+             x-model="testerName"
+             placeholder="Votre nom ou e-mail *"
+             class="w-full px-4 py-2 text-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400
+                    bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-content-default" />
+      <textarea x-model="testNotes"
+                placeholder="Notes (optionnel)…"
+                rows="3"
+                class="w-full px-4 py-2 text-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none
+                       bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-content-default"></textarea>
+      <button @click="submitValidation()"
+              :disabled="!testerName.trim() || testSending"
+              class="w-full py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95
+                     bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed">
+        <span x-show="!testSending">Envoyer la validation</span>
+        <span x-show="testSending">Envoi…</span>
+      </button>
+      <p x-show="testError" x-text="testError"
+         class="text-red-600 dark:text-red-400 text-sm text-center"></p>
+    </div>
+
+    <div x-show="testSent"
+         class="text-green-700 dark:text-green-300 text-center font-semibold text-sm">
+      ✅ Validation envoyée !
     </div>
   </div>
 
