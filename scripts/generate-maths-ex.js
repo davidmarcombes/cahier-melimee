@@ -1,25 +1,67 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { program } = require('commander');
-const inquirer = require('inquirer').default || require('inquirer');
+const { program, Option } = require('commander');
+const { select, input, number: numberPrompt, Separator } = require('@inquirer/prompts');
 
 // ---------------------------------------------------------------------------
-// CLI options
+// Allowed values for choice-based parameters
 // ---------------------------------------------------------------------------
-program
-  .option('-m, --mode <mode>', 'exercice or application')
-  .option('-t, --type <type>', "Type d'exercice")
-  .option('-c, --category <category>', 'Catégorie (ex: operations, logique)')
-  .option('-l, --level <level>', 'Niveau (cp, ce1, etc.)')
-  .option('-n, --name <name>', "Nom de l'exercice (slug)")
-  .option('-d, --difficulty <difficulty>', 'Difficulté (facile, moyen, difficile)')
-  .option('-i, --count <number>', 'Nombre de fichiers MD', parseInt)
-  .option('-g, --generator <name>', 'Nom du générateur (mode application)')
-  .option('-r, --repeat <number>', "Nombre d'exercices générés à l'exécution", parseInt)
-  .parse(process.argv);
+const MODES = ['exercice', 'application'];
 
-const options = program.opts();
+// Descriptive labels for interactive prompts
+const LEVEL_CHOICES = [
+  { name: 'CP  — Cours Préparatoire', value: 'cp' },
+  { name: 'CE1 — Cours Élémentaire 1', value: 'ce1' },
+  { name: 'CE2 — Cours Élémentaire 2', value: 'ce2' },
+  { name: 'CM1 — Cours Moyen 1', value: 'cm1' },
+  { name: 'CM2 — Cours Moyen 2', value: 'cm2' },
+  { name: '6e  — Sixième', value: '6e' },
+];
+const LEVELS = LEVEL_CHOICES.map((c) => c.value);
+const CATEGORY_CHOICES = [
+  { name: 'Numération      — Écriture, lecture, décomposition des nombres', value: 'numeration' },
+  { name: 'Opérations      — Addition, soustraction, multiplication, division', value: 'operations' },
+  { name: 'Nombres         — Comparaison, rangement, encadrement', value: 'nombres' },
+  { name: 'Fractions       — Parts, partages, représentations', value: 'fractions' },
+  { name: 'Mesures         — Longueurs, masses, durées, contenances', value: 'mesures' },
+  { name: 'Géométrie       — Formes, solides, symétrie, repérage, théorèmes', value: 'geometrie' },
+  { name: 'Problèmes       — Résolution de problèmes', value: 'problemes' },
+  { name: 'Logique         — Raisonnement, suites, grilles', value: 'logique' },
+  { name: 'Algèbre         — Calcul littéral, équations, fonctions', value: 'algebre' },
+  { name: 'Espace          — Solides, volumes, repérage 3D', value: 'espace' },
+  { name: 'Transformations — Symétries, translation, rotation, homothétie', value: 'transforms' },
+  { name: 'Proportions     — Pourcentages, échelles, vitesse, ratios', value: 'proportions' },
+  { name: 'Données         — Statistiques, graphiques, probabilités', value: 'donnees' },
+  { name: 'Algorithmes     — Raisonnement, programmation', value: 'algorithmes' },
+  { name: 'Autre           — Autres type', value: 'autre' },
+];
+const CATEGORIES = CATEGORY_CHOICES.map((c) => c.value).filter((v) => v !== 'Autre');
+
+const DIFFICULTY_CHOICES = [
+  { name: '⭐ Facile', value: 'facile' },
+  { name: '⭐⭐ Moyen', value: 'moyen' },
+  { name: '⭐⭐⭐ Difficile', value: 'difficile' },
+];
+const DIFFICULTIES = DIFFICULTY_CHOICES.map((c) => c.value);
+
+const TYPE_CHOICES = [
+  { name: 'number-check    — Vérifier un calcul (vrai/faux)', value: 'number-check' },
+  { name: 'problem         — Problème avec réponse libre', value: 'problem' },
+  { name: 'matching        — Associer des paires', value: 'matching' },
+  { name: 'pyramid         — Pyramide de nombres', value: 'pyramid' },
+  { name: 'sequence        — Compléter une suite', value: 'sequence' },
+  { name: 'bounding        — Encadrement de nombre', value: 'bounding' },
+  { name: 'convert         — Conversion d\'unités', value: 'convert' },
+  { name: 'logic-grid      — Grille de logique', value: 'logic-grid' },
+  { name: 'true-false      — Vrai ou faux', value: 'true-false' },
+  { name: 'compare         — Comparer deux nombres', value: 'compare' },
+  { name: 'multi-question  — Questions sur un contexte', value: 'multi-question' },
+  { name: 'mcq             — QCM (choix multiples)', value: 'mcq' },
+  { name: 'fraction        — Représentation de fraction', value: 'fraction' },
+  { name: 'base-10         — Décomposition en base 10', value: 'base-10' },
+  { name: 'clock           — Lire l\'heure', value: 'clock' },
+];
 
 // ---------------------------------------------------------------------------
 // Static exercise templates (empty shells)
@@ -43,6 +85,25 @@ const TEMPLATES = {
   'base-10': 'number: \nanswer: ""',
   clock: 'hour: \nminute: \nanswer: ""',
 };
+
+const TYPES = Object.keys(TEMPLATES);
+
+// ---------------------------------------------------------------------------
+// CLI options
+// ---------------------------------------------------------------------------
+program
+  .addOption(new Option('-m, --mode <mode>', 'Mode').choices(MODES))
+  .addOption(new Option('-l, --level <level>', 'Niveau scolaire').choices(LEVELS))
+  .addOption(new Option('-c, --category <category>', 'Catégorie').choices([...CATEGORIES, 'Autre']))
+  .addOption(new Option('-d, --difficulty <difficulty>', 'Difficulté').choices(DIFFICULTIES))
+  .addOption(new Option('-t, --type <type>', "Type d'exercice").choices(TYPES))
+  .option('-n, --name <name>', "Nom de l'exercice (slug)")
+  .option('-i, --count <number>', 'Nombre de fichiers MD', parseInt)
+  .option('-g, --generator <name>', 'Nom du générateur (mode application)')
+  .option('-r, --repeat <number>', "Nombre d'exercices générés à l'exécution", parseInt)
+  .parse(process.argv);
+
+const options = program.opts();
 
 // ---------------------------------------------------------------------------
 // Available generators (read dynamically from generators.js)
@@ -116,158 +177,116 @@ function getUniqueDirPath(basePath) {
 async function run() {
   const genNames = getAvailableGenerators();
 
-  const answers = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'mode',
-      message: 'Quel mode ?',
-      choices: [
-        { name: 'Exercice (contenu statique)', value: 'exercice' },
-        { name: 'Application (générateur dynamique)', value: 'application' },
-      ],
-      when: !options.mode,
-    },
-    // --- common questions ---
-    {
-      type: 'list',
-      name: 'level',
-      message: 'Niveau scolaire :',
-      choices: ['cp', 'ce1', 'ce2', 'cm1', 'cm2', '6e'],
-      when: !options.level,
-    },
-    {
-      type: 'list',
-      name: 'category',
-      message: 'Quelle catégorie ?',
-      choices: ['logique', 'operations', 'numeration', 'fraction', 'mesure', 'Autre'],
-      when: !options.category,
-    },
-    {
-      type: 'input',
-      name: 'customCategory',
-      message: 'Saisissez la catégorie :',
-      when: (h) => h.category === 'Autre' || options.category === 'Autre',
-    },
-    {
-      type: 'input',
-      name: 'name',
-      message: "Nom de la série (slug-name) :",
-      when: !options.name,
-      validate: (v) =>
-        /^[a-z0-9-]+$/.test(v) ||
-        'Utilisez uniquement des lettres minuscules, chiffres et tirets (ex: addition-simple)',
-    },
-    {
-      type: 'list',
-      name: 'difficulty',
-      message: 'Difficulté :',
-      choices: ['facile', 'moyen', 'difficile'],
-      when: !options.difficulty,
-    },
-    // --- exercice-specific ---
-    {
-      type: 'list',
-      name: 'type',
-      message: "Quel type d'exercice ?",
-      choices: Object.keys(TEMPLATES),
-      when: (h) => (h.mode || options.mode) === 'exercice' && !options.type,
-    },
-    {
-      type: 'number',
-      name: 'count',
-      message: "Nombre de fichiers à créer :",
-      default: 1,
-      when: (h) => (h.mode || options.mode) === 'exercice' && !options.count,
-      validate: (v) =>
-        (Number.isInteger(v) && v > 0) || 'Le nombre doit être un entier supérieur à 0',
-    },
-    // --- application-specific ---
-    {
-      type: 'list',
-      name: 'type',
-      message: "Type d'exercice généré :",
-      choices: Object.keys(TEMPLATES),
-      when: (h) => (h.mode || options.mode) === 'application' && !options.type,
-    },
-    {
-      type: 'list',
-      name: 'generator',
+  // --- mode ---
+  const mode = options.mode || await select({
+    message: 'Quel mode ?',
+    choices: [
+      { name: 'Exercice (contenu statique)', value: 'exercice' },
+      { name: 'Application (générateur dynamique)', value: 'application' },
+    ],
+  });
+
+  // --- common questions ---
+  const level = options.level || await select({
+    message: 'Niveau scolaire :',
+    choices: LEVEL_CHOICES,
+  });
+
+  let category = options.category || await select({
+    message: 'Quelle catégorie ?',
+    choices: CATEGORY_CHOICES,
+  });
+  if (category === 'Autre') {
+    category = await input({ message: 'Saisissez la catégorie :' });
+  }
+
+  const name = options.name || await input({
+    message: 'Nom de la série (slug-name) :',
+    validate: (v) =>
+      /^[a-z0-9-]+$/.test(v) ||
+      'Utilisez uniquement des lettres minuscules, chiffres et tirets (ex: addition-simple)',
+  });
+
+  const difficulty = options.difficulty || await select({
+    message: 'Difficulté :',
+    choices: DIFFICULTY_CHOICES,
+  });
+
+  // --- type (common to both modes) ---
+  const type = options.type || await select({
+    message: mode === 'application' ? "Type d'exercice généré :" : "Quel type d'exercice ?",
+    choices: TYPE_CHOICES,
+  });
+
+  // --- count ---
+  const count = options.count || await numberPrompt({
+    message: mode === 'application' ? 'Nombre de fichiers .md (variantes) :' : 'Nombre de fichiers à créer :',
+    default: 1,
+    validate: (v) =>
+      (Number.isInteger(v) && v > 0) || 'Le nombre doit être un entier supérieur à 0',
+  });
+
+  // --- application-specific ---
+  let generator;
+  let repeat;
+  if (mode === 'application') {
+    const genChoices = genNames.length
+      ? [...genNames.map((g) => ({ name: g, value: g })), new Separator(), { name: 'Autre', value: 'Autre' }]
+      : [{ name: 'Autre', value: 'Autre' }];
+    generator = options.generator || await select({
       message: 'Quel générateur ?',
-      choices: genNames.length
-        ? [...genNames, new inquirer.Separator(), 'Autre']
-        : ['Autre'],
-      when: (h) => (h.mode || options.mode) === 'application' && !options.generator,
-    },
-    {
-      type: 'input',
-      name: 'customGenerator',
-      message: 'Nom du générateur (doit exister dans generators.js) :',
-      when: (h) => h.generator === 'Autre',
-      validate: (v) =>
-        /^[a-zA-Z][a-zA-Z0-9]*$/.test(v) || 'Utilisez un nom camelCase valide',
-    },
-    {
-      type: 'number',
-      name: 'repeat',
+      choices: genChoices,
+    });
+    if (generator === 'Autre') {
+      generator = await input({
+        message: 'Nom du générateur (doit exister dans generators.js) :',
+        validate: (v) =>
+          /^[a-zA-Z][a-zA-Z0-9]*$/.test(v) || 'Utilisez un nom camelCase valide',
+      });
+    }
+    repeat = options.repeat || await numberPrompt({
       message: "Nombre d'exercices générés à chaque chargement :",
       default: 10,
-      when: (h) => (h.mode || options.mode) === 'application' && !options.repeat,
       validate: (v) =>
         (Number.isInteger(v) && v > 0) || 'Le nombre doit être un entier supérieur à 0',
-    },
-    {
-      type: 'number',
-      name: 'count',
-      message: "Nombre de fichiers .md (variantes) :",
-      default: 1,
-      when: (h) => (h.mode || options.mode) === 'application' && !options.count,
-      validate: (v) =>
-        (Number.isInteger(v) && v > 0) || 'Le nombre doit être un entier supérieur à 0',
-    },
-  ]);
+    });
+  }
 
-  const data = { ...options, ...answers };
-  const mode = data.mode;
-  const finalCategory = data.customCategory || data.category;
-  const finalGenerator = data.customGenerator || data.generator;
-  const cleanTitle = data.name.replace(/-/g, ' ');
+  const cleanTitle = name.replace(/-/g, ' ');
 
   // Determine base directory
   const root = mode === 'application' ? '../src/fr/applications/' : '../src/fr/exercices/';
   const baseDir = path.resolve(__dirname, root);
   const targetDir = getUniqueDirPath(
-    path.join(baseDir, data.level, 'maths', finalCategory, data.name)
+    path.join(baseDir, level, 'maths', category, name)
   );
 
   fs.mkdirSync(targetDir, { recursive: true });
 
   // Generate a unique ID
   const existingIds = collectExistingIds();
-  const id = generateUniqueId(data.name, existingIds);
+  const id = generateUniqueId(name, existingIds);
   const timestamp = new Date().toISOString();
 
   // Write index.yaml
   const yamlContent = `id: "${id}"
 created_at: "${timestamp}"
 seriesTitle: "${cleanTitle}"
-difficulty: ${data.difficulty}
+difficulty: ${difficulty}
 `;
   fs.writeFileSync(path.join(targetDir, 'index.yaml'), yamlContent);
   console.log(`📋 Créé : index.yaml (id: ${id})`);
 
   // Write .md files
-  const count = data.count || 1;
-
   if (mode === 'application') {
     // Application mode: generator-based .md files
-    const repeat = data.repeat || 10;
     for (let i = 1; i <= count; i++) {
       const num = String(i).padStart(2, '0');
-      const fileName = `${num}-${data.name}.md`;
+      const fileName = `${num}-${name}.md`;
       const mdContent = `---
-type: ${data.type}
+type: ${type}
 title: "${cleanTitle}${count > 1 ? ' - ' + i : ''}"
-generator: "${finalGenerator}"
+generator: "${generator}"
 repeat: ${repeat}
 ---
 
@@ -277,12 +296,12 @@ repeat: ${repeat}
     }
   } else {
     // Exercise mode: static template .md files
-    const extraFields = TEMPLATES[data.type] || 'answer: ""';
+    const extraFields = TEMPLATES[type] || 'answer: ""';
     for (let i = 1; i <= count; i++) {
       const num = String(i).padStart(2, '0');
-      const fileName = `${num}-${data.name}.md`;
+      const fileName = `${num}-${name}.md`;
       const mdContent = `---
-type: ${data.type}
+type: ${type}
 title: "${cleanTitle}${count > 1 ? ' - ' + i : ''}"
 ${extraFields}
 ---

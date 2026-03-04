@@ -243,7 +243,8 @@ module.exports = function (eleventyConfig) {
         };
 
         // 4. Handle answers (can be single or array)
-        let answerRaw = ex.data.answer;
+        // Support both `answer` (singular) and `answers` (plural, for multi-blank operations)
+        let answerRaw = ex.data.answers || ex.data.answer;
         if (typeof answerRaw === 'string') answerRaw = interpolate(answerRaw);
         else if (Array.isArray(answerRaw)) answerRaw = answerRaw.map(a => typeof a === 'string' ? interpolate(a) : a);
 
@@ -298,6 +299,19 @@ module.exports = function (eleventyConfig) {
           }
           if (u > 0) currentX += uCols * 18;
           item.base10 = { ...b, markup: svg, width: currentX + 20 };
+        }
+
+        if (ex.data.svgImage) {
+          item.svgImage = {
+            generator: interpolate(String(ex.data.svgImage.generator)),
+            params: {}
+          };
+          if (ex.data.svgImage.params) {
+            for (const [k, v] of Object.entries(ex.data.svgImage.params)) {
+              const val = interpolate(String(v));
+              item.svgImage.params[k] = isNaN(val) ? val : Number(val);
+            }
+          }
         }
 
         if (ex.data.pairs) {

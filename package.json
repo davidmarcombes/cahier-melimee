@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Eleventy + Tailwind CSS + Alpine.js starter template",
     "scripts": {
-        "help": "node -e \"const pkg=require('./package.json'); const fs=require('fs'); console.log('\\nAvailable npm scripts:'); Object.keys(pkg.scripts).sort().forEach(k=>console.log('  '+k)); console.log('\\nJavaScript tools (scripts/*.js):'); fs.readdirSync('scripts').filter(f=>f.endsWith('.js')).map(f=>f.replace(/\\.js$/, '')).sort().forEach(f=>console.log('  '+f));\"",
+        "help": "node -e \"const cmds={dev:'Start dev server (site + CSS watch)',build:'Build for production','serve:local':'Serve built site locally',clean:'Remove _site build output',tokens:'Regenerate Tailwind design tokens','env:dev':'Switch to dev environment','env:prod':'Switch to prod environment','env:test':'Switch to test environment','db:start':'Start PocketBase server','db:admin':'Open PocketBase admin UI','generate:names':'Generate student names','generate:ids':'Generate student identities','generate:maths':'Generate math exercises','import:identities':'Import identities into PocketBase','validate:exercises':'Validate exercise YAML files',validate:'Validate project config','check:duplicates':'Check for duplicate entries',lint:'Run ESLint + Prettier checks',format:'Auto-format with Prettier',spellcheck:'Spellcheck markdown files',slides:'Build slides PDF','sim:server':'Start simulation server','test:auth':'Test PocketBase auth flow'}; console.log('\\nAvailable commands:\\n'); Object.entries(cmds).forEach(([k,v])=>console.log('  npm run '+k.padEnd(22)+v)); console.log();\"",
         "env:dev": "node scripts/set-env.js dev",
         "env:prod": "node scripts/set-env.js prod",
         "env:test": "node scripts/set-env.js test",
