@@ -17,7 +17,7 @@ Registered in .vscode/settings.json via markdown.marp.themes
 -->
 # Le Cahier de Mélimée
 
-### **Des exercices gratuits, sans pub, sans tracking…  avec Salto !** 
+### **Des exercices gratuits, sans pub, sans tracking…  avec Salto !**
 
 <center><br>
 
@@ -38,8 +38,7 @@ Registered in .vscode/settings.json via markdown.marp.themes
 ❌ **Jungle en ligne** – Tarifs, pubs, tracking, données, rien ne va.
 ❌ **Pour progresser il faut pratiquer** – Répéter encore et encore.
 <br>
-> **Plutôt que de constater...**, pourquoi ne pas agir et construire une plateforme qui peut aider les enfants à progresser. 
-
+> **Plutôt que de constater...**, pourquoi ne pas agir et construire une plateforme qui peut aider les enfants à progresser.
 
 ---
 
@@ -64,13 +63,14 @@ Registered in .vscode/settings.json via markdown.marp.themes
 🔹 **Pas de surcharge sensorielle** – Design épuré, sans animations stressantes.
 🔹 **Pas de business model toxique** – Pas de monétisation, pas de produits dérivés.
 🔹 **Pas de dépendance aux GAFAM** – Hébergement souverain, code open source.
-🔹 **Zéro barrière financière** – Gratuit et ouvert pour tous et pour toujours. 
+🔹 **Zéro barrière financière** – Gratuit et ouvert pour tous et pour toujours.
 🔹 **Ouvert et transparent** – Tout est vérifiable, rien n'est caché.
 🔹 **Avec Salto !** – Une mascotte bienveillante pour dédramatiser les erreurs.
 
 ---
 
-#  La méthode 🧠
+# La méthode 🧠
+
 Apprendre, c’est comprendre… puis s’entraîner régulièrement
 
 💙 Des exercices courts et ciblés → Un objectif précis par session (ex : tables de 6).
@@ -87,23 +87,26 @@ Apprendre, c’est comprendre… puis s’entraîner régulièrement
 
 ---
 
-# La Tech 🛠 
+# La Tech 🛠
 
 ### **Une stack légère et open source**
+
 - **Frontend** : Site statique (11ty) + Alpine.js pour l’interactivité.
 - **Backend** : PocketBase (identité anonyme et suivi de progression).
 - **Hors ligne** : Tout est téléchargeable (ZIP avec base de données locale).
 - **Illustrations** : Salto et Mélimée en SVG pour un rendu léger.
 
 ### **L'objectif**
+
 - **Coûts minimaux** : Infrastructure frugale et efficiente.
-- **Téléchargement** : Version locale minimale 
+- **Téléchargement** : Version locale minimale
 
 ---
 
 # **Prochaines Étapes 🚀**
 
 ### **Où en est le projet ?**
+
 - [x] Prototype exercices fonctionnel (51 séries, 17 types, du CP au CM2).
 - [x] Prototype backend et inscription.
 - [x] Design minimaliste et mascotte Salto.
@@ -116,21 +119,23 @@ Apprendre, c’est comprendre… puis s’entraîner régulièrement
 # Feuille de route 🏁
 
 ### **Au début les maths**
+
 🔹 Large banque d'exercices
 🔹 Progressivement du CP au collège
 🔹 Version hors ligne
 
 ### **Ensuite parcours utilisateur**
+
 🔹 Valorisation des efforts, système de points, progression
 🔹 Suggestion d'exercices intelligente
 
 ### **La suite?**
-🔹 Ajouter les leçons, du Français ?
 
+🔹 Ajouter les leçons, du Français ?
 
 ---
 
-# <img src="../src/assets/images/salto_none.gif" alt="logo" style="vertical-align:bottom;" width="75px"> Rejoins l’expédition !
+# <img src="../src/assets/images/salto_none.gif" alt="logo" style="vertical-align:bottom;" width="75px"> Rejoins l’expédition
 
 ### **Salto cherche :**  
 
@@ -140,7 +145,6 @@ Apprendre, c’est comprendre… puis s’entraîner régulièrement
 👉 **Enseignants** (pédagogie, contenu).
 👉 **Testeurs** (parents, enfants, grands-parents).
 
-**→ Tout est open source !** [GitHub](https://github.com/davidmarcombes/cahier-melimee) 
+**→ Tout est open source !** [GitHub](https://github.com/davidmarcombes/cahier-melimee)
 
-**→ Demo version !** [Alpha](https://github.com/davidmarcombes/cahier-melimee) 
-
+**→ Demo version !** [Alpha](https://www.marcombes.fr/melimee/fr/index.html)
