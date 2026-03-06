@@ -1,12 +1,116 @@
 /* Theme toggle */
 function themeToggle() { return { dark: document.documentElement.classList.contains('dark'), toggle() { this.dark = !this.dark; document.documentElement.classList.toggle('dark', this.dark); localStorage.setItem('theme', this.dark ? 'dark' : 'light') } } }
 
+function mathGridSvg(cols, rows, filled, color = '#4A90E2') {
+  const size = 20; // Size of each small square in pixels
+  const gap = 1;   // Gap between squares
+
+  let svgContent = '';
+
+  for (let i = 0; i < (cols * rows); i++) {
+    const x = (i % cols) * size;
+    const y = Math.floor(i / cols) * size;
+    const isFilled = i < filled;
+
+    svgContent += `
+      <rect 
+        x="${x}" y="${y}" 
+        width="${size - gap}" height="${size - gap}" 
+        fill="${isFilled ? color : '#f0f0f0'}" 
+        stroke="#ccc" 
+        stroke-width="0.5"
+      />`;
+  }
+
+  const width = cols * size;
+  const height = rows * size;
+
+  return `<svg width="${width}" height="${height}" viewBox="0 -1 ${width} ${height + 1}" style="display:inline-block; margin:5px;">
+            ${svgContent}
+          </svg>`;
+}
+
+function slicedPieSvg(n, k, size = 100, color = '#4A90E2') {
+  const center = size / 2;
+  const radius = size / 2 - 2; // Slight padding
+  let paths = '';
+
+  for (let i = 0; i < n; i++) {
+    // Calculate start and end angles in radians
+    const startAngle = (i * 2 * Math.PI) / n - Math.PI / 2;
+    const endAngle = ((i + 1) * 2 * Math.PI) / n - Math.PI / 2;
+
+    // Calculate coordinates
+    const x1 = center + radius * Math.cos(startAngle);
+    const y1 = center + radius * Math.sin(startAngle);
+    const x2 = center + radius * Math.cos(endAngle);
+    const y2 = center + radius * Math.sin(endAngle);
+
+    // Large-arc-flag is 0 if the slice is <= 180 degrees (always true if n >= 2)
+    const largeArcFlag = 0;
+    const fill = i < k ? color : '#ffffff';
+
+    // SVG Path: Move to center, Line to start, Arc to end, Close path
+    paths += `
+      <path d="M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z" 
+            fill="${fill}" stroke="#333" stroke-width="1" />`;
+  }
+
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+      ${paths}
+    </svg>`;
+}
+
+function circleSvg(r, label = "", fillColor = "white") {
+  const pad = label ? 40 : 5;
+  const size = (r * 2) + pad * 2;
+  const center = r + pad;
+
+  let labelHtml = "";
+  if (label) {
+    labelHtml = `
+      <line x1="${center}" y1="${center}" x2="${center + r}" y2="${center}" stroke="black" stroke-dasharray="4" />
+      <text x="${center + r / 2}" y="${center - 10}" text-anchor="middle" font-size="14" font-family="Arial">${label}</text>`;
+  }
+
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="${center}" cy="${center}" r="${r}" fill="${fillColor}" stroke="black" stroke-width="2" />
+      ${labelHtml}
+    </svg>`;
+}
+
+function rectangleSvg(w, h, labelW = "", labelH = "", fillColor = "white") {
+  const pad = (labelW || labelH) ? 35 : 5;
+  const totalW = w + pad * 2;
+  const totalH = h + pad * 2;
+
+  return `
+    <svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
+      <rect x="${pad}" y="${pad}" width="${w}" height="${h}" fill="${fillColor}" stroke="black" stroke-width="2" />
+      ${labelW ? `<text x="${pad + w / 2}" y="${pad + h + 25}" text-anchor="middle" font-family="Arial">${labelW}</text>` : ''}
+      ${labelH ? `<text x="${pad - 10}" y="${pad + h / 2}" text-anchor="end" dominant-baseline="middle" font-family="Arial">${labelH}</text>` : ''}
+    </svg>`;
+}
+
+function squareSvg(size, label = "", fillColor = 'white') {
+  const pad = 35;
+  const total = size + pad * 2;
+  return `
+    <svg width="${total}" height="${total}" viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg">
+      <rect x="${pad}" y="${pad}" width="${size}" height="${size}" fill="${fillColor}" stroke="black" stroke-width="2" />
+      ${labelW ? `<text x="${pad + size / 2}" y="${pad + size + 25}" text-anchor="middle" font-family="Arial">${label}</text>` : ''}
+    </svg>`;
+}
+
 /* Series player — single-template engine */
 function seriesPlayer(exercises) {
   return {
     exercises,
     currentIndex: 0,
     userInput: '',
+    trouInputs: [],
     showError: false,
     solvedFlags: exercises.map(() => false),
     matchSelected: null,
@@ -28,6 +132,11 @@ function seriesPlayer(exercises) {
     mqErrors: [],
     mcqSelected: null,
     mcqWrong: null,
+    showValidationPanel: false,
+    testNotes: '',
+    testSending: false,
+    testSent: false,
+    testError: '',
 
     /* Fraction Helpers */
     get fractionShapes() {
@@ -158,6 +267,7 @@ function seriesPlayer(exercises) {
     init() {
       this.regenerateAll();
       this.syncFromHash();
+      const _blanks0 = (this.cur.operation || '').split('?').length - 1; this.trouInputs = _blanks0 > 0 ? Array(_blanks0).fill('') : [];
       const _ia = this.cur.sequence || this.cur.bounding || this.cur.convert;
       this.seqInputs = (_ia ? _ia.answers.map(() => '') : []);
       if (this.cur.grid) { this.gridCells = new Array(this.cur.grid.rows.length * this.cur.grid.columns.length).fill(0) }
@@ -240,6 +350,23 @@ function seriesPlayer(exercises) {
         else { this.seqErrors = wrong; this.showError = true; setTimeout(() => { this.showError = false }, 2000) }
         return
       }
+      // Operation à trou (single or multi-blank)
+      if (this.trouInputs.length > 0) {
+        if (this.solved) return;
+        if (this.trouInputs.some(v => !v.trim())) { this.showError = true; setTimeout(() => { this.showError = false }, 2000); return }
+        let isCorrect;
+        if (this.trouInputs.length === 1) {
+          // Single blank: answers are alternatives
+          const input = this.trouInputs[0].trim().toLowerCase().replace(/,/g, '.');
+          isCorrect = (this.cur.answers || []).some(a => a.replace(/,/g, '.') === input);
+        } else {
+          // Multi-blank: answers are positional
+          isCorrect = this.trouInputs.every((v, i) => v.trim().toLowerCase().replace(/,/g, '.') === (this.cur.answers[i] || '').replace(/,/g, '.'));
+        }
+        if (isCorrect) { this.solvedFlags[this.currentIndex] = true; this.showError = false; if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) } }
+        else { this.showError = true; setTimeout(() => { this.showError = false }, 2000) }
+        return
+      }
       if (this.solved || !this.userInput.trim()) return;
       const input = this.userInput.trim().toLowerCase().replace(/,/g, '.');
       const isCorrect = (this.cur.answers || []).some(a => a.replace(/,/g, '.') === input);
@@ -288,6 +415,32 @@ function seriesPlayer(exercises) {
       else { this.mcqWrong = i; this.mcqSelected = null; setTimeout(() => { this.mcqWrong = null }, 1500) }
     },
 
+
+    async submitValidation() {
+      this.testSending = true;
+      this.testError = '';
+      const live = await window.__pbAvailable();
+      if (!live) {
+        this.testError = 'Mode démo — la validation n\'a pas été envoyée.';
+        this.testSending = false;
+        return;
+      }
+      try {
+        const pb = new PocketBase(window.__pbUrl);
+        const seriesId = window.location.pathname.replace(/\/$/, '').split('/').pop();
+        await pb.collection('validations').create({
+          series_id: seriesId,
+          notes: this.testNotes.trim()
+        });
+        this.testSent = true;
+      } catch (err) {
+        this.testError = 'Erreur d\'envoi. Réessayez.';
+        console.error(err);
+      } finally {
+        this.testSending = false;
+      }
+    },
+
     mqCheck(i) {
       if (this.mqSolved[i] || !this.mqInputs[i].trim()) return;
       const q = this.cur.mqQuestions; if (!q) return;
@@ -310,7 +463,8 @@ function seriesPlayer(exercises) {
 
     goTo(idx) {
       this.currentIndex = idx; this.userInput = ''; this.showError = false; this.matchSelected = null; this.matchConnections = []; this.matchErrors = []; this._matchLinesSvg = '';
-      const _e = this.exercises[idx] || {}; const _s = _e.sequence || _e.bounding || _e.convert; this.seqInputs = _s ? _s.answers.map(() => '') : []; this.seqErrors = [];
+      const _e = this.exercises[idx] || {}; const _blanks = (_e.operation || '').split('?').length - 1; this.trouInputs = _blanks > 0 ? Array(_blanks).fill('') : [];
+      const _s = _e.sequence || _e.bounding || _e.convert; this.seqInputs = _s ? _s.answers.map(() => '') : []; this.seqErrors = [];
       const _g = _e.grid; this.gridCells = _g ? new Array(_g.rows.length * _g.columns.length).fill(0) : []; this.gridErrors = [];
       if (_e.pyramid) { this._initPyramid(_e.pyramid) } else { this.pyramidInputs = []; this.pyramidErrors = [] }
       if (_e.statements) { this.tfInputs = _e.statements.map(() => null) } else { this.tfInputs = [] } this.tfErrors = [];
@@ -343,7 +497,7 @@ document.addEventListener('alpine:init', () => {
           const prefix = window.__pathPrefix || '/';
           if (Array.isArray(d) && d.length && d[0].title && d[0].seriesUrl && d[0].seriesUrl.startsWith(prefix)) { this.data = d; return; }
           sessionStorage.removeItem('ex');
-        } catch(e) { sessionStorage.removeItem('ex'); }
+        } catch (e) { sessionStorage.removeItem('ex'); }
       }
 
       this.loading = true;
@@ -362,7 +516,7 @@ document.addEventListener('alpine:init', () => {
           };
         });
         sessionStorage.setItem('ex', JSON.stringify(this.data));
-      } catch(e) { console.error('CSV load error:', e); }
+      } catch (e) { console.error('CSV load error:', e); }
       this.loading = false;
     }
   });

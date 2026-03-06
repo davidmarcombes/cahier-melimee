@@ -9,6 +9,7 @@ const CONFIGS = {
   dev: `# Environment: dev
 POCKETBASE_URL=http://localhost:8090
 SITE_URL=http://localhost:8080
+GENERATE_TEST_MODE=true
 `,
   prod: `# Environment: prod
 POCKETBASE_URL=https://www.marcombes.fr/nopocketbase
@@ -20,6 +21,7 @@ POCKETBASE_URL=http://localhost:8090
 SITE_URL=http://localhost:3000/melimee_test
 PATH_PREFIX=/melimee_test/
 PORT=3000
+GENERATE_TEST_MODE=true
 `,
 };
 
