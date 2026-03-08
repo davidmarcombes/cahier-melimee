@@ -73,6 +73,23 @@ function squareSvg(size, label = "", fillColor = 'var(--sf)') {
     </svg>`;
 }
 
+function triangleSvg(pixA, pixB, labelA = "", labelB = "", labelC = "", fillColor = 'var(--sf)') {
+  const padX = 45, padTop = 15, padBot = 28;
+  const totalW = pixA + padX * 2;
+  const totalH = pixB + padTop + padBot;
+  const x0 = padX,        y0 = padTop + pixB; // bottom-left (right angle)
+  const x1 = padX + pixA, y1 = padTop + pixB; // bottom-right
+  const x2 = padX,        y2 = padTop;         // top-left
+  const m = 10;
+  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2" />
+      <polyline points="${x0 + m},${y0} ${x0 + m},${y0 - m} ${x0},${y0 - m}" fill="none" stroke="var(--ct)" stroke-width="1.5" />
+      ${labelA ? `<text x="${(x0 + x1) / 2}" y="${y0 + 20}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${labelA}</text>` : ''}
+      ${labelB ? `<text x="${x0 - 8}" y="${(y0 + y2) / 2}" text-anchor="end" dominant-baseline="middle" font-family="Arial" fill="var(--ct)">${labelB}</text>` : ''}
+      ${labelC ? `<text x="${(x1 + x2) / 2 + 15}" y="${(y1 + y2) / 2 - 6}" text-anchor="start" font-family="Arial" fill="var(--ct)">${labelC}</text>` : ''}
+    </svg>`;
+}
+
 function rulerSvg(min = 0, max = 10, step = 1, minorStep = 0.1, customLabels = {}, markColor = 'var(--p)', width = 500) {
   const height = 110;
   const pad = 40;
@@ -152,6 +169,9 @@ function seriesPlayer(exercises) {
     mqErrors: [],
     mcqSelected: null,
     mcqWrong: null,
+    rfInputs: ['', ''],
+    tileSelected: [],
+    tileErrors: [],
     showValidationPanel: false,
     testNotes: '',
     testSending: false,
@@ -295,6 +315,7 @@ function seriesPlayer(exercises) {
       if (this.cur.statements) { this.tfInputs = this.cur.statements.map(() => null) }
       if (this.cur.comparisons) { this.cmpInputs = this.cur.comparisons.map(() => null) }
       if (this.cur.mqQuestions) { this.mqInputs = this.cur.mqQuestions.map(() => ''); this.mqSolved = this.cur.mqQuestions.map(() => false) }
+      setTimeout(() => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = this.$el.querySelector('.js-trou input'); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }, 0)
     },
     get cur() { return this.exercises[this.currentIndex] || {} },
     /* Parse operation à trou into structured parts for fraction rendering */
@@ -317,7 +338,39 @@ function seriesPlayer(exercises) {
     get solvedCount() { return this.solvedFlags.filter(Boolean).length },
     get allSolved() { return this.solvedFlags.every(Boolean) },
 
+    tileTap(i) {
+      if (this.solved) return;
+      const idx = this.tileSelected.indexOf(i);
+      this.tileSelected = idx === -1 ? [...this.tileSelected, i] : this.tileSelected.filter(s => s !== i);
+      this.tileErrors = [];
+    },
+
     check() {
+      if (this.cur.type === 'tile-select') {
+        if (this.solved) return;
+        const expected = [...(this.cur.tileAnswers || [])].sort((a, b) => a - b);
+        const actual = [...this.tileSelected].sort((a, b) => a - b);
+        if (actual.length === expected.length && actual.every((v, i) => v === expected[i])) {
+          this.solvedFlags[this.currentIndex] = true; this.showError = false; this.tileErrors = [];
+          if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) }
+        } else {
+          this.tileErrors = this.tileSelected.filter(i => !expected.includes(i));
+          this.showError = true; setTimeout(() => { this.showError = false; this.tileErrors = [] }, 2000);
+        }
+        return
+      }
+      if (this.cur.type === 'fraction-check') {
+        if (this.solved) return;
+        if (!this.rfInputs[0].trim() || !this.rfInputs[1].trim()) { this.showError = true; setTimeout(() => { this.showError = false }, 2000); return }
+        const isCorrect = (this.cur.answers || []).some(a => {
+          const p = a.split('/'); return this.rfInputs[0].trim() === p[0] && this.rfInputs[1].trim() === p[1];
+        });
+        if (isCorrect) {
+          this.solvedFlags[this.currentIndex] = true; this.showError = false;
+          if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) }
+        } else { this.showError = true; setTimeout(() => { this.showError = false }, 2000) }
+        return
+      }
       if (this.cur.type === 'matching') {
         if (this.solved) return;
         const p = this.cur.pairs;
@@ -498,7 +551,7 @@ function seriesPlayer(exercises) {
     },
 
     goTo(idx) {
-      this.currentIndex = idx; this.userInput = ''; this.showError = false; this.matchSelected = null; this.matchConnections = []; this.matchErrors = []; this._matchLinesSvg = '';
+      this.currentIndex = idx; this.userInput = ''; this.showError = false; this.matchSelected = null; this.matchConnections = []; this.matchErrors = []; this._matchLinesSvg = ''; this.rfInputs = ['', ''];
       const _e = this.exercises[idx] || {}; const _blanks = (_e.operation || '').split('?').length - 1; this.trouInputs = _blanks > 0 ? Array(_blanks).fill('') : [];
       const _s = _e.sequence || _e.bounding || _e.convert; this.seqInputs = _s ? _s.answers.map(() => '') : []; this.seqErrors = [];
       const _g = _e.grid; this.gridCells = _g ? new Array(_g.rows.length * _g.columns.length).fill(0) : []; this.gridErrors = [];
@@ -506,8 +559,8 @@ function seriesPlayer(exercises) {
       if (_e.statements) { this.tfInputs = _e.statements.map(() => null) } else { this.tfInputs = [] } this.tfErrors = [];
       if (_e.comparisons) { this.cmpInputs = _e.comparisons.map(() => null) } else { this.cmpInputs = [] } this.cmpErrors = [];
       if (_e.mqQuestions) { this.mqInputs = _e.mqQuestions.map(() => ''); this.mqSolved = _e.mqQuestions.map(() => false) } else { this.mqInputs = []; this.mqSolved = [] } this.mqErrors = [];
-      this.mcqSelected = null; this.mcqWrong = null; window.location.hash = '#' + (idx + 1);
-      this.$nextTick(() => { const ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() })
+      this.mcqSelected = null; this.mcqWrong = null; this.tileSelected = []; this.tileErrors = []; window.location.hash = '#' + (idx + 1);
+      setTimeout(() => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = this.$el.querySelector('.js-trou input'); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }, 0)
     },
 
     syncFromHash() { const h = parseInt(window.location.hash.replace('#', ''), 10); if (h >= 1 && h <= this.exercises.length) { this.currentIndex = h - 1 } }

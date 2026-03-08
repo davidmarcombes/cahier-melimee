@@ -1,0 +1,73 @@
+{# Fraction-check type — two-box stacked fraction input, for any exercise whose answer is a fraction #}
+<div x-show="cur.type === 'fraction-check'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 mb-8">
+
+  {# Optional SVG visual (e.g. ruler) #}
+  <template x-if="cur.svg">
+    <div class="flex justify-center mb-6" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
+  </template>
+
+  {# Operation or expression to evaluate #}
+  <div x-show="cur.operation"
+       class="flex justify-center items-center flex-wrap gap-2 text-4xl font-extrabold text-content-default mb-8"
+       x-html="(cur.operation || '') + ' ='"></div>
+
+  {# Body instructions (shown when no operation, or as a supplement) #}
+  <div class="prose dark:prose-invert text-center text-sm max-w-none text-content-subtle mb-6"
+       x-show="cur.body" x-html="cur.body"></div>
+
+  {# Stacked fraction answer input #}
+  <div class="flex justify-center items-center mb-8">
+    <div class="inline-flex flex-col items-center">
+      <input
+        type="text"
+        inputmode="numeric"
+        x-model="rfInputs[0]"
+        @keydown.enter="rfInputs[1].trim() ? check() : $refs.rfDenom.focus()"
+        :disabled="solved"
+        placeholder="?"
+        aria-label="Numérateur"
+        x-ref="rfNum"
+        class="w-24 h-14 text-center text-3xl font-extrabold border-2 border-b-0 rounded-t-xl
+               focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 transition-colors
+               bg-white dark:bg-slate-800 text-content-default"
+        :class="{
+          'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+          'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
+          'border-primary-300 dark:border-primary-600': !solved && !showError
+        }"
+      />
+      <div class="w-24 h-0.5"
+           :class="solved ? 'bg-green-500' : showError ? 'bg-red-400' : 'bg-primary-300 dark:bg-primary-600'"></div>
+      <input
+        type="text"
+        inputmode="numeric"
+        x-model="rfInputs[1]"
+        @keydown.enter="check()"
+        :disabled="solved"
+        placeholder="?"
+        aria-label="Dénominateur"
+        x-ref="rfDenom"
+        class="w-24 h-14 text-center text-3xl font-extrabold border-2 border-t-0 rounded-b-xl
+               focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 transition-colors
+               bg-white dark:bg-slate-800 text-content-default"
+        :class="{
+          'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+          'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
+          'border-primary-300 dark:border-primary-600': !solved && !showError
+        }"
+      />
+    </div>
+  </div>
+
+  {# Verify button #}
+  <button
+    @click="check()"
+    :disabled="solved || !rfInputs[0].trim() || !rfInputs[1].trim()"
+    class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
+           disabled:opacity-40 disabled:cursor-not-allowed"
+    :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+  >
+    <span x-show="!solved">Vérifier</span>
+    <span x-show="solved">Bravo !</span>
+  </button>
+</div>

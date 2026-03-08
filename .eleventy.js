@@ -346,6 +346,11 @@ module.exports = async function (eleventyConfig) {
           }
         }
 
+        if (ex.data.tiles) {
+          item.tiles = ex.data.tiles.map(t => md.renderInline(interpolate(String(t))));
+          item.tileAnswers = (ex.data.tileAnswers || []).map(Number);
+        }
+
         if (ex.data.pairs) {
           const processedPairs = ex.data.pairs.map(p => ({
             left: md.renderInline(interpolate(String(p.left))),

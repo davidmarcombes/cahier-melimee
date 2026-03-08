@@ -1,5 +1,5 @@
 ---
-type: number-check
+type: fraction-check
 title: 'Représentation de fractions ($\frac{1}{100}$)'
 answer: ["50/100", "5/10"]
 svg:

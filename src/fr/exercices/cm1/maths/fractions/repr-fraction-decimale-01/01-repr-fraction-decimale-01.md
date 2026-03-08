@@ -1,5 +1,5 @@
 ---
-type: number-check
+type: fraction-check
 title: "Interpréter des dixièmes"
 answer: "3/10"
 svg:

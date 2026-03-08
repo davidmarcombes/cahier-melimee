@@ -223,6 +223,132 @@ const generators = {
         }
     },
 
+    egalitesFractions: {
+        generate: (params = {}) => {
+            const frac = (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+            // a=1..8, b=1..8 so a+1 and b+1 stay ≤ 9
+            const a = rand(params.minInt ?? 1, params.maxInt ?? 8);
+            const b = rand(params.minTenth ?? 1, params.maxTenth ?? 8);
+            const num = a * 10 + b; // e.g. 72 for a=7, b=2
+
+            // Always 2 correct tiles: fraction form + mixed form
+            const correct = [
+                frac(num, 10),             // 72/10
+                `${a} + ${frac(b, 10)}`    // 7 + 2/10
+            ];
+
+            // Wrong tiles: wrong integer OR wrong tenths
+            const wrongs = [
+                `${a + 1} + ${frac(b, 10)}`,   // (a+1) + b/10
+                `${a} + ${frac(b + 1, 10)}`    // a + (b+1)/10
+            ];
+
+            // 3 or 4 tiles total (1 or 2 wrong)
+            const numWrong = Math.random() > 0.5 ? 2 : 1;
+            const selectedWrong = wrongs.slice(0, numWrong);
+
+            // Shuffle all tiles, track correct indices
+            const pool = [
+                ...correct.map(t => ({ t, ok: true })),
+                ...selectedWrong.map(t => ({ t, ok: false }))
+            ].sort(() => Math.random() - 0.5);
+
+            return {
+                type: 'tile-select',
+                title: `Coche toutes les expressions qui valent ${frac(num, 10)}`,
+                tiles: pool.map(p => p.t),
+                tileAnswers: pool.map((p, i) => p.ok ? i : -1).filter(i => i !== -1)
+            };
+        }
+    },
+
+    recomposerFractions: {
+        generate: (params = {}) => {
+            const frac = (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+            const level = params.level ?? 'mixed';
+            // patterns: 1=a+b/10, 2=a+b/10+c/100, 3=b/10+c/100
+            const pool = level === 'tenths' ? [1] : level === 'hundredths' ? [2, 3] : [1, 2, 3];
+            const pattern = pool[rand(0, pool.length - 1)];
+
+            if (pattern === 1) {
+                const a = rand(1, 9);
+                const b = rand(1, 9);
+                return {
+                    type: 'fraction-check',
+                    title: 'Recompose la fraction',
+                    operation: `${a} + ${frac(b, 10)}`,
+                    answers: [`${a * 10 + b}/10`]
+                };
+            }
+            if (pattern === 2) {
+                const a = rand(1, 5);
+                const b = rand(0, 9);
+                const c = rand(1, 9);
+                const parts = [String(a)];
+                if (b > 0) parts.push(`+ ${frac(b, 10)}`);
+                parts.push(`+ ${frac(c, 100)}`);
+                return {
+                    type: 'fraction-check',
+                    title: 'Recompose la fraction',
+                    operation: parts.join(' '),
+                    answers: [`${a * 100 + b * 10 + c}/100`]
+                };
+            }
+            // pattern === 3
+            const b = rand(1, 9);
+            const c = rand(1, 9);
+            return {
+                type: 'fraction-check',
+                title: 'Recompose la fraction',
+                operation: `${frac(b, 10)} + ${frac(c, 100)}`,
+                answers: [`${b * 10 + c}/100`]
+            };
+        }
+    },
+
+    perimetreFormes: {
+        generate: (params = {}) => {
+            const shapes = ['square', 'rectangle', 'triangle'];
+            const shape = shapes[rand(0, 2)];
+
+            if (shape === 'square') {
+                const side = rand(params.minSide ?? 3, params.maxSide ?? 12);
+                return {
+                    type: 'number-check',
+                    title: 'Calcule le périmètre du carré (en cm)',
+                    svg: { gen: 'squareSvg', par: { size: 80, label: `${side} cm` } },
+                    answers: [String(4 * side)]
+                };
+            }
+
+            if (shape === 'rectangle') {
+                const w = rand(params.minW ?? 3, params.maxW ?? 14);
+                let h = rand(params.minH ?? 2, params.maxH ?? 10);
+                if (h === w) h = h < 10 ? h + 1 : h - 1;
+                const maxSide = Math.max(w, h);
+                const sc = 100 / maxSide;
+                return {
+                    type: 'number-check',
+                    title: 'Calcule le périmètre du rectangle (en cm)',
+                    svg: { gen: 'rectangleSvg', par: { w: Math.round(w * sc), h: Math.round(h * sc), labelW: `${w} cm`, labelH: `${h} cm` } },
+                    answers: [String(2 * (w + h))]
+                };
+            }
+
+            // Triangle: right triangle using Pythagorean triples
+            const triples = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15]];
+            const [ta, tb, tc] = triples[rand(0, triples.length - 1)];
+            const maxLeg = Math.max(ta, tb);
+            const ps = 100 / maxLeg;
+            return {
+                type: 'number-check',
+                title: 'Calcule le périmètre du triangle (en cm)',
+                svg: { gen: 'triangleSvg', par: { pixA: Math.round(ta * ps), pixB: Math.round(tb * ps), labelA: `${ta} cm`, labelB: `${tb} cm`, labelC: `${tc} cm` } },
+                answers: [String(ta + tb + tc)]
+            };
+        }
+    },
+
 };
 
 // Dual export: Node.js (build time) + browser (runtime)

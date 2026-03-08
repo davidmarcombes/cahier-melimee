@@ -1,5 +1,5 @@
 ---
-type: number-check
+type: fraction-check
 title: "Quelle fraction décimale ?"
 answer: "17/10"
 svg:
@@ -13,5 +13,4 @@ svg:
       1.7: "?"
 ---
 
-**Quelle fraction décimale est repérée par le point ?**
-Réponds sous la forme d'une fraction (ex : 14/10).
+Quelle fraction décimale est repérée par le point ?

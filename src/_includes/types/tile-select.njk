@@ -1,0 +1,45 @@
+{# Tile-select type — click to select all correct tiles #}
+<div x-show="cur.type === 'tile-select'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 mb-8">
+
+  {# Tile grid #}
+  <div class="flex flex-wrap justify-center gap-4 mb-8">
+    <template x-for="(tile, i) in (cur.tiles || [])" :key="i">
+      <button
+        @click="tileTap(i)"
+        :disabled="solved"
+        class="min-w-[6rem] px-6 py-5 text-3xl font-bold rounded-2xl border-2
+               transition-all duration-150 select-none
+               bg-white dark:bg-slate-800 text-content-default"
+        :class="{
+          'border-primary-500 bg-primary-50 dark:bg-primary-900/20 scale-105 shadow-lg':
+            tileSelected.includes(i) && !solved && !tileErrors.includes(i),
+          'border-green-500 bg-green-50 dark:bg-green-900/20':
+            solved && (cur.tileAnswers || []).includes(i),
+          'border-red-400 bg-red-50 dark:bg-red-900/20':
+            tileErrors.includes(i),
+          'opacity-40 cursor-not-allowed':
+            solved && !(cur.tileAnswers || []).includes(i),
+          'border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow cursor-pointer':
+            !solved && !tileSelected.includes(i) && !tileErrors.includes(i)
+        }"
+        x-html="tile"
+      ></button>
+    </template>
+  </div>
+
+  {# Body instructions #}
+  <div class="prose dark:prose-invert text-center text-sm max-w-none text-content-subtle mb-6"
+       x-show="cur.body" x-html="cur.body"></div>
+
+  {# Verify button #}
+  <button
+    @click="check()"
+    :disabled="solved || tileSelected.length === 0"
+    class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
+           disabled:opacity-40 disabled:cursor-not-allowed"
+    :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+  >
+    <span x-show="!solved">Vérifier</span>
+    <span x-show="solved">Bravo !</span>
+  </button>
+</div>

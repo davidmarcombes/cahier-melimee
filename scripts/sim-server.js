@@ -3,44 +3,55 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 8080;
-const PUBLIC_DIR = path.join(__dirname, '_site');
+const PUBLIC_DIR = path.join(__dirname, '..', '_zsite');
 
-// Mapping common extensions to Mime-Types
 const mimeTypes = {
     '.html': 'text/html',
-    '.js': 'text/javascript',
-    '.css': 'text/css',
+    '.js':   'text/javascript',
+    '.css':  'text/css',
     '.json': 'application/json',
-    '.svg': 'image/svg+xml'
+    '.svg':  'image/svg+xml',
+    '.txt':  'text/plain',
+    '.xml':  'application/xml',
+    '.ico':  'image/x-icon',
+    '.png':  'image/png',
+    '.jpg':  'image/jpeg',
+    '.webp': 'image/webp',
+    '.woff2':'font/woff2',
 };
 
 http.createServer((req, res) => {
-    // 1. Resolve the file path (default to index.html for folders)
-    let urlPath = req.url === '/' ? '/index.html' : req.url;
-    let filePath = path.join(PUBLIC_DIR, urlPath);
-    const ext = path.extname(filePath);
+    // Strip query string, default to index.html for directory requests
+    let urlPath = req.url.split('?')[0];
+    if (urlPath === '/' || urlPath.endsWith('/')) urlPath += 'index.html';
 
-    // 2. Check if file exists
-    if (!fs.existsSync(filePath)) {
-        res.writeHead(404);
-        res.end("404: File Not Found");
+    const filePath = path.join(PUBLIC_DIR, urlPath);
+    const ext = path.extname(filePath);
+    const contentType = mimeTypes[ext] || 'application/octet-stream';
+
+    // Try .br first (pre-compressed), then fall back to the plain copy
+    const brPath = filePath + '.br';
+    if (fs.existsSync(brPath)) {
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Content-Encoding', 'br');
+        res.setHeader('Vary', 'Accept-Encoding');
+        fs.createReadStream(brPath).pipe(res);
+        console.log(`[br]   ${urlPath}`);
         return;
     }
 
-    // 3. Set Headers (The "Bucket Simulation" Logic)
-    // We treat .html, .js, and .css as gzipped binaries
-    if (['.html', '.js', '.css'].includes(ext)) {
-        res.setHeader('Content-Encoding', 'gzip');
-        res.setHeader('Content-Type', mimeTypes[ext] || 'text/plain');
+    if (fs.existsSync(filePath)) {
+        res.setHeader('Content-Type', contentType);
+        fs.createReadStream(filePath).pipe(res);
+        console.log(`[raw]  ${urlPath}`);
+        return;
     }
 
-    // 4. Stream the file directly
-    const stream = fs.createReadStream(filePath);
-    stream.pipe(res);
-
-    console.log(`Served: ${urlPath} (Mode: Simulated Gzip)`);
+    res.writeHead(404);
+    res.end('404: Not Found');
+    console.log(`[404]  ${urlPath}`);
 
 }).listen(PORT, () => {
-    console.log(`🚀 Simulator running at http://localhost:${PORT}`);
-    console.log(`Serving from: ${PUBLIC_DIR}`);
+    console.log(`🚀 Brotli sim-server at http://localhost:${PORT}`);
+    console.log(`   Serving: ${PUBLIC_DIR}`);
 });
