@@ -4,6 +4,7 @@ layout: base
 
 <div x-data="{
   filters: JSON.parse(sessionStorage.getItem('exf') || '{&quot;level&quot;:&quot;&quot;,&quot;topic&quot;:&quot;&quot;,&quot;difficulty&quot;:&quot;&quot;}'),
+  search: '',
   limit: 12,
   get all() { return $store.exercises.data || [] },
   get options() {
@@ -11,16 +12,22 @@ layout: base
     return { level: u('level'), topic: u('topic'), difficulty: u('difficulty') }
   },
   get filtered() {
+    const q = this.search.toLowerCase();
     return this.all.filter(s =>
       (!this.filters.level || s.level === this.filters.level) &&
       (!this.filters.topic || s.topic === this.filters.topic) &&
-      (!this.filters.difficulty || s.difficulty === this.filters.difficulty)
+      (!this.filters.difficulty || s.difficulty === this.filters.difficulty) &&
+      (!q || (s.title + ' ' + s.topic).toLowerCase().includes(q))
     )
   },
   get visible() { return this.filtered.slice(0, this.limit) },
-  get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') },
-  resetFilters() { this.filters = { level: '', topic: '', difficulty: '' }; this.limit = 12 }
-}" x-init="$store.exercises.load(); $watch('filters', v => { this.limit = 12; sessionStorage.setItem('exf', JSON.stringify(v)) })" x-cloak class="py-4">
+  get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') || this.search !== '' },
+  resetFilters() { 
+    this.filters = { level: '', topic: '', difficulty: '' }; 
+    this.search = '';
+    this.limit = 12 
+  }
+}" x-init="$store.exercises.load(); $watch('filters', v => { this.limit = 12; sessionStorage.setItem('exf', JSON.stringify(v)) }); $watch('search', () => { this.limit = 12 })" x-cloak class="py-4">
 
   <h1 class="text-3xl font-extrabold text-content-default mb-6">{{ title }}</h1>
 
@@ -35,29 +42,43 @@ layout: base
     <div>
       {# Filters #}
       <div class="flex flex-wrap gap-3 mb-8">
-        <select x-model="filters.level" aria-label="Filtrer par niveau" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
+        <div class="w-full md:w-64 relative">
+          <input 
+            type="text" 
+            x-model="search" 
+            placeholder="Rechercher un exercice..." 
+            class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+          >
+          <div class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+
+        <select x-model="filters.level" aria-label="Filtrer par niveau" class="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
           <option value="">Tous les niveaux</option>
           <template x-for="v in options.level" :key="v">
             <option :value="v" x-text="v"></option>
           </template>
         </select>
 
-        <select x-model="filters.topic" aria-label="Filtrer par thème" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
+        <select x-model="filters.topic" aria-label="Filtrer par thème" class="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
           <option value="">Tous les th&#232;mes</option>
           <template x-for="v in options.topic" :key="v">
             <option :value="v" x-text="v"></option>
           </template>
         </select>
 
-        <select x-model="filters.difficulty" aria-label="Filtrer par difficulté" class="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default">
+        <select x-model="filters.difficulty" aria-label="Filtrer par difficulté" class="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
           <option value="">Difficult&#233;</option>
           <template x-for="v in options.difficulty" :key="v">
             <option :value="v" x-text="(v === 'difficile' ? '&#x1F41E; ' : v === 'moyen' ? '&#x1F41D; ' : '&#x1F997; ') + v"></option>
           </template>
         </select>
 
-        <button x-show="hasActiveFilter" @click="resetFilters()" class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 underline">
-          R&#233;initialiser
+        <button x-show="hasActiveFilter" @click="resetFilters()" class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all active:scale-90" title="Réinitialiser les filtres">
+          <span class="text-xl leading-none">↶</span>
         </button>
       </div>
 

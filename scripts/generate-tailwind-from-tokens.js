@@ -28,6 +28,10 @@ const varAliases = {
   'surface-subtle': 'ss',
   'content-default': 'ct',
   'content-subtle': 'cs',
+  'primary-500': 'p',
+  'accent-500': 'a',
+  'primary': 'p',
+  'accent': 'a',
 };
 
 function processColors(obj, prefix = '') {
@@ -48,6 +52,14 @@ function processColors(obj, prefix = '') {
         current = current[parts[i]];
       }
       current[parts[parts.length - 1]] = `var(${varName})`;
+
+      // If we just set 500, also set DEFAULT for better Tailwind support
+      if (parts[parts.length - 1] === '500' && parts.length > 1) {
+        const parentKey = parts.slice(0, -1).join('-');
+        if (parentKey === 'primary' || parentKey === 'accent') {
+          current['DEFAULT'] = `var(${varName})`;
+        }
+      }
     } else if (typeof value === 'object') {
       // Nested palette
       processColors(value, fullKey);
@@ -60,6 +72,14 @@ function processColors(obj, prefix = '') {
         current = current[parts[i]];
       }
       current[parts[parts.length - 1]] = value;
+
+      // If we just set 500, also set DEFAULT for better Tailwind support
+      if (parts[parts.length - 1] === '500' && parts.length > 1) {
+        const parentKey = parts.slice(0, -1).join('-');
+        if (parentKey === 'primary' || parentKey === 'accent') {
+          current['DEFAULT'] = value;
+        }
+      }
     }
   }
 }
@@ -67,7 +87,7 @@ function processColors(obj, prefix = '') {
 if (tokens.colors) processColors(tokens.colors);
 
 // Generate CSS variables file
-const cssContent = `/* Auto-generated from design-tokens.json */
+const cssContent = `/* DO NOT EDIT — auto-generated from design-tokens.json by scripts/generate-tailwind-from-tokens.js */
 :root {
   ${lightVars.join('\n  ')}
 }
@@ -79,7 +99,7 @@ const cssContent = `/* Auto-generated from design-tokens.json */
 
 // Generate Tailwind config
 const config = `/** @type {import('tailwindcss').Config} */
-// This file is auto-generated from design-tokens.json
+// DO NOT EDIT — auto-generated from design-tokens.json by scripts/generate-tailwind-from-tokens.js
 module.exports = {
   content: ['./src/**/*.{html,njk,md,js,svg}'],
   darkMode: 'class',
@@ -95,9 +115,11 @@ module.exports = {
 };
 `;
 
-// Inject CSS variables directly into input.css between marker comments
+const markerStart = '/* BEGIN:design-tokens */';
+const markerEnd = '/* END:design-tokens */';
+
 const cssVarsBlock = [
-  '/* BEGIN:design-tokens */',
+  markerStart,
   '@layer base {',
   '  :root {',
   ...lightVars.map(v => `    ${v}`),
@@ -106,21 +128,25 @@ const cssVarsBlock = [
   ...darkVars.map(v => `    ${v}`),
   '  }',
   '}',
-  '/* END:design-tokens */'
+  markerEnd
 ].join('\n');
 
 try {
   let inputCss = fs.readFileSync(inputCssPath, 'utf8');
-  // Replace existing block if present, otherwise append after @font-face declarations
-  if (inputCss.includes('/* BEGIN:design-tokens */')) {
-    inputCss = inputCss.replace(
-      /\/\* BEGIN:design-tokens \*\/[\s\S]*?\/\* END:design-tokens \*\//,
-      cssVarsBlock
-    );
-  } else {
-    // Insert before @tailwind base
+  // Remove any existing design-tokens blocks (including those with the old longer markers)
+  inputCss = inputCss.replace(/\/\* BEGIN:design-tokens[\s\S]*?\/\* END:design-tokens \*\//g, '');
+
+  // Clean up extra newlines that might have been left behind
+  inputCss = inputCss.replace(/\n\n\n+/g, '\n\n');
+
+  // Insert before @tailwind base
+  if (inputCss.includes('@tailwind base;')) {
     inputCss = inputCss.replace('@tailwind base;', cssVarsBlock + '\n\n@tailwind base;');
+  } else {
+    // If somehow @tailwind base is missing, append to the end
+    inputCss += '\n\n' + cssVarsBlock;
   }
+
   fs.writeFileSync(inputCssPath, inputCss);
   fs.writeFileSync(tailwindConfigPath, config);
   console.log('\u2705 Generated tailwind.config.js and injected CSS variables into input.css');

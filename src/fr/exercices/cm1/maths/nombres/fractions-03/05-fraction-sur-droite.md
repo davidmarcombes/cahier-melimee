@@ -1,6 +1,6 @@
 ---
 type: mcq
-title: "Où se trouve 3/4 sur la droite ?"
+title: 'Où se trouve $\frac{3}{4}$ sur la droite ?'
 answer: "Entre 0 et 1, plus proche de 1"
 choices:
   - "Entre 0 et 1, plus proche de 1"

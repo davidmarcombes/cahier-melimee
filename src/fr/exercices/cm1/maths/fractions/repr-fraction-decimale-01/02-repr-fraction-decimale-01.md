@@ -1,10 +1,10 @@
 ---
 type: number-check
-title: "Représentation de fractions (1/10)"
+title: 'Représentation de fractions ($\frac{1}{10}$)'
 answer: "7/10"
-svgImage:
-  generator: mathGridSvg
-  params:
+svg:
+  gen: mathGridSvg
+  par:
     cols: 10
     rows: 1
     filled: 7

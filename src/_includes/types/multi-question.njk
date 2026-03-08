@@ -2,8 +2,13 @@
 <div x-show="cur.type === 'multi-question'" class="space-y-4">
   {# Context block (large number, statement, etc.) #}
   <div x-show="cur.mqContext" class="text-center py-4">
-    <span class="text-3xl font-bold font-mono text-content-default tracking-wider" x-text="cur.mqContext"></span>
+    <span class="text-3xl font-bold font-mono text-content-default tracking-wider" x-html="cur.mqContext"></span>
   </div>
+
+  {# Optional SVG visual (ruler, grid, etc.) #}
+  <template x-if="cur.svg">
+    <div class="flex justify-center mb-4" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
+  </template>
 
   {# Body instructions #}
   <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm"></div>
@@ -19,7 +24,7 @@
           'border-slate-200 dark:border-slate-700 bg-surface-subtle': !mqSolved[i] && !mqErrors.includes(i)
         }"
       >
-        <p class="flex-1 text-sm text-content-default" x-text="q.text"></p>
+        <p class="flex-1 text-sm text-content-default" x-html="q.text"></p>
         <input
           type="text"
           x-model="mqInputs[i]"

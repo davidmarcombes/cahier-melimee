@@ -1,108 +1,128 @@
 /* Theme toggle */
 function themeToggle() { return { dark: document.documentElement.classList.contains('dark'), toggle() { this.dark = !this.dark; document.documentElement.classList.toggle('dark', this.dark); localStorage.setItem('theme', this.dark ? 'dark' : 'light') } } }
 
-function mathGridSvg(cols, rows, filled, color = '#4A90E2') {
-  const size = 20; // Size of each small square in pixels
-  const gap = 1;   // Gap between squares
-
+function mathGridSvg(cols, rows, filled, color = 'var(--p)') {
+  const size = 20;
+  const gap = 1;
   let svgContent = '';
-
   for (let i = 0; i < (cols * rows); i++) {
     const x = (i % cols) * size;
     const y = Math.floor(i / cols) * size;
-    const isFilled = i < filled;
-
-    svgContent += `
-      <rect 
-        x="${x}" y="${y}" 
-        width="${size - gap}" height="${size - gap}" 
-        fill="${isFilled ? color : '#f0f0f0'}" 
-        stroke="#ccc" 
-        stroke-width="0.5"
-      />`;
+    svgContent += `<rect x="${x}" y="${y}" width="${size - gap}" height="${size - gap}"
+      fill="${i < filled ? color : 'var(--ss)'}" stroke="var(--cs)" stroke-width="0.5" />`;
   }
-
   const width = cols * size;
   const height = rows * size;
-
   return `<svg width="${width}" height="${height}" viewBox="0 -1 ${width} ${height + 1}" style="display:inline-block; margin:5px;">
             ${svgContent}
           </svg>`;
 }
 
-function slicedPieSvg(n, k, size = 100, color = '#4A90E2') {
+function slicedPieSvg(n, k, size = 100, color = 'var(--p)') {
   const center = size / 2;
-  const radius = size / 2 - 2; // Slight padding
+  const radius = size / 2 - 2;
   let paths = '';
-
   for (let i = 0; i < n; i++) {
-    // Calculate start and end angles in radians
     const startAngle = (i * 2 * Math.PI) / n - Math.PI / 2;
     const endAngle = ((i + 1) * 2 * Math.PI) / n - Math.PI / 2;
-
-    // Calculate coordinates
     const x1 = center + radius * Math.cos(startAngle);
     const y1 = center + radius * Math.sin(startAngle);
     const x2 = center + radius * Math.cos(endAngle);
     const y2 = center + radius * Math.sin(endAngle);
-
-    // Large-arc-flag is 0 if the slice is <= 180 degrees (always true if n >= 2)
-    const largeArcFlag = 0;
-    const fill = i < k ? color : '#ffffff';
-
-    // SVG Path: Move to center, Line to start, Arc to end, Close path
-    paths += `
-      <path d="M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z" 
-            fill="${fill}" stroke="#333" stroke-width="1" />`;
+    paths += `<path d="M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z"
+      fill="${i < k ? color : 'var(--sf)'}" stroke="var(--cs)" stroke-width="1" />`;
   }
-
-  return `
-    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
       ${paths}
     </svg>`;
 }
 
-function circleSvg(r, label = "", fillColor = "white") {
+function circleSvg(r, label = "", fillColor = 'var(--sf)') {
   const pad = label ? 40 : 5;
   const size = (r * 2) + pad * 2;
   const center = r + pad;
-
   let labelHtml = "";
   if (label) {
     labelHtml = `
-      <line x1="${center}" y1="${center}" x2="${center + r}" y2="${center}" stroke="black" stroke-dasharray="4" />
-      <text x="${center + r / 2}" y="${center - 10}" text-anchor="middle" font-size="14" font-family="Arial">${label}</text>`;
+      <line x1="${center}" y1="${center}" x2="${center + r}" y2="${center}" stroke="var(--ct)" stroke-dasharray="4" />
+      <text x="${center + r / 2}" y="${center - 10}" text-anchor="middle" font-size="14" font-family="Arial" fill="var(--ct)">${label}</text>`;
   }
-
-  return `
-    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="${center}" cy="${center}" r="${r}" fill="${fillColor}" stroke="black" stroke-width="2" />
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="${center}" cy="${center}" r="${r}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2" />
       ${labelHtml}
     </svg>`;
 }
 
-function rectangleSvg(w, h, labelW = "", labelH = "", fillColor = "white") {
+function rectangleSvg(w, h, labelW = "", labelH = "", fillColor = 'var(--sf)') {
   const pad = (labelW || labelH) ? 35 : 5;
   const totalW = w + pad * 2;
   const totalH = h + pad * 2;
-
-  return `
-    <svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
-      <rect x="${pad}" y="${pad}" width="${w}" height="${h}" fill="${fillColor}" stroke="black" stroke-width="2" />
-      ${labelW ? `<text x="${pad + w / 2}" y="${pad + h + 25}" text-anchor="middle" font-family="Arial">${labelW}</text>` : ''}
-      ${labelH ? `<text x="${pad - 10}" y="${pad + h / 2}" text-anchor="end" dominant-baseline="middle" font-family="Arial">${labelH}</text>` : ''}
+  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
+      <rect x="${pad}" y="${pad}" width="${w}" height="${h}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2" />
+      ${labelW ? `<text x="${pad + w / 2}" y="${pad + h + 25}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${labelW}</text>` : ''}
+      ${labelH ? `<text x="${pad - 10}" y="${pad + h / 2}" text-anchor="end" dominant-baseline="middle" font-family="Arial" fill="var(--ct)">${labelH}</text>` : ''}
     </svg>`;
 }
 
-function squareSvg(size, label = "", fillColor = 'white') {
+function squareSvg(size, label = "", fillColor = 'var(--sf)') {
   const pad = 35;
   const total = size + pad * 2;
-  return `
-    <svg width="${total}" height="${total}" viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg">
-      <rect x="${pad}" y="${pad}" width="${size}" height="${size}" fill="${fillColor}" stroke="black" stroke-width="2" />
-      ${labelW ? `<text x="${pad + size / 2}" y="${pad + size + 25}" text-anchor="middle" font-family="Arial">${label}</text>` : ''}
+  return `<svg width="${total}" height="${total}" viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg">
+      <rect x="${pad}" y="${pad}" width="${size}" height="${size}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2" />
+      ${label ? `<text x="${pad + size / 2}" y="${pad + size + 25}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${label}</text>` : ''}
     </svg>`;
 }
+
+function rulerSvg(min = 0, max = 10, step = 1, minorStep = 0.1, customLabels = {}, markColor = 'var(--p)', width = 500) {
+  const height = 110;
+  const pad = 40;
+  const totalW = width + pad * 2;
+  const range = max - min;
+  const getX = (val) => pad + ((val - min) / range) * width;
+
+  const lineY = 35; // Vertical position of the horizontal ruler line
+  let ticks = "";
+  let labels = "";
+
+  for (let i = min; i <= max; i += minorStep) {
+    const currentVal = Math.round(i * 1000) / 1000;
+    const x = getX(currentVal);
+    const isMajor = Math.abs((currentVal - min) % step) < 0.001;
+
+    // Ruler Ticks (pointing UP)
+    const tickHeight = isMajor ? 20 : 10;
+    ticks += `<line x1="${x}" y1="${lineY}" x2="${x}" y2="${lineY - tickHeight}" stroke="var(--ct)" stroke-width="1.5" />`;
+
+    // Regular scale numbers (Above the line)
+    if (isMajor) {
+      labels += `<text x="${x}" y="${lineY - 25}" text-anchor="middle" font-family="Arial" font-size="12" fill="var(--cs)">${currentVal}</text>`;
+    }
+
+    // Custom Markers (Solid Arrow Head + Stem)
+    if (customLabels[currentVal] !== undefined) {
+      const stemLength = 25;
+      const headSize = 8; // Half-width of the triangle base
+      const headHeight = 10;
+
+      // Points for a solid triangle pointing UP: (Tip, Bottom-Right, Bottom-Left)
+      const points = `${x},${lineY} ${x + headSize},${lineY + headHeight} ${x - headSize},${lineY + headHeight}`;
+
+      labels += `
+        <polygon points="${points}" fill="${markColor}" />
+        <line x1="${x}" y1="${lineY + headHeight}" x2="${x}" y2="${lineY + headHeight + stemLength}" stroke="${markColor}" stroke-width="2.5" />
+        <text x="${x}" y="${lineY + headHeight + stemLength + 20}" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="${markColor}">
+          ${customLabels[currentVal]}
+        </text>`;
+    }
+  }
+
+  return `<svg width="${totalW}" height="${height}" viewBox="0 0 ${totalW} ${height}" xmlns="http://www.w3.org/2000/svg">
+      <line x1="${pad}" y1="${lineY}" x2="${pad + width}" y2="${lineY}" stroke="var(--ct)" stroke-width="2" />
+      ${ticks}
+      ${labels}
+    </svg>`;
+}
+
 
 /* Series player — single-template engine */
 function seriesPlayer(exercises) {
@@ -277,6 +297,22 @@ function seriesPlayer(exercises) {
       if (this.cur.mqQuestions) { this.mqInputs = this.cur.mqQuestions.map(() => ''); this.mqSolved = this.cur.mqQuestions.map(() => false) }
     },
     get cur() { return this.exercises[this.currentIndex] || {} },
+    /* Parse operation à trou into structured parts for fraction rendering */
+    get trouParts() {
+      const op = this.cur.operation;
+      if (!op || !op.includes('?')) return null;
+      const parts = []; let ii = 0;
+      const re = /(\d+\/\d+|\?\/\d+|\?|[^?\d]+(?:\d+(?!\/\d))?[^?\d]*)/g;
+      let m;
+      while ((m = re.exec(op)) !== null) {
+        const t = m[1];
+        if (/^\d+\/\d+$/.test(t)) { const [n, d] = t.split('/'); parts.push({ t: 'f', n, d }); }
+        else if (/^\?\/\d+$/.test(t)) { parts.push({ t: 'fi', idx: ii++, d: t.split('/')[1] }); }
+        else if (t === '?') { parts.push({ t: 'i', idx: ii++ }); }
+        else { parts.push({ t: 'x', v: t }); }
+      }
+      return parts;
+    },
     get solved() { return this.solvedFlags[this.currentIndex] },
     get solvedCount() { return this.solvedFlags.filter(Boolean).length },
     get allSolved() { return this.solvedFlags.every(Boolean) },
@@ -456,7 +492,7 @@ function seriesPlayer(exercises) {
         const from = this.matchGetCoords('left', c.left);
         const to = this.matchGetCoords('right', c.right);
         if (!from || !to) return '';
-        const color = this.matchErrors.some(e => e.left === c.left) ? '#ef4444' : (this.solvedFlags[this.currentIndex] ? '#22c55e' : '#005af0');
+        const color = this.matchErrors.some(e => e.left === c.left) ? '#ef4444' : (this.solvedFlags[this.currentIndex] ? '#22c55e' : 'var(--p)');
         return '<line x1="' + from.x + '" y1="' + from.y + '" x2="' + to.x + '" y2="' + to.y + '" stroke="' + color + '" stroke-width="3" stroke-linecap="round"/>'
       }).join('')
     },

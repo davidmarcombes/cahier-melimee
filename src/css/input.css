@@ -17,6 +17,8 @@
 /* BEGIN:design-tokens */
 @layer base {
   :root {
+    --p: #2a85bf;
+    --a: #bf812a;
     --sf: #ffffff;
     --sc: #f1f5f9;
     --ss: #f8fafc;
@@ -24,6 +26,8 @@
     --cs: #475569;
   }
   .dark {
+    --p: #4da7d9;
+    --a: #e0a84c;
     --sf: #0f172a;
     --sc: #1e293b;
     --ss: #1e293b;
@@ -50,6 +54,11 @@
   .emoji {
     @apply inline-block h-[1.2em] w-auto align-text-bottom;
   }
+
+  /* Stacked fraction display */
+  .frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; font-size: 0.55em; line-height: 1.2; }
+  .fn { border-bottom: 2px solid currentColor; padding: 0 3px; min-width: 1.2em; text-align: center; }
+  .fd { padding: 0 3px; text-align: center; }
 
   /* Minimal prose — replaces @tailwindcss/typography (14K → ~1K) */
   .prose { max-width: 65ch; line-height: 1.75; }

@@ -11,7 +11,7 @@
         "dev": "npm run tokens && concurrently \"npm:dev:site\" \"npm:dev:css\"",
         "dev:site": "npm run tokens && eleventy --serve",
         "dev:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --minify --watch",
-        "build": "npm run tokens && eleventy && npm run build:css",
+        "build": "npm run validate:exercises && npm run tokens && eleventy && npm run build:css",
         "build:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --minify",
         "clean": "rm -rf _site",
         "tokens": "node scripts/generate-tailwind-from-tokens.js",
@@ -61,8 +61,12 @@
         "tailwindcss": "^3.4.0"
     },
     "dependencies": {
+        "@mathjax/src": "^4.1.1",
+        "@peaceroad/markdown-it-math-tex-to-mathml": "^0.2.0",
         "commander": "^14.0.3",
         "he": "^1.2.0",
-        "inquirer": "^13.2.5"
+        "inquirer": "^13.2.5",
+        "katex": "^0.16.37",
+        "markdown-it": "^14.1.1"
     }
 }

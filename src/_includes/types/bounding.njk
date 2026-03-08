@@ -21,7 +21,7 @@
     />
     <span class="text-2xl font-bold text-slate-400">&lt;</span>
     <div class="w-20 sm:w-24 h-14 sm:h-16 flex items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-primary-700 font-bold text-xl sm:text-2xl text-primary-700 dark:text-primary-300">
-      <span x-text="cur.bounding ? cur.bounding.number : ''"></span>
+      <span x-html="cur.bounding ? cur.bounding.number : ''"></span>
     </div>
     <span class="text-2xl font-bold text-slate-400">&lt;</span>
     <input

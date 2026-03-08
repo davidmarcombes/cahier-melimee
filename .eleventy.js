@@ -11,7 +11,25 @@ const UpgradeHelper = require("@11ty/eleventy-upgrade-help");
 
 
 
-module.exports = function (eleventyConfig) {
+const markdownIt = require('markdown-it');
+
+module.exports = async function (eleventyConfig) {
+  // LaTeX support using MathML (Zero-runtime JS/CSS on client)
+  const mathPlugin = (await import('@peaceroad/markdown-it-math-tex-to-mathml')).default;
+  const md = markdownIt({
+    html: true,
+    breaks: true,
+    linkify: true
+  }).use(mathPlugin);
+
+  eleventyConfig.setLibrary('md', md);
+
+  // Filter to render strings that contain LaTeX (useful for frontmatter)
+  eleventyConfig.addFilter('renderMath', (content) => {
+    if (!content) return '';
+    // Use renderInline if it's likely a short string, otherwise render
+    return md.renderInline(String(content));
+  });
   // Virtual template: sitemap (keeps src/ root free of .njk files)
   eleventyConfig.addTemplate('sitemap.xml.njk',
     `<?xml version="1.0" encoding="UTF-8"?>
@@ -236,11 +254,15 @@ module.exports = function (eleventyConfig) {
 
         // 3. Start building the item
         const item = {
-          title: interpolate(ex.data.title || ''),
+          title: md.renderInline(interpolate(ex.data.title || '')),
           type: ex.data.type || 'number-check',
           operation: interpolate(ex.data.operation || ''),
           body: interpolate((ex.templateContent || '').trim())
         };
+        // Only render operation as math if it doesn't have gaps, to preserve trouParts logic
+        if (item.operation && !item.operation.includes('?')) {
+          item.operation = md.renderInline(item.operation);
+        }
 
         // 4. Handle answers (can be single or array)
         // Support both `answer` (singular) and `answers` (plural, for multi-blank operations)
@@ -301,23 +323,33 @@ module.exports = function (eleventyConfig) {
           item.base10 = { ...b, markup: svg, width: currentX + 20 };
         }
 
-        if (ex.data.svgImage) {
-          item.svgImage = {
-            generator: interpolate(String(ex.data.svgImage.generator)),
-            params: {}
+        if (ex.data.svg) {
+          item.svg = {
+            gen: interpolate(String(ex.data.svg.gen)),
+            par: {}
           };
-          if (ex.data.svgImage.params) {
-            for (const [k, v] of Object.entries(ex.data.svgImage.params)) {
-              const val = interpolate(String(v));
-              item.svgImage.params[k] = isNaN(val) ? val : Number(val);
+          if (ex.data.svg.par) {
+            for (const [k, v] of Object.entries(ex.data.svg.par)) {
+              if (v !== null && typeof v === 'object') {
+                // Preserve objects (e.g. label map for rulerSvg)
+                const obj = {};
+                for (const [ok, ov] of Object.entries(v)) {
+                  const key = isNaN(ok) ? ok : Number(ok);
+                  obj[key] = interpolate(String(ov));
+                }
+                item.svg.par[k] = obj;
+              } else {
+                const val = interpolate(String(v));
+                item.svg.par[k] = isNaN(val) ? val : Number(val);
+              }
             }
           }
         }
 
         if (ex.data.pairs) {
           const processedPairs = ex.data.pairs.map(p => ({
-            left: interpolate(String(p.left)),
-            right: interpolate(String(p.right))
+            left: md.renderInline(interpolate(String(p.left))),
+            right: md.renderInline(interpolate(String(p.right)))
           }));
           const leftIndexed = processedPairs.map((p, i) => ({ label: p.left, origIdx: i }));
           const rightIndexed = processedPairs.map((p, i) => ({ label: p.right, origIdx: i }));
@@ -338,21 +370,21 @@ module.exports = function (eleventyConfig) {
 
         if (ex.data.given && ex.data.answers) {
           item.sequence = {
-            given: ex.data.given.map(n => interpolate(String(n))),
+            given: ex.data.given.map(n => md.renderInline(interpolate(String(n)))),
             answers: ex.data.answers.map(n => interpolate(String(n)))
           };
         }
 
         if (ex.data.type === 'bounding' && ex.data.number != null && ex.data.answers) {
           item.bounding = {
-            number: interpolate(String(ex.data.number)),
+            number: md.renderInline(interpolate(String(ex.data.number))),
             answers: ex.data.answers.map(n => interpolate(String(n)))
           };
         }
 
         if (ex.data.type === 'logic-grid' && ex.data.columns && ex.data.rows && ex.data.solution) {
-          const cols = ex.data.columns.map(c => interpolate(String(c)));
-          const rows = ex.data.rows.map(r => interpolate(String(r)));
+          const cols = ex.data.columns.map(c => md.renderInline(interpolate(String(c))));
+          const rows = ex.data.rows.map(r => md.renderInline(interpolate(String(r))));
           const solution = rows.map(r => cols.map(c => {
             const solValue = interpolate(String(ex.data.solution[c]));
             return solValue === r;
@@ -380,28 +412,28 @@ module.exports = function (eleventyConfig) {
 
         if (ex.data.type === 'true-false' && ex.data.statements) {
           item.statements = ex.data.statements.map(s => ({
-            text: interpolate(String(s.text)),
+            text: md.renderInline(interpolate(String(s.text))),
             answer: s.answer === true || interpolate(String(s.answer)) === 'true'
           }));
         }
 
         if (ex.data.type === 'multi-question' && ex.data.questions) {
-          item.mqContext = ex.data.context ? interpolate(String(ex.data.context)) : '';
+          item.mqContext = ex.data.context ? md.renderInline(interpolate(String(ex.data.context))) : '';
           item.mqQuestions = ex.data.questions.map(q => ({
-            text: interpolate(String(q.text)),
+            text: md.renderInline(interpolate(String(q.text))),
             answer: interpolate(String(q.answer)).trim().toLowerCase()
           }));
         }
 
         if (ex.data.type === 'mcq' && ex.data.choices && ex.data.answer != null) {
           const correct = interpolate(String(ex.data.answer)).trim();
-          const choices = ex.data.choices.map(c => interpolate(String(c)));
+          const choices = ex.data.choices.map(c => md.renderInline(interpolate(String(c))));
           for (let i = choices.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [choices[i], choices[j]] = [choices[j], choices[i]];
           }
           item.mcqChoices = choices;
-          item.mcqAnswer = choices.indexOf(correct);
+          item.mcqAnswer = choices.indexOf(md.renderInline(correct));
         }
 
         if (ex.data.type === 'compare' && ex.data.comparisons) {

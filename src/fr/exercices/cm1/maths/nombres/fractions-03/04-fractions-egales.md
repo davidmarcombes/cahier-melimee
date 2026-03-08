@@ -1,6 +1,6 @@
 ---
 type: mcq
-title: "Quelle fraction est égale à 1/2 ?"
+title: 'Quelle fraction est égale à $\frac{1}{2}$ ?'
 answer: "2/4"
 choices:
   - "2/4"

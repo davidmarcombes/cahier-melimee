@@ -1,22 +1,29 @@
 {# Number-check visual #}
 <div x-show="cur.type === 'number-check'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 mb-8">
-  <template x-if="cur.svgImage">
-    <div class="flex justify-center mb-6" x-html="window[cur.svgImage.generator](...Object.values(cur.svgImage.params))"></div>
+  <template x-if="cur.svg">
+    <div class="flex justify-center mb-6" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
   {# Standard: operation = ? #}
   <div x-show="cur.operation && !cur.operation.includes('?')" class="text-center mb-6">
-    <span class="text-5xl font-extrabold text-content-default tracking-wide" x-text="cur.operation + ' = ?'"></span>
+    <span class="text-5xl font-extrabold text-content-default tracking-wide" x-html="(cur.operation || '') + ' = ?'"></span>
   </div>
-  {# Opération à trou: one or more inline blanks #}
-  <div x-show="cur.operation && cur.operation.includes('?')" class="flex items-center justify-center gap-2 mb-6 flex-wrap">
-    <template x-for="(seg, i) in cur.operation.split('?')" :key="i">
+  {# Opération à trou: one or more inline blanks with fraction support #}
+  <div x-show="trouParts" class="flex items-center justify-center gap-2 mb-6 flex-wrap">
+    <template x-for="(p, i) in trouParts" :key="i">
       <span class="contents">
-        <span class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide whitespace-nowrap"
-              x-text="seg"></span>
-        <input x-show="i < cur.operation.split('?').length - 1"
+        {# Plain text #}
+        <span x-show="p.t==='x'" class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide whitespace-nowrap"
+              x-text="p.v"></span>
+        {# Static fraction (e.g. 45/10) #}
+        <span x-show="p.t==='f'" class="frac text-4xl sm:text-5xl font-extrabold text-content-default">
+          <span class="fn" x-text="p.n"></span>
+          <span class="fd" x-text="p.d"></span>
+        </span>
+        {# Plain input #}
+        <input x-show="p.t==='i'"
                inputmode="numeric"
-               :value="trouInputs[i] || ''"
-               @input="trouInputs[i] = $event.target.value"
+               :value="trouInputs[p.idx] || ''"
+               @input="trouInputs[p.idx] = $event.target.value"
                @keydown.enter="check()" :disabled="solved"
                class="w-16 sm:w-20 h-14 sm:h-16 text-center text-3xl sm:text-4xl font-extrabold
                  rounded-xl border-2 transition-colors
@@ -29,6 +36,27 @@
                }"
                placeholder="?"
         />
+        {# Fraction with input as numerator (e.g. ?/10) #}
+        <span x-show="p.t==='fi'" class="frac text-4xl sm:text-5xl font-extrabold text-content-default">
+          <span class="fn">
+            <input inputmode="numeric"
+                   :value="trouInputs[p.idx] || ''"
+                   @input="trouInputs[p.idx] = $event.target.value"
+                   @keydown.enter="check()" :disabled="solved"
+                   class="w-12 sm:w-16 h-10 sm:h-12 text-center text-lg sm:text-xl font-extrabold
+                     rounded-lg border-2 transition-colors
+                     focus:outline-none focus:ring-2 focus:ring-primary-500
+                     bg-white dark:bg-slate-800 text-content-default"
+                   :class="{
+                     'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+                     'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
+                     'border-primary-300 dark:border-primary-600': !solved && !showError
+                   }"
+                   placeholder="?"
+            />
+          </span>
+          <span class="fd" x-text="p.d"></span>
+        </span>
       </span>
     </template>
   </div>

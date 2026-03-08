@@ -12,10 +12,17 @@ isSeriesPage: true
 {% set exercises = collections[folder or "exercices"] | seriesExercises(series) %}
 {% set usedTypes = exercises | extractTypes %}
 {% set hasGenerators = false %}
-{% for ex in exercises %}{% if ex.data.generator %}{% set hasGenerators = true %}{% endif %}{% endfor %}
+{% set needsKatex = false %}
+{% for ex in exercises %}
+  {% if ex.data.generator %}{% set hasGenerators = true %}{% endif %}
+  {% if '$' in (ex.data.title or '') %}{% set needsKatex = true %}{% endif %}
+{% endfor %}
 
 {% if hasGenerators %}
 <script src="{{ '/assets/js/generators.js' | url }}"></script>
+{% endif %}
+{% if needsKatex %}
+<link rel="stylesheet" href="{{ '/assets/katex/katex.min.css' | url }}">
 {% endif %}
 
 {% if 'base-10' in usedTypes %}{% include "svg-defs.njk" %}{% endif %}
@@ -39,7 +46,7 @@ isSeriesPage: true
   </div>
 
   {# Exercise title #}
-  <h1 class="text-2xl font-bold text-content-default mb-4 text-center" x-text="cur.title"></h1>
+  <h1 class="text-2xl font-bold text-content-default mb-4 text-center" x-html="cur.title || ''"></h1>
 
   {# Type-specific visual blocks (only included when the series uses that type) #}
   {% if 'number-check' in usedTypes %}{% include "types/number-check.njk" %}{% endif %}

@@ -1,10 +1,10 @@
 ---
 type: number-check
-title: "Représentation de fractions (1/10)"
+title: "Interpréter des dixièmes"
 answer: "3/10"
-svgImage:
-  generator: mathGridSvg
-  params:
+svg:
+  gen: mathGridSvg
+  par:
     cols: 10
     rows: 1
     filled: 3

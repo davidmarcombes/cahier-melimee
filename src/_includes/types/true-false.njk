@@ -19,7 +19,7 @@
             'bg-green-50 dark:bg-green-900/20': solved
           }"
         >
-          <td class="py-3 px-3 text-content-default" x-text="st.text"></td>
+          <td class="py-3 px-3 text-content-default" x-html="st.text"></td>
           <td class="py-3 px-3 text-center">
             <button
               @click="if(!solved){tfInputs[i]=true;tfErrors=tfErrors.filter(e=>e!==i)}"

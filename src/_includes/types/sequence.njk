@@ -5,7 +5,7 @@
   <div class="flex flex-wrap justify-center items-center gap-2">
     <template x-for="(n, i) in (cur.sequence ? cur.sequence.given : [])" :key="'sg'+i">
       <div class="w-16 sm:w-20 h-12 sm:h-14 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 font-bold text-lg sm:text-xl text-content-default">
-        <span x-text="n"></span>
+        <span x-html="n"></span>
       </div>
     </template>
     <template x-for="(ans, i) in (cur.sequence ? cur.sequence.answers : [])" :key="'sa'+i">
