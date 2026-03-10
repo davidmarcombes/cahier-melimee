@@ -32,7 +32,8 @@
         "slides": "npx @marp-team/marp-cli docs/slides.md --pdf --theme docs/marp_melimee.css -o docs/slides.pdf",
         "serve:local": "node scripts/serve-subpath.js",
         "lint": "eslint . && prettier --check .",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "clean:yaml": "node scripts/clean-yaml.js"
     },
     "keywords": [
         "eleventy",

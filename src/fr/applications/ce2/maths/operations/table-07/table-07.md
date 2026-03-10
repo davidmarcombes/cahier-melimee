@@ -1,6 +1,6 @@
 ---
 type: number-check
-title: "🐙 Table de 7"
+title: "Table de 7"
 generator: "multiplicationSimple"
 repeat: 10
 params:

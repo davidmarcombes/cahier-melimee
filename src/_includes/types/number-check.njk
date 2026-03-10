@@ -1,59 +1,34 @@
-{# Number-check visual #}
 <div x-show="cur.type === 'number-check'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 mb-8">
   <template x-if="cur.svg">
     <div class="flex justify-center mb-6" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
-  {# Standard: operation = ? #}
   <div x-show="cur.operation && !cur.operation.includes('?')" class="text-center mb-6">
     <span class="text-5xl font-extrabold text-content-default tracking-wide" x-html="(cur.operation || '') + ' = ?'"></span>
   </div>
-  {# Opération à trou: one or more inline blanks with fraction support #}
   <div x-show="trouParts" class="js-trou flex items-center justify-center gap-2 mb-6 flex-wrap">
     <template x-for="(p, i) in trouParts" :key="i">
       <span class="contents">
-        {# Plain text #}
-        <span x-show="p.t==='x'" class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide whitespace-nowrap"
-              x-text="p.v"></span>
-        {# Static fraction (e.g. 45/10) #}
+        <span x-show="p.t==='x'" class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide whitespace-nowrap" x-text="p.v"></span>
         <span x-show="p.t==='f'" class="frac text-4xl sm:text-5xl font-extrabold text-content-default">
           <span class="fn" x-text="p.n"></span>
           <span class="fd" x-text="p.d"></span>
         </span>
-        {# Plain input #}
-        <input x-show="p.t==='i'"
-               inputmode="numeric"
+        <input x-show="p.t==='i'" inputmode="numeric"
                :value="trouInputs[p.idx] || ''"
                @input="trouInputs[p.idx] = $event.target.value"
                @keydown.enter="check()" :disabled="solved"
-               class="w-16 sm:w-20 h-14 sm:h-16 text-center text-3xl sm:text-4xl font-extrabold
-                 rounded-xl border-2 transition-colors
-                 focus:outline-none focus:ring-2 focus:ring-primary-500
-                 bg-white dark:bg-slate-800 text-content-default"
-               :class="{
-                 'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-                 'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
-                 'border-primary-300 dark:border-primary-600': !solved && !showError
-               }"
-               placeholder="?"
-        />
-        {# Fraction with input as numerator (e.g. ?/10) #}
+               class="w-16 sm:w-20 h-14 sm:h-16 text-center text-3xl sm:text-4xl font-extrabold rounded-xl border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+               :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':showError,'border-primary-300 dark:border-primary-600':!solved&&!showError}"
+               placeholder="?"/>
         <span x-show="p.t==='fi'" class="frac text-4xl sm:text-5xl font-extrabold text-content-default">
           <span class="fn">
             <input inputmode="numeric"
                    :value="trouInputs[p.idx] || ''"
                    @input="trouInputs[p.idx] = $event.target.value"
                    @keydown.enter="check()" :disabled="solved"
-                   class="w-12 sm:w-16 h-10 sm:h-12 text-center text-lg sm:text-xl font-extrabold
-                     rounded-lg border-2 transition-colors
-                     focus:outline-none focus:ring-2 focus:ring-primary-500
-                     bg-white dark:bg-slate-800 text-content-default"
-                   :class="{
-                     'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-                     'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
-                     'border-primary-300 dark:border-primary-600': !solved && !showError
-                   }"
-                   placeholder="?"
-            />
+                   class="w-12 sm:w-16 h-10 sm:h-12 text-center text-lg sm:text-xl font-extrabold rounded-lg border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+                   :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':showError,'border-primary-300 dark:border-primary-600':!solved&&!showError}"
+                   placeholder="?"/>
           </span>
           <span class="fd" x-text="p.d"></span>
         </span>
@@ -62,15 +37,10 @@
   </div>
   <div class="prose dark:prose-invert text-center text-lg max-w-none" x-html="cur.body"></div>
 </div>
-{# Opération à trou verify button #}
 <div x-show="cur.operation && cur.operation.includes('?')" class="flex items-center gap-3 mb-6">
-  <button
-    @click="check()"
-    :disabled="solved || trouInputs.some(v => !v.trim())"
-    class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
-      disabled:opacity-40 disabled:cursor-not-allowed"
-    :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
-  >
+  <button @click="check()" :disabled="solved || trouInputs.some(v => !v.trim())"
+    class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
     <span x-show="!solved">Vérifier</span>
     <span x-show="solved">Bravo !</span>
   </button>

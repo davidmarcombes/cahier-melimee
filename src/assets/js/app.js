@@ -315,7 +315,9 @@ function seriesPlayer(exercises) {
       if (this.cur.statements) { this.tfInputs = this.cur.statements.map(() => null) }
       if (this.cur.comparisons) { this.cmpInputs = this.cur.comparisons.map(() => null) }
       if (this.cur.mqQuestions) { this.mqInputs = this.cur.mqQuestions.map(() => ''); this.mqSolved = this.cur.mqQuestions.map(() => false) }
-      setTimeout(() => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = this.$el.querySelector('.js-trou input'); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }, 0)
+      const _focusFirst = () => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-trou input')).find(el => el.offsetHeight > 0); else if (this.seqInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-seq input')).find(el => el.offsetHeight > 0); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }
+      requestAnimationFrame(_focusFirst)
+      this.$watch('currentIndex', () => requestAnimationFrame(_focusFirst))
     },
     get cur() { return this.exercises[this.currentIndex] || {} },
     /* Parse operation à trou into structured parts for fraction rendering */
@@ -323,7 +325,7 @@ function seriesPlayer(exercises) {
       const op = this.cur.operation;
       if (!op || !op.includes('?')) return null;
       const parts = []; let ii = 0;
-      const re = /(\d+\/\d+|\?\/\d+|\?|[^?\d]+(?:\d+(?!\/\d))?[^?\d]*)/g;
+      const re = /(\d+\/\d+|\?\/\d+|\?|[^?\d]+(?:\d+(?!\/\d))?[^?\d]*|\d+(?!\/\d))/g;
       let m;
       while ((m = re.exec(op)) !== null) {
         const t = m[1];
@@ -560,7 +562,6 @@ function seriesPlayer(exercises) {
       if (_e.comparisons) { this.cmpInputs = _e.comparisons.map(() => null) } else { this.cmpInputs = [] } this.cmpErrors = [];
       if (_e.mqQuestions) { this.mqInputs = _e.mqQuestions.map(() => ''); this.mqSolved = _e.mqQuestions.map(() => false) } else { this.mqInputs = []; this.mqSolved = [] } this.mqErrors = [];
       this.mcqSelected = null; this.mcqWrong = null; this.tileSelected = []; this.tileErrors = []; window.location.hash = '#' + (idx + 1);
-      setTimeout(() => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = this.$el.querySelector('.js-trou input'); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }, 0)
     },
 
     syncFromHash() { const h = parseInt(window.location.hash.replace('#', ''), 10); if (h >= 1 && h <= this.exercises.length) { this.currentIndex = h - 1 } }

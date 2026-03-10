@@ -1,0 +1,9 @@
+---
+title: "Compte les barres et les cubes"
+type: "base-10"
+tens: 3
+ones: 6
+answer: "36"
+---
+
+Compte les barres de 10 et les petits cubes.

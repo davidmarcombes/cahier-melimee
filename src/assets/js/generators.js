@@ -103,6 +103,46 @@ const generators = {
         }
     },
 
+    tablesSoustractionCP: {
+        generate: (params = {}) => {
+            const sub = rand(params.minSub ?? 0, params.maxSub ?? 9);
+            const result = rand(params.minResult ?? 0, params.maxResult ?? 9);
+            const a = sub + result;
+            return { type: 'number-check', operation: `${a} - ${sub}`, answers: [String(result)] };
+        }
+    },
+
+    soustractionTrou: {
+        generate: (params = {}) => {
+            const result = rand(params.minResult ?? 0, params.maxResult ?? 9);
+            const sub = rand(params.minSub ?? 1, params.maxSub ?? 9);
+            const total = result + sub;
+            const missing = Math.random() > 0.5 ? 'result' : 'sub';
+            const op = missing === 'result' ? `${total} - ${sub} = ?` : `${total} - ? = ${result}`;
+            return { type: 'number-check', operation: op, answers: [String(missing === 'result' ? result : sub)] };
+        }
+    },
+
+    ajouterSoustraire10: {
+        generate: (params = {}) => {
+            const n = rand(params.min ?? 1, params.max ?? 89);
+            const add = Math.random() > 0.5;
+            const op = add ? `${n} + 10 = ?` : `${n + 10} - 10 = ?`;
+            return { type: 'number-check', operation: op, answers: [String(add ? n + 10 : n)] };
+        }
+    },
+
+    decompositionBase10: {
+        generate: (params = {}) => {
+            const t = rand(params.minTens ?? 1, params.maxTens ?? 9);
+            const u = rand(params.minOnes ?? 0, params.maxOnes ?? 9);
+            const op = u === 0
+                ? `${t} dizaine${t > 1 ? 's' : ''} et 0 unité = ?`
+                : `${t} dizaine${t > 1 ? 's' : ''} et ${u} unité${u > 1 ? 's' : ''} = ?`;
+            return { type: 'number-check', operation: op, answers: [String(t * 10 + u)] };
+        }
+    },
+
     pairOuImpair: {
         generate: (params = {}) => {
             const num = rand(params.min ?? 1, params.max ?? 100);
@@ -303,6 +343,177 @@ const generators = {
                 operation: `${frac(b, 10)} + ${frac(c, 100)}`,
                 answers: [`${b * 10 + c}/100`]
             };
+        }
+    },
+
+    comparerNombres: {
+        generate: (params = {}) => {
+            const min = params.min ?? 1;
+            const max = params.max ?? 100;
+            const count = params.count ?? 4;
+            const comparisons = [];
+            for (let i = 0; i < count; i++) {
+                let a = rand(min, max);
+                let b = rand(min, max);
+                while (a === b) b = rand(min, max);
+                comparisons.push({ left: String(a), right: String(b), answer: a < b ? '<' : '>' });
+            }
+            return { type: 'compare', comparisons };
+        }
+    },
+
+    tablesAdditionCP: {
+        generate: (params = {}) => {
+            const base = params.base ?? rand(params.minBase ?? 1, params.maxBase ?? 9);
+            const addend = rand(params.minAdd ?? 0, params.maxAdd ?? 9);
+            return { type: 'number-check', operation: `${base} + ${addend}`, answers: [String(base + addend)] };
+        }
+    },
+
+    complements10: {
+        generate: () => {
+            const a = rand(1, 9);
+            const b = 10 - a;
+            const missing = Math.random() > 0.5 ? 'a' : 'b';
+            const op = missing === 'a' ? `? + ${b} = 10` : `${a} + ? = 10`;
+            return { type: 'number-check', operation: op, answers: [String(missing === 'a' ? a : b)] };
+        }
+    },
+
+    doublesMoities: {
+        generate: (params = {}) => {
+            const n = rand(params.min ?? 1, params.max ?? 10);
+            if (Math.random() > 0.5) {
+                return { type: 'number-check', operation: `double de ${n} = ?`, answers: [String(n * 2)] };
+            } else {
+                const even = n * 2;
+                return { type: 'number-check', operation: `moitié de ${even} = ?`, answers: [String(n)] };
+            }
+        }
+    },
+
+    compterDeN: {
+        generate: (params = {}) => {
+            const stepChoices = params.step ? [params.step] : [2, 5, 10];
+            const step = stepChoices[rand(0, stepChoices.length - 1)];
+            const asc = params.direction ? params.direction === 'asc' : Math.random() > 0.5;
+            const startVal = asc ? rand(0, 7) * step : rand(5, 12) * step;
+            const given = asc
+                ? [startVal, startVal + step, startVal + 2 * step]
+                : [startVal, startVal - step, startVal - 2 * step];
+            const answers = asc
+                ? [startVal + 3 * step, startVal + 4 * step, startVal + 5 * step]
+                : [startVal - 3 * step, startVal - 4 * step, startVal - 5 * step];
+            if (answers.some(v => v < 0)) {
+                return { type: 'sequence', sequence: { given: [0, step, step * 2].map(String), answers: [step * 3, step * 4, step * 5].map(String) } };
+            }
+            return { type: 'sequence', sequence: { given: given.map(String), answers: answers.map(String) } };
+        }
+    },
+
+    additionDecimaux: {
+        generate: (params = {}) => {
+            const decimals = params.decimals ?? 1;
+            const max = params.max ?? 9;
+            const scale = Math.pow(10, decimals);
+            const a = rand(1, max * scale) / scale;
+            const b = rand(1, max * scale) / scale;
+            const result = Math.round((a + b) * scale) / scale;
+            const fmt = n => String(n).replace('.', ',');
+            return { type: 'number-check', operation: `${fmt(a)} + ${fmt(b)}`, answers: [fmt(result)] };
+        }
+    },
+
+    soustractionDecimaux: {
+        generate: (params = {}) => {
+            const decimals = params.decimals ?? 1;
+            const max = params.max ?? 9;
+            const scale = Math.pow(10, decimals);
+            let a = rand(2, max * scale) / scale;
+            let b = rand(1, Math.round(a * scale) - 1) / scale;
+            const result = Math.round((a - b) * scale) / scale;
+            const fmt = n => String(n).replace('.', ',');
+            return { type: 'number-check', operation: `${fmt(a)} - ${fmt(b)}`, answers: [fmt(result)] };
+        }
+    },
+
+    comparerDecimaux: {
+        generate: (params = {}) => {
+            const decimals = params.decimals ?? 1;
+            const max = params.max ?? 9;
+            const count = params.count ?? 4;
+            const scale = Math.pow(10, decimals);
+            const fmt = n => String(n).replace('.', ',');
+            const comparisons = [];
+            for (let i = 0; i < count; i++) {
+                let a = rand(1, max * scale) / scale;
+                let b = rand(1, max * scale) / scale;
+                while (a === b) b = rand(1, max * scale) / scale;
+                comparisons.push({ left: fmt(a), right: fmt(b), answer: a < b ? '<' : '>' });
+            }
+            return { type: 'compare', comparisons };
+        }
+    },
+
+    divisionTrou: {
+        generate: (params = {}) => {
+            const b = rand(params.minDivisor ?? 2, params.maxDivisor ?? 9);
+            const q = rand(params.minQuotient ?? 2, params.maxQuotient ?? 10);
+            const a = q * b;
+            const missing = Math.random() > 0.5 ? 'quotient' : 'dividend';
+            const op = missing === 'quotient' ? `${a} \u00f7 ${b} = ?` : `? \u00f7 ${b} = ${q}`;
+            return { type: 'number-check', operation: op, answers: [String(missing === 'quotient' ? q : a)] };
+        }
+    },
+
+    decompositionCentaines: {
+        generate: (params = {}) => {
+            const maxH = params.maxHundreds ?? 9;
+            const h = rand(params.minHundreds ?? 1, maxH);
+            const t = rand(params.minTens ?? 0, params.maxTens ?? 9);
+            const u = rand(params.minOnes ?? 0, params.maxOnes ?? 9);
+            const parts = [`${h} centaine${h > 1 ? 's' : ''}`];
+            if (t > 0) parts.push(`${t} dizaine${t > 1 ? 's' : ''}`);
+            if (u > 0) parts.push(`${u} unité${u > 1 ? 's' : ''}`);
+            if (t === 0 && u === 0) parts.push('0 dizaine et 0 unité');
+            return { type: 'number-check', operation: `${parts.join(' et ')} = ?`, answers: [String(h * 100 + t * 10 + u)] };
+        }
+    },
+
+    compterDeNCE1: {
+        generate: (params = {}) => {
+            const stepChoices = params.steps ?? [2, 3, 4, 5, 10];
+            const step = stepChoices[rand(0, stepChoices.length - 1)];
+            const asc = params.direction ? params.direction === 'asc' : Math.random() > 0.5;
+            const maxStart = params.max ?? 100;
+            const startVal = asc ? rand(0, Math.floor((maxStart - 5 * step) / step)) * step : rand(5, Math.floor(maxStart / step)) * step;
+            const given = asc
+                ? [startVal, startVal + step, startVal + 2 * step]
+                : [startVal, startVal - step, startVal - 2 * step];
+            const answers = asc
+                ? [startVal + 3 * step, startVal + 4 * step, startVal + 5 * step]
+                : [startVal - 3 * step, startVal - 4 * step, startVal - 5 * step];
+            if (answers.some(v => v < 0)) {
+                return { type: 'sequence', sequence: { given: [0, step, step * 2].map(String), answers: [step * 3, step * 4, step * 5].map(String) } };
+            }
+            return { type: 'sequence', sequence: { given: given.map(String), answers: answers.map(String) } };
+        }
+    },
+
+    soustractionSimple: {
+        generate: (params = {}) => {
+            const a = rand(params.minA ?? 10, params.maxA ?? 99);
+            const b = rand(params.minB ?? 1, params.maxB ?? Math.min(a - 1, 99));
+            return { type: 'number-check', operation: `${a} - ${b}`, answers: [String(a - b)] };
+        }
+    },
+
+    ajouterSoustraire100: {
+        generate: (params = {}) => {
+            const n = rand(params.min ?? 1, params.max ?? 899);
+            const add = Math.random() > 0.5;
+            const op = add ? `${n} + 100 = ?` : `${n + 100} - 100 = ?`;
+            return { type: 'number-check', operation: op, answers: [String(add ? n + 100 : n)] };
         }
     },
 

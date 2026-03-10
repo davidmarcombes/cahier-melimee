@@ -76,8 +76,11 @@ function run() {
             const newId = generateUniqueId(folderName);
             const timestamp = new Date().toISOString();
 
-            // Prepend id and created_at to the yaml file
-            const idBlock = `id: "${newId}"\ncreated_at: "${timestamp}"\n`;
+            // Prepend id, and created_at only if not already present
+            const hasCreatedAt = /^created_at:/m.test(content);
+            const idBlock = hasCreatedAt
+                ? `id: "${newId}"\n`
+                : `id: "${newId}"\ncreated_at: "${timestamp}"\n`;
             const updatedContent = idBlock + content;
 
             fs.writeFileSync(yamlPath, updatedContent, 'utf8');
