@@ -21,6 +21,10 @@ const TYPE_SCHEMAS = {
   'fraction':     { required: ['shape', 'numerator', 'denominator', 'answer'] },
   'base-10':      { required: ['answer'], requireOneOf: [['number'], ['hundreds', 'tens', 'ones']] },
   'clock':        { required: ['hour', 'minute', 'answer'] },
+  'sort':         { required: ['items'], arrays: ['items'] },
+  'ruler':        { required: [] },
+  'fraction-check': { required: ['answers'], arrays: ['answers'] },
+  'tile-select':  { required: ['tiles', 'tileAnswers'], arrays: ['tiles', 'tileAnswers'] },
 };
 
 const COLORS = {

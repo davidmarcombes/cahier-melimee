@@ -67,6 +67,7 @@ isSeriesPage: true
   {% if 'ruler' in usedTypes %}{% include "types/ruler.njk" %}{% endif %}
   {% if 'fraction-check' in usedTypes %}{% include "types/fraction-check.njk" %}{% endif %}
   {% if 'tile-select' in usedTypes %}{% include "types/tile-select.njk" %}{% endif %}
+  {% if 'sort' in usedTypes %}{% include "types/sort.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -141,6 +142,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'tile-select' in usedTypes %}
     <span x-show="cur.type === 'tile-select'">Certaines tuiles ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
+    {% if 'sort' in usedTypes %}
+    <span x-show="cur.type === 'sort'">L'ordre n'est pas correct. Essaie encore !</span>
     {% endif %}
   </div>
 

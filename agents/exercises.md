@@ -37,19 +37,62 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `multi-question` | `types/multi-question.njk` | Shared context + multiple sub-questions, each validated on Enter. |
 | `mcq` | `types/mcq.njk` | Multiple choice — click the correct answer among 3-5 shuffled choices. |
 | `ruler` | `types/ruler.njk` | Graduated ruler with markers — read a value. SVG via `rulerSvg` getter. |
+| `sort` | `types/sort.njk` | Order items by clicking them in sequence. Items listed in correct order in YAML, shuffled at runtime. |
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
 
 ## Adding a New Exercise Type
 
-1. Create `src/_includes/types/your-type.njk` — the visual partial
-2. Add conditional include in `series-player.njk`:
-   ```njk
-   {% if 'your-type' in usedTypes %}{% include "types/your-type.njk" %}{% endif %}
-   ```
-3. Add state, methods, and `check()` branch in `app.js` `seriesPlayer`
-4. Add type handling in `.eleventy.js` `seriesPayload` filter if needed
-5. Create sample content in `src/fr/exercices/`
+Complete checklist — every step is required:
+
+### 1. Template partial
+Create `src/_includes/types/your-type.njk`.
+- Wrap everything in `<div x-show="cur.type === 'your-type'">`.
+- Keep `:class` objects on a **single line** — multi-line blocks render verbatim whitespace into built HTML and inflate page size.
+- Include a "Vérifier" button inside the partial (or reuse `seq-verify.njk` for sequence-style types).
+
+### 2. `series-player.njk` — two places
+```njk
+{# Conditional include (~line 52, with other type includes) #}
+{% if 'your-type' in usedTypes %}{% include "types/your-type.njk" %}{% endif %}
+
+{# Error feedback span (~line 130, inside the showError div) #}
+{% if 'your-type' in usedTypes %}
+<span x-show="cur.type === 'your-type'">Message d'erreur. Essaie encore !</span>
+{% endif %}
+```
+
+### 3. `app.js` — four places
+- **State variables** (top of `seriesPlayer` data object): add all input/error/display arrays.
+- **`init()`**: initialize state for the first exercise (index 0).
+- **`goTo(idx)`**: reset state when navigating to a new exercise.
+- **`check()`**: add a type branch — `solvedFlags[currentIndex] = true` + auto-advance on success; `showError = true` + timeout reset on failure.
+- **Methods** (before `goTo`): add any interaction handlers.
+
+### 4. `.eleventy.js` — `seriesPayload` filter
+If the type has custom YAML fields beyond `title/type/operation/body/answers`, add a block before `payload.push(item)`:
+```js
+if (ex.data.type === 'your-type' && ex.data.yourField) {
+  item.yourField = ex.data.yourField;
+}
+```
+
+### 5. `scripts/validate-exercises.js` — `TYPE_SCHEMAS`
+Register the type so the validator accepts it:
+```js
+'your-type': { required: ['requiredField'], arrays: ['arrayField'] },
+```
+
+### 6. `scripts/generate-maths-ex.js` — two places
+- **`TYPE_CHOICES`**: add `{ name: 'your-type — Description', value: 'your-type' }`.
+- **`TEMPLATES`**: add the empty scaffold YAML string.
+
+### 7. Sample content + IDs
+Create at least one series under `src/fr/exercices/`, then run `npm run generate:ids`.
+
+### 8. Documentation
+- Add a row to the **Exercise Types** table above.
+- Add new YAML fields to the **Front-Matter Schema** section below.
 
 ## Adding a New Generator
 
@@ -102,6 +145,11 @@ context: "267 543 109"     # multi-question shared context
 questions:                 # multi-question
   - text: "Sub-question?"
     answer: "answer"
+items:                     # sort — listed in CORRECT order, shuffled at runtime
+  - "3,07"
+  - "3,7"
+  - "30,7"
+direction: asc             # sort — "asc" (plus petit → plus grand) or "desc"
 ---
 
 Markdown body shown as instructions.

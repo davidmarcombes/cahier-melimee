@@ -475,6 +475,10 @@ module.exports = async function (eleventyConfig) {
             answers: ex.data.items.map(it => interpolate(String(it.answer)).trim())
           };
         }
+        if (ex.data.type === 'sort' && ex.data.items) {
+          item.items = ex.data.items.map(v => interpolate(String(v)));
+          if (ex.data.direction) item.direction = ex.data.direction;
+        }
 
         payload.push(item);
       }

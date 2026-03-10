@@ -172,6 +172,9 @@ function seriesPlayer(exercises) {
     rfInputs: ['', ''],
     tileSelected: [],
     tileErrors: [],
+    sortPicked: [],
+    sortShuffled: [],
+    sortErrors: [],
     showValidationPanel: false,
     testNotes: '',
     testSending: false,
@@ -315,6 +318,7 @@ function seriesPlayer(exercises) {
       if (this.cur.statements) { this.tfInputs = this.cur.statements.map(() => null) }
       if (this.cur.comparisons) { this.cmpInputs = this.cur.comparisons.map(() => null) }
       if (this.cur.mqQuestions) { this.mqInputs = this.cur.mqQuestions.map(() => ''); this.mqSolved = this.cur.mqQuestions.map(() => false) }
+      if (this.cur.items) { this.sortShuffled = [...this.cur.items].sort(() => Math.random() - 0.5) }
       const _focusFirst = () => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-trou input')).find(el => el.offsetHeight > 0); else if (this.seqInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-seq input')).find(el => el.offsetHeight > 0); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }
       requestAnimationFrame(_focusFirst)
       this.$watch('currentIndex', () => requestAnimationFrame(_focusFirst))
@@ -359,6 +363,16 @@ function seriesPlayer(exercises) {
           this.tileErrors = this.tileSelected.filter(i => !expected.includes(i));
           this.showError = true; setTimeout(() => { this.showError = false; this.tileErrors = [] }, 2000);
         }
+        return
+      }
+      if (this.cur.type === 'sort') {
+        if (this.solved) return;
+        const userOrder = this.sortPicked.map(i => this.sortShuffled[i]);
+        const wrong = userOrder.map((v, i) => v !== (this.cur.items || [])[i] ? i : -1).filter(i => i !== -1);
+        if (wrong.length === 0) {
+          this.solvedFlags[this.currentIndex] = true; this.showError = false; this.sortErrors = [];
+          if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) }
+        } else { this.sortErrors = wrong; this.showError = true; setTimeout(() => { this.showError = false; this.sortErrors = []; this.sortPicked = [] }, 2000) }
         return
       }
       if (this.cur.type === 'fraction-check') {
@@ -552,6 +566,15 @@ function seriesPlayer(exercises) {
       }).join('')
     },
 
+    sortTap(idx) {
+      if (this.solved || this.sortPicked.includes(idx)) return;
+      this.sortPicked.push(idx);
+    },
+    sortUnpick(rank) {
+      if (this.solved) return;
+      this.sortPicked = this.sortPicked.slice(0, rank);
+    },
+
     goTo(idx) {
       this.currentIndex = idx; this.userInput = ''; this.showError = false; this.matchSelected = null; this.matchConnections = []; this.matchErrors = []; this._matchLinesSvg = ''; this.rfInputs = ['', ''];
       const _e = this.exercises[idx] || {}; const _blanks = (_e.operation || '').split('?').length - 1; this.trouInputs = _blanks > 0 ? Array(_blanks).fill('') : [];
@@ -561,7 +584,9 @@ function seriesPlayer(exercises) {
       if (_e.statements) { this.tfInputs = _e.statements.map(() => null) } else { this.tfInputs = [] } this.tfErrors = [];
       if (_e.comparisons) { this.cmpInputs = _e.comparisons.map(() => null) } else { this.cmpInputs = [] } this.cmpErrors = [];
       if (_e.mqQuestions) { this.mqInputs = _e.mqQuestions.map(() => ''); this.mqSolved = _e.mqQuestions.map(() => false) } else { this.mqInputs = []; this.mqSolved = [] } this.mqErrors = [];
-      this.mcqSelected = null; this.mcqWrong = null; this.tileSelected = []; this.tileErrors = []; window.location.hash = '#' + (idx + 1);
+      this.mcqSelected = null; this.mcqWrong = null; this.tileSelected = []; this.tileErrors = [];
+      if (_e.items) { this.sortPicked = []; this.sortShuffled = [..._e.items].sort(() => Math.random() - 0.5) } else { this.sortPicked = []; this.sortShuffled = [] } this.sortErrors = [];
+      window.location.hash = '#' + (idx + 1);
     },
 
     syncFromHash() { const h = parseInt(window.location.hash.replace('#', ''), 10); if (h >= 1 && h <= this.exercises.length) { this.currentIndex = h - 1 } }

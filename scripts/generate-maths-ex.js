@@ -61,6 +61,7 @@ const TYPE_CHOICES = [
   { name: 'fraction        — Représentation de fraction', value: 'fraction' },
   { name: 'base-10         — Décomposition en base 10', value: 'base-10' },
   { name: 'clock           — Lire l\'heure', value: 'clock' },
+  { name: 'sort            — Ordonner des valeurs (click-to-rank)', value: 'sort' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -84,6 +85,7 @@ const TEMPLATES = {
   fraction: 'shape: "circle"\nnumerator: \ndenominator: \nanswer: ""',
   'base-10': 'number: \nanswer: ""',
   clock: 'hour: \nminute: \nanswer: ""',
+  sort: 'direction: asc\nitems:\n  - ""\n  - ""\n  - ""\n  - ""',
 };
 
 const TYPES = Object.keys(TEMPLATES);
