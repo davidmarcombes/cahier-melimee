@@ -560,6 +560,237 @@ const generators = {
         }
     },
 
+    // Sort: order decimal numbers
+    // params: count (4), decimals (1), min (1), max (9), direction ('asc'), confusable (false)
+    // confusable=true forces all values to share the same integer part (harder to sort)
+    trierDecimaux: {
+        generate(params = {}) {
+            const count = params.count ?? 4;
+            const dec = params.decimals ?? 1;
+            const direction = params.direction ?? 'asc';
+            const scale = Math.pow(10, dec);
+            const confusable = params.confusable ?? false;
+
+            const values = new Set();
+            if (confusable) {
+                // Same integer part, differ only in decimals
+                const intPart = rand(params.min ?? 1, params.max ?? 9);
+                while (values.size < count) values.add(intPart * scale + rand(0, scale - 1));
+            } else {
+                const lo = (params.min ?? 1) * scale;
+                const hi = (params.max ?? 9) * scale;
+                while (values.size < count) values.add(rand(lo, hi));
+            }
+
+            const fmt = n => (n / scale).toFixed(dec).replace('.', ',');
+            const sorted = [...values].sort((a, b) => direction === 'asc' ? a - b : b - a).map(fmt);
+            const title = direction === 'asc' ? 'Ordre croissant' : 'Ordre décroissant';
+            return { type: 'sort', title, items: sorted, direction };
+        }
+    },
+
+    // number-check + abacusSvg: read a boulier (abacus) and write the number
+    // params: minDigits (3), maxDigits (6), allowZeroDigit (true)
+    //   allowZeroDigit=false → all digits 1-9 (CE2 intro level)
+    lireAbacus: {
+        generate(params = {}) {
+            const ALL_PV = [
+                { label: '1\u202f000\u202f000', pv: 1000000 },
+                { label: '100\u202f000',        pv: 100000  },
+                { label: '10\u202f000',         pv: 10000   },
+                { label: '1\u202f000',          pv: 1000    },
+                { label: '100',                 pv: 100     },
+                { label: '10',                  pv: 10      },
+                { label: '1',                   pv: 1       },
+            ];
+            const minD = params.minDigits ?? 3;
+            const maxD = params.maxDigits ?? 6;
+            const numD = params.digits    ?? rand(minD, maxD);
+            const allowZero = params.allowZeroDigit ?? true;
+
+            const pvSlice = ALL_PV.slice(ALL_PV.length - numD);
+            const digits  = pvSlice.map((_, i) =>
+                i === 0 ? rand(1, 9) : (allowZero ? rand(0, 9) : rand(1, 9))
+            );
+
+            const number = pvSlice.reduce((sum, { pv }, i) => sum + digits[i] * pv, 0);
+            const rows   = pvSlice.map(({ label }, i) => ({ label, value: digits[i] }));
+
+            return {
+                type: 'number-check',
+                title: 'Quel nombre est représenté sur le boulier ?',
+                svg: { gen: 'abacusSvg', par: { rows, beadsPerRow: 10 } },
+                answers: [String(number)]
+            };
+        }
+    },
+
+    // number-check: mental arithmetic on large numbers (add/subtract multiples of place values)
+    // params: minVal (100000), maxVal (999999), ops (1), pvChoices, minCoef (1), maxCoef (9)
+    // facile: ops=1, pvChoices=['milliers','centaines'], maxCoef=9
+    // moyen:  ops=2, pvChoices=['dizaines de milliers','milliers','centaines'], maxCoef=9
+    // difficile: ops=2, pvChoices=['milliers','centaines','dizaines'], minCoef=10, maxCoef=25
+    calcMentalGrands: {
+        generate(params = {}) {
+            const PV = {
+                'unités': 1, 'dizaines': 10, 'centaines': 100,
+                'milliers': 1000, 'dizaines de milliers': 10000, 'centaines de milliers': 100000
+            };
+            // French thousands separator (non-breaking space)
+            const fmtNum = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+
+            const minVal    = params.minVal ?? 100000;
+            const maxVal    = params.maxVal ?? 999999;
+            const opCount   = params.ops ?? 1;
+            const pvChoices = params.pvChoices ?? ['milliers', 'centaines'];
+            const minCoef   = params.minCoef ?? 1;
+            const maxCoef   = params.maxCoef ?? 9;
+
+            let n = rand(minVal, maxVal);
+            let result = n;
+            const parts = [];
+            const usedPV = new Set();
+
+            for (let i = 0; i < opCount; i++) {
+                // Pick a place value not already used this exercise
+                let pv;
+                let attempts = 0;
+                do { pv = pvChoices[rand(0, pvChoices.length - 1)]; attempts++; }
+                while (usedPV.has(pv) && attempts < 20);
+                usedPV.add(pv);
+
+                const pvVal = PV[pv];
+                const coef  = rand(minCoef, maxCoef);
+                const canSub = result - coef * pvVal >= 0;
+                const canAdd = result + coef * pvVal <= 9999999;
+                const doAdd  = canSub && canAdd ? Math.random() > 0.5 : !canSub;
+
+                result += doAdd ? coef * pvVal : -(coef * pvVal);
+                parts.push(`${doAdd ? 'Ajoute' : 'Enlève'} ${coef} ${pv}`);
+            }
+
+            return {
+                type: 'number-check',
+                title: fmtNum(n),
+                operation: parts.join(' et '),
+                answers: [String(result)]
+            };
+        }
+    },
+
+    // Tile-select: decompose a decimal number into place-value tiles
+    // params: firstPV (3=ones), lastPV (4=tenths), minComponents (1), distractors (auto)
+    // PV index: 0=1000, 1=100, 2=10, 3=1, 4=0.1, 5=0.01, 6=0.001
+    // facile: firstPV=3, lastPV=4  →  X,X   (e.g. 3,7)
+    // moyen:  firstPV=3, lastPV=5  →  X,XX  (e.g. 4,35)
+    // difficile: firstPV=2, lastPV=6 → XX,XXX (e.g. 13,035)
+    decomposerDecimal: {
+        generate(params = {}) {
+            const PV = [1000, 100, 10, 1, 0.1, 0.01, 0.001];
+            const firstPV = params.firstPV ?? 3;
+            const lastPV  = params.lastPV  ?? 4;
+            const pvCount = lastPV - firstPV + 1;
+            const decPlaces = Math.max(0, lastPV - 3);
+            const scale = Math.pow(10, decPlaces);
+            const minComponents = params.minComponents ?? 1;
+
+            // Format a place-value tile: coef × PV[pvIdx]
+            const fmtTile = (coef, pvIdx) => {
+                const val = coef * PV[pvIdx];
+                if (Number.isInteger(val)) return String(val);
+                return val.toFixed(pvIdx - 3).replace('.', ',');
+            };
+
+            // Generate digits, retrying until enough non-zero components
+            let digits;
+            do {
+                digits = [];
+                for (let k = 0; k < pvCount; k++) {
+                    digits.push(k === 0 || k === pvCount - 1 ? rand(1, 9) : rand(0, 9));
+                }
+            } while (digits.filter(Boolean).length < minComponents);
+
+            // Collect non-zero place-value components
+            const correctTiles = [];
+            for (let k = 0; k < pvCount; k++) {
+                if (digits[k] > 0) correctTiles.push({ coef: digits[k], pvIdx: firstPV + k });
+            }
+
+            // Compute number string using integer arithmetic (avoids float drift)
+            let numInt = 0;
+            for (const { coef, pvIdx } of correctTiles) {
+                numInt += coef * Math.round(PV[pvIdx] * scale);
+            }
+            const numStr = (numInt / scale).toFixed(decPlaces).replace('.', ',');
+
+            // Build distractor pool: same coef shifted ±1 place, or adjacent coef same place
+            const used = new Set(correctTiles.map(c => fmtTile(c.coef, c.pvIdx)));
+            const distractorPool = [];
+            for (const { coef, pvIdx } of correctTiles) {
+                if (pvIdx > 0) {
+                    const t = fmtTile(coef, pvIdx - 1);
+                    if (!used.has(t)) { distractorPool.push(t); used.add(t); }
+                }
+                if (pvIdx < 6) {
+                    const t = fmtTile(coef, pvIdx + 1);
+                    if (!used.has(t)) { distractorPool.push(t); used.add(t); }
+                }
+                const alt = coef < 9 ? coef + 1 : coef - 1;
+                const t = fmtTile(alt, pvIdx);
+                if (!used.has(t)) { distractorPool.push(t); used.add(t); }
+            }
+
+            const numDist = params.distractors ?? Math.max(3, correctTiles.length);
+            const selected = distractorPool.sort(() => Math.random() - 0.5).slice(0, numDist);
+
+            const pool = [
+                ...correctTiles.map(c => ({ t: fmtTile(c.coef, c.pvIdx), ok: true })),
+                ...selected.map(t => ({ t, ok: false }))
+            ].sort(() => Math.random() - 0.5);
+
+            return {
+                type: 'tile-select',
+                title: `Coche les tuiles qui composent ${numStr}`,
+                tiles: pool.map(p => p.t),
+                tileAnswers: pool.map((p, i) => p.ok ? i : -1).filter(i => i !== -1)
+            };
+        }
+    },
+
+    // Sort: order fractions
+    // params: count (4), direction ('asc'), sameDenominator (true), denominator (random 4-12)
+    // sameDenominator=false draws from a pool of common fractions (halves, thirds, quarters…)
+    trierFractions: {
+        generate(params = {}) {
+            const count = params.count ?? 4;
+            const direction = params.direction ?? 'asc';
+            const sameDen = params.sameDenominator ?? true;
+
+            let fracs;
+            if (sameDen) {
+                const denChoices = params.denominator
+                    ? [params.denominator]
+                    : [4, 6, 8, 10, 12];
+                const den = denChoices[rand(0, denChoices.length - 1)];
+                const nums = new Set();
+                while (nums.size < count) nums.add(rand(1, den - 1));
+                fracs = [...nums].map(n => ({ n, d: den, v: n / den }));
+            } else {
+                const pool = [
+                    {n:1,d:2},{n:1,d:3},{n:2,d:3},{n:1,d:4},{n:3,d:4},
+                    {n:1,d:6},{n:5,d:6},{n:1,d:8},{n:3,d:8},{n:5,d:8},{n:7,d:8},
+                    {n:1,d:10},{n:3,d:10},{n:7,d:10},{n:9,d:10},
+                ].map(f => ({...f, v: f.n / f.d}));
+                fracs = pool.slice().sort(() => Math.random() - 0.5).slice(0, count);
+            }
+
+            fracs.sort((a, b) => direction === 'asc' ? a.v - b.v : b.v - a.v);
+            const items = fracs.map(f => `${f.n}/${f.d}`);
+            const title = direction === 'asc' ? 'Ordre croissant' : 'Ordre décroissant';
+            return { type: 'sort', title, items, direction };
+        }
+    },
+
 };
 
 // Dual export: Node.js (build time) + browser (runtime)

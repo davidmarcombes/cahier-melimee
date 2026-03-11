@@ -33,7 +33,8 @@
         "serve:local": "node scripts/serve-subpath.js",
         "lint": "eslint . && prettier --check .",
         "format": "prettier --write .",
-        "clean:yaml": "node scripts/clean-yaml.js"
+        "clean:yaml": "node scripts/clean-yaml.js",
+        "report": "node scripts/generate-report.js"
     },
     "keywords": [
         "eleventy",

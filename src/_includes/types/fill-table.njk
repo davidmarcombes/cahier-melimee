@@ -1,0 +1,38 @@
+<div x-show="cur.type === 'fill-table'" class="space-y-4">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm mb-2"></div>
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse text-sm">
+      <thead x-show="cur.table && cur.table.headers && cur.table.headers.length">
+        <tr>
+          <template x-for="h in (cur.table ? cur.table.headers : [])" :key="h">
+            <th class="px-3 py-2 text-center font-bold text-content-default bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600" x-text="h"></th>
+          </template>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="(row, ri) in (cur.table ? cur.table.rows : [])" :key="ri">
+          <tr>
+            <template x-for="(cell, ci) in row" :key="ci">
+              <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
+                <span x-show="!cell.blank" x-text="cell.value" class="font-semibold text-content-default"></span>
+                <input x-show="cell.blank" inputmode="decimal"
+                       :value="tableInputs[cell.idx] || ''"
+                       @input="tableInputs[cell.idx] = $event.target.value"
+                       @keydown.enter="check()" :disabled="solved"
+                       class="js-table w-14 h-8 text-center text-sm font-bold rounded-lg border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+                       :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved&&!tableErrors.includes(cell.idx),'border-red-400 bg-red-50 dark:bg-red-900/20':tableErrors.includes(cell.idx),'border-primary-300 dark:border-primary-600':!solved&&!tableErrors.includes(cell.idx)}"
+                       placeholder="?"/>
+              </td>
+            </template>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+  <div x-show="!solved" class="flex justify-center pt-2">
+    <button @click="check()" :disabled="tableInputs.some(v => !v.trim())"
+      class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
+      Vérifier
+    </button>
+  </div>
+</div>

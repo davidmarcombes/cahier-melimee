@@ -90,6 +90,45 @@ function triangleSvg(pixA, pixB, labelA = "", labelB = "", labelC = "", fillColo
     </svg>`;
 }
 
+// abacusSvg — boulier/abacus SVG
+// rows: [{ label, value }, ...] — value 0..beadsPerRow (active beads on left, inactive on right)
+// beadsPerRow: default 10
+function abacusSvg(rows, beadsPerRow = 10) {
+  const COLORS = ['#e0743c', 'var(--p)', '#4daa60'];
+  const R = 7, SLOT = 18, ROW_H = 26, V_PAD = 10, H_PAD = 10;
+  const ROD_W = beadsPerRow * SLOT + 10;   // +10 = constant gap between active/inactive groups
+  const FRAME_W = ROD_W + H_PAD * 2;
+  const LABEL_W = 76, GAP = 6;
+  const TOTAL_W = LABEL_W + GAP + FRAME_W;
+  const FRAME_H = rows.length * ROW_H + V_PAD * 2;
+  const FX = LABEL_W + GAP;
+  let g = '';
+
+  g += `<rect x="${FX}" y="0" width="${FRAME_W}" height="${FRAME_H}" rx="6" fill="var(--sf)" stroke="var(--cs)" stroke-width="1.5"/>`;
+
+  rows.forEach(({ label, value }, ri) => {
+    const cy = V_PAD + ri * ROW_H + ROW_H / 2;
+    const color = COLORS[ri % COLORS.length];
+    const x1 = FX + H_PAD, x2 = FX + H_PAD + ROD_W;
+
+    if (ri > 0) g += `<line x1="${FX+1}" y1="${V_PAD + ri*ROW_H}" x2="${FX+FRAME_W-1}" y2="${V_PAD + ri*ROW_H}" stroke="var(--cs)" stroke-width="0.5" opacity="0.4"/>`;
+    g += `<line x1="${x1}" y1="${cy}" x2="${x2}" y2="${cy}" stroke="var(--cs)" stroke-width="1.5"/>`;
+    g += `<text x="${LABEL_W}" y="${cy}" text-anchor="end" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="var(--ct)">${label}</text>`;
+
+    for (let i = 0; i < value; i++) {
+      const bx = x1 + R + i * SLOT;
+      g += `<circle cx="${bx}" cy="${cy}" r="${R}" fill="${color}"/>`;
+      g += `<circle cx="${bx - 2}" cy="${cy - 3}" r="2" fill="rgba(255,255,255,0.35)"/>`;
+    }
+    for (let j = 0; j < beadsPerRow - value; j++) {
+      const bx = x2 - R - j * SLOT;
+      g += `<circle cx="${bx}" cy="${cy}" r="${R}" fill="var(--ss)" stroke="var(--cs)" stroke-width="1"/>`;
+    }
+  });
+
+  return `<svg width="${TOTAL_W}" height="${FRAME_H}" viewBox="0 0 ${TOTAL_W} ${FRAME_H}" xmlns="http://www.w3.org/2000/svg">${g}</svg>`;
+}
+
 function rulerSvg(min = 0, max = 10, step = 1, minorStep = 0.1, customLabels = {}, markColor = 'var(--p)', width = 500) {
   const height = 110;
   const pad = 40;
@@ -175,6 +214,8 @@ function seriesPlayer(exercises) {
     sortPicked: [],
     sortShuffled: [],
     sortErrors: [],
+    tableInputs: [],
+    tableErrors: [],
     showValidationPanel: false,
     testNotes: '',
     testSending: false,
@@ -319,7 +360,8 @@ function seriesPlayer(exercises) {
       if (this.cur.comparisons) { this.cmpInputs = this.cur.comparisons.map(() => null) }
       if (this.cur.mqQuestions) { this.mqInputs = this.cur.mqQuestions.map(() => ''); this.mqSolved = this.cur.mqQuestions.map(() => false) }
       if (this.cur.items) { this.sortShuffled = [...this.cur.items].sort(() => Math.random() - 0.5) }
-      const _focusFirst = () => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-trou input')).find(el => el.offsetHeight > 0); else if (this.seqInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-seq input')).find(el => el.offsetHeight > 0); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }
+      if (this.cur.table) { this.tableInputs = new Array(this.cur.table.blankCount).fill('') } this.tableErrors = [];
+      const _focusFirst = () => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-trou input')).find(el => el.offsetHeight > 0); else if (this.seqInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-seq input')).find(el => el.offsetHeight > 0); else if (this.cur.type === 'fill-table') ref = Array.from(this.$el.querySelectorAll('.js-table input')).find(el => el.offsetHeight > 0); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }
       requestAnimationFrame(_focusFirst)
       this.$watch('currentIndex', () => requestAnimationFrame(_focusFirst))
     },
@@ -352,6 +394,21 @@ function seriesPlayer(exercises) {
     },
 
     check() {
+      if (this.cur.type === 'fill-table') {
+        if (this.solved) return;
+        if (this.tableInputs.some(v => !v.trim())) { this.showError = true; setTimeout(() => { this.showError = false }, 2000); return }
+        const errors = [];
+        (this.cur.table?.rows || []).forEach(row => row.forEach(cell => {
+          if (cell.blank) {
+            const u = this.tableInputs[cell.idx].replace(',', '.').trim();
+            const a = cell.answer.replace(',', '.').trim();
+            if (u !== a) errors.push(cell.idx);
+          }
+        }));
+        if (errors.length === 0) { this.solvedFlags[this.currentIndex] = true; this.showError = false; this.tableErrors = []; if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) } }
+        else { this.tableErrors = errors; this.showError = true; setTimeout(() => { this.showError = false; this.tableErrors = [] }, 2000) }
+        return
+      }
       if (this.cur.type === 'tile-select') {
         if (this.solved) return;
         const expected = [...(this.cur.tileAnswers || [])].sort((a, b) => a - b);
@@ -586,6 +643,7 @@ function seriesPlayer(exercises) {
       if (_e.mqQuestions) { this.mqInputs = _e.mqQuestions.map(() => ''); this.mqSolved = _e.mqQuestions.map(() => false) } else { this.mqInputs = []; this.mqSolved = [] } this.mqErrors = [];
       this.mcqSelected = null; this.mcqWrong = null; this.tileSelected = []; this.tileErrors = [];
       if (_e.items) { this.sortPicked = []; this.sortShuffled = [..._e.items].sort(() => Math.random() - 0.5) } else { this.sortPicked = []; this.sortShuffled = [] } this.sortErrors = [];
+      if (_e.table) { this.tableInputs = new Array(_e.table.blankCount).fill('') } else { this.tableInputs = [] } this.tableErrors = [];
       window.location.hash = '#' + (idx + 1);
     },
 

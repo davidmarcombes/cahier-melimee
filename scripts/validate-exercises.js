@@ -22,6 +22,7 @@ const TYPE_SCHEMAS = {
   'base-10':      { required: ['answer'], requireOneOf: [['number'], ['hundreds', 'tens', 'ones']] },
   'clock':        { required: ['hour', 'minute', 'answer'] },
   'sort':         { required: ['items'], arrays: ['items'] },
+  'fill-table':   { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
   'ruler':        { required: [] },
   'fraction-check': { required: ['answers'], arrays: ['answers'] },
   'tile-select':  { required: ['tiles', 'tileAnswers'], arrays: ['tiles', 'tileAnswers'] },

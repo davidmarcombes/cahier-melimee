@@ -479,6 +479,19 @@ module.exports = async function (eleventyConfig) {
           item.items = ex.data.items.map(v => interpolate(String(v)));
           if (ex.data.direction) item.direction = ex.data.direction;
         }
+        if (ex.data.type === 'fill-table' && ex.data.rows && ex.data.headers) {
+          let blankIdx = 0;
+          const rows = ex.data.rows.map((row, ri) => {
+            let colAnsIdx = 0;
+            return row.map(cell => {
+              if (String(cell) === '?') {
+                return { blank: true, answer: String((ex.data.answers[ri] || [])[colAnsIdx++] ?? ''), idx: blankIdx++ };
+              }
+              return { blank: false, value: String(cell) };
+            });
+          });
+          item.table = { headers: ex.data.headers.map(String), rows, blankCount: blankIdx };
+        }
 
         payload.push(item);
       }

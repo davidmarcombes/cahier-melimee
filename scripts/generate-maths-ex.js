@@ -62,6 +62,7 @@ const TYPE_CHOICES = [
   { name: 'base-10         — Décomposition en base 10', value: 'base-10' },
   { name: 'clock           — Lire l\'heure', value: 'clock' },
   { name: 'sort            — Ordonner des valeurs (click-to-rank)', value: 'sort' },
+  { name: 'fill-table      — Compléter un tableau', value: 'fill-table' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -86,6 +87,7 @@ const TEMPLATES = {
   'base-10': 'number: \nanswer: ""',
   clock: 'hour: \nminute: \nanswer: ""',
   sort: 'direction: asc\nitems:\n  - ""\n  - ""\n  - ""\n  - ""',
+  'fill-table': 'headers: ["Col1", "Col2", "Col3"]\nrows:\n  - ["valeur", "?", "valeur"]\n  - ["valeur", "valeur", "?"]\nanswers:\n  - ["?"]\n  - ["?"]',
 };
 
 const TYPES = Object.keys(TEMPLATES);

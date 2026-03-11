@@ -74,14 +74,7 @@ function run() {
         // Check if 'id:' key is missing
         if (!content.match(/^id:/m)) {
             const newId = generateUniqueId(folderName);
-            const timestamp = new Date().toISOString();
-
-            // Prepend id, and created_at only if not already present
-            const hasCreatedAt = /^created_at:/m.test(content);
-            const idBlock = hasCreatedAt
-                ? `id: "${newId}"\n`
-                : `id: "${newId}"\ncreated_at: "${timestamp}"\n`;
-            const updatedContent = idBlock + content;
+            const updatedContent = `id: "${newId}"\n` + content;
 
             fs.writeFileSync(yamlPath, updatedContent, 'utf8');
             console.log(`✅ Assigned id: ${newId} to: ${path.relative(path.resolve(__dirname, '..'), folderPath)}`);
