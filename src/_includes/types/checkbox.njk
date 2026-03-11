@@ -1,0 +1,71 @@
+{# checkbox type — tick all valid statements, then verify #}
+<div x-show="cur.type === 'checkbox'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
+
+  {# Optional SVG / visual above statements #}
+  <template x-if="cur.svg">
+    <div class="flex justify-center mb-4" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
+  </template>
+
+  {# Optional body #}
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4"></div>
+
+  {# Statement rows #}
+  <div class="space-y-2 mb-5">
+    <template x-for="(stmt, i) in (cur.statements || [])" :key="i">
+      <button
+        @click="checkTap(i)"
+        :disabled="solved"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left
+               transition-all duration-150 select-none bg-white dark:bg-slate-800"
+        :class="{
+          'border-primary-400 bg-primary-50 dark:bg-primary-900/20 shadow':
+            checkSelected.includes(i) && !solved && !checkErrors.includes(i),
+          'border-green-500 bg-green-50 dark:bg-green-900/20':
+            solved && (cur.checkedAnswers || []).includes(i),
+          'border-red-400 bg-red-50 dark:bg-red-900/20':
+            checkErrors.includes(i),
+          'opacity-40 cursor-not-allowed':
+            solved && !(cur.checkedAnswers || []).includes(i),
+          'border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow cursor-pointer':
+            !solved && !checkSelected.includes(i) && !checkErrors.includes(i)
+        }"
+      >
+        {# Checkbox visual #}
+        <span
+          class="flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors"
+          :class="{
+            'bg-primary-500 border-primary-500': checkSelected.includes(i) && !solved && !checkErrors.includes(i),
+            'bg-green-500 border-green-500':     solved && (cur.checkedAnswers || []).includes(i),
+            'bg-red-100 border-red-400':         checkErrors.includes(i),
+            'border-slate-300 dark:border-slate-500': !checkSelected.includes(i) && !checkErrors.includes(i) && !solved
+          }"
+        >
+          <svg
+            x-show="checkSelected.includes(i) || (solved && (cur.checkedAnswers || []).includes(i))"
+            class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3.5"
+            viewBox="0 0 24 24" aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+        </span>
+
+        {# Statement text #}
+        <span class="text-sm sm:text-base font-medium text-content-default leading-snug" x-html="stmt"></span>
+      </button>
+    </template>
+  </div>
+
+  {# Verify button #}
+  <div class="flex justify-center">
+    <button
+      @click="check()"
+      :disabled="solved || checkSelected.length === 0"
+      class="px-8 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95
+             disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+  </div>
+</div>

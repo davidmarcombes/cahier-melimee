@@ -1,11 +1,11 @@
 ---
 type: fill-table
 title: "Plusieurs chiffres manquants"
-headers: ["Milliers", "Centaines", "Dizaines", "Unités"]
+headers: ["Nombre", "Milliers", "Centaines", "Dizaines", "Unités"]
 rows:
-  - ["?", "?", "5", "3"]
-  - ["2", "?", "?", "9"]
-  - ["?", "7", "0", "?"]
+  - ["1453", "?", "?", "5", "3"]
+  - ["2069", "2", "?", "?", "9"]
+  - ["3702", "?", "7", "0", "?"]
 answers:
   - ["1", "4"]
   - ["0", "6"]

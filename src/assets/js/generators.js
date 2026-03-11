@@ -625,6 +625,96 @@ const generators = {
         }
     },
 
+    // fill-table + decompoChipsHtml: read place-value chips, fill the numeration table
+    // params: minDigits (3), maxDigits (6), allowZeroDigit (true)
+    decompoTableau: {
+        generate(params = {}) {
+            const ALL_PV = [
+                { label: '1\u202f000\u202f000', pv: 1000000 },
+                { label: '100\u202f000',        pv: 100000  },
+                { label: '10\u202f000',         pv: 10000   },
+                { label: '1\u202f000',          pv: 1000    },
+                { label: '100',                 pv: 100     },
+                { label: '10',                  pv: 10      },
+                { label: '1',                   pv: 1       },
+            ];
+            const minD = params.minDigits ?? 3;
+            const maxD = params.maxDigits ?? 6;
+            const numD = params.digits    ?? rand(minD, maxD);
+            const allowZero = params.allowZeroDigit ?? true;
+
+            const pvSlice = ALL_PV.slice(ALL_PV.length - numD);
+            const digits  = pvSlice.map((_, i) =>
+                i === 0 ? rand(1, 9) : (allowZero ? rand(0, 9) : rand(1, 9))
+            );
+
+            const chips   = pvSlice.map(({ label }, i) => ({ label, value: digits[i] }));
+            const rows    = [pvSlice.map(({ label }, i) => ({ blank: true, idx: i, answer: String(digits[i]) }))];
+
+            return {
+                type: 'fill-table',
+                title: 'Remplis le tableau de numération.',
+                svg: { gen: 'decompoChipsHtml', par: { chips } },
+                table: { blankCount: numD, headers: pvSlice.map(({ label }) => label), rows }
+            };
+        }
+    },
+
+    // checkbox: find all valid decompositions of a hundredths fraction (N/100)
+    // params: withZeros (false) — allow 0 in tenths/hundredths digit
+    decompoFraction: {
+        generate(params = {}) {
+            const a = rand(1, 9);
+            const b = params.withZeros ? rand(0, 9) : rand(1, 9);  // tenths digit
+            const c = rand(1, 9);                                    // hundredths digit (always ≥1)
+            const N = a * 100 + b * 10 + c;
+
+            // Inline fraction: stacked numerator/denominator
+            const F = (n, d) =>
+                `<span style="display:inline-flex;flex-direction:column;align-items:center;`
+                + `vertical-align:-0.35em;margin:0 2px;line-height:1.2;font-size:0.9em">`
+                + `<span style="border-bottom:1px solid currentColor;padding:0 3px;text-align:center">${n}</span>`
+                + `<span style="padding:0 3px;text-align:center">${d}</span></span>`;
+
+            const P = ' + ';
+            const shuffle = arr => {
+                const r = [...arr];
+                for (let i = r.length - 1; i > 0; i--) { const j = rand(0, i); [r[i], r[j]] = [r[j], r[i]]; }
+                return r;
+            };
+
+            // --- Valid decompositions ---
+            const valid = [
+                ...(b > 0 ? [`${a}${P}${F(b,10)}${P}${F(c,100)}`]          : []),  // a + b/10 + c/100
+                `${a}${P}${F(b*10+c, 100)}`,                                         // a + (10b+c)/100
+                `${F(a*100+b*10, 100)}${P}${F(c, 100)}`,                             // (100a+10b)/100 + c/100
+                `${F(a*10+b, 10)}${P}${F(c, 100)}`,                                  // (10a+b)/10 + c/100
+                ...(b > 0 ? [`${F(a*100,100)}${P}${F(b*10,100)}${P}${F(c,100)}`] : []),  // 100a/100 + 10b/100 + c/100
+            ];
+
+            // --- Invalid distractors (look similar, compute to wrong value) ---
+            const invalid = [
+                ...(b > 0 && b !== c ? [`${a}${P}${F(c,10)}${P}${F(b,100)}`]    : []),  // swap b↔c
+                ...(b > 0            ? [`${a}${P}${F(b,10)}${P}${F(c,10)}`]     : [`${a}${P}${F(c,10)}`]),  // c/10 not c/100
+                ...(b > 0            ? [`${F(a*100,100)}${P}${F(b*10,10)}${P}${F(c,100)}`] : []),  // 10b/10 = integer b
+                `${a}${P}${F(b*10+c, 1000)}`,                                            // wrong power (/1000)
+            ];
+
+            // Pick 3 valid + 3 invalid, shuffle together
+            const picked = shuffle([
+                ...shuffle(valid).slice(0, 3).map(s => ({ s, ok: true })),
+                ...shuffle(invalid).slice(0, 3).map(s => ({ s, ok: false })),
+            ]);
+
+            return {
+                type: 'checkbox',
+                title: `Coche toutes les décompositions correctes de ${F(N, 100)}.`,
+                statements: picked.map(x => x.s),
+                checkedAnswers: picked.reduce((acc, x, i) => { if (x.ok) acc.push(i); return acc; }, [])
+            };
+        }
+    },
+
     // number-check: mental arithmetic on large numbers (add/subtract multiples of place values)
     // params: minVal (100000), maxVal (999999), ops (1), pvChoices, minCoef (1), maxCoef (9)
     // facile: ops=1, pvChoices=['milliers','centaines'], maxCoef=9

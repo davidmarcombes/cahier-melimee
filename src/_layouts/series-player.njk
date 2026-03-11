@@ -69,6 +69,7 @@ isSeriesPage: true
   {% if 'tile-select' in usedTypes %}{% include "types/tile-select.njk" %}{% endif %}
   {% if 'sort' in usedTypes %}{% include "types/sort.njk" %}{% endif %}
   {% if 'fill-table' in usedTypes %}{% include "types/fill-table.njk" %}{% endif %}
+  {% if 'checkbox' in usedTypes %}{% include "types/checkbox.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -149,6 +150,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'fill-table' in usedTypes %}
     <span x-show="cur.type === 'fill-table'">Certaines cases ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
+    {% if 'checkbox' in usedTypes %}
+    <span x-show="cur.type === 'checkbox'">Certaines cases cochées ne sont pas correctes. Essaie encore !</span>
     {% endif %}
   </div>
 

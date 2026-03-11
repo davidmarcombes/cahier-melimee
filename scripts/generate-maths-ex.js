@@ -63,6 +63,7 @@ const TYPE_CHOICES = [
   { name: 'clock           — Lire l\'heure', value: 'clock' },
   { name: 'sort            — Ordonner des valeurs (click-to-rank)', value: 'sort' },
   { name: 'fill-table      — Compléter un tableau', value: 'fill-table' },
+  { name: 'checkbox        — Cocher les affirmations vraies', value: 'checkbox' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -88,6 +89,7 @@ const TEMPLATES = {
   clock: 'hour: \nminute: \nanswer: ""',
   sort: 'direction: asc\nitems:\n  - ""\n  - ""\n  - ""\n  - ""',
   'fill-table': 'headers: ["Col1", "Col2", "Col3"]\nrows:\n  - ["valeur", "?", "valeur"]\n  - ["valeur", "valeur", "?"]\nanswers:\n  - ["?"]\n  - ["?"]',
+  'checkbox': 'statements:\n  - ""\n  - ""\n  - ""\n  - ""\ncheckedAnswers: []',
 };
 
 const TYPES = Object.keys(TEMPLATES);

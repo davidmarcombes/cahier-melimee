@@ -351,6 +351,11 @@ module.exports = async function (eleventyConfig) {
           item.tileAnswers = (ex.data.tileAnswers || []).map(Number);
         }
 
+        if (ex.data.statements) {
+          item.statements = ex.data.statements.map(s => md.renderInline(interpolate(String(s))));
+          item.checkedAnswers = (ex.data.checkedAnswers || []).map(Number);
+        }
+
         if (ex.data.pairs) {
           const processedPairs = ex.data.pairs.map(p => ({
             left: md.renderInline(interpolate(String(p.left))),

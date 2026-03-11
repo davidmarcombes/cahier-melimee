@@ -38,6 +38,8 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `mcq` | `types/mcq.njk` | Multiple choice — click the correct answer among 3-5 shuffled choices. |
 | `ruler` | `types/ruler.njk` | Graduated ruler with markers — read a value. SVG via `rulerSvg` getter. |
 | `sort` | `types/sort.njk` | Order items by clicking them in sequence. Items listed in correct order in YAML, shuffled at runtime. |
+| `fill-table` | `types/fill-table.njk` | Table with blank cells — student fills each digit/value. Supports `cur.svg` above the table. Uses `blankCount`, `headers`, `rows` (cells: `{blank, idx, answer}`). |
+| `checkbox` | `types/checkbox.njk` | Tick all valid statements — multi-select with a verify button. Fields: `statements[]` (HTML strings), `checkedAnswers[]` (integer indices). Supports `cur.svg`. |
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
 
@@ -150,6 +152,11 @@ items:                     # sort — listed in CORRECT order, shuffled at runti
   - "3,7"
   - "30,7"
 direction: asc             # sort — "asc" (plus petit → plus grand) or "desc"
+statements:                # checkbox — list of HTML/text strings
+  - "Affirmation 1"
+  - "Affirmation 2"
+  - "Affirmation 3"
+checkedAnswers: [0, 2]     # checkbox — 0-indexed integers (NOT strings)
 ---
 
 Markdown body shown as instructions.

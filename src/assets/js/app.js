@@ -90,6 +90,28 @@ function triangleSvg(pixA, pixB, labelA = "", labelB = "", labelC = "", fillColo
     </svg>`;
 }
 
+// decompoChipsHtml — place-value chips with dot rows (grouped 5+remainder)
+// chips: [{ label, value }, ...] — value 0-9
+function decompoChipsHtml(chips) {
+  const COLORS = ['#e0743c', 'var(--p)', '#4daa60'];
+  const parts = chips.map(({ label, value }, i) => {
+    const c = COLORS[i % COLORS.length];
+    let dots;
+    if (value === 0) {
+      dots = `<span style="color:var(--cs);font-size:11px;line-height:1">—</span>`;
+    } else {
+      const r1 = Math.min(value, 5), r2 = value - r1;
+      const s = `display:block;color:${c};font-size:11px;line-height:1.3;letter-spacing:1px`;
+      dots = `<span style="${s}">${'●'.repeat(r1)}</span>${r2 ? `<span style="${s}">${'●'.repeat(r2)}</span>` : ''}`;
+    }
+    return `<div style="display:inline-flex;flex-direction:column;border-radius:8px;overflow:hidden;min-width:50px">`
+      + `<div style="background:${c};color:#fff;padding:3px 6px;font-size:10px;font-weight:700;font-family:system-ui,sans-serif;text-align:center;white-space:nowrap">${label}</div>`
+      + `<div style="background:var(--sf);border:1.5px solid ${c};border-top:none;border-radius:0 0 8px 8px;padding:5px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:28px;justify-content:center">${dots}</div>`
+      + `</div>`;
+  });
+  return `<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">${parts.join('')}</div>`;
+}
+
 // abacusSvg — boulier/abacus SVG
 // rows: [{ label, value }, ...] — value 0..beadsPerRow (active beads on left, inactive on right)
 // beadsPerRow: default 10
@@ -216,6 +238,8 @@ function seriesPlayer(exercises) {
     sortErrors: [],
     tableInputs: [],
     tableErrors: [],
+    checkSelected: [],
+    checkErrors: [],
     showValidationPanel: false,
     testNotes: '',
     testSending: false,
@@ -393,6 +417,13 @@ function seriesPlayer(exercises) {
       this.tileErrors = [];
     },
 
+    checkTap(i) {
+      if (this.solved) return;
+      const idx = this.checkSelected.indexOf(i);
+      this.checkSelected = idx === -1 ? [...this.checkSelected, i] : this.checkSelected.filter(s => s !== i);
+      this.checkErrors = [];
+    },
+
     check() {
       if (this.cur.type === 'fill-table') {
         if (this.solved) return;
@@ -419,6 +450,19 @@ function seriesPlayer(exercises) {
         } else {
           this.tileErrors = this.tileSelected.filter(i => !expected.includes(i));
           this.showError = true; setTimeout(() => { this.showError = false; this.tileErrors = [] }, 2000);
+        }
+        return
+      }
+      if (this.cur.type === 'checkbox') {
+        if (this.solved) return;
+        const exp = [...(this.cur.checkedAnswers || [])].sort((a,b) => a-b);
+        const act = [...this.checkSelected].sort((a,b) => a-b);
+        if (act.length === exp.length && act.every((v,i) => v === exp[i])) {
+          this.solvedFlags[this.currentIndex] = true; this.showError = false; this.checkErrors = [];
+          if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) }
+        } else {
+          this.checkErrors = this.checkSelected.filter(i => !exp.includes(i));
+          this.showError = true; setTimeout(() => { this.showError = false; this.checkErrors = [] }, 2000);
         }
         return
       }
@@ -644,6 +688,7 @@ function seriesPlayer(exercises) {
       this.mcqSelected = null; this.mcqWrong = null; this.tileSelected = []; this.tileErrors = [];
       if (_e.items) { this.sortPicked = []; this.sortShuffled = [..._e.items].sort(() => Math.random() - 0.5) } else { this.sortPicked = []; this.sortShuffled = [] } this.sortErrors = [];
       if (_e.table) { this.tableInputs = new Array(_e.table.blankCount).fill('') } else { this.tableInputs = [] } this.tableErrors = [];
+      this.checkSelected = []; this.checkErrors = [];
       window.location.hash = '#' + (idx + 1);
     },
 
