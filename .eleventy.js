@@ -444,6 +444,7 @@ module.exports = async function (eleventyConfig) {
           }
           item.mcqChoices = choices;
           item.mcqAnswer = choices.indexOf(md.renderInline(correct));
+          if (ex.data.mcqCompact) item.mcqCompact = true;
         }
 
         if (ex.data.type === 'compare' && ex.data.comparisons) {
@@ -484,6 +485,13 @@ module.exports = async function (eleventyConfig) {
           item.items = ex.data.items.map(v => interpolate(String(v)));
           if (ex.data.direction) item.direction = ex.data.direction;
         }
+        if (ex.data.type === 'select' && ex.data.statements && ex.data.choices) {
+          item.selectChoices = ex.data.choices.map(String);
+          item.selectStatements = ex.data.statements.map(s => {
+            const parts = String(s.template).split('___');
+            return { before: parts[0] || '', after: parts[1] || '', answer: String(s.answer) };
+          });
+        }
         if (ex.data.type === 'fill-table' && ex.data.rows && ex.data.headers) {
           let blankIdx = 0;
           const rows = ex.data.rows.map((row, ri) => {
@@ -495,7 +503,7 @@ module.exports = async function (eleventyConfig) {
               return { blank: false, value: String(cell) };
             });
           });
-          item.table = { headers: ex.data.headers.map(String), rows, blankCount: blankIdx };
+          item.table = { headers: ex.data.headers.map(String), rows, blankCount: blankIdx, headerCol: !!ex.data.headerCol };
         }
 
         payload.push(item);

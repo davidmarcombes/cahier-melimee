@@ -1,0 +1,54 @@
+{# select type — inline dropdown for each statement, all shown simultaneously #}
+<div x-show="cur.type === 'select'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
+
+  {# Optional body #}
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4"></div>
+
+  {# Statement rows with inline dropdowns #}
+  <div class="space-y-3 mb-6">
+    <template x-for="(stmt, i) in (cur.selectStatements || [])" :key="i">
+      <div
+        class="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3 rounded-xl border-2 text-sm sm:text-base font-medium transition-all bg-white dark:bg-slate-800"
+        :class="{
+          'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+          'border-red-400 bg-red-50 dark:bg-red-900/20': selectErrors.includes(i) && !solved,
+          'border-slate-200 dark:border-slate-700': !solved && !selectErrors.includes(i)
+        }"
+      >
+        <span x-show="stmt.before" x-text="stmt.before" class="text-content-default"></span>
+        <select
+          x-model="selectAnswers[i]"
+          :disabled="solved"
+          class="rounded-lg border-2 px-2 py-1 text-sm sm:text-base font-semibold bg-white dark:bg-slate-700 text-content-default transition-colors cursor-pointer"
+          :class="{
+            'border-green-500 text-green-700 dark:text-green-300': solved,
+            'border-red-400 text-red-700 dark:text-red-300': selectErrors.includes(i) && !solved,
+            'border-primary-400 dark:border-primary-500': !solved && selectAnswers[i] && !selectErrors.includes(i),
+            'border-slate-300 dark:border-slate-500': !solved && !selectAnswers[i]
+          }"
+        >
+          <option value="">— choisir —</option>
+          <template x-for="choice in (cur.selectChoices || [])" :key="choice">
+            <option :value="choice" x-text="choice"></option>
+          </template>
+        </select>
+        <span x-show="stmt.after" x-text="stmt.after" class="text-content-default"></span>
+        <span x-show="solved" class="ml-auto text-green-600 dark:text-green-400 font-bold text-lg">✓</span>
+      </div>
+    </template>
+  </div>
+
+  {# Verify button #}
+  <div class="flex justify-center">
+    <button
+      @click="check()"
+      :disabled="solved || selectAnswers.some(v => !v)"
+      class="px-8 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95
+             disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+  </div>
+</div>

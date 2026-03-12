@@ -27,6 +27,7 @@ const TYPE_SCHEMAS = {
   'fraction-check': { required: ['answers'], arrays: ['answers'] },
   'tile-select':  { required: ['tiles', 'tileAnswers'], arrays: ['tiles', 'tileAnswers'] },
   'checkbox':     { required: ['statements', 'checkedAnswers'], arrays: ['statements', 'checkedAnswers'] },
+  'select':       { required: ['choices', 'statements'], arrays: ['choices', 'statements'] },
 };
 
 const COLORS = {

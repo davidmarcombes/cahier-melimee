@@ -847,6 +847,117 @@ const generators = {
         }
     },
 
+    // Symbolic value MCQ: which emoji combination equals the target?
+    enigmeSymboles: {
+        generate(params = {}) {
+            const PAIRS = [
+                { a: '🍎', va: 4, b: '🍊', vb: 1 },
+                { a: '⭐', va: 10, b: '🌙', vb: 3 },
+                { a: '🐝', va: 6, b: '🌸', vb: 2 },
+                { a: '🏠', va: 7, b: '🌲', vb: 3 },
+                { a: '🎯', va: 8, b: '💧', vb: 3 },
+                { a: '🦋', va: 5, b: '🌈', vb: 2 },
+                { a: '🐋', va: 9, b: '🐠', vb: 4 },
+                { a: '🏆', va: 5, b: '🎖️', vb: 2 },
+            ];
+            const pair = PAIRS[rand(0, PAIRS.length - 1)];
+            const { a, va, b, vb } = pair;
+            const na = rand(1, 3);
+            const nb = rand(0, 3);
+            const target = na * va + nb * vb;
+            const fmt = (n1, n2) =>
+                (n1 > 0 ? a.repeat(n1) : '') +
+                (n1 > 0 && n2 > 0 ? ' ' : '') +
+                (n2 > 0 ? b.repeat(n2) : '');
+            const correct = fmt(na, nb);
+            const seen = new Set([target]);
+            const candidates = [];
+            for (let da = -2; da <= 2; da++) {
+                for (let db = -2; db <= 2; db++) {
+                    if (da === 0 && db === 0) continue;
+                    const na2 = na + da, nb2 = nb + db;
+                    if (na2 < 0 || nb2 < 0 || na2 > 4 || nb2 > 4) continue;
+                    if (na2 === 0 && nb2 === 0) continue;
+                    const val = na2 * va + nb2 * vb;
+                    if (!seen.has(val)) { seen.add(val); candidates.push(fmt(na2, nb2)); }
+                }
+            }
+            const distractors = candidates.sort(() => Math.random() - 0.5).slice(0, 3);
+            const choices = [correct, ...distractors].sort(() => Math.random() - 0.5);
+            return {
+                type: 'mcq',
+                title: `${a} vaut **${va}** et ${b} vaut **${vb}**. Quelle combinaison vaut **${target}** ?`,
+                mcqChoices: choices,
+                mcqAnswer: choices.indexOf(correct),
+                mcqCompact: true,
+                answers: [String(target)]
+            };
+        }
+    },
+
+    // Pyramid: addition pyramid
+    // params: size (4|5), minBase (1), maxBase (20), showApex (false), hiddenCount (null=auto)
+    pyramideAdditions: {
+        generate(params = {}) {
+            const size = params.size ?? 4;
+            const minBase = params.minBase ?? 1;
+            const maxBase = params.maxBase ?? 20;
+            const showApex = params.showApex ?? false;
+
+            // Build base row
+            const base = [];
+            for (let i = 0; i < size; i++) base.push(rand(minBase, maxBase));
+
+            // Compute all rows bottom-up (base = index 0)
+            const allRows = [base];
+            for (let r = 1; r < size; r++) {
+                const prev = allRows[r - 1];
+                const row = [];
+                for (let c = 0; c < prev.length - 1; c++) row.push(prev[c] + prev[c + 1]);
+                allRows.push(row);
+            }
+
+            // Decide which cells are "given" (true = shown, false = pupil fills in)
+            // Base: all given; middle: hide ~half; apex: depends on showApex
+            const givenRows = allRows.map((row, r) => {
+                if (r === 0) return row.map(() => true);
+                if (r === allRows.length - 1) return [showApex];
+                // Alternate hidden cells in middle rows
+                return row.map((_, c) => c % 2 !== 0);
+            });
+
+            // Payload is apex-first (reversed)
+            const rows = [...allRows].reverse();
+            const given = [...givenRows].reverse();
+
+            return { type: 'pyramid', pyramid: { rows, given } };
+        }
+    },
+
+    // Clock: read analog clock
+    // params: step (minute granularity: 60/30/15/5/1), minHour (1), maxHour (12)
+    lireHeure: {
+        generate(params = {}) {
+            const step = params.step ?? 5;
+            const minHour = params.minHour ?? 1;
+            const maxHour = params.maxHour ?? 12;
+            const hour = rand(minHour, maxHour);
+            const totalSteps = Math.floor(60 / step);
+            const minuteStep = rand(0, totalSteps - 1);
+            const minute = minuteStep * step;
+            const hStr = String(hour);
+            const mStr = String(minute).padStart(2, '0');
+            const hStr2 = String(hour).padStart(2, '0');
+            return {
+                type: 'clock',
+                title: 'Quelle heure est-il ?',
+                hour,
+                minute,
+                answers: [`${hStr}:${mStr}`, `${hStr2}:${mStr}`]
+            };
+        }
+    },
+
     // Sort: order fractions
     // params: count (4), direction ('asc'), sameDenominator (true), denominator (random 4-12)
     // sameDenominator=false draws from a pool of common fractions (halves, thirds, quarters…)

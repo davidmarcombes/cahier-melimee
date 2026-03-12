@@ -45,7 +45,11 @@
       "Bash(find:*)",
       "Bash(npx eleventy)",
       "Bash(# Compare with a \"\"normal\"\" exercise page within budget wc -c e:/Code/cahier-melimee/_site/fr/exercices/69fc2565/index.html || echo \"\"not found\"\" # Find a smaller page ls e:/Code/cahier-melimee/_site/fr/exercices/)",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(for f:*)",
+      "Bash(do)",
+      "Bash(sed -i 's/^id: \"\"\"\"$//' \"$f\")",
+      "Bash(done)"
     ]
   }
 }

@@ -7,8 +7,10 @@
     <table class="w-full border-collapse text-sm">
       <thead x-show="cur.table && cur.table.headers && cur.table.headers.length">
         <tr>
-          <template x-for="h in (cur.table ? cur.table.headers : [])" :key="h">
-            <th class="px-3 py-2 text-center font-bold text-content-default bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600" x-text="h"></th>
+          <template x-for="(h, hi) in (cur.table ? cur.table.headers : [])" :key="hi">
+            <th class="px-3 py-2 text-center font-bold border border-slate-300 dark:border-slate-600"
+                :class="cur.table.headerCol ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200' : 'bg-slate-100 dark:bg-slate-800 text-content-default'"
+                x-text="h"></th>
           </template>
         </tr>
       </thead>
@@ -16,8 +18,10 @@
         <template x-for="(row, ri) in (cur.table ? cur.table.rows : [])" :key="ri">
           <tr>
             <template x-for="(cell, ci) in row" :key="ci">
-              <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
-                <span x-show="!cell.blank" x-text="cell.value" class="font-semibold text-content-default"></span>
+              <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700"
+                  :class="cur.table.headerCol && ci === 0 ? 'bg-primary-100 dark:bg-primary-900/30' : ''">
+                <span x-show="!cell.blank" x-text="cell.value"
+                      :class="cur.table.headerCol && ci === 0 ? 'font-bold text-primary-800 dark:text-primary-200' : 'font-semibold text-content-default'"></span>
                 <input x-show="cell.blank" inputmode="decimal"
                        :value="tableInputs[cell.idx] || ''"
                        @input="tableInputs[cell.idx] = $event.target.value"

@@ -64,6 +64,7 @@ const TYPE_CHOICES = [
   { name: 'sort            — Ordonner des valeurs (click-to-rank)', value: 'sort' },
   { name: 'fill-table      — Compléter un tableau', value: 'fill-table' },
   { name: 'checkbox        — Cocher les affirmations vraies', value: 'checkbox' },
+  { name: 'select          — Choisir un mot dans un menu déroulant', value: 'select' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -90,6 +91,7 @@ const TEMPLATES = {
   sort: 'direction: asc\nitems:\n  - ""\n  - ""\n  - ""\n  - ""',
   'fill-table': 'headers: ["Col1", "Col2", "Col3"]\nrows:\n  - ["valeur", "?", "valeur"]\n  - ["valeur", "valeur", "?"]\nanswers:\n  - ["?"]\n  - ["?"]',
   'checkbox': 'statements:\n  - ""\n  - ""\n  - ""\n  - ""\ncheckedAnswers: []',
+  'select': 'choices: ["", "", "", "", ""]\nstatements:\n  - template: "___ de ___"\n    answer: ""\n  - template: "___ de ___"\n    answer: ""',
 };
 
 const TYPES = Object.keys(TEMPLATES);

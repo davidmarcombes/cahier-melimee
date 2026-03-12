@@ -240,6 +240,8 @@ function seriesPlayer(exercises) {
     tableErrors: [],
     checkSelected: [],
     checkErrors: [],
+    selectAnswers: [],
+    selectErrors: [],
     showValidationPanel: false,
     testNotes: '',
     testSending: false,
@@ -466,6 +468,15 @@ function seriesPlayer(exercises) {
         }
         return
       }
+      if (this.cur.type === 'select') {
+        if (this.solved) return;
+        const stmts = this.cur.selectStatements || [];
+        if (this.selectAnswers.some(v => !v)) { this.showError = true; setTimeout(() => { this.showError = false }, 2000); return }
+        const errors = stmts.map((s, i) => (this.selectAnswers[i] || '').trim().toLowerCase() !== s.answer.trim().toLowerCase() ? i : -1).filter(i => i !== -1);
+        if (errors.length === 0) { this.solvedFlags[this.currentIndex] = true; this.showError = false; this.selectErrors = []; if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) } }
+        else { this.selectErrors = errors; this.showError = true; setTimeout(() => { this.showError = false; this.selectErrors = [] }, 2000) }
+        return
+      }
       if (this.cur.type === 'sort') {
         if (this.solved) return;
         const userOrder = this.sortPicked.map(i => this.sortShuffled[i]);
@@ -689,6 +700,7 @@ function seriesPlayer(exercises) {
       if (_e.items) { this.sortPicked = []; this.sortShuffled = [..._e.items].sort(() => Math.random() - 0.5) } else { this.sortPicked = []; this.sortShuffled = [] } this.sortErrors = [];
       if (_e.table) { this.tableInputs = new Array(_e.table.blankCount).fill('') } else { this.tableInputs = [] } this.tableErrors = [];
       this.checkSelected = []; this.checkErrors = [];
+      this.selectAnswers = new Array((_e.selectStatements || []).length).fill(''); this.selectErrors = [];
       window.location.hash = '#' + (idx + 1);
     },
 
