@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Les jours de la semaine"
+answer: "7 jours"
 choices:
   - "7 jours"
   - "5 jours"

@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Écrire un décimal"
+answer: "4,7"
 choices:
   - "4,7"
   - "47"

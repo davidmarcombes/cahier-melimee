@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Côtés et sommets"
+answer: "Le triangle"
 choices:
   - "Le triangle"
   - "Le carré"

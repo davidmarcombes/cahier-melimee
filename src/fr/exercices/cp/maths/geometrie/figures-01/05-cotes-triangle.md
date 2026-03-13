@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Combien de côtés ?"
+answer: "3"
 choices:
   - "3"
   - "4"

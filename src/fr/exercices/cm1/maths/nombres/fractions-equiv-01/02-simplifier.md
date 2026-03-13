@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Simplifier une fraction"
+answer: "2/3"
 choices:
   - "2/3"
   - "4/6"

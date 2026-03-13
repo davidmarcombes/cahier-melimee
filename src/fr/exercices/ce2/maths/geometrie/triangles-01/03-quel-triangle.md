@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Quel triangle ?"
+answer: "Triangle isocèle"
 choices:
   - "Triangle isocèle"
   - "Triangle équilatéral"

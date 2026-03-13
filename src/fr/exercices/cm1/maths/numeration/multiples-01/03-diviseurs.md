@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Les diviseurs de 12"
+answer: "1, 2, 3, 4, 6, 12"
 choices:
   - "1, 2, 3, 4, 6, 12"
   - "1, 2, 4, 8, 12"

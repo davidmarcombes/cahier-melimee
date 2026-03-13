@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Quelle fraction ?"
+answer: "Un quart (1/4)"
 choices:
   - "Un quart (1/4)"
   - "Un demi (1/2)"

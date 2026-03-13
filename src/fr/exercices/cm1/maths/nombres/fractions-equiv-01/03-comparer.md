@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Comparer des fractions"
+answer: "3/4"
 choices:
   - "3/4"
   - "2/3"

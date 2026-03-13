@@ -6,8 +6,8 @@ const yaml = require('js-yaml');
 const VALID_DIFFICULTIES = ['facile', 'moyen', 'difficile'];
 
 const TYPE_SCHEMAS = {
-  'number-check': { required: ['answer'] },
-  'problem':      { required: ['answer'] },
+  'number-check': { required: [], requireOneOf: [['answer'], ['answers'], ['generator']] },
+  'problem':      { required: [], requireOneOf: [['answer'], ['answers'], ['generator']] },
   'matching':     { required: ['pairs'], arrays: ['pairs'], arrayFields: { pairs: ['left', 'right'] } },
   'pyramid':      { required: ['pyramid'], arrays: ['pyramid'] },
   'sequence':     { required: ['given', 'answers'], arrays: ['given', 'answers'] },
@@ -25,7 +25,7 @@ const TYPE_SCHEMAS = {
   'drag-sort':    { required: ['tiles'], arrays: ['tiles'] },
   'fill-table':   { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
   'ruler':        { required: [] },
-  'fraction-check': { required: ['answers'], arrays: ['answers'] },
+  'fraction-check': { required: [], requireOneOf: [['answer'], ['answers']], arrays: ['answers'] },
   'tile-select':  { required: ['tiles', 'tileAnswers'], arrays: ['tiles', 'tileAnswers'] },
   'checkbox':     { required: ['statements', 'checkedAnswers'], arrays: ['statements', 'checkedAnswers'] },
   'select':       { required: ['choices', 'statements'], arrays: ['choices', 'statements'] },

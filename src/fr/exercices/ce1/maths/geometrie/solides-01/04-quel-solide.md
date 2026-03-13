@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Quel solide ?"
+answer: "Le pavé droit"
 choices:
   - "Le cube"
   - "Le cylindre"

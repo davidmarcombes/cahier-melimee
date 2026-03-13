@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Quelle unité ?"
+answer: "Des grammes (g)"
 choices:
   - "Des grammes (g)"
   - "Des kilogrammes (kg)"

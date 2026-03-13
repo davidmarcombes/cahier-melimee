@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Quelle figure ?"
+answer: "Le triangle"
 choices:
   - "Le triangle"
   - "Le carré"

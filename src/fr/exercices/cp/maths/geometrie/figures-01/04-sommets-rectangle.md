@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Combien de sommets ?"
+answer: "4"
 choices:
   - "4"
   - "3"

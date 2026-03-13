@@ -1,6 +1,7 @@
 ---
 title: "Compte les barres et les cubes"
 type: "base-10"
+hundreds: 0
 tens: 4
 ones: 5
 answer: "45"

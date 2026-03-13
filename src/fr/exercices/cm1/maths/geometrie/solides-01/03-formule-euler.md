@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Faces d'un prisme pentagonal"
+answer: "7 faces"
 choices:
   - "7 faces"
   - "5 faces"

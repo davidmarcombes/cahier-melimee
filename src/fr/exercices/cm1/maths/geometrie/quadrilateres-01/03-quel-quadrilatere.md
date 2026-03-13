@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Quel quadrilatère ?"
+answer: "Un losange"
 choices:
   - "Un losange"
   - "Un carré"

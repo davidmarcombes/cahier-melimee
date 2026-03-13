@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Quelle figure ?"
+answer: "Le losange"
 choices:
   - "Le losange"
   - "Le carré"

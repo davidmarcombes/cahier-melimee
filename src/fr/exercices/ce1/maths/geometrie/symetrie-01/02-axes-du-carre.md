@@ -1,6 +1,7 @@
 ---
 type: mcq
 title: "Axes de symétrie"
+answer: "4 axes"
 choices:
   - "4 axes"
   - "2 axes"
