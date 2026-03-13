@@ -38,8 +38,17 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `mcq` | `types/mcq.njk` | Multiple choice — click the correct answer among 3-5 shuffled choices. |
 | `ruler` | `types/ruler.njk` | Graduated ruler with markers — read a value. SVG via `rulerSvg` getter. |
 | `sort` | `types/sort.njk` | Order items by clicking them in sequence. Items listed in correct order in YAML, shuffled at runtime. |
+| `drag-sort` | `types/drag-sort.njk` | Sort tiles by clicking pairs to swap them. Direction indicator (🐭 petit → 🐘 grand). Tiles support HTML via `x-html`. Fields: `tiles[]` (strings), `direction` (`asc`/`desc`). |
 | `fill-table` | `types/fill-table.njk` | Table with blank cells — student fills each digit/value. Supports `cur.svg` above the table. Uses `blankCount`, `headers`, `rows` (cells: `{blank, idx, answer}`). |
 | `checkbox` | `types/checkbox.njk` | Tick all valid statements — multi-select with a verify button. Fields: `statements[]` (HTML strings), `checkedAnswers[]` (integer indices). Supports `cur.svg`. |
+| `select` | `types/select.njk` | Complete sentences by choosing a word from a dropdown. Fields: `choices[]` (option list), `statements[]` (each with `template` using `___` placeholder, and `answer`). |
+| `svg-tiles` | `types/svg-tiles.njk` | Display grids of SVGs. User clicks on correct ones. Fields: `tiles[]` (Array of objects with `gen` and `par`), `answers[]` (integer indices). |
+| `tile-select` | `types/tile-select.njk` | Click to select all correct tiles (multi-select). Fields: `tiles[]` (HTML strings), `tileAnswers[]` (0-indexed correct indices). |
+| `fraction` | `types/fraction.njk` | Visual fraction representation — shade a shape. Fields: `shape` (`circle`/`rect`), `numerator`, `denominator`, `answer`. |
+| `fraction-check` | `types/fraction-check.njk` | Stacked fraction input (numerator/denominator boxes). Fields: `answers[]` (two strings: numerator, denominator). Supports `cur.operation` and `cur.svg`. |
+| `base-10` | `types/base-10.njk` | Base-10 blocks visual — decompose a number into hundreds/tens/ones. Fields: `answer`, plus either `number` or `hundreds`+`tens`+`ones`. |
+| `clock` | `types/clock.njk` | Analog clock — read or set the time. Fields: `hour`, `minute`, `answer`. |
+| `click-blocks` | `types/click-blocks.njk` | Click cells to fill columns from the bottom up (place-value blocks). Fields: `columns[]` (each with `label`, `value`, `color`, `answer`, `max`). Supports generators. |
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
 
@@ -151,12 +160,48 @@ items:                     # sort — listed in CORRECT order, shuffled at runti
   - "3,07"
   - "3,7"
   - "30,7"
-direction: asc             # sort — "asc" (plus petit → plus grand) or "desc"
+direction: asc             # sort / drag-sort — "asc" (petit → grand) or "desc"
+tiles:                     # drag-sort — HTML strings, listed in CORRECT order
+  - "1/6"
+  - "1/4"
+  - "1/2"
 statements:                # checkbox — list of HTML/text strings
   - "Affirmation 1"
   - "Affirmation 2"
   - "Affirmation 3"
 checkedAnswers: [0, 2]     # checkbox — 0-indexed integers (NOT strings)
+tiles:                     # svg-tiles — array of SVG generator objects
+  - gen: "circleSvg"
+    par:
+      r: 40
+  - gen: "squareSvg"
+    par:
+      size: 80
+  - gen: "embed"
+    par:
+      svg: "<svg><circle r='10'/></svg>"
+  - gen: "file"
+    par:
+      name: "my-icon.svg"  # Looks in src/_includes/svg/
+answers: [1]               # svg-tiles — 0-indexed integers
+tiles:                     # tile-select — HTML strings (can include markup/fractions)
+  - "2/3"
+  - "3/4"
+tileAnswers: [0]           # tile-select — 0-indexed correct tiles
+columns:                   # click-blocks — place-value columns
+  - label: "100"
+    value: 100
+    color: "#dc2626"
+    answer: 3              # expected number of filled cells (digit at that position)
+    max: 9                 # max cells in column
+  - label: "10"
+    value: 10
+    color: "#7c3aed"
+    answer: 2
+    max: 9
+answers:                   # fraction-check — [numerator, denominator] as strings
+  - "3"
+  - "4"
 ---
 
 Markdown body shown as instructions.

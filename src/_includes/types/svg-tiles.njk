@@ -1,0 +1,62 @@
+{# SVG-tiles type — click to select tiles containing SVGs #}
+<div x-show="cur.type === 'svg-tiles'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
+
+  {# Body instructions #}
+  <div class="prose dark:prose-invert text-lg text-content-default mb-6"
+       x-show="cur.body" x-html="cur.body"></div>
+
+  {# Tile grid #}
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+    <template x-for="(svg, i) in (cur.tiles || [])" :key="i">
+      <button
+        @click="svgTap(i)"
+        :disabled="solved"
+        class="relative flex flex-col justify-between overflow-hidden
+               rounded-lg border-[3px] transition-all duration-150 select-none
+               bg-white dark:bg-slate-800 text-content-default"
+        :class="{
+          'border-primary-500 scale-[1.02] shadow-md':
+            svgSelected.includes(i) && !solved && !svgErrors.includes(i),
+          'border-green-500 scale-[1.02] shadow-md':
+            solved && (cur.answers || []).includes(i),
+          'border-red-400':
+            svgErrors.includes(i),
+          'opacity-40 cursor-not-allowed':
+            solved && !(cur.answers || []).includes(i),
+          'border-[#cdecfa] dark:border-slate-700 hover:border-primary-300 hover:shadow':
+            !solved && !svgSelected.includes(i) && !svgErrors.includes(i)
+        }"
+      >
+        <!-- The SVG content -->
+        <div class="flex-1 flex items-center justify-center p-4 w-full min-h-[140px]" x-html="window[svg.gen](...Object.values(svg.par))"></div>
+        
+        <!-- The bottom bar with checkmark -->
+        <div class="w-full h-8 flex items-center justify-center transition-colors"
+             :class="{
+               'bg-primary-500': svgSelected.includes(i) && !solved && !svgErrors.includes(i),
+               'bg-green-500': solved && (cur.answers || []).includes(i),
+               'bg-red-400': svgErrors.includes(i),
+               'bg-[#cdecfa] dark:bg-slate-700': !svgSelected.includes(i) && !solved && !svgErrors.includes(i)
+             }">
+           <svg class="w-6 h-6 text-white transition-opacity duration-200" 
+                :class="(svgSelected.includes(i) || (solved && (cur.answers || []).includes(i))) ? 'opacity-100' : 'opacity-100'" 
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+           </svg>
+        </div>
+      </button>
+    </template>
+  </div>
+
+  {# Verify button #}
+  <button
+    @click="check()"
+    :disabled="solved || svgSelected.length === 0"
+    class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
+           disabled:opacity-40 disabled:cursor-not-allowed"
+    :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+  >
+    <span x-show="!solved">Vérifier</span>
+    <span x-show="solved">Bravo !</span>
+  </button>
+</div>

@@ -1,0 +1,52 @@
+{# click-blocks type — click cells to fill columns from the bottom up #}
+<div x-show="cur.type === 'click-blocks'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 mb-8">
+
+  {# Columns grid #}
+  <div class="flex justify-center gap-1.5 mb-5 overflow-x-auto pb-1">
+    <template x-for="(col, ci) in (cur.columns || [])" :key="ci">
+      <div class="flex flex-col items-center shrink-0">
+
+        {# Column label #}
+        <div class="text-xs font-bold mb-1 text-center whitespace-nowrap"
+             :style="'color:' + col.color"
+             x-text="col.label"></div>
+
+        {# Cell stack — rows from top (r=1) to bottom (r=max) #}
+        <div class="border-2 rounded overflow-hidden"
+             :style="clickBlockErrors.includes(ci) && !solved ? 'border-color: #ef4444' : 'border-color:' + col.color">
+          <template x-for="r in col.max" :key="r">
+            <div
+              @click="blockTap(ci, r)"
+              class="w-12 h-7 flex items-center justify-center text-xs font-semibold select-none cursor-pointer transition-colors border-b border-slate-200 last:border-b-0"
+              :style="(clickBlockLevels[ci] || 0) + r > col.max
+                ? 'background-color:' + col.color + '; color: white;'
+                : solved ? '' : 'background-color: white; color: #94a3b8;'"
+              x-text="col.label"
+            ></div>
+          </template>
+        </div>
+
+        {# Digit × value below #}
+        <div class="mt-1.5 text-center text-xs font-bold leading-tight" :style="'color:' + col.color">
+          <div><span x-text="clickBlockLevels[ci] || 0"></span> × <span x-text="col.label"></span></div>
+          <div x-text="((clickBlockLevels[ci] || 0) * col.value).toLocaleString('fr-FR', {maximumFractionDigits: 10})"></div>
+        </div>
+
+      </div>
+    </template>
+  </div>
+
+  {# Verify button #}
+  <div class="flex justify-center">
+    <button
+      @click="check()"
+      :disabled="solved"
+      class="px-8 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95
+             disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+  </div>
+</div>

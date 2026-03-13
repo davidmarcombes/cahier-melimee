@@ -323,32 +323,57 @@ module.exports = async function (eleventyConfig) {
           item.base10 = { ...b, markup: svg, width: currentX + 20 };
         }
 
-        if (ex.data.svg) {
-          item.svg = {
-            gen: interpolate(String(ex.data.svg.gen)),
+        const parseSvgElement = (dataSvg) => {
+          if (!dataSvg) return null;
+          const svgObj = {
+            gen: interpolate(String(dataSvg.gen)),
             par: {}
           };
-          if (ex.data.svg.par) {
-            for (const [k, v] of Object.entries(ex.data.svg.par)) {
+          if (dataSvg.par) {
+            for (const [k, v] of Object.entries(dataSvg.par)) {
               if (v !== null && typeof v === 'object') {
-                // Preserve objects (e.g. label map for rulerSvg)
                 const obj = {};
                 for (const [ok, ov] of Object.entries(v)) {
                   const key = isNaN(ok) ? ok : Number(ok);
                   obj[key] = interpolate(String(ov));
                 }
-                item.svg.par[k] = obj;
+                svgObj.par[k] = obj;
               } else {
                 const val = interpolate(String(v));
-                item.svg.par[k] = isNaN(val) ? val : Number(val);
+                svgObj.par[k] = isNaN(val) ? val : Number(val);
               }
             }
           }
+          if (svgObj.gen === 'file') {
+            const filepath = svgObj.par.name || svgObj.par.file;
+            if (filepath) {
+              const fullPath = path.join(__dirname, 'src', '_includes', 'svg', filepath);
+              if (fs.existsSync(fullPath)) {
+                svgObj.gen = 'embedSvg';
+                svgObj.par = { svg: fs.readFileSync(fullPath, 'utf8') };
+              } else {
+                svgObj.gen = 'embedSvg';
+                svgObj.par = { svg: `<svg width="50" height="50"><text x="0" y="25" fill="red">Missing ${filepath}</text></svg>` };
+              }
+            }
+          } else if (svgObj.gen === 'embed') {
+            svgObj.gen = 'embedSvg';
+          }
+          return svgObj;
+        };
+
+        if (ex.data.svg) {
+          item.svg = parseSvgElement(ex.data.svg);
         }
 
-        if (ex.data.tiles) {
+        if (ex.data.tiles && ex.data.type !== 'svg-tiles') {
           item.tiles = ex.data.tiles.map(t => md.renderInline(interpolate(String(t))));
           item.tileAnswers = (ex.data.tileAnswers || []).map(Number);
+        }
+
+        if (ex.data.type === 'svg-tiles' && ex.data.tiles) {
+          item.tiles = ex.data.tiles.map(parseSvgElement);
+          item.answers = (ex.data.answers || []).map(Number);
         }
 
         if (ex.data.statements) {
@@ -480,6 +505,40 @@ module.exports = async function (eleventyConfig) {
             })),
             answers: ex.data.items.map(it => interpolate(String(it.answer)).trim())
           };
+        }
+        if (ex.data.type === 'drag-sort' && ex.data.tiles) {
+          // Pre-render known SVG generators as HTML strings so tiles work without window[fn] calls
+          const preRenderTile = (t) => {
+            if (!t || typeof t !== 'object' || !t.gen) return interpolate(String(t));
+            const par = t.par || {};
+            if (t.gen === 'fractionShapesSvg') {
+              const n = Number(par.n), d = Number(par.d), size = Number(par.size) || 80;
+              const cx = size / 2, r = size / 2 - 2;
+              let paths = '';
+              for (let i = 0; i < d; i++) {
+                const a0 = (i * 2 * Math.PI) / d - Math.PI / 2;
+                const a1 = ((i + 1) * 2 * Math.PI) / d - Math.PI / 2;
+                const x1 = (cx + r * Math.cos(a0)).toFixed(2), y1 = (cx + r * Math.sin(a0)).toFixed(2);
+                const x2 = (cx + r * Math.cos(a1)).toFixed(2), y2 = (cx + r * Math.sin(a1)).toFixed(2);
+                paths += `<path d="M${cx} ${cx}L${x1} ${y1}A${r} ${r} 0 0 1 ${x2} ${y2}Z" fill="${i < n ? 'var(--p)' : 'var(--sf)'}" stroke="var(--cs)" stroke-width="1"/>`;
+              }
+              const pie = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
+              return `<span style="display:inline-flex;flex-direction:column;align-items:center;gap:0.4rem">${pie}<span class="frac text-lg"><span class="fn">${n}</span><span class="fd">${d}</span></span></span>`;
+            }
+            // Unknown gen → keep as runtime object (fallback)
+            return parseSvgElement(t);
+          };
+          item.tiles = ex.data.tiles.map(t => preRenderTile(t));
+          if (ex.data.direction) item.direction = ex.data.direction;
+        }
+        if (ex.data.type === 'click-blocks' && ex.data.columns) {
+          item.columns = ex.data.columns.map(col => ({
+            label: String(col.label || ''),
+            value: Number(col.value || 0),
+            color: String(col.color || '#3b82f6'),
+            answer: Number(col.answer || 0),
+            max: Number(col.max || 9)
+          }));
         }
         if (ex.data.type === 'sort' && ex.data.items) {
           item.items = ex.data.items.map(v => interpolate(String(v)));

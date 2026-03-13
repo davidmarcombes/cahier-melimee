@@ -1,6 +1,8 @@
 /* Theme toggle */
 function themeToggle() { return { dark: document.documentElement.classList.contains('dark'), toggle() { this.dark = !this.dark; document.documentElement.classList.toggle('dark', this.dark); localStorage.setItem('theme', this.dark ? 'dark' : 'light') } } }
 
+function embedSvg(svg) { return svg; }
+
 function mathGridSvg(cols, rows, filled, color = 'var(--p)') {
   const size = 20;
   const gap = 1;
@@ -89,6 +91,103 @@ function triangleSvg(pixA, pixB, labelA = "", labelB = "", labelC = "", fillColo
       ${labelC ? `<text x="${(x1 + x2) / 2 + 15}" y="${(y1 + y2) / 2 - 6}" text-anchor="start" font-family="Arial" fill="var(--ct)">${labelC}</text>` : ''}
     </svg>`;
 }
+
+// fractionShapesSvg — pie chart for fraction n/d with the fraction label below
+// Called via gen: fractionShapesSvg, par: { n, d, size (optional, default 80) }
+function fractionShapesSvg(n, d, size = 80) {
+  const pie = slicedPieSvg(d, n, size);
+  return `<span style="display:inline-flex;flex-direction:column;align-items:center;gap:0.4rem">${pie}<span class="frac text-lg"><span class="fn">${n}</span><span class="fd">${d}</span></span></span>`;
+}
+
+// --- 3D Shapes ---
+
+function cubeSvg(size = 50, color = 'var(--p)', opacity = 1) {
+  const tilt = size * 0.4;
+  const w = size;
+  const h = size;
+  const totalW = w + tilt + 4;
+  const totalH = h + tilt + 4;
+  return `<svg width="${totalW}" height="${totalH}" viewBox="-2 -2 ${totalW} ${totalH}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="var(--cs)" stroke-width="1.5" stroke-linejoin="round">
+      <!-- Top face -->
+      <polygon points="${tilt},0 ${w+tilt},0 ${w},${tilt} 0,${tilt}" fill="${color}" />
+      <polygon points="${tilt},0 ${w+tilt},0 ${w},${tilt} 0,${tilt}" fill="rgba(255,255,255,0.3)" />
+      <!-- Right face -->
+      <polygon points="${w},${tilt} ${w+tilt},0 ${w+tilt},${h} ${w},${h+tilt}" fill="${color}" />
+      <polygon points="${w},${tilt} ${w+tilt},0 ${w+tilt},${h} ${w},${h+tilt}" fill="rgba(0,0,0,0.2)" />
+      <!-- Front face -->
+      <polygon points="0,${tilt} ${w},${tilt} ${w},${h+tilt} 0,${h+tilt}" fill="${color}" />
+    </g>
+  </svg>`;
+}
+
+function sphereSvg(r = 40, color = 'var(--p)', opacity = 1) {
+  const size = r * 2 + 10;
+  const cx = size / 2;
+  const cy = size / 2;
+  const gid = 'rg_' + Math.random().toString(36).substr(2, 5);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="${gid}" cx="35%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#fff" stop-opacity="0.6"/>
+        <stop offset="40%" stop-color="${color}" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#000" stop-opacity="0.5"/>
+      </radialGradient>
+    </defs>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${gid})" stroke="var(--cs)" stroke-width="1.5" />
+  </svg>`;
+}
+
+function cylinderSvg(w = 50, h = 80, color = 'var(--p)', opacity = 1) {
+  const rx = w / 2;
+  const ry = rx * 0.4;
+  const totalW = w + 10;
+  const totalH = h + ry * 2 + 10;
+  const x0 = 5;
+  const y0 = 5 + ry;
+  const gid = 'lg_' + Math.random().toString(36).substr(2, 5);
+  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#000" stop-opacity="0.3"/>
+        <stop offset="30%" stop-color="${color}" stop-opacity="1"/>
+        <stop offset="70%" stop-color="${color}" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#000" stop-opacity="0.5"/>
+      </linearGradient>
+    </defs>
+    <g stroke="var(--cs)" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M ${x0},${y0} V ${y0+h} A ${rx} ${ry} 0 0 0 ${x0+w},${y0+h} V ${y0} Z" fill="url(#${gid})" />
+      <ellipse cx="${x0+rx}" cy="${y0}" rx="${rx}" ry="${ry}" fill="${color}" />
+      <ellipse cx="${x0+rx}" cy="${y0}" rx="${rx}" ry="${ry}" fill="rgba(255,255,255,0.3)" />
+    </g>
+  </svg>`;
+}
+
+function coneSvg(w = 60, h = 90, color = 'var(--p)', opacity = 1) {
+  const rx = w / 2;
+  const ry = rx * 0.4;
+  const totalW = w + 10;
+  const totalH = h + ry + 10;
+  const cx = totalW / 2;
+  const topY = 5;
+  const botY = topY + h;
+  const x0 = cx - rx;
+  const x1 = cx + rx;
+  const gid = 'lg_' + Math.random().toString(36).substr(2, 5);
+  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#000" stop-opacity="0.3"/>
+        <stop offset="35%" stop-color="${color}" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#000" stop-opacity="0.6"/>
+      </linearGradient>
+    </defs>
+    <g stroke="var(--cs)" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M ${cx},${topY} L ${x0},${botY} A ${rx} ${ry} 0 0 0 ${x1},${botY} Z" fill="url(#${gid})" />
+    </g>
+  </svg>`;
+}
+
 
 // decompoChipsHtml — place-value chips with dot rows (grouped 5+remainder)
 // chips: [{ label, value }, ...] — value 0-9
@@ -201,6 +300,106 @@ function rulerSvg(min = 0, max = 10, step = 1, minorStep = 0.1, customLabels = {
     </svg>`;
 }
 
+function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+  const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+  return {
+    x: centerX + (radius * Math.cos(angleInRadians)),
+    y: centerY + (radius * Math.sin(angleInRadians))
+  };
+}
+
+function describeArc(x, y, radius, startAngle, endAngle) {
+  const start = polarToCartesian(x, y, radius, endAngle);
+  const end = polarToCartesian(x, y, radius, startAngle);
+  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+  return [
+    "M", x, y,
+    "L", start.x, start.y,
+    "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y,
+    "Z"
+  ].join(" ");
+}
+
+function fractionShapesSvg(fraction) {
+  if (!fraction) return [];
+  const { numerator, denominator, shape, rows, cols } = fraction;
+  if (!denominator) return [];
+  const count = Math.ceil(numerator / denominator) || 1;
+  const shapes = [];
+
+  for (let sIdx = 1; sIdx <= count; sIdx++) {
+    const filledInThisShape = Math.max(0, Math.min(denominator, numerator - (sIdx - 1) * denominator));
+    let svgContent = '';
+
+    if (shape === 'circle') {
+      svgContent += `<circle cx="50" cy="50" r="48" fill="white" stroke="currentColor" stroke-width="2" class="fill-white dark:fill-slate-900 text-slate-300 dark:text-slate-600" />`;
+      for (let pIdx = 1; pIdx <= denominator; pIdx++) {
+        const arc = describeArc(50, 50, 48, (pIdx - 1) * (360 / denominator), pIdx * (360 / denominator));
+        svgContent += `<path d="${arc}" fill="none" stroke="currentColor" stroke-width="1" class="text-slate-300 dark:text-slate-600" />`;
+        if (pIdx <= filledInThisShape) {
+          svgContent += `<path d="${arc}" class="fill-primary-500 stroke-primary-700" stroke-width="1" />`;
+        }
+      }
+    } else if (shape === 'square') {
+      svgContent += `<rect x="2" y="2" width="96" height="96" fill="white" stroke="currentColor" stroke-width="2" class="fill-white dark:fill-slate-900 text-slate-300 dark:text-slate-600" />`;
+      const rCount = rows || 1;
+      const cCount = cols || denominator || 1;
+      const w = 96 / cCount;
+      const h = 96 / rCount;
+      for (let r = 1; r <= rCount; r++) {
+        for (let c = 1; c <= cCount; c++) {
+          const itemIdx = (r - 1) * cCount + c;
+          const x = 2 + (c - 1) * w;
+          const y = 2 + (r - 1) * h;
+          svgContent += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="currentColor" stroke-width="1" class="text-slate-300 dark:text-slate-700" />`;
+          if (itemIdx <= filledInThisShape) {
+            svgContent += `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="fill-primary-500 stroke-primary-700" stroke-width="1" />`;
+          }
+        }
+      }
+    }
+    const fullSvg = `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm">${svgContent}</svg>`;
+    shapes.push({ idx: sIdx, svg: fullSvg });
+  }
+  return shapes;
+}
+
+function rulerExerciseSvg(r) {
+  if (!r) return '';
+  const W = 420, PAD = 40, Y = 60;
+  const range = r.max - r.min;
+  if (range <= 0) return '';
+  const uw = W / range;
+  const divs = r.divisions || 1;
+  const subs = r.subdivisions || 0;
+  let s = `<line x1="${PAD}" y1="${Y}" x2="${PAD + W}" y2="${Y}" stroke="currentColor" stroke-width="2"/>`;
+  for (let u = 0; u <= range; u++) {
+    const x = PAD + u * uw;
+    s += `<line x1="${x}" y1="${Y - 18}" x2="${x}" y2="${Y}" stroke="currentColor" stroke-width="2"/>`;
+    s += `<text x="${x}" y="${Y + 16}" text-anchor="middle" fill="currentColor" font-size="12" font-weight="500">${r.min + u}</text>`;
+    if (u < range) {
+      for (let d = 1; d < divs; d++) {
+        s += `<line x1="${x + d * uw / divs}" y1="${Y - 12}" x2="${x + d * uw / divs}" y2="${Y}" stroke="currentColor" stroke-width="1.5"/>`;
+      }
+      if (subs > 0) {
+        for (let d = 0; d < divs; d++) {
+          for (let sub = 1; sub < subs; sub++) {
+            const xs = x + (d + sub / subs) * uw / divs;
+            s += `<line x1="${xs}" y1="${Y - 7}" x2="${xs}" y2="${Y}" stroke="currentColor" stroke-width="1"/>`;
+          }
+        }
+      }
+    }
+  }
+  if (r.markers) {
+    r.markers.forEach(m => {
+      const x = PAD + (m.value - r.min) * uw;
+      s += `<polygon points="${x},${Y - 22} ${x - 6},${Y - 34} ${x + 6},${Y - 34}" class="fill-red-500 dark:fill-red-400"/>`;
+      s += `<text x="${x}" y="${Y - 38}" text-anchor="middle" fill="currentColor" font-size="14" font-weight="700" class="fill-red-600 dark:fill-red-400">${m.label}</text>`;
+    });
+  }
+  return s;
+}
 
 /* Series player — single-template engine */
 function seriesPlayer(exercises) {
@@ -233,6 +432,8 @@ function seriesPlayer(exercises) {
     rfInputs: ['', ''],
     tileSelected: [],
     tileErrors: [],
+    svgSelected: [],
+    svgErrors: [],
     sortPicked: [],
     sortShuffled: [],
     sortErrors: [],
@@ -242,6 +443,12 @@ function seriesPlayer(exercises) {
     checkErrors: [],
     selectAnswers: [],
     selectErrors: [],
+    dragTilesOrder: [],
+    dragSelected: null,
+    dragErrors: [],
+    _dragErrTimer: null,
+    clickBlockLevels: [],
+    clickBlockErrors: [],
     showValidationPanel: false,
     testNotes: '',
     testSending: false,
@@ -251,109 +458,14 @@ function seriesPlayer(exercises) {
     /* Fraction Helpers */
     get fractionShapes() {
       if (this.cur.type !== 'fraction' || !this.cur.fraction) return [];
-      const { numerator, denominator, shape, rows, cols } = this.cur.fraction;
-      if (!denominator) return [];
-      const count = Math.ceil(numerator / denominator) || 1;
-      const shapes = [];
-
-      for (let sIdx = 1; sIdx <= count; sIdx++) {
-        const filledInThisShape = Math.max(0, Math.min(denominator, numerator - (sIdx - 1) * denominator));
-        let svgContent = '';
-
-        if (shape === 'circle') {
-          // Background circle
-          svgContent += `<circle cx="50" cy="50" r="48" fill="white" stroke="currentColor" stroke-width="2" class="fill-white dark:fill-slate-900 text-slate-300 dark:text-slate-600" />`;
-          for (let pIdx = 1; pIdx <= denominator; pIdx++) {
-            const arc = this.describeArc(50, 50, 48, (pIdx - 1) * (360 / denominator), pIdx * (360 / denominator));
-            // Outline path
-            svgContent += `<path d="${arc}" fill="none" stroke="currentColor" stroke-width="1" class="text-slate-300 dark:text-slate-600" />`;
-            // Fill path if needed
-            if (pIdx <= filledInThisShape) {
-              svgContent += `<path d="${arc}" class="fill-primary-500 stroke-primary-700" stroke-width="1" />`;
-            }
-          }
-        } else if (shape === 'square') {
-          // Background rect
-          svgContent += `<rect x="2" y="2" width="96" height="96" fill="white" stroke="currentColor" stroke-width="2" class="fill-white dark:fill-slate-900 text-slate-300 dark:text-slate-600" />`;
-          const rCount = rows || 1;
-          const cCount = cols || denominator || 1;
-          const w = 96 / cCount;
-          const h = 96 / rCount;
-          for (let r = 1; r <= rCount; r++) {
-            for (let c = 1; c <= cCount; c++) {
-              const itemIdx = (r - 1) * cCount + c;
-              const x = 2 + (c - 1) * w;
-              const y = 2 + (r - 1) * h;
-              // Outline rect
-              svgContent += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="currentColor" stroke-width="1" class="text-slate-300 dark:text-slate-700" />`;
-              // Fill rect if needed
-              if (itemIdx <= filledInThisShape) {
-                svgContent += `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="fill-primary-500 stroke-primary-700" stroke-width="1" />`;
-              }
-            }
-          }
-        }
-        shapes.push({ idx: sIdx, html: svgContent });
-      }
-      return shapes;
+      return fractionShapesSvg(this.cur.fraction);
     },
 
 
     /* Ruler SVG */
     get rulerSvg() {
       if (this.cur.type !== 'ruler' || !this.cur.ruler) return '';
-      const r = this.cur.ruler, W = 420, PAD = 40, Y = 60;
-      const range = r.max - r.min;
-      if (range <= 0) return '';
-      const uw = W / range;
-      const divs = r.divisions || 1;
-      const subs = r.subdivisions || 0;
-      let s = `<line x1="${PAD}" y1="${Y}" x2="${PAD + W}" y2="${Y}" stroke="currentColor" stroke-width="2"/>`;
-      for (let u = 0; u <= range; u++) {
-        const x = PAD + u * uw;
-        s += `<line x1="${x}" y1="${Y - 18}" x2="${x}" y2="${Y}" stroke="currentColor" stroke-width="2"/>`;
-        s += `<text x="${x}" y="${Y + 16}" text-anchor="middle" fill="currentColor" font-size="12" font-weight="500">${r.min + u}</text>`;
-        if (u < range) {
-          for (let d = 1; d < divs; d++) {
-            s += `<line x1="${x + d * uw / divs}" y1="${Y - 12}" x2="${x + d * uw / divs}" y2="${Y}" stroke="currentColor" stroke-width="1.5"/>`;
-          }
-          if (subs > 0) {
-            for (let d = 0; d < divs; d++) {
-              for (let sub = 1; sub < subs; sub++) {
-                const xs = x + (d + sub / subs) * uw / divs;
-                s += `<line x1="${xs}" y1="${Y - 7}" x2="${xs}" y2="${Y}" stroke="currentColor" stroke-width="1"/>`;
-              }
-            }
-          }
-        }
-      }
-      if (r.markers) {
-        r.markers.forEach(m => {
-          const x = PAD + (m.value - r.min) * uw;
-          s += `<polygon points="${x},${Y - 22} ${x - 6},${Y - 34} ${x + 6},${Y - 34}" class="fill-red-500 dark:fill-red-400"/>`;
-          s += `<text x="${x}" y="${Y - 38}" text-anchor="middle" fill="currentColor" font-size="14" font-weight="700" class="fill-red-600 dark:fill-red-400">${m.label}</text>`;
-        });
-      }
-      return s;
-    },
-
-    polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-      const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
-      return {
-        x: centerX + (radius * Math.cos(angleInRadians)),
-        y: centerY + (radius * Math.sin(angleInRadians))
-      };
-    },
-    describeArc(x, y, radius, startAngle, endAngle) {
-      const start = this.polarToCartesian(x, y, radius, endAngle);
-      const end = this.polarToCartesian(x, y, radius, startAngle);
-      const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-      return [
-        "M", x, y,
-        "L", start.x, start.y,
-        "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y,
-        "Z"
-      ].join(" ");
+      return rulerExerciseSvg(this.cur.ruler);
     },
 
     regenerateAll() {
@@ -386,7 +498,10 @@ function seriesPlayer(exercises) {
       if (this.cur.comparisons) { this.cmpInputs = this.cur.comparisons.map(() => null) }
       if (this.cur.mqQuestions) { this.mqInputs = this.cur.mqQuestions.map(() => ''); this.mqSolved = this.cur.mqQuestions.map(() => false) }
       if (this.cur.items) { this.sortShuffled = [...this.cur.items].sort(() => Math.random() - 0.5) }
+      if (this.cur.selectStatements) { this.selectAnswers = new Array(this.cur.selectStatements.length).fill('') }
+      if (this.cur.tiles) { const _tn = this.cur.tiles.length; const _ta = Array.from({length: _tn}, (_, i) => i); for (let i = _tn - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [_ta[i], _ta[j]] = [_ta[j], _ta[i]]; } if (_ta.every((v, i) => v === i) && _tn > 1) [_ta[0], _ta[1]] = [_ta[1], _ta[0]]; this.dragTilesOrder = _ta; }
       if (this.cur.table) { this.tableInputs = new Array(this.cur.table.blankCount).fill('') } this.tableErrors = [];
+      if (this.cur.columns) { this.clickBlockLevels = this.cur.columns.map(() => 0); this.clickBlockErrors = []; }
       const _focusFirst = () => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-trou input')).find(el => el.offsetHeight > 0); else if (this.seqInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-seq input')).find(el => el.offsetHeight > 0); else if (this.cur.type === 'fill-table') ref = Array.from(this.$el.querySelectorAll('.js-table input')).find(el => el.offsetHeight > 0); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }
       requestAnimationFrame(_focusFirst)
       this.$watch('currentIndex', () => requestAnimationFrame(_focusFirst))
@@ -419,14 +534,72 @@ function seriesPlayer(exercises) {
       this.tileErrors = [];
     },
 
+    dragRender(tile) {
+      if (!tile) return '';
+      if (typeof tile === 'string') return tile;
+      return window[tile.gen](...Object.values(tile.par));
+    },
+
+    dragTap(pos) {
+      if (this.solved) return;
+      const p = Number(pos);
+      if (this.dragSelected === null) {
+        this.dragSelected = p;
+      } else if (this.dragSelected === p) {
+        this.dragSelected = null;
+      } else {
+        const sel = this.dragSelected;
+        const order = this.dragTilesOrder.map(Number);
+        [order[sel], order[p]] = [order[p], order[sel]];
+        this.dragTilesOrder = order;
+        this.dragSelected = null;
+        if (this._dragErrTimer) { clearTimeout(this._dragErrTimer); this._dragErrTimer = null; }
+        this.dragErrors = [];
+      }
+    },
+
+    blockTap(ci, r) {
+      if (this.solved) return;
+      const col = (this.cur.columns || [])[ci];
+      if (!col) return;
+      const newLevel = col.max - r + 1;
+      const updated = (this.clickBlockLevels || []).map((v, i) => i === ci ? (v === newLevel ? 0 : newLevel) : v);
+      this.clickBlockLevels = updated;
+      this.clickBlockErrors = [];
+    },
+
     checkTap(i) {
       if (this.solved) return;
       const idx = this.checkSelected.indexOf(i);
       this.checkSelected = idx === -1 ? [...this.checkSelected, i] : this.checkSelected.filter(s => s !== i);
       this.checkErrors = [];
     },
+    
+    svgTap(i) {
+      if (this.solved) return;
+      const idx = this.svgSelected.indexOf(i);
+      this.svgSelected = idx === -1 ? [...this.svgSelected, i] : this.svgSelected.filter(s => s !== i);
+      this.svgErrors = [];
+    },
 
     check() {
+      if (this.cur.type === 'drag-sort') {
+        if (this.solved) return;
+        if (this._dragErrTimer) { clearTimeout(this._dragErrTimer); this._dragErrTimer = null; }
+        this.dragErrors = [];
+        const errors = this.dragTilesOrder.map((origIdx, pos) => Number(origIdx) !== pos ? pos : -1).filter(p => p >= 0);
+        if (errors.length === 0) { this.solvedFlags[this.currentIndex] = true; this.showError = false; this.dragSelected = null; if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) } }
+        else { this.dragErrors = errors; this.showError = true; this._dragErrTimer = setTimeout(() => { this.showError = false; this.dragErrors = []; this._dragErrTimer = null; }, 2000) }
+        return
+      }
+      if (this.cur.type === 'click-blocks') {
+        if (this.solved) return;
+        const cols = this.cur.columns || [];
+        const errors = cols.map((col, i) => (this.clickBlockLevels[i] || 0) !== col.answer ? i : -1).filter(i => i >= 0);
+        if (errors.length === 0) { this.solvedFlags[this.currentIndex] = true; this.showError = false; this.clickBlockErrors = []; if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) } }
+        else { this.clickBlockErrors = errors; this.showError = true; setTimeout(() => { this.showError = false; this.clickBlockErrors = [] }, 2000) }
+        return
+      }
       if (this.cur.type === 'fill-table') {
         if (this.solved) return;
         if (this.tableInputs.some(v => !v.trim())) { this.showError = true; setTimeout(() => { this.showError = false }, 2000); return }
@@ -452,6 +625,19 @@ function seriesPlayer(exercises) {
         } else {
           this.tileErrors = this.tileSelected.filter(i => !expected.includes(i));
           this.showError = true; setTimeout(() => { this.showError = false; this.tileErrors = [] }, 2000);
+        }
+        return
+      }
+      if (this.cur.type === 'svg-tiles') {
+        if (this.solved) return;
+        const expected = [...(this.cur.answers || [])].sort((a, b) => a - b);
+        const actual = [...this.svgSelected].sort((a, b) => a - b);
+        if (actual.length === expected.length && actual.every((v, i) => v === expected[i])) {
+          this.solvedFlags[this.currentIndex] = true; this.showError = false; this.svgErrors = [];
+          if (this.currentIndex < this.exercises.length - 1) { setTimeout(() => this.goTo(this.currentIndex + 1), 1500) }
+        } else {
+          this.svgErrors = this.svgSelected.filter(i => !expected.includes(i));
+          this.showError = true; setTimeout(() => { this.showError = false; this.svgErrors = [] }, 2000);
         }
         return
       }
@@ -696,11 +882,13 @@ function seriesPlayer(exercises) {
       if (_e.statements) { this.tfInputs = _e.statements.map(() => null) } else { this.tfInputs = [] } this.tfErrors = [];
       if (_e.comparisons) { this.cmpInputs = _e.comparisons.map(() => null) } else { this.cmpInputs = [] } this.cmpErrors = [];
       if (_e.mqQuestions) { this.mqInputs = _e.mqQuestions.map(() => ''); this.mqSolved = _e.mqQuestions.map(() => false) } else { this.mqInputs = []; this.mqSolved = [] } this.mqErrors = [];
-      this.mcqSelected = null; this.mcqWrong = null; this.tileSelected = []; this.tileErrors = [];
+      this.mcqSelected = null; this.mcqWrong = null; this.tileSelected = []; this.tileErrors = []; this.svgSelected = []; this.svgErrors = [];
       if (_e.items) { this.sortPicked = []; this.sortShuffled = [..._e.items].sort(() => Math.random() - 0.5) } else { this.sortPicked = []; this.sortShuffled = [] } this.sortErrors = [];
       if (_e.table) { this.tableInputs = new Array(_e.table.blankCount).fill('') } else { this.tableInputs = [] } this.tableErrors = [];
       this.checkSelected = []; this.checkErrors = [];
+      if (_e.columns) { this.clickBlockLevels = _e.columns.map(() => 0); } else { this.clickBlockLevels = []; } this.clickBlockErrors = [];
       this.selectAnswers = new Array((_e.selectStatements || []).length).fill(''); this.selectErrors = [];
+      if (_e.tiles) { const n = _e.tiles.length; const arr = Array.from({length: n}, (_, i) => i); for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } if (arr.every((v, i) => v === i) && n > 1) [arr[0], arr[1]] = [arr[1], arr[0]]; this.dragTilesOrder = arr; } else { this.dragTilesOrder = []; } this.dragSelected = null; if (this._dragErrTimer) { clearTimeout(this._dragErrTimer); this._dragErrTimer = null; } this.dragErrors = [];
       window.location.hash = '#' + (idx + 1);
     },
 

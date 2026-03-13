@@ -958,9 +958,225 @@ const generators = {
         }
     },
 
+    // MCQ: compare two volumes expressed in different units
+    // params: level ('moyen' | 'difficile'), equalProb (0.2)
+    // moyen     — pairs among mL/cL/dL/L
+    // difficile — adds hL
+    comparerVolumes: {
+        generate(params = {}) {
+            const UNITS = {
+                'mL':  { label: 'millilitre',  plural: 'millilitres'  },
+                'cL':  { label: 'centilitre',  plural: 'centilitres'  },
+                'dL':  { label: 'décilitre',   plural: 'décilitres'   },
+                'L':   { label: 'litre',       plural: 'litres'       },
+                'hL':  { label: 'hectolitre',  plural: 'hectolitres'  },
+            };
+            const PAIR_SETS = {
+                moyen: [
+                    { u1: 'mL', u2: 'cL', factor: 10,   v2Range: [1, 20], delta: 5  },
+                    { u1: 'cL', u2: 'dL', factor: 10,   v2Range: [1, 20], delta: 5  },
+                    { u1: 'dL', u2: 'L',  factor: 10,   v2Range: [1, 20], delta: 5  },
+                    { u1: 'mL', u2: 'dL', factor: 100,  v2Range: [1, 10], delta: 10 },
+                    { u1: 'cL', u2: 'L',  factor: 100,  v2Range: [1, 10], delta: 50 },
+                ],
+                difficile: [
+                    { u1: 'mL', u2: 'cL', factor: 10,   v2Range: [1, 20], delta: 5   },
+                    { u1: 'cL', u2: 'dL', factor: 10,   v2Range: [1, 20], delta: 5   },
+                    { u1: 'dL', u2: 'L',  factor: 10,   v2Range: [1, 20], delta: 5   },
+                    { u1: 'mL', u2: 'dL', factor: 100,  v2Range: [1, 10], delta: 10  },
+                    { u1: 'cL', u2: 'L',  factor: 100,  v2Range: [1, 10], delta: 50  },
+                    { u1: 'mL', u2: 'L',  factor: 1000, v2Range: [1, 5],  delta: 100 },
+                    { u1: 'L',  u2: 'hL', factor: 100,  v2Range: [1, 10], delta: 50  },
+                    { u1: 'dL', u2: 'hL', factor: 1000, v2Range: [1, 3],  delta: 100 },
+                ],
+            };
+
+            const level = params.level ?? 'moyen';
+            const pairs = PAIR_SETS[level] || PAIR_SETS.moyen;
+            const pair = pairs[rand(0, pairs.length - 1)];
+            const { u1, u2, factor, v2Range, delta } = pair;
+
+            const v2 = rand(v2Range[0], v2Range[1]);
+            const v1eq = v2 * factor;
+
+            const isEqual = Math.random() < (params.equalProb ?? 0.2);
+            let v1, answerIdx;
+            if (isEqual) {
+                v1 = v1eq;
+                answerIdx = 2;
+            } else if (Math.random() < 0.5) {
+                v1 = v1eq + delta;
+                answerIdx = 0;
+            } else {
+                v1 = v1eq - delta;
+                if (v1 > 0) {
+                    answerIdx = 1;
+                } else {
+                    v1 = v1eq + delta;
+                    answerIdx = 0;
+                }
+            }
+
+            const fmt = (n, u) => `${n}\u202f${n === 1 ? UNITS[u].label : UNITS[u].plural}`;
+            const A = fmt(v1, u1);
+            const B = fmt(v2, u2);
+
+            return {
+                type: 'mcq',
+                title: `Lequel est le plus grand, ${A} ou ${B}\u00a0?`,
+                mcqChoices: [A, B, 'aucun\u00a0: les deux sont égaux'],
+                mcqAnswer: answerIdx,
+            };
+        }
+    },
+
+    // MCQ: compare two lengths expressed in different units
+    // params: level ('moyen' | 'difficile'), equalProb (0.2)
+    // moyen  — pairs among cm/dm/m/km
+    // difficile — adds mm, hm; more combinations
+    comparerLongueurs: {
+        generate(params = {}) {
+            const UNITS = {
+                'mm':  { label: 'millimètre',  plural: 'millimètres' },
+                'cm':  { label: 'centimètre',  plural: 'centimètres' },
+                'dm':  { label: 'décimètre',   plural: 'décimètres'  },
+                'm':   { label: 'mètre',       plural: 'mètres'      },
+                'hm':  { label: 'hectomètre',  plural: 'hectomètres' },
+                'km':  { label: 'kilomètre',   plural: 'kilomètres'  },
+            };
+            // Each pair: u1 is the "smaller" unit, u2 the "larger"; factor = how many u1 in 1 u2
+            const PAIR_SETS = {
+                moyen: [
+                    { u1: 'cm', u2: 'dm',  factor: 10,   v2Range: [1, 20], delta: 5   },
+                    { u1: 'dm', u2: 'm',   factor: 10,   v2Range: [1, 20], delta: 5   },
+                    { u1: 'cm', u2: 'm',   factor: 100,  v2Range: [1, 10], delta: 50  },
+                    { u1: 'm',  u2: 'km',  factor: 1000, v2Range: [1, 10], delta: 100 },
+                ],
+                difficile: [
+                    { u1: 'mm', u2: 'cm',  factor: 10,   v2Range: [1, 20], delta: 5   },
+                    { u1: 'mm', u2: 'dm',  factor: 100,  v2Range: [1, 10], delta: 10  },
+                    { u1: 'mm', u2: 'm',   factor: 1000, v2Range: [1, 3],  delta: 100 },
+                    { u1: 'cm', u2: 'dm',  factor: 10,   v2Range: [1, 20], delta: 5   },
+                    { u1: 'dm', u2: 'm',   factor: 10,   v2Range: [1, 20], delta: 5   },
+                    { u1: 'cm', u2: 'm',   factor: 100,  v2Range: [1, 10], delta: 50  },
+                    { u1: 'm',  u2: 'hm',  factor: 100,  v2Range: [1, 10], delta: 50  },
+                    { u1: 'hm', u2: 'km',  factor: 10,   v2Range: [1, 10], delta: 5   },
+                    { u1: 'm',  u2: 'km',  factor: 1000, v2Range: [1, 10], delta: 100 },
+                ],
+            };
+
+            const level = params.level ?? 'moyen';
+            const pairs = PAIR_SETS[level] || PAIR_SETS.moyen;
+            const pair = pairs[rand(0, pairs.length - 1)];
+            const { u1, u2, factor, v2Range, delta } = pair;
+
+            const v2 = rand(v2Range[0], v2Range[1]);
+            const v1eq = v2 * factor; // value in u1 that equals v2 in u2
+
+            const isEqual = Math.random() < (params.equalProb ?? 0.2);
+            let v1, answerIdx;
+            if (isEqual) {
+                v1 = v1eq;
+                answerIdx = 2;
+            } else if (Math.random() < 0.5) {
+                v1 = v1eq + delta;   // u1 side is bigger
+                answerIdx = 0;
+            } else {
+                v1 = v1eq - delta;
+                if (v1 > 0) {
+                    answerIdx = 1;   // u2 side is bigger
+                } else {
+                    v1 = v1eq + delta; // fallback: u1 side
+                    answerIdx = 0;
+                }
+            }
+
+            const fmt = (n, u) => `${n}\u202f${n === 1 ? UNITS[u].label : UNITS[u].plural}`;
+            const A = fmt(v1, u1);
+            const B = fmt(v2, u2);
+
+            return {
+                type: 'mcq',
+                title: `Lequel est le plus grand, ${A} ou ${B}\u00a0?`,
+                mcqChoices: [A, B, 'aucun\u00a0: les deux sont égaux'],
+                mcqAnswer: answerIdx,
+            };
+        }
+    },
+
     // Sort: order fractions
     // params: count (4), direction ('asc'), sameDenominator (true), denominator (random 4-12)
     // sameDenominator=false draws from a pool of common fractions (halves, thirds, quarters…)
+    // Checkbox: identify multiples of a given divisor from a mixed set
+    // params: divisor (specific number), divisors (array to pick from randomly),
+    //         count (6), min (divisor), max (99)
+    multiplesOf: {
+        generate(params = {}) {
+            const count   = params.count ?? 6;
+            const pool    = params.divisors || (params.divisor ? [params.divisor] : [2, 3, 5, 10]);
+            const divisor = pool[rand(0, pool.length - 1)];
+            const min     = params.min ?? Math.max(1, divisor);
+            const max     = params.max ?? 99;
+
+            // Build separate pools so we can guarantee ≥2 correct and ≥2 wrong
+            const multiples    = [];
+            const nonMultiples = [];
+            for (let n = min; n <= max; n++) {
+                if (n % divisor === 0) multiples.push(n);
+                else nonMultiples.push(n);
+            }
+
+            const nCorrect = rand(2, Math.min(count - 2, multiples.length));
+            const picked = [
+                ...multiples.sort(() => Math.random() - 0.5).slice(0, nCorrect),
+                ...nonMultiples.sort(() => Math.random() - 0.5).slice(0, count - nCorrect),
+            ].sort(() => Math.random() - 0.5);
+
+            const title = `Coche les multiples de ${divisor}.`;
+            const statements = picked.map(String);
+            const checkedAnswers = picked
+                .map((n, i) => n % divisor === 0 ? i : -1)
+                .filter(i => i !== -1);
+
+            return { type: 'checkbox', title, statements, checkedAnswers };
+        }
+    },
+
+    // Checkbox: identify even or odd numbers from a mixed set
+    // params: count (6), min (2), max (99), mode ('pairs'|'impairs'|'alterne')
+    // mode='alterne' randomly picks pairs or impairs each time
+    nombresPairsImpairs: {
+        generate(params = {}) {
+            const count = params.count ?? 6;
+            const min   = params.min ?? 2;
+            const max   = params.max ?? 99;
+            const mode  = params.mode ?? 'alterne';
+            const askPairs = mode === 'pairs' ? true
+                           : mode === 'impairs' ? false
+                           : Math.random() < 0.5;
+
+            // generate `count` distinct numbers with at least 2 correct and 2 wrong
+            let numbers;
+            let attempts = 0;
+            do {
+                const seen = new Set();
+                while (seen.size < count) seen.add(rand(min, max));
+                numbers = [...seen];
+                const corrects = numbers.filter(n => askPairs ? n % 2 === 0 : n % 2 !== 0);
+                attempts++;
+                if (corrects.length >= 2 && corrects.length <= count - 2) break;
+            } while (attempts < 50);
+
+            const title = askPairs ? 'Coche les nombres pairs.' : 'Coche les nombres impairs.';
+            const statements = numbers.map(String);
+            const checkedAnswers = numbers
+                .map((n, i) => (askPairs ? n % 2 === 0 : n % 2 !== 0) ? i : -1)
+                .filter(i => i !== -1);
+
+            return { type: 'checkbox', title, statements, checkedAnswers };
+        }
+    },
+
     trierFractions: {
         generate(params = {}) {
             const count = params.count ?? 4;
@@ -989,6 +1205,94 @@ const generators = {
             const items = fracs.map(f => `${f.n}/${f.d}`);
             const title = direction === 'asc' ? 'Ordre croissant' : 'Ordre décroissant';
             return { type: 'sort', title, items, direction };
+        }
+    },
+
+    // mcq: identify the place-value position of a highlighted digit
+    // params: positions (array of {label,value,color?}), count (3) — number of positions used per question
+    positionChiffre: {
+        generate(params = {}) {
+            const ALL = [
+                { label: 'milliers',  value: 1000  },
+                { label: 'centaines', value: 100   },
+                { label: 'dizaines',  value: 10    },
+                { label: 'unités',    value: 1     },
+                { label: 'dixièmes',  value: 0.1   },
+                { label: 'centièmes', value: 0.01  },
+                { label: 'millièmes', value: 0.001 },
+            ];
+            const pool = (params.positions || ALL).map(p =>
+                typeof p === 'string' ? ALL.find(a => a.label === p) : p
+            ).filter(Boolean);
+            const count = Math.min(params.count || 3, pool.length);
+
+            // Shuffle pool and pick `count` positions, then sort by descending value
+            const chosen = [...pool].sort(() => Math.random() - 0.5).slice(0, count)
+                .sort((a, b) => b.value - a.value);
+
+            // Assign non-zero random digits at each chosen position
+            let number = 0;
+            const digits = {};
+            chosen.forEach(p => {
+                const d = rand(1, 9);
+                digits[p.value] = d;
+                number = Math.round((number + d * p.value) * 1e6) / 1e6;
+            });
+
+            // Format number in French notation
+            const maxDec = chosen.some(p => p.value < 1)
+                ? chosen.filter(p => p.value < 1).length + (chosen.some(p => p.value === 0.001) ? 0 : 0)
+                : 0;
+            const decPlaces = chosen.reduce((m, p) => {
+                if (p.value === 0.1)   return Math.max(m, 1);
+                if (p.value === 0.01)  return Math.max(m, 2);
+                if (p.value === 0.001) return Math.max(m, 3);
+                return m;
+            }, 0);
+            const formatted = number.toLocaleString('fr-FR', { minimumFractionDigits: decPlaces, maximumFractionDigits: decPlaces });
+
+            // Pick target position (what we ask about)
+            const target = chosen[Math.floor(Math.random() * chosen.length)];
+            const targetDigit = digits[target.value];
+
+            // Options = all chosen positions, shuffled
+            const options = [...chosen].sort(() => Math.random() - 0.5).map(p => p.label);
+            const answerIdx = options.indexOf(target.label);
+
+            return {
+                type: 'mcq',
+                title: `Dans <strong>${formatted}</strong>, en quelle position se trouve le <strong>${targetDigit}</strong>\u00a0?`,
+                mcqOptions: options,
+                mcqAnswer: answerIdx,
+                answers: [target.label]
+            };
+        }
+    },
+
+    // click-blocks: fill place-value columns to represent a number
+    // params: min (1), max (999), places (['100','10','1'])
+    blocsValeurPosition: {
+        generate(params = {}) {
+            const min = params.min ?? 1;
+            const max = params.max ?? 999;
+            const n = rand(min, max);
+            const places = params.places || [
+                { label: '100', value: 100, color: '#dc2626' },
+                { label: '10',  value: 10,  color: '#7c3aed' },
+                { label: '1',   value: 1,   color: '#2563eb' }
+            ];
+            const columns = places.map(p => ({
+                label: p.label,
+                value: p.value,
+                color: p.color,
+                answer: Math.floor(n / p.value) % 10,
+                max: 9
+            }));
+            return {
+                type: 'click-blocks',
+                title: `Colorie les blocs pour représenter le nombre <strong>${n}</strong>.`,
+                columns
+            };
         }
     },
 

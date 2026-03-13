@@ -68,9 +68,11 @@ isSeriesPage: true
   {% if 'fraction-check' in usedTypes %}{% include "types/fraction-check.njk" %}{% endif %}
   {% if 'tile-select' in usedTypes %}{% include "types/tile-select.njk" %}{% endif %}
   {% if 'sort' in usedTypes %}{% include "types/sort.njk" %}{% endif %}
+  {% if 'drag-sort' in usedTypes %}{% include "types/drag-sort.njk" %}{% endif %}
   {% if 'fill-table' in usedTypes %}{% include "types/fill-table.njk" %}{% endif %}
-  {% if 'checkbox' in usedTypes %}{% include "types/checkbox.njk" %}{% endif %}
+  {% if 'click-blocks' in usedTypes %}{% include "types/click-blocks.njk" %}{% endif %}
   {% if 'select' in usedTypes %}{% include "types/select.njk" %}{% endif %}
+  {% if 'svg-tiles' in usedTypes %}{% include "types/svg-tiles.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -149,14 +151,23 @@ isSeriesPage: true
     {% if 'sort' in usedTypes %}
     <span x-show="cur.type === 'sort'">L'ordre n'est pas correct. Essaie encore !</span>
     {% endif %}
+    {% if 'drag-sort' in usedTypes %}
+    <span x-show="cur.type === 'drag-sort'">L'ordre n'est pas correct. Essaie encore !</span>
+    {% endif %}
     {% if 'fill-table' in usedTypes %}
     <span x-show="cur.type === 'fill-table'">Certaines cases ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
+    {% if 'click-blocks' in usedTypes %}
+    <span x-show="cur.type === 'click-blocks'">Certaines colonnes ne sont pas correctes. Essaie encore !</span>
     {% endif %}
     {% if 'checkbox' in usedTypes %}
     <span x-show="cur.type === 'checkbox'">Certaines cases cochées ne sont pas correctes. Essaie encore !</span>
     {% endif %}
     {% if 'select' in usedTypes %}
     <span x-show="cur.type === 'select'">Certaines réponses ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
+    {% if 'svg-tiles' in usedTypes %}
+    <span x-show="cur.type === 'svg-tiles'">Certaines formes ne sont pas correctes. Essaie encore !</span>
     {% endif %}
   </div>
 

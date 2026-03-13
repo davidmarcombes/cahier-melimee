@@ -62,9 +62,15 @@ const TYPE_CHOICES = [
   { name: 'base-10         — Décomposition en base 10', value: 'base-10' },
   { name: 'clock           — Lire l\'heure', value: 'clock' },
   { name: 'sort            — Ordonner des valeurs (click-to-rank)', value: 'sort' },
+  { name: 'drag-sort       — Trier des tuiles par glissement/échange', value: 'drag-sort' },
   { name: 'fill-table      — Compléter un tableau', value: 'fill-table' },
   { name: 'checkbox        — Cocher les affirmations vraies', value: 'checkbox' },
   { name: 'select          — Choisir un mot dans un menu déroulant', value: 'select' },
+  { name: 'svg-tiles       — Tuiles avec SVG générés via helpers', value: 'svg-tiles' },
+  { name: 'tile-select     — Cliquer toutes les tuiles correctes', value: 'tile-select' },
+  { name: 'fraction-check  — Saisir une fraction (numérateur/dénominateur)', value: 'fraction-check' },
+  { name: 'ruler           — Lire une valeur sur une règle graduée', value: 'ruler' },
+  { name: 'click-blocks    — Colorier des blocs pour représenter la valeur', value: 'click-blocks' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -89,9 +95,15 @@ const TEMPLATES = {
   'base-10': 'number: \nanswer: ""',
   clock: 'hour: \nminute: \nanswer: ""',
   sort: 'direction: asc\nitems:\n  - ""\n  - ""\n  - ""\n  - ""',
+  'drag-sort': 'direction: asc\ntiles:\n  - ""\n  - ""\n  - ""\n  - ""',
   'fill-table': 'headers: ["Col1", "Col2", "Col3"]\nrows:\n  - ["valeur", "?", "valeur"]\n  - ["valeur", "valeur", "?"]\nanswers:\n  - ["?"]\n  - ["?"]',
   'checkbox': 'statements:\n  - ""\n  - ""\n  - ""\n  - ""\ncheckedAnswers: []',
   'select': 'choices: ["", "", "", "", ""]\nstatements:\n  - template: "___ de ___"\n    answer: ""\n  - template: "___ de ___"\n    answer: ""',
+  'svg-tiles': 'tiles:\n  - gen: "circleSvg"\n    par:\n      r: 40\n  - gen: "squareSvg"\n    par:\n      size: 40\nanswers: []',
+  'tile-select': 'tiles:\n  - ""\n  - ""\n  - ""\ntileAnswers: []',
+  'fraction-check': 'answers:\n  - ""\n  - ""',
+  ruler: 'min: 0\nmax: 10\ndivisions: 10\nmarkers:\n  - label: "A"\n    value: ',
+  'click-blocks': 'columns:\n  - label: "100"\n    value: 100\n    color: "#dc2626"\n    answer: 0\n    max: 9\n  - label: "10"\n    value: 10\n    color: "#7c3aed"\n    answer: 0\n    max: 9\n  - label: "1"\n    value: 1\n    color: "#2563eb"\n    answer: 0\n    max: 9',
 };
 
 const TYPES = Object.keys(TEMPLATES);

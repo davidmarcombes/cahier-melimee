@@ -22,12 +22,15 @@ const TYPE_SCHEMAS = {
   'base-10':      { required: ['answer'], requireOneOf: [['number'], ['hundreds', 'tens', 'ones']] },
   'clock':        { required: ['hour', 'minute', 'answer'] },
   'sort':         { required: ['items'], arrays: ['items'] },
+  'drag-sort':    { required: ['tiles'], arrays: ['tiles'] },
   'fill-table':   { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
   'ruler':        { required: [] },
   'fraction-check': { required: ['answers'], arrays: ['answers'] },
   'tile-select':  { required: ['tiles', 'tileAnswers'], arrays: ['tiles', 'tileAnswers'] },
   'checkbox':     { required: ['statements', 'checkedAnswers'], arrays: ['statements', 'checkedAnswers'] },
   'select':       { required: ['choices', 'statements'], arrays: ['choices', 'statements'] },
+  'svg-tiles':    { required: ['tiles', 'answers'], arrays: ['tiles', 'answers'], arrayFields: { tiles: ['gen'] } },
+  'click-blocks': { required: ['columns'], arrays: ['columns'] },
 };
 
 const COLORS = {
