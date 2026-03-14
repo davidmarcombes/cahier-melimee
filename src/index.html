@@ -2,18 +2,19 @@
 permalink: /index.html
 eleventyExcludeFromCollections: true
 ---
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url={{ '/fr/' | url }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url={{ '/fr/' | url }}" />
     <title>Redirection...</title>
-    <link rel="canonical" href="{{ '/fr/' | url }}">
+    <link rel="canonical" href="{{ '/fr/' | url }}" />
     <script>
-        window.location.href = "{{ '/fr/' | url }}";
+      window.location.href = "{{ '/fr/' | url }}";
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <p>Redirection vers <a href="{{ '/fr/' | url }}">le Cahier de Mélimée</a>...</p>
-</body>
+  </body>
 </html>

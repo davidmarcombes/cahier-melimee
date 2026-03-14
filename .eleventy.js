@@ -6,12 +6,23 @@ const yaml = require('js-yaml');
 const pathPrefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
 // HTML minification using html-minifier-terser
 const htmlmin = require('html-minifier-terser');
-const UpgradeHelper = require("@11ty/eleventy-upgrade-help");
-
-
-
+const UpgradeHelper = require('@11ty/eleventy-upgrade-help');
 
 const markdownIt = require('markdown-it');
+
+// ── Shorthand renderer ───────────────────────────────────────────────────────
+// Converts &funcName(arg1, arg2, ...) notation to HTML.
+// Add entries here as new shorthands are needed.
+const _shorthands = {
+  frac: (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`,
+};
+function renderShorthands(str) {
+  return str.replace(/&(\w+)\(([^)]*)\)/g, (match, fn, args) => {
+    const f = _shorthands[fn];
+    if (!f) return match; // unknown shorthand — leave as-is
+    return f(...args.split(',').map((a) => a.trim()));
+  });
+}
 
 module.exports = async function (eleventyConfig) {
   // LaTeX support using MathML (Zero-runtime JS/CSS on client)
@@ -19,7 +30,7 @@ module.exports = async function (eleventyConfig) {
   const md = markdownIt({
     html: true,
     breaks: true,
-    linkify: true
+    linkify: true,
   }).use(mathPlugin);
 
   eleventyConfig.setLibrary('md', md);
@@ -31,7 +42,8 @@ module.exports = async function (eleventyConfig) {
     return md.renderInline(String(content));
   });
   // Virtual template: sitemap (keeps src/ root free of .njk files)
-  eleventyConfig.addTemplate('sitemap.xml.njk',
+  eleventyConfig.addTemplate(
+    'sitemap.xml.njk',
     `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {% for page in collections.all %}
@@ -58,32 +70,35 @@ module.exports = async function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({
     'src/assets/images/favicon.ico': 'favicon.ico',
     'src/assets/images/favicon-32x32.png': 'favicon-32x32.png',
-    'src/assets/images/apple-touch-icon.png': 'apple-touch-icon.png'
+    'src/assets/images/apple-touch-icon.png': 'apple-touch-icon.png',
   });
 
   // Shortcode for responsive images
-  eleventyConfig.addNunjucksAsyncShortcode('image', async function (src, alt = '', sizes = '100vw', cls = '', loading = 'lazy') {
-    if (!alt) {
-      throw new Error(`Missing "+alt+" on image from: ${src}`);
+  eleventyConfig.addNunjucksAsyncShortcode(
+    'image',
+    async function (src, alt = '', sizes = '100vw', cls = '', loading = 'lazy') {
+      if (!alt) {
+        throw new Error(`Missing "+alt+" on image from: ${src}`);
+      }
+
+      let metadata = await Image(src, {
+        widths: [320, 640, 1024, 1600],
+        formats: ['avif', 'webp', 'png'],
+        outputDir: './_site/assets/images/',
+        urlPath: `${pathPrefix}/assets/images/`,
+      });
+
+      let imageAttributes = {
+        alt,
+        sizes,
+        loading,
+        decoding: 'async',
+      };
+      if (cls) imageAttributes.class = cls;
+
+      return Image.generateHTML(metadata, imageAttributes);
     }
-
-    let metadata = await Image(src, {
-      widths: [320, 640, 1024, 1600],
-      formats: ['avif', 'webp', 'png'],
-      outputDir: './_site/assets/images/',
-      urlPath: `${pathPrefix}/assets/images/`
-    });
-
-    let imageAttributes = {
-      alt,
-      sizes,
-      loading,
-      decoding: 'async'
-    };
-    if (cls) imageAttributes.class = cls;
-
-    return Image.generateHTML(metadata, imageAttributes);
-  });
+  );
 
   // Shortcode for inline emojis/icons (SVG, GIF, PNG)
   eleventyConfig.addShortcode('emoji', function (name, alt = '') {
@@ -92,7 +107,6 @@ module.exports = async function (eleventyConfig) {
 
   // Basic passthrough copy for fonts
   eleventyConfig.addPassthroughCopy({ 'src/assets/fonts': 'assets/fonts' });
-
 
   // Add a simple filter
   eleventyConfig.addFilter('year', () => new Date().getFullYear());
@@ -108,8 +122,6 @@ module.exports = async function (eleventyConfig) {
     if (isNaN(d)) return '';
     return d.toISOString().slice(0, 10);
   });
-
-
 
   // Blog posts collection (newest first)
   eleventyConfig.addCollection('posts', function (collectionApi) {
@@ -143,7 +155,7 @@ module.exports = async function (eleventyConfig) {
     const folders = ['exercices', 'applications'];
     const result = [];
 
-    folders.forEach(folder => {
+    folders.forEach((folder) => {
       const dir = path.join('src/fr', folder);
       const yamlFiles = findIndexYamls(dir);
 
@@ -169,7 +181,7 @@ module.exports = async function (eleventyConfig) {
           subtopic: parts[2] || '',
           skill: meta.skill || '',
           difficulty: meta.difficulty || '',
-          folder: folder
+          folder: folder,
         });
       }
     });
@@ -181,7 +193,7 @@ module.exports = async function (eleventyConfig) {
     if (!seriesName) return [];
     const normalized = seriesName.replace(/\\/g, '/');
     return collection
-      .filter(item => {
+      .filter((item) => {
         const dir = path.dirname(item.inputPath).replace(/\\/g, '/');
         return dir.endsWith('/' + normalized);
       })
@@ -190,7 +202,7 @@ module.exports = async function (eleventyConfig) {
 
   // Extract unique exercise types from a series (for conditional template includes)
   eleventyConfig.addFilter('extractTypes', function (exercises) {
-    return [...new Set(exercises.map(ex => ex.data.type || 'number-check'))];
+    return [...new Set(exercises.map((ex) => ex.data.type || 'number-check'))];
   });
 
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
@@ -198,10 +210,10 @@ module.exports = async function (eleventyConfig) {
     const payload = [];
     const helpers = {
       rand: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
-      pick: (...args) => args[Math.floor(Math.random() * args.length)]
+      pick: (...args) => args[Math.floor(Math.random() * args.length)],
     };
 
-    exercises.forEach(ex => {
+    exercises.forEach((ex) => {
       const repeat = ex.data.repeat || 1;
 
       // For generator-based exercises, emit a single placeholder (runtime expands + fills)
@@ -210,7 +222,7 @@ module.exports = async function (eleventyConfig) {
           title: ex.data.title || '',
           type: ex.data.type || 'number-check',
           body: (ex.templateContent || '').trim(),
-          _gen: { name: ex.data.generator, params: ex.data.params || {}, count: repeat }
+          _gen: { name: ex.data.generator, params: ex.data.params || {}, count: repeat },
         });
         return; // skip to next exercise
       }
@@ -220,7 +232,7 @@ module.exports = async function (eleventyConfig) {
         let vars = {};
 
         if (ex.data.vars) {
-          ex.data.vars.forEach(v => {
+          ex.data.vars.forEach((v) => {
             if (v.formula) {
               try {
                 const keys = [...Object.keys(helpers), ...Object.keys(vars)];
@@ -257,7 +269,7 @@ module.exports = async function (eleventyConfig) {
           title: md.renderInline(interpolate(ex.data.title || '')),
           type: ex.data.type || 'number-check',
           operation: interpolate(ex.data.operation || ''),
-          body: interpolate((ex.templateContent || '').trim())
+          body: interpolate((ex.templateContent || '').trim()),
         };
         // Only render operation as math if it doesn't have gaps, to preserve trouParts logic
         if (item.operation && !item.operation.includes('?')) {
@@ -268,11 +280,16 @@ module.exports = async function (eleventyConfig) {
         // Support both `answer` (singular) and `answers` (plural, for multi-blank operations)
         let answerRaw = ex.data.answers || ex.data.answer;
         if (typeof answerRaw === 'string') answerRaw = interpolate(answerRaw);
-        else if (Array.isArray(answerRaw)) answerRaw = answerRaw.map(a => typeof a === 'string' ? interpolate(a) : a);
+        else if (Array.isArray(answerRaw))
+          answerRaw = answerRaw.map((a) => (typeof a === 'string' ? interpolate(a) : a));
 
         item.answers = Array.isArray(answerRaw)
-          ? answerRaw.map(v => String(v).trim().toLowerCase())
-          : [String(answerRaw || '').trim().toLowerCase()];
+          ? answerRaw.map((v) => String(v).trim().toLowerCase())
+          : [
+              String(answerRaw || '')
+                .trim()
+                .toLowerCase(),
+            ];
 
         // 5. Specialized Type Handling
         if (ex.data.type === 'fraction') {
@@ -281,7 +298,7 @@ module.exports = async function (eleventyConfig) {
             numerator: Number(interpolate(String(ex.data.numerator || 0))),
             denominator: Number(interpolate(String(ex.data.denominator || 1))),
             cols: ex.data.cols ? Number(interpolate(String(ex.data.cols))) : null,
-            rows: ex.data.rows ? Number(interpolate(String(ex.data.rows))) : null
+            rows: ex.data.rows ? Number(interpolate(String(ex.data.rows))) : null,
           };
         }
 
@@ -294,11 +311,11 @@ module.exports = async function (eleventyConfig) {
             number: num,
             hundreds: ex.data.hundreds != null ? Number(interpolate(String(ex.data.hundreds))) : null,
             tens: ex.data.tens != null ? Number(interpolate(String(ex.data.tens))) : null,
-            ones: ex.data.ones != null ? Number(interpolate(String(ex.data.ones))) : null
+            ones: ex.data.ones != null ? Number(interpolate(String(ex.data.ones))) : null,
           };
           const h = b.hundreds !== null ? b.hundreds : Math.floor(b.number / 100);
           const t = b.tens !== null ? b.tens : Math.floor((b.number % 100) / 10);
-          const u = b.ones !== null ? b.ones : (b.number % 10);
+          const u = b.ones !== null ? b.ones : b.number % 10;
 
           let svg = '';
           let currentX = 10;
@@ -327,7 +344,7 @@ module.exports = async function (eleventyConfig) {
           if (!dataSvg) return null;
           const svgObj = {
             gen: interpolate(String(dataSvg.gen)),
-            par: {}
+            par: {},
           };
           if (dataSvg.par) {
             for (const [k, v] of Object.entries(dataSvg.par)) {
@@ -353,7 +370,9 @@ module.exports = async function (eleventyConfig) {
                 svgObj.par = { svg: fs.readFileSync(fullPath, 'utf8') };
               } else {
                 svgObj.gen = 'embedSvg';
-                svgObj.par = { svg: `<svg width="50" height="50"><text x="0" y="25" fill="red">Missing ${filepath}</text></svg>` };
+                svgObj.par = {
+                  svg: `<svg width="50" height="50"><text x="0" y="25" fill="red">Missing ${filepath}</text></svg>`,
+                };
               }
             }
           } else if (svgObj.gen === 'embed') {
@@ -367,7 +386,7 @@ module.exports = async function (eleventyConfig) {
         }
 
         if (ex.data.tiles && ex.data.type !== 'svg-tiles') {
-          item.tiles = ex.data.tiles.map(t => md.renderInline(interpolate(String(t))));
+          item.tiles = ex.data.tiles.map((t) => md.renderInline(interpolate(String(t))));
           item.tileAnswers = (ex.data.tileAnswers || []).map(Number);
         }
 
@@ -377,14 +396,14 @@ module.exports = async function (eleventyConfig) {
         }
 
         if (ex.data.statements) {
-          item.statements = ex.data.statements.map(s => md.renderInline(interpolate(String(s))));
+          item.statements = ex.data.statements.map((s) => md.renderInline(interpolate(String(s))));
           item.checkedAnswers = (ex.data.checkedAnswers || []).map(Number);
         }
 
         if (ex.data.pairs) {
-          const processedPairs = ex.data.pairs.map(p => ({
+          const processedPairs = ex.data.pairs.map((p) => ({
             left: md.renderInline(interpolate(String(p.left))),
-            right: md.renderInline(interpolate(String(p.right)))
+            right: md.renderInline(interpolate(String(p.right))),
           }));
           const leftIndexed = processedPairs.map((p, i) => ({ label: p.left, origIdx: i }));
           const rightIndexed = processedPairs.map((p, i) => ({ label: p.right, origIdx: i }));
@@ -397,48 +416,61 @@ module.exports = async function (eleventyConfig) {
             [rightIndexed[i], rightIndexed[j]] = [rightIndexed[j], rightIndexed[i]];
           }
           item.pairs = {
-            left: leftIndexed.map(l => l.label),
-            right: rightIndexed.map(r => r.label),
-            answers: leftIndexed.map(l => rightIndexed.findIndex(r => r.origIdx === l.origIdx))
+            left: leftIndexed.map((l) => l.label),
+            right: rightIndexed.map((r) => r.label),
+            answers: leftIndexed.map((l) => rightIndexed.findIndex((r) => r.origIdx === l.origIdx)),
           };
         }
 
         if (ex.data.given && ex.data.answers) {
           item.sequence = {
-            given: ex.data.given.map(n => md.renderInline(interpolate(String(n)))),
-            answers: ex.data.answers.map(n => interpolate(String(n)))
+            given: ex.data.given.map((n) => md.renderInline(interpolate(String(n)))),
+            answers: ex.data.answers.map((n) => interpolate(String(n))),
           };
         }
 
         if (ex.data.type === 'bounding' && ex.data.number != null && ex.data.answers) {
           item.bounding = {
             number: md.renderInline(interpolate(String(ex.data.number))),
-            answers: ex.data.answers.map(n => interpolate(String(n)))
+            answers: ex.data.answers.map((n) => interpolate(String(n))),
           };
         }
 
         if (ex.data.type === 'logic-grid' && ex.data.columns && ex.data.rows && ex.data.solution) {
-          const cols = ex.data.columns.map(c => md.renderInline(interpolate(String(c))));
-          const rows = ex.data.rows.map(r => md.renderInline(interpolate(String(r))));
-          const solution = rows.map(r => cols.map(c => {
-            const solValue = interpolate(String(ex.data.solution[c]));
-            return solValue === r;
-          }));
+          const cols = ex.data.columns.map((c) => md.renderInline(interpolate(String(c))));
+          const rows = ex.data.rows.map((r) => md.renderInline(interpolate(String(r))));
+          const solution = rows.map((r) =>
+            cols.map((c) => {
+              const solValue = interpolate(String(ex.data.solution[c]));
+              return solValue === r;
+            })
+          );
           item.grid = { columns: cols, rows: rows, solution: solution };
         }
 
         if (ex.data.type === 'pyramid' && ex.data.pyramid) {
-          const rawRows = ex.data.pyramid.map(r => r.map(v => v == null ? null : Number(interpolate(String(v)))));
-          const given = rawRows.map(r => r.map(v => v !== null));
+          const rawRows = ex.data.pyramid.map((r) => r.map((v) => (v == null ? null : Number(interpolate(String(v))))));
+          const given = rawRows.map((r) => r.map((v) => v !== null));
           let changed = true;
           while (changed) {
             changed = false;
             for (let r = 0; r < rawRows.length - 1; r++) {
               for (let c = 0; c < rawRows[r].length - 1; c++) {
-                const l = rawRows[r][c], ri = rawRows[r][c + 1], p = rawRows[r + 1][c];
-                if (l !== null && ri !== null && p === null) { rawRows[r + 1][c] = l + ri; changed = true; }
-                if (p !== null && l !== null && ri === null) { rawRows[r][c + 1] = p - l; changed = true; }
-                if (p !== null && ri !== null && l === null) { rawRows[r][c] = p - ri; changed = true; }
+                const l = rawRows[r][c],
+                  ri = rawRows[r][c + 1],
+                  p = rawRows[r + 1][c];
+                if (l !== null && ri !== null && p === null) {
+                  rawRows[r + 1][c] = l + ri;
+                  changed = true;
+                }
+                if (p !== null && l !== null && ri === null) {
+                  rawRows[r][c + 1] = p - l;
+                  changed = true;
+                }
+                if (p !== null && ri !== null && l === null) {
+                  rawRows[r][c] = p - ri;
+                  changed = true;
+                }
               }
             }
           }
@@ -446,23 +478,23 @@ module.exports = async function (eleventyConfig) {
         }
 
         if (ex.data.type === 'true-false' && ex.data.statements) {
-          item.statements = ex.data.statements.map(s => ({
+          item.statements = ex.data.statements.map((s) => ({
             text: md.renderInline(interpolate(String(s.text))),
-            answer: s.answer === true || interpolate(String(s.answer)) === 'true'
+            answer: s.answer === true || interpolate(String(s.answer)) === 'true',
           }));
         }
 
         if (ex.data.type === 'multi-question' && ex.data.questions) {
           item.mqContext = ex.data.context ? md.renderInline(interpolate(String(ex.data.context))) : '';
-          item.mqQuestions = ex.data.questions.map(q => ({
+          item.mqQuestions = ex.data.questions.map((q) => ({
             text: md.renderInline(interpolate(String(q.text))),
-            answer: interpolate(String(q.answer)).trim().toLowerCase()
+            answer: interpolate(String(q.answer)).trim().toLowerCase(),
           }));
         }
 
         if (ex.data.type === 'mcq' && ex.data.choices && ex.data.answer != null) {
           const correct = interpolate(String(ex.data.answer)).trim();
-          const choices = ex.data.choices.map(c => md.renderInline(interpolate(String(c))));
+          const choices = ex.data.choices.map((c) => md.renderInline(interpolate(String(c))));
           for (let i = choices.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [choices[i], choices[j]] = [choices[j], choices[i]];
@@ -473,13 +505,13 @@ module.exports = async function (eleventyConfig) {
         }
 
         if (ex.data.type === 'compare' && ex.data.comparisons) {
-          item.comparisons = ex.data.comparisons.map(c => {
+          item.comparisons = ex.data.comparisons.map((c) => {
             const l = interpolate(String(c.left));
             const r = interpolate(String(c.right));
             return {
               left: l,
               right: r,
-              answer: Number(l) < Number(r) ? '<' : '>'
+              answer: Number(l) < Number(r) ? '<' : '>',
             };
           });
         }
@@ -490,20 +522,20 @@ module.exports = async function (eleventyConfig) {
             max: Number(interpolate(String(ex.data.max ?? 10))),
             divisions: Number(interpolate(String(ex.data.divisions ?? 1))),
             subdivisions: Number(interpolate(String(ex.data.subdivisions ?? 0))),
-            markers: (ex.data.markers || []).map(m => ({
+            markers: (ex.data.markers || []).map((m) => ({
               label: interpolate(String(m.label || '')),
-              value: Number(interpolate(String(m.value)))
-            }))
+              value: Number(interpolate(String(m.value))),
+            })),
           };
         }
 
         if (ex.data.type === 'convert' && ex.data.items) {
           item.convert = {
-            items: ex.data.items.map(it => ({
+            items: ex.data.items.map((it) => ({
               prompt: interpolate(String(it.prompt)),
-              unit: it.unit ? interpolate(String(it.unit)) : ''
+              unit: it.unit ? interpolate(String(it.unit)) : '',
             })),
-            answers: ex.data.items.map(it => interpolate(String(it.answer)).trim())
+            answers: ex.data.items.map((it) => interpolate(String(it.answer)).trim()),
           };
         }
         if (ex.data.type === 'drag-sort' && ex.data.tiles) {
@@ -512,14 +544,19 @@ module.exports = async function (eleventyConfig) {
             if (!t || typeof t !== 'object' || !t.gen) return interpolate(String(t));
             const par = t.par || {};
             if (t.gen === 'fractionShapesSvg') {
-              const n = Number(par.n), d = Number(par.d), size = Number(par.size) || 80;
-              const cx = size / 2, r = size / 2 - 2;
+              const n = Number(par.n),
+                d = Number(par.d),
+                size = Number(par.size) || 80;
+              const cx = size / 2,
+                r = size / 2 - 2;
               let paths = '';
               for (let i = 0; i < d; i++) {
                 const a0 = (i * 2 * Math.PI) / d - Math.PI / 2;
                 const a1 = ((i + 1) * 2 * Math.PI) / d - Math.PI / 2;
-                const x1 = (cx + r * Math.cos(a0)).toFixed(2), y1 = (cx + r * Math.sin(a0)).toFixed(2);
-                const x2 = (cx + r * Math.cos(a1)).toFixed(2), y2 = (cx + r * Math.sin(a1)).toFixed(2);
+                const x1 = (cx + r * Math.cos(a0)).toFixed(2),
+                  y1 = (cx + r * Math.sin(a0)).toFixed(2);
+                const x2 = (cx + r * Math.cos(a1)).toFixed(2),
+                  y2 = (cx + r * Math.sin(a1)).toFixed(2);
                 paths += `<path d="M${cx} ${cx}L${x1} ${y1}A${r} ${r} 0 0 1 ${x2} ${y2}Z" fill="${i < n ? 'var(--p)' : 'var(--sf)'}" stroke="var(--cs)" stroke-width="1"/>`;
               }
               const pie = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
@@ -528,25 +565,25 @@ module.exports = async function (eleventyConfig) {
             // Unknown gen → keep as runtime object (fallback)
             return parseSvgElement(t);
           };
-          item.tiles = ex.data.tiles.map(t => preRenderTile(t));
+          item.tiles = ex.data.tiles.map((t) => preRenderTile(t));
           if (ex.data.direction) item.direction = ex.data.direction;
         }
         if (ex.data.type === 'click-blocks' && ex.data.columns) {
-          item.columns = ex.data.columns.map(col => ({
+          item.columns = ex.data.columns.map((col) => ({
             label: String(col.label || ''),
             value: Number(col.value || 0),
             color: String(col.color || '#3b82f6'),
             answer: Number(col.answer || 0),
-            max: Number(col.max || 9)
+            max: Number(col.max || 9),
           }));
         }
         if (ex.data.type === 'sort' && ex.data.items) {
-          item.items = ex.data.items.map(v => interpolate(String(v)));
+          item.items = ex.data.items.map((v) => interpolate(String(v)));
           if (ex.data.direction) item.direction = ex.data.direction;
         }
         if (ex.data.type === 'select' && ex.data.statements && ex.data.choices) {
           item.selectChoices = ex.data.choices.map(String);
-          item.selectStatements = ex.data.statements.map(s => {
+          item.selectStatements = ex.data.statements.map((s) => {
             const parts = String(s.template).split('___');
             return { before: parts[0] || '', after: parts[1] || '', answer: String(s.answer) };
           });
@@ -555,14 +592,21 @@ module.exports = async function (eleventyConfig) {
           let blankIdx = 0;
           const rows = ex.data.rows.map((row, ri) => {
             let colAnsIdx = 0;
-            return row.map(cell => {
+            return row.map((cell) => {
               if (String(cell) === '?') {
                 return { blank: true, answer: String((ex.data.answers[ri] || [])[colAnsIdx++] ?? ''), idx: blankIdx++ };
               }
-              return { blank: false, value: String(cell) };
+              return { blank: false, value: renderShorthands(String(cell)) };
             });
           });
-          item.table = { headers: ex.data.headers.map(String), rows, blankCount: blankIdx, headerCol: !!ex.data.headerCol };
+          const _inputW = { 1: 'w-8', 2: 'w-10', 3: 'w-12' }[ex.data.inputSize] || 'w-14';
+          item.table = {
+            headers: ex.data.headers.map((h) => renderShorthands(String(h))),
+            rows,
+            blankCount: blankIdx,
+            headerCol: !!ex.data.headerCol,
+            inputClass: _inputW,
+          };
         }
 
         payload.push(item);
@@ -571,8 +615,8 @@ module.exports = async function (eleventyConfig) {
 
     return JSON.stringify(payload)
       .replace(/&quot;/g, '\\"') // Unescape HTML quotes that break JSON if decoded by browser
-      .replace(/&apos;/g, "\\u0027") // Unescape HTML apostrophes
-      .replace(/'/g, "\\u0027"); // Escape single quotes
+      .replace(/&apos;/g, '\\u0027') // Unescape HTML apostrophes
+      .replace(/'/g, '\\u0027'); // Escape single quotes
   });
 
   // Convert seriesMeta to compact CSV for the listing page
@@ -615,7 +659,7 @@ module.exports = async function (eleventyConfig) {
           removeEmptyAttributes: true,
           minifyCSS: true,
           minifyJS: true,
-          useShortDoctype: true
+          useShortDoctype: true,
         });
       } catch (e) {
         // if minification fails, just return unminified content
@@ -631,8 +675,7 @@ module.exports = async function (eleventyConfig) {
   eleventyConfig.addTransform('sizeReport', function (content, outputPath) {
     if (outputPath && outputPath.endsWith('.html')) {
       const total = Buffer.byteLength(content, 'utf8');
-      const measure = (re) => (content.match(re) || [])
-        .reduce((sum, m) => sum + Buffer.byteLength(m, 'utf8'), 0);
+      const measure = (re) => (content.match(re) || []).reduce((sum, m) => sum + Buffer.byteLength(m, 'utf8'), 0);
 
       pageSizeMap.set(outputPath, {
         path: outputPath,
@@ -640,7 +683,7 @@ module.exports = async function (eleventyConfig) {
         svgBytes: measure(/<svg[\s\S]*?<\/svg>/gi),
         jsBytes: measure(/<script[\s\S]*?<\/script>/gi),
         imgBytes: measure(/src="data:image\/[^"]*"/gi),
-        cssBytes: measure(/<style[\s\S]*?<\/style>/gi)
+        cssBytes: measure(/<style[\s\S]*?<\/style>/gi),
       });
     }
     return content;
@@ -654,7 +697,7 @@ module.exports = async function (eleventyConfig) {
       console.error('  WARNING: The following series are MISSING "id" in index.yaml');
       console.error('  No pages were generated for them!');
       console.error('='.repeat(70) + '\x1b[0m');
-      missingSeriesIds.forEach(p => console.error(`  \x1b[31m- ${p}\x1b[0m`));
+      missingSeriesIds.forEach((p) => console.error(`  \x1b[31m- ${p}\x1b[0m`));
       console.error('\x1b[31m\nRun: npm run generate:ids\x1b[0m\n');
     }
 
@@ -663,28 +706,35 @@ module.exports = async function (eleventyConfig) {
       console.warn('\n\x1b[33m' + '='.repeat(70));
       console.warn('  CSV DATA WARNINGS:');
       console.warn('='.repeat(70) + '\x1b[0m');
-      csvWarnings.forEach(w => console.warn(`  \x1b[33m- ${w}\x1b[0m`));
+      csvWarnings.forEach((w) => console.warn(`  \x1b[33m- ${w}\x1b[0m`));
       console.warn('');
     }
 
     const pageSizes = [...pageSizeMap.values()];
     const sorted = pageSizes.sort((a, b) => b.kb - a.kb);
-    const fmt = b => (b / 1024).toFixed(1) + 'k';
+    const fmt = (b) => (b / 1024).toFixed(1) + 'k';
     const row = ({ path: p, kb, svgBytes, jsBytes, imgBytes, cssBytes }) => {
       const short = p.replace(process.cwd(), '').replace('/_site', '');
       console.log(
         short.padEnd(70) +
-        (kb + 'k').padStart(8) +
-        fmt(svgBytes).padStart(8) +
-        fmt(jsBytes).padStart(8) +
-        fmt(imgBytes).padStart(8) +
-        fmt(cssBytes).padStart(8)
+          (kb + 'k').padStart(8) +
+          fmt(svgBytes).padStart(8) +
+          fmt(jsBytes).padStart(8) +
+          fmt(imgBytes).padStart(8) +
+          fmt(cssBytes).padStart(8)
       );
     };
 
     const header = () => {
       console.log('\u2500'.repeat(110));
-      console.log('Page'.padEnd(70) + 'Total'.padStart(8) + 'SVG'.padStart(8) + 'JS'.padStart(8) + 'IMG'.padStart(8) + 'CSS'.padStart(8));
+      console.log(
+        'Page'.padEnd(70) +
+          'Total'.padStart(8) +
+          'SVG'.padStart(8) +
+          'JS'.padStart(8) +
+          'IMG'.padStart(8) +
+          'CSS'.padStart(8)
+      );
       console.log('\u2500'.repeat(110));
     };
 
@@ -699,16 +749,16 @@ module.exports = async function (eleventyConfig) {
     top10.forEach(row);
 
     if (middle.length > 0) {
-      const avg = key => middle.reduce((a, p) => a + (key === 'kb' ? parseFloat(p[key]) : p[key]), 0) / middle.length;
+      const avg = (key) => middle.reduce((a, p) => a + (key === 'kb' ? parseFloat(p[key]) : p[key]), 0) / middle.length;
       console.log(`\n\u26aa ${middle.length} pages not shown \u2014 averages:`);
       header();
       console.log(
         `(avg ${middle.length} pages)`.padEnd(70) +
-        fmt(avg('kb') * 1024).padStart(8) +
-        fmt(avg('svgBytes')).padStart(8) +
-        fmt(avg('jsBytes')).padStart(8) +
-        fmt(avg('imgBytes')).padStart(8) +
-        fmt(avg('cssBytes')).padStart(8)
+          fmt(avg('kb') * 1024).padStart(8) +
+          fmt(avg('svgBytes')).padStart(8) +
+          fmt(avg('jsBytes')).padStart(8) +
+          fmt(avg('imgBytes')).padStart(8) +
+          fmt(avg('cssBytes')).padStart(8)
       );
     }
 
@@ -716,16 +766,16 @@ module.exports = async function (eleventyConfig) {
     header();
     bottom5.forEach(row);
 
-    const total = key => pageSizes.reduce((a, p) => a + (key === 'kb' ? p.kb * 1024 : p[key]), 0);
+    const total = (key) => pageSizes.reduce((a, p) => a + (key === 'kb' ? p.kb * 1024 : p[key]), 0);
     console.log('\n\ud83d\udce6 Site totals:');
     header();
     console.log(
       `${pageSizes.length} pages`.padEnd(70) +
-      fmt(total('kb')).padStart(8) +
-      fmt(total('svgBytes')).padStart(8) +
-      fmt(total('jsBytes')).padStart(8) +
-      fmt(total('imgBytes')).padStart(8) +
-      fmt(total('cssBytes')).padStart(8)
+        fmt(total('kb')).padStart(8) +
+        fmt(total('svgBytes')).padStart(8) +
+        fmt(total('jsBytes')).padStart(8) +
+        fmt(total('imgBytes')).padStart(8) +
+        fmt(total('cssBytes')).padStart(8)
     );
   });
 
@@ -736,7 +786,7 @@ module.exports = async function (eleventyConfig) {
       output: '_site',
       includes: '_includes',
       layouts: '_layouts',
-      data: '_data'
-    }
+      data: '_data',
+    },
   };
 };

@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, it, expect } from 'vitest';
+import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
@@ -18,20 +19,11 @@ const _lsStub = { getItem: () => null, setItem: () => {}, removeItem: () => {} }
 // app.js calls document.addEventListener('alpine:init', ...) at the top level.
 const _documentStub = { addEventListener: () => {} };
 
-const {
-  circleSvg,
-  slicedPieSvg,
-  mathGridSvg,
-  rectangleSvg,
-  squareSvg,
-  triangleSvg,
-  fractionShapesSvg,
-} = new Function(
+const { circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg } = new Function(
   'window',
   'localStorage',
   'document',
-  appSrc +
-    '\nreturn { circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg };'
+  appSrc + '\nreturn { circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg };'
 )(_windowStub, _lsStub, _documentStub);
 
 // ─── DOM validation utility ───────────────────────────────────────────────────
@@ -183,5 +175,46 @@ describe('SVG generators', () => {
       const doc = parser.parseFromString(triangleSvg(60, 80), 'text/xml');
       expect(doc.querySelector('polyline')).not.toBeNull();
     });
+  });
+});
+
+// ─── SVGO bloat check ────────────────────────────────────────────────────────
+// Each SVG function's output is run through SVGO (multipass). If the optimiser
+// can reduce the output by more than 75 %, the generator is considered bloated
+// and the test fails. Current worst-case: mathGridSvg ~68 %, slicedPieSvg ~50 %.
+
+const _require = createRequire(import.meta.url);
+const { optimize } = _require('svgo');
+
+const BLOAT_THRESHOLD = 75; // percent reducible by SVGO before we consider it bloated
+
+function svgoBloat(svg) {
+  const result = optimize(svg, { multipass: true });
+  return (1 - result.data.length / svg.length) * 100;
+}
+
+describe('SVGO bloat check (threshold: <75% reducible)', () => {
+  it('circleSvg', () => {
+    expect(svgoBloat(circleSvg(50))).toBeLessThan(BLOAT_THRESHOLD);
+    expect(svgoBloat(circleSvg(50, 'r'))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('slicedPieSvg', () => {
+    expect(svgoBloat(slicedPieSvg(4, 3))).toBeLessThan(BLOAT_THRESHOLD);
+    expect(svgoBloat(slicedPieSvg(8, 5))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('mathGridSvg', () => {
+    // Large grids have many identical <rect> elements SVGO can compress heavily,
+    // so we only test a representative small grid here.
+    expect(svgoBloat(mathGridSvg(5, 2, 6))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('rectangleSvg', () => {
+    expect(svgoBloat(rectangleSvg(80, 40))).toBeLessThan(BLOAT_THRESHOLD);
+    expect(svgoBloat(rectangleSvg(80, 40, '8 cm', '4 cm'))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('squareSvg', () => {
+    expect(svgoBloat(squareSvg(80, '5 cm'))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('triangleSvg', () => {
+    expect(svgoBloat(triangleSvg(60, 80, '6 cm', '8 cm', '10 cm'))).toBeLessThan(BLOAT_THRESHOLD);
   });
 });

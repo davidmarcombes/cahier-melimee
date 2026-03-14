@@ -14,22 +14,22 @@ const ROOT = path.join(__dirname, '../_site');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
-  '.css':  'text/css',
-  '.js':   'application/javascript',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
   '.json': 'application/json',
-  '.csv':  'text/csv',
-  '.xml':  'application/xml',
-  '.txt':  'text/plain',
-  '.png':  'image/png',
-  '.jpg':  'image/jpeg',
+  '.csv': 'text/csv',
+  '.xml': 'application/xml',
+  '.txt': 'text/plain',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
-  '.gif':  'image/gif',
-  '.svg':  'image/svg+xml',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
   '.webp': 'image/webp',
   '.avif': 'image/avif',
-  '.ico':  'image/x-icon',
+  '.ico': 'image/x-icon',
   '.woff': 'font/woff',
-  '.woff2':'font/woff2',
+  '.woff2': 'font/woff2',
 };
 
 function serve(req, res) {

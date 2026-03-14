@@ -33,7 +33,10 @@ module.exports = [
     rules: {
       ...js.configs.recommended.rules,
       // Functions are called from inline HTML (Alpine x-data), not from JS
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^(seriesPlayer|themeToggle|challengePlayer)$' }],
+      'no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^(seriesPlayer|themeToggle|challengePlayer)$' },
+      ],
     },
   },
 ];

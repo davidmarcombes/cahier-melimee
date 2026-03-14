@@ -30,8 +30,8 @@ const varAliases = {
   'content-subtle': 'cs',
   'primary-500': 'p',
   'accent-500': 'a',
-  'primary': 'p',
-  'accent': 'a',
+  primary: 'p',
+  accent: 'a',
 };
 
 function processColors(obj, prefix = '') {
@@ -122,13 +122,13 @@ const cssVarsBlock = [
   markerStart,
   '@layer base {',
   '  :root {',
-  ...lightVars.map(v => `    ${v}`),
+  ...lightVars.map((v) => `    ${v}`),
   '  }',
   '  .dark {',
-  ...darkVars.map(v => `    ${v}`),
+  ...darkVars.map((v) => `    ${v}`),
   '  }',
   '}',
-  markerEnd
+  markerEnd,
 ].join('\n');
 
 try {

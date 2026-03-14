@@ -1,20 +1,20 @@
 {
-    "fr": [
-        {
-            "text": "Se lancer",
-            "url": "/fr/onboarding/"
-        },
-        {
-            "text": "Exercices",
-            "url": "/fr/exercices/"
-        },
-        {
-            "text": "Blog",
-            "url": "/fr/blog/"
-        },
-        {
-            "text": "Connexion",
-            "url": "/fr/connexion/"
-        }
-    ]
+  "fr": [
+    {
+      "text": "Se lancer",
+      "url": "/fr/onboarding/"
+    },
+    {
+      "text": "Exercices",
+      "url": "/fr/exercices/"
+    },
+    {
+      "text": "Blog",
+      "url": "/fr/blog/"
+    },
+    {
+      "text": "Connexion",
+      "url": "/fr/connexion/"
+    }
+  ]
 }

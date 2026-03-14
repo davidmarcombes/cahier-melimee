@@ -7,34 +7,38 @@ const VALID_DIFFICULTIES = ['facile', 'moyen', 'difficile'];
 
 const TYPE_SCHEMAS = {
   'number-check': { required: [], requireOneOf: [['answer'], ['answers'], ['generator']] },
-  'problem':      { required: [], requireOneOf: [['answer'], ['answers'], ['generator']] },
-  'matching':     { required: ['pairs'], arrays: ['pairs'], arrayFields: { pairs: ['left', 'right'] } },
-  'pyramid':      { required: ['pyramid'], arrays: ['pyramid'] },
-  'sequence':     { required: ['given', 'answers'], arrays: ['given', 'answers'] },
-  'bounding':     { required: ['number', 'answers'], arrays: ['answers'] },
-  'convert':      { required: ['items'], arrays: ['items'], arrayFields: { items: ['prompt', 'answer'] } },
-  'logic-grid':   { required: ['columns', 'rows', 'solution'], arrays: ['columns', 'rows'] },
-  'true-false':   { required: ['statements'], arrays: ['statements'], arrayFields: { statements: ['text', 'answer'] } },
-  'compare':      { required: ['comparisons'], arrays: ['comparisons'], arrayFields: { comparisons: ['left', 'right'] } },
+  problem: { required: [], requireOneOf: [['answer'], ['answers'], ['generator']] },
+  matching: { required: ['pairs'], arrays: ['pairs'], arrayFields: { pairs: ['left', 'right'] } },
+  pyramid: { required: ['pyramid'], arrays: ['pyramid'] },
+  sequence: { required: ['given', 'answers'], arrays: ['given', 'answers'] },
+  bounding: { required: ['number', 'answers'], arrays: ['answers'] },
+  convert: { required: ['items'], arrays: ['items'], arrayFields: { items: ['prompt', 'answer'] } },
+  'logic-grid': { required: ['columns', 'rows', 'solution'], arrays: ['columns', 'rows'] },
+  'true-false': { required: ['statements'], arrays: ['statements'], arrayFields: { statements: ['text', 'answer'] } },
+  compare: { required: ['comparisons'], arrays: ['comparisons'], arrayFields: { comparisons: ['left', 'right'] } },
   'multi-question': { required: ['questions'], arrays: ['questions'], arrayFields: { questions: ['text', 'answer'] } },
-  'mcq':          { required: ['answer', 'choices'], arrays: ['choices'] },
-  'fraction':     { required: ['shape', 'numerator', 'denominator', 'answer'] },
-  'base-10':      { required: ['answer'], requireOneOf: [['number'], ['hundreds', 'tens', 'ones']] },
-  'clock':        { required: ['hour', 'minute', 'answer'] },
-  'sort':         { required: ['items'], arrays: ['items'] },
-  'drag-sort':    { required: ['tiles'], arrays: ['tiles'] },
-  'fill-table':   { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
-  'ruler':        { required: [] },
+  mcq: { required: ['answer', 'choices'], arrays: ['choices'] },
+  fraction: { required: ['shape', 'numerator', 'denominator', 'answer'] },
+  'base-10': { required: ['answer'], requireOneOf: [['number'], ['hundreds', 'tens', 'ones']] },
+  clock: { required: ['hour', 'minute', 'answer'] },
+  sort: { required: ['items'], arrays: ['items'] },
+  'drag-sort': { required: ['tiles'], arrays: ['tiles'] },
+  'fill-table': { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
+  ruler: { required: [] },
   'fraction-check': { required: [], requireOneOf: [['answer'], ['answers']], arrays: ['answers'] },
-  'tile-select':  { required: ['tiles', 'tileAnswers'], arrays: ['tiles', 'tileAnswers'] },
-  'checkbox':     { required: ['statements', 'checkedAnswers'], arrays: ['statements', 'checkedAnswers'] },
-  'select':       { required: ['choices', 'statements'], arrays: ['choices', 'statements'] },
-  'svg-tiles':    { required: ['tiles', 'answers'], arrays: ['tiles', 'answers'], arrayFields: { tiles: ['gen'] } },
+  'tile-select': { required: ['tiles', 'tileAnswers'], arrays: ['tiles', 'tileAnswers'] },
+  checkbox: { required: ['statements', 'checkedAnswers'], arrays: ['statements', 'checkedAnswers'] },
+  select: { required: ['choices', 'statements'], arrays: ['choices', 'statements'] },
+  'svg-tiles': { required: ['tiles', 'answers'], arrays: ['tiles', 'answers'], arrayFields: { tiles: ['gen'] } },
   'click-blocks': { required: ['columns'], arrays: ['columns'] },
 };
 
 const COLORS = {
-  red: '\x1b[31m', green: '\x1b[32m', yellow: '\x1b[33m', reset: '\x1b[0m', bold: '\x1b[1m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
 };
 
 function findFiles(dir, name) {
@@ -52,7 +56,11 @@ function parseFrontmatter(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return null;
-  try { return yaml.load(match[1]); } catch { return null; }
+  try {
+    return yaml.load(match[1]);
+  } catch {
+    return null;
+  }
 }
 
 function validateSeries(seriesDir, errors) {
@@ -66,7 +74,9 @@ function validateSeries(seriesDir, errors) {
   }
 
   let meta;
-  try { meta = yaml.load(fs.readFileSync(indexPath, 'utf8')); } catch (e) {
+  try {
+    meta = yaml.load(fs.readFileSync(indexPath, 'utf8'));
+  } catch (e) {
     errors.push(`${rel}/index.yaml: invalid YAML — ${e.message}`);
     return;
   }
@@ -75,7 +85,9 @@ function validateSeries(seriesDir, errors) {
   if (!meta.difficulty) {
     errors.push(`${rel}/index.yaml: missing "difficulty"`);
   } else if (!VALID_DIFFICULTIES.includes(meta.difficulty)) {
-    errors.push(`${rel}/index.yaml: invalid difficulty "${meta.difficulty}" (expected: ${VALID_DIFFICULTIES.join(', ')})`);
+    errors.push(
+      `${rel}/index.yaml: invalid difficulty "${meta.difficulty}" (expected: ${VALID_DIFFICULTIES.join(', ')})`
+    );
   }
 
   // Validate exercise .md files
@@ -107,9 +119,11 @@ function validateSeries(seriesDir, errors) {
 
     // Check requireOneOf (e.g., base-10 needs either "number" or "hundreds"+"tens"+"ones")
     if (schema.requireOneOf) {
-      const satisfied = schema.requireOneOf.some(group => group.every(f => data[f] !== undefined && data[f] !== null));
+      const satisfied = schema.requireOneOf.some((group) =>
+        group.every((f) => data[f] !== undefined && data[f] !== null)
+      );
       if (!satisfied) {
-        const options = schema.requireOneOf.map(g => g.join(' + ')).join('" or "');
+        const options = schema.requireOneOf.map((g) => g.join(' + ')).join('" or "');
         errors.push(`${relMd}: type "${type}" requires one of: "${options}"`);
       }
     }
@@ -170,5 +184,7 @@ if (errors.length > 0) {
   console.error('');
   process.exit(1);
 } else {
-  console.log(`\n${COLORS.green}${COLORS.bold}  ✓ ${seriesCount} series, ${exerciseCount} exercises validated${COLORS.reset}\n`);
+  console.log(
+    `\n${COLORS.green}${COLORS.bold}  ✓ ${seriesCount} series, ${exerciseCount} exercises validated${COLORS.reset}\n`
+  );
 }

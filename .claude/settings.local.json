@@ -58,7 +58,8 @@
       "Read(//home/david/Code/web/cahier-melimee/src/fr/applications/**)",
       "Bash(/dev/null cat:*)",
       "Bash(npx vitest:*)",
-      "Bash(sort -k5 -nr)"
+      "Bash(sort -k5 -nr)",
+      "Bash(node -e \"require\\(''''./.eleventy.js''''\\)\")"
     ]
   }
 }
