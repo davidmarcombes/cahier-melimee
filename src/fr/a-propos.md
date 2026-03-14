@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "L'esprit de Mélimée 🐸"
+title: "L'esprit de Mélimée"
 lang: fr
 locale: fr-FR
 ---

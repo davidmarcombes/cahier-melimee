@@ -1,0 +1,76 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SVG generators > circleSvg > matches snapshot (no label) 1`] = `
+"<svg width="110" height="110" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="55" cy="55" r="50" fill="var(--sf)" stroke="var(--ct)" stroke-width="2" />
+      
+    </svg>"
+`;
+
+exports[`SVG generators > circleSvg > matches snapshot (with label) 1`] = `
+"<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="90" cy="90" r="50" fill="var(--sf)" stroke="var(--ct)" stroke-width="2" />
+      
+      <line x1="90" y1="90" x2="140" y2="90" stroke="var(--ct)" stroke-dasharray="4" />
+      <text x="115" y="80" text-anchor="middle" font-size="14" font-family="Arial" fill="var(--ct)">r</text>
+    </svg>"
+`;
+
+exports[`SVG generators > mathGridSvg > matches snapshot 1`] = `
+"<svg width="100" height="40" viewBox="0 -1 100 41" style="display:inline-block; margin:5px;">
+            <rect x="0" y="0" width="19" height="19"
+      fill="var(--p)" stroke="var(--cs)" stroke-width="0.5" /><rect x="20" y="0" width="19" height="19"
+      fill="var(--p)" stroke="var(--cs)" stroke-width="0.5" /><rect x="40" y="0" width="19" height="19"
+      fill="var(--p)" stroke="var(--cs)" stroke-width="0.5" /><rect x="60" y="0" width="19" height="19"
+      fill="var(--p)" stroke="var(--cs)" stroke-width="0.5" /><rect x="80" y="0" width="19" height="19"
+      fill="var(--p)" stroke="var(--cs)" stroke-width="0.5" /><rect x="0" y="20" width="19" height="19"
+      fill="var(--p)" stroke="var(--cs)" stroke-width="0.5" /><rect x="20" y="20" width="19" height="19"
+      fill="var(--ss)" stroke="var(--cs)" stroke-width="0.5" /><rect x="40" y="20" width="19" height="19"
+      fill="var(--ss)" stroke="var(--cs)" stroke-width="0.5" /><rect x="60" y="20" width="19" height="19"
+      fill="var(--ss)" stroke="var(--cs)" stroke-width="0.5" /><rect x="80" y="20" width="19" height="19"
+      fill="var(--ss)" stroke="var(--cs)" stroke-width="0.5" />
+          </svg>"
+`;
+
+exports[`SVG generators > rectangleSvg > matches snapshot (no labels) 1`] = `
+"<svg width="90" height="50" viewBox="0 0 90 50" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="5" width="80" height="40" fill="var(--sf)" stroke="var(--ct)" stroke-width="2" />
+      
+      
+    </svg>"
+`;
+
+exports[`SVG generators > rectangleSvg > matches snapshot (with labels) 1`] = `
+"<svg width="150" height="110" viewBox="0 0 150 110" xmlns="http://www.w3.org/2000/svg">
+      <rect x="35" y="35" width="80" height="40" fill="var(--sf)" stroke="var(--ct)" stroke-width="2" />
+      <text x="75" y="100" text-anchor="middle" font-family="Arial" fill="var(--ct)">8 cm</text>
+      <text x="25" y="55" text-anchor="end" dominant-baseline="middle" font-family="Arial" fill="var(--ct)">4 cm</text>
+    </svg>"
+`;
+
+exports[`SVG generators > slicedPieSvg > matches snapshot (3 of 4 slices filled) 1`] = `
+"<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 50 50 L 50 2 A 48 48 0 0 1 98 50 Z"
+      fill="var(--p)" stroke="var(--cs)" stroke-width="1" /><path d="M 50 50 L 98 50 A 48 48 0 0 1 50 98 Z"
+      fill="var(--p)" stroke="var(--cs)" stroke-width="1" /><path d="M 50 50 L 50 98 A 48 48 0 0 1 2 50.00000000000001 Z"
+      fill="var(--p)" stroke="var(--cs)" stroke-width="1" /><path d="M 50 50 L 2 50.00000000000001 A 48 48 0 0 1 49.99999999999999 2 Z"
+      fill="var(--sf)" stroke="var(--cs)" stroke-width="1" />
+    </svg>"
+`;
+
+exports[`SVG generators > squareSvg > matches snapshot 1`] = `
+"<svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+      <rect x="35" y="35" width="80" height="80" fill="var(--sf)" stroke="var(--ct)" stroke-width="2" />
+      <text x="75" y="140" text-anchor="middle" font-family="Arial" fill="var(--ct)">5 cm</text>
+    </svg>"
+`;
+
+exports[`SVG generators > triangleSvg > matches snapshot 1`] = `
+"<svg width="150" height="123" viewBox="0 0 150 123" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="45,95 105,95 45,15" fill="var(--sf)" stroke="var(--ct)" stroke-width="2" />
+      <polyline points="55,95 55,85 45,85" fill="none" stroke="var(--ct)" stroke-width="1.5" />
+      <text x="75" y="115" text-anchor="middle" font-family="Arial" fill="var(--ct)">6 cm</text>
+      <text x="37" y="55" text-anchor="end" dominant-baseline="middle" font-family="Arial" fill="var(--ct)">8 cm</text>
+      <text x="90" y="49" text-anchor="start" font-family="Arial" fill="var(--ct)">10 cm</text>
+    </svg>"
+`;

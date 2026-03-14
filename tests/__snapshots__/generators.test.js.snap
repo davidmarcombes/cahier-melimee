@@ -1,0 +1,41 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`additionSimple > matches snapshot 1`] = `
+{
+  "answers": [
+    "40",
+  ],
+  "operation": "15 + 25",
+  "type": "number-check",
+}
+`;
+
+exports[`additionTrou > matches snapshot 1`] = `
+{
+  "answers": [
+    "11",
+  ],
+  "operation": "9 + ? = 20",
+  "type": "number-check",
+}
+`;
+
+exports[`multiplicationSimple > matches snapshot 1`] = `
+{
+  "answers": [
+    "24",
+  ],
+  "operation": "4 × 6",
+  "type": "number-check",
+}
+`;
+
+exports[`romanNumerals > matches snapshot 1`] = `
+{
+  "answers": [
+    "9",
+  ],
+  "operation": "IX",
+  "type": "number-check",
+}
+`;

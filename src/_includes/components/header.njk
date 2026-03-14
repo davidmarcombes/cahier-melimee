@@ -1,4 +1,4 @@
-<header class="border-b bg-surface-chrome" x-data="{ mobileOpen: false, testOpen: false }">
+<header class="border-b bg-surface-chrome" x-data="{ mobileOpen: false, testOpen: false, cahierUser: (window.localStore && window.localStore.getUser()) || null }">
   <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
     <a href="{{ '/fr' | url }}" class="flex items-center gap-2 shrink-0">
       {% image "src/assets/images/logo.png", site.title + " logo", "2rem", "h-8 w-auto", "eager" %}
@@ -8,9 +8,21 @@
     {# Desktop nav #}
     <nav class="hidden md:flex items-center gap-4">
       {% for item in navigation[lang or 'fr'] %}
-        <a href="{{ item.url | url }}"
-           {% if page.url == item.url %}aria-current="page"{% endif %}
-           class="text-sm hover:text-primary-500 transition-colors">{{ item.text }}</a>
+        {% if item.url == '/fr/onboarding/' %}
+          <template x-if="cahierUser">
+            <a :href="(window.__pathPrefix || '/') + 'fr/cahier/?user=' + cahierUser.slug"
+               class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors">Mon Cahier</a>
+          </template>
+          <template x-if="!cahierUser">
+            <a href="{{ item.url | url }}"
+               {% if page.url == item.url %}aria-current="page"{% endif %}
+               class="text-sm hover:text-primary-500 transition-colors">{{ item.text }}</a>
+          </template>
+        {% else %}
+          <a href="{{ item.url | url }}"
+             {% if page.url == item.url %}aria-current="page"{% endif %}
+             class="text-sm hover:text-primary-500 transition-colors">{{ item.text }}</a>
+        {% endif %}
       {% endfor %}
       {% if site.testEnabled and isSeriesPage %}
       {# Test dropdown #}
@@ -66,10 +78,24 @@
     class="md:hidden border-t border-slate-200 dark:border-slate-700 bg-surface-chrome px-4 py-3"
   >
     {% for item in navigation[lang or 'fr'] %}
-      <a href="{{ item.url | url }}"
-         {% if page.url == item.url %}aria-current="page"{% endif %}
-         @click="mobileOpen = false"
-         class="block py-3 text-sm text-content-default hover:text-primary-500 transition-colors">{{ item.text }}</a>
+      {% if item.url == '/fr/onboarding/' %}
+        <template x-if="cahierUser">
+          <a :href="(window.__pathPrefix || '/') + 'fr/cahier/?user=' + cahierUser.slug"
+             @click="mobileOpen = false"
+             class="block py-3 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors">Mon Cahier</a>
+        </template>
+        <template x-if="!cahierUser">
+          <a href="{{ item.url | url }}"
+             {% if page.url == item.url %}aria-current="page"{% endif %}
+             @click="mobileOpen = false"
+             class="block py-3 text-sm text-content-default hover:text-primary-500 transition-colors">{{ item.text }}</a>
+        </template>
+      {% else %}
+        <a href="{{ item.url | url }}"
+           {% if page.url == item.url %}aria-current="page"{% endif %}
+           @click="mobileOpen = false"
+           class="block py-3 text-sm text-content-default hover:text-primary-500 transition-colors">{{ item.text }}</a>
+      {% endif %}
     {% endfor %}
     {% if site.testEnabled and isSeriesPage %}
     <div class="border-t border-slate-200 dark:border-slate-700 mt-2 pt-2">

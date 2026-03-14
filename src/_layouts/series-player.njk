@@ -28,7 +28,7 @@ isSeriesPage: true
 {% if 'base-10' in usedTypes %}{% include "svg-defs.njk" %}{% endif %}
 
 <div
-  x-data='seriesPlayer({{ exercises | seriesPayload | safe }})'
+  x-data='seriesPlayer({{ exercises | seriesPayload | safe }}, "{{ id }}")'
   @hashchange.window="syncFromHash()" @resize.window.debounce="updateMatchLines()"
   {% if site.testEnabled %}@test:validate.window="showValidationPanel = true"{% endif %}
   x-cloak class="max-w-xl mx-auto py-8"

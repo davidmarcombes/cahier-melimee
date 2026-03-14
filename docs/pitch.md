@@ -107,7 +107,7 @@ Apprendre, c’est comprendre… puis s’entraîner régulièrement
 
 ### **Où en est le projet ?**
 
-- [x] Prototype exercices fonctionnel (51 séries, 17 types, du CP au CM2).
+- [x] Prototype exercices fonctionnel (280+ séries, 25 types, du CP au CM2).
 - [x] Prototype backend et inscription.
 - [x] Design minimaliste et mascotte Salto.
 - [ ] **Finaliser la version bêta** (tests utilisateurs).

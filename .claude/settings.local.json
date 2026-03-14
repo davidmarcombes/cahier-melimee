@@ -55,7 +55,10 @@
       "Read(//home/david/Code/web/cahier-melimee/src/fr/exercices/**)",
       "Bash(for level in cp ce1 ce2 cm1)",
       "Bash(do echo \"=== APP: $level ===\")",
-      "Read(//home/david/Code/web/cahier-melimee/src/fr/applications/**)"
+      "Read(//home/david/Code/web/cahier-melimee/src/fr/applications/**)",
+      "Bash(/dev/null cat:*)",
+      "Bash(npx vitest:*)",
+      "Bash(sort -k5 -nr)"
     ]
   }
 }

@@ -14,7 +14,7 @@ locale: fr-FR
 
 ---
 
-# Bonjour petit aventurier ! 🐸
+# Bonjour petit aventurier !
 
 Bienvenue dans l'étang de Salto. Ici, on apprend en s'amusant, mais on garde aussi tes secrets bien à l'abri. Voici comment nous protégeons ta "bulle" magique :
 

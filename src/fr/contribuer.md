@@ -5,7 +5,7 @@ lang: fr
 locale: fr-FR
 ---
 
-# Rejoignez l'aventure Mélimée 🐸
+# Rejoignez l'aventure Mélimée
 
 Le Cahier Mélimée est un bien commun. Toute aide est précieuse pour faire grandir cet étang éducatif, que vous soyez développeur, enseignant, parent ou designer.
 

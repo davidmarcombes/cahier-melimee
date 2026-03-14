@@ -129,7 +129,7 @@ needsPocketBase: true
         <h2 class="text-3xl font-bold mb-4">Bienvenue, <span class="text-primary-600 dark:text-primary-400" x-text="selectedIdentity?.name"></span> !</h2>
         <p class="text-lg text-content-subtle mb-10">Ton cahier est prêt. Tu peux maintenant commencer tes exercices.</p>
         
-        <a :href="(window.__pathPrefix || '/') + 'cahier/' + slug" class="inline-block px-10 py-4 bg-primary-500 text-white text-lg font-bold rounded-2xl shadow-xl hover:bg-primary-600 transition-all transform hover:scale-105 active:scale-95">
+        <a :href="(window.__pathPrefix || '/') + 'fr/cahier/?user=' + slug" class="inline-block px-10 py-4 bg-primary-500 text-white text-lg font-bold rounded-2xl shadow-xl hover:bg-primary-600 transition-all transform hover:scale-105 active:scale-95">
           Accéder à mon cahier
         </a>
       </div>
@@ -161,12 +161,13 @@ function onboardingWizard() {
     },
 
     get workspaceUrl() {
-      return `https://melimee.site/cahier/${this.slug}`;
+      const prefix = window.__pathPrefix || '/';
+      return window.location.origin + prefix + 'fr/cahier/?user=' + this.slug;
     },
 
     async init() {
       console.log('Onboarding Wizard: Initializing diverse identity fetch...');
-      const live = await window.__pbAvailable;
+      const live = await window.__pbAvailable();
       if (!live) this.demoMode = true;
       try {
         if (this.demoMode) throw new Error('demo mode');
@@ -321,32 +322,28 @@ function onboardingWizard() {
 
     async submitOnboarding() {
       this.isSubmitting = true;
+      const data = {
+        username: this.selectedIdentity.name,
+        sticker_id: this.assignedSticker,
+        visual_key: this.passwordSequence.join('-'),
+        slug: this.slug
+      };
       try {
-        if (this.demoMode) {
-          this.nextStep();
-          return;
+        if (!this.demoMode) {
+          await pb.collection('pupils').create(data);
+          if (this.selectedIdentity.id) {
+            await pb.collection('identities').update(this.selectedIdentity.id, {
+              'usage_count+': 1
+            });
+          }
         }
-        const data = {
-          username: this.selectedIdentity.name,
-          sticker_id: this.assignedSticker,
-          visual_key: this.passwordSequence.join('-'),
-          slug: this.slug
-        };
-
-        await pb.collection('pupils').create(data);
-
-        // Increment usage count if it's a dynamic identity
-        if (this.selectedIdentity.id) {
-          await pb.collection('identities').update(this.selectedIdentity.id, {
-            'usage_count+': 1
-          });
-        }
-
+        localStore.setUser(data);
         this.nextStep();
       } catch (error) {
         console.error('Submission failed:', error);
-        // Gracefully proceed in demo mode rather than blocking the user
+        // Gracefully proceed even if PocketBase failed — still save locally
         this.demoMode = true;
+        localStore.setUser(data);
         this.nextStep();
       } finally {
         this.isSubmitting = false;

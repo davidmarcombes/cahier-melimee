@@ -97,7 +97,7 @@ needsPocketBase: true
       <div class="text-6xl mb-4">👋</div>
       <h2 class="text-2xl font-bold text-content-default mb-2">Content de te revoir !</h2>
       <p class="text-content-subtle mb-6" x-text="pupilRecord.username"></p>
-      <a :href="(window.__pathPrefix || '/') + 'cahier/' + pupilRecord.slug" class="inline-block px-8 py-3 bg-primary-500 text-white font-bold rounded-xl shadow-md hover:bg-primary-600 transition-all active:scale-95">
+      <a :href="(window.__pathPrefix || '/') + 'fr/cahier/?user=' + pupilRecord.slug" class="inline-block px-8 py-3 bg-primary-500 text-white font-bold rounded-xl shadow-md hover:bg-primary-600 transition-all active:scale-95">
         Accéder à mon cahier
       </a>
     </div>
@@ -126,16 +126,9 @@ function connexionForm() {
     async findPupils() {
       this.error = '';
       this.loading = true;
-      const live = await window.__pbAvailable;
+      const live = await window.__pbAvailable();
       if (!live) {
-        this.demoMode = true;
-        const name = this.username.trim() || 'petit-renard-roux';
-        this.matchingPupils = demoStickers.slice(0, 3).map((s, i) => ({
-          id: 'demo-' + i, username: name, sticker_id: s,
-          visual_key: 'demo', slug: name + '-' + i
-        }));
-        this.loading = false;
-        this.step = 2;
+        this._goDemo();
         return;
       }
       try {
@@ -152,11 +145,22 @@ function connexionForm() {
           this.step = 2;
         }
       } catch (err) {
-        this.error = 'Erreur de connexion au serveur.';
         console.error(err);
+        this._goDemo();
       } finally {
         this.loading = false;
       }
+    },
+
+    _goDemo() {
+      this.demoMode = true;
+      const name = this.username.trim() || 'petit-renard-roux';
+      this.matchingPupils = demoStickers.slice(0, 3).map((s, i) => ({
+        id: 'demo-' + i, username: name, sticker_id: s,
+        visual_key: 'demo', slug: name + '-' + i
+      }));
+      this.loading = false;
+      this.step = 2;
     },
 
     selectPupil(pupil) {
@@ -188,6 +192,7 @@ function connexionForm() {
         }
         const entered = this.passwordSequence.join('-');
         if (entered === this.pupilRecord.visual_key) {
+          localStore.setUser(this.pupilRecord);
           this.step = 4;
         } else {
           this.error = 'Clé secrète incorrecte. Essaie encore.';

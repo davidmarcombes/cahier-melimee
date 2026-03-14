@@ -1,3 +1,23 @@
+/* ─────────────────────────────────────────────────────────────
+   Local progress store — primary persistence layer.
+   Key: 'melimee_v1'  { user: {...}, progress: { [seriesId]: {...} } }
+   Works fully offline; PocketBase sync will be layered on top later.
+   ───────────────────────────────────────────────────────────── */
+const localStore = (() => {
+  const KEY = 'melimee_v1';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } }
+  function save(d) { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch {} }
+  return {
+    getUser()            { return load().user || null; },
+    setUser(p)           { const d = load(); d.user = { slug: p.slug, username: p.username, sticker_id: p.sticker_id }; save(d); },
+    clearUser()          { const d = load(); delete d.user; save(d); },
+    markDone(seriesId)   { if (!seriesId) return; const d = load(); if (!d.progress) d.progress = {}; if (!d.progress[seriesId]) { d.progress[seriesId] = { done: true, completedAt: new Date().toISOString() }; save(d); } },
+    getProgress()        { return load().progress || {}; },
+    countDone()          { return Object.keys(load().progress || {}).length; },
+  };
+})();
+window.localStore = localStore;
+
 /* Theme toggle */
 function themeToggle() { return { dark: document.documentElement.classList.contains('dark'), toggle() { this.dark = !this.dark; document.documentElement.classList.toggle('dark', this.dark); localStorage.setItem('theme', this.dark ? 'dark' : 'light') } } }
 
@@ -402,9 +422,10 @@ function rulerExerciseSvg(r) {
 }
 
 /* Series player — single-template engine */
-function seriesPlayer(exercises) {
+function seriesPlayer(exercises, seriesId) {
   return {
     exercises,
+    seriesId: seriesId || '',
     currentIndex: 0,
     userInput: '',
     trouInputs: [],
@@ -505,6 +526,7 @@ function seriesPlayer(exercises) {
       const _focusFirst = () => { let ref; if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum; else if (this.trouInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-trou input')).find(el => el.offsetHeight > 0); else if (this.seqInputs.length > 0) ref = Array.from(this.$el.querySelectorAll('.js-seq input')).find(el => el.offsetHeight > 0); else if (this.cur.type === 'fill-table') ref = Array.from(this.$el.querySelectorAll('.js-table input')).find(el => el.offsetHeight > 0); else ref = this.$refs.input; if (ref && !ref.disabled) ref.focus() }
       requestAnimationFrame(_focusFirst)
       this.$watch('currentIndex', () => requestAnimationFrame(_focusFirst))
+      this.$watch('solvedCount', count => { if (count === this.exercises.length && this.exercises.length > 0) localStore.markDone(this.seriesId); })
     },
     get cur() { return this.exercises[this.currentIndex] || {} },
     /* Parse operation à trou into structured parts for fraction rendering */
