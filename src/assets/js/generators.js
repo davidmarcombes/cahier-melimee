@@ -353,6 +353,56 @@ const generators = {
     },
   },
 
+  // 5 tiles, 2 or 3 correct — find the ones that are equal (no target shown)
+  // Representations of a + b/10: N/10, N*10/100, a+b/10, a+b*10/100
+  fractionsEgales5: {
+    generate(params = {}) {
+      const frac = (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+      const a = rand(params.minA ?? 1, params.maxA ?? 8);
+      const b = rand(1, 9);
+      const N = a * 10 + b; // e.g. 42 for a=4, b=2
+
+      // All 4 correct representations of a + b/10
+      const allCorrect = [
+        frac(N, 10),                                 // 42/10
+        frac(N * 10, 100),                           // 420/100
+        `${a}&nbsp;+&nbsp;${frac(b, 10)}`,           // 4 + 2/10
+        `${a}&nbsp;+&nbsp;${frac(b * 10, 100)}`,     // 4 + 20/100
+      ];
+
+      // Pick k correct (2 or 3)
+      const k = rand(2, 3);
+      const chosen = [...allCorrect].sort(() => Math.random() - 0.5).slice(0, k);
+
+      // Distractors — different values that look plausible
+      const dPool = [];
+      if (b !== a) dPool.push(frac(b * 10 + a, 10));           // swap digits: ba/10
+      if (a > 1)   dPool.push(frac((a - 1) * 10 + b, 10));    // (a-1).b
+      if (a < 9)   dPool.push(frac((a + 1) * 10 + b, 10));    // (a+1).b
+      if (b !== a) dPool.push(`${b}&nbsp;+&nbsp;${frac(a, 10)}`); // b + a/10
+      dPool.push(frac(N * 10 + 1, 100));                       // N*10+1 /100 (≠ N*10/100)
+      dPool.push(frac(a * 10, 10));                            // a.0
+      dPool.push(frac(N, 100));                                // 0.N (wrong denominator)
+      dPool.push(`${a}&nbsp;+&nbsp;${frac(b, 100)}`);          // a + b/100 (= a.0b)
+
+      const distractors = [...new Set(dPool)]
+        .filter(d => !chosen.includes(d))
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5 - k);
+
+      const pool = [...chosen, ...distractors].sort(() => Math.random() - 0.5);
+      const tileAnswers = chosen.map(c => pool.indexOf(c));
+      const kLabel = k === 2 ? 'les 2 nombres égaux' : 'les 3 nombres égaux';
+
+      return {
+        type: 'tile-select',
+        title: `Clique sur ${kLabel}`,
+        tiles: pool,
+        tileAnswers,
+      };
+    },
+  },
+
   recomposerFractions: {
     generate: (params = {}) => {
       const frac = (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
