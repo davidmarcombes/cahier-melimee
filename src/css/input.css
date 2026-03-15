@@ -19,6 +19,11 @@
   :root {
     --p: #2a85bf;
     --a: #bf812a;
+    --red: #c94040;
+    --green: #3a9a55;
+    --purple: #7040c9;
+    --pink: #c94080;
+    --orange: #c97040;
     --sf: #ffffff;
     --sc: #f1f5f9;
     --ss: #f8fafc;
@@ -28,6 +33,11 @@
   .dark {
     --p: #4da7d9;
     --a: #e0a84c;
+    --red: #e06868;
+    --green: #5cc478;
+    --purple: #9a70e0;
+    --pink: #e068a8;
+    --orange: #e09058;
     --sf: #0f172a;
     --sc: #1e293b;
     --ss: #1e293b;

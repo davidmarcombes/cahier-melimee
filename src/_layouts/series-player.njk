@@ -19,6 +19,7 @@ isSeriesPage: true
 {% endfor %}
 
 {% if hasGenerators %}
+<script src="{{ '/assets/js/svg.js' | url }}"></script>
 <script src="{{ '/assets/js/generators.js' | url }}"></script>
 {% endif %}
 {% if needsKatex %}

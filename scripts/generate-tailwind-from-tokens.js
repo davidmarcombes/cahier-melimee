@@ -32,6 +32,11 @@ const varAliases = {
   'accent-500': 'a',
   primary: 'p',
   accent: 'a',
+  'figure-red': 'red',
+  'figure-green': 'green',
+  'figure-purple': 'purple',
+  'figure-pink': 'pink',
+  'figure-orange': 'orange',
 };
 
 function processColors(obj, prefix = '') {

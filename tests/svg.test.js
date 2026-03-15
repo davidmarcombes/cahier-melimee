@@ -5,26 +5,21 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
-// ─── Load SVG functions from app.js ──────────────────────────────────────────
-// app.js is browser-only (no exports). We use new Function() so that function
+// ─── Load SVG functions from svg.js ──────────────────────────────────────────
+// svg.js is browser-only (no exports). We use new Function() so that function
 // declarations inside the file are locally scoped and we can return the ones
-// we need. We pass explicit stubs for window and localStorage so this works in
-// any environment (node or jsdom) without relying on implicit globals.
+// we need.
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const appSrc = readFileSync(resolve(__dirname, '../src/assets/js/app.js'), 'utf8');
+const appSrc = readFileSync(resolve(__dirname, '../src/assets/js/svg.js'), 'utf8');
 
-const _windowStub = {};
-const _lsStub = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
-// app.js calls document.addEventListener('alpine:init', ...) at the top level.
-const _documentStub = { addEventListener: () => {} };
-
-const { circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg } = new Function(
-  'window',
-  'localStorage',
-  'document',
-  appSrc + '\nreturn { circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg };'
-)(_windowStub, _lsStub, _documentStub);
+const {
+  circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg,
+  equilateralTriangleSvg, isoscelesTriangleSvg, rhombusSvg, parallelogramSvg, trapezoidSvg, regularPolygonSvg,
+  cuboidSvg, triangularPrismSvg, squarePyramidSvg, tetrahedronSvg,
+} = new Function(
+  appSrc + '\nreturn { circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg, equilateralTriangleSvg, isoscelesTriangleSvg, rhombusSvg, parallelogramSvg, trapezoidSvg, regularPolygonSvg, cuboidSvg, triangularPrismSvg, squarePyramidSvg, tetrahedronSvg };'
+)();
 
 // ─── DOM validation utility ───────────────────────────────────────────────────
 // Uses jsdom's DOMParser to verify the string is well-formed XML.
@@ -178,6 +173,184 @@ describe('SVG generators', () => {
   });
 });
 
+// ─── New 2D shapes ───────────────────────────────────────────────────────────
+
+describe('equilateralTriangleSvg', () => {
+  it('produces well-formed XML', () => {
+    const { valid, error } = validateXml(equilateralTriangleSvg(80));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('contains a <polygon> with 3 points', () => {
+    const doc = new DOMParser().parseFromString(equilateralTriangleSvg(80), 'text/xml');
+    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/);
+    expect(pts.length).toBe(3);
+  });
+  it('renders a <text> label when provided', () => {
+    const doc = new DOMParser().parseFromString(equilateralTriangleSvg(80, '6 cm'), 'text/xml');
+    expect(doc.querySelector('text').textContent).toBe('6 cm');
+  });
+  it('omits <text> when no label', () => {
+    const doc = new DOMParser().parseFromString(equilateralTriangleSvg(80), 'text/xml');
+    expect(doc.querySelector('text')).toBeNull();
+  });
+});
+
+describe('isoscelesTriangleSvg', () => {
+  it('produces well-formed XML', () => {
+    const { valid, error } = validateXml(isoscelesTriangleSvg(80, 70));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('contains a <polygon> with 3 points', () => {
+    const doc = new DOMParser().parseFromString(isoscelesTriangleSvg(80, 70), 'text/xml');
+    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/);
+    expect(pts.length).toBe(3);
+  });
+  it('apex x is centred on the base', () => {
+    const doc = new DOMParser().parseFromString(isoscelesTriangleSvg(80, 70), 'text/xml');
+    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/)
+      .map(p => parseFloat(p.split(',')[0]));
+    const [x0, x1, x2] = pts; // BL, BR, apex
+    expect(x2).toBeCloseTo((x0 + x1) / 2, 1);
+  });
+});
+
+describe('rhombusSvg', () => {
+  it('produces well-formed XML', () => {
+    const { valid, error } = validateXml(rhombusSvg(80, 60));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('contains a <polygon> with 4 points', () => {
+    const doc = new DOMParser().parseFromString(rhombusSvg(80, 60), 'text/xml');
+    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/);
+    expect(pts.length).toBe(4);
+  });
+  it('renders label text when provided', () => {
+    const doc = new DOMParser().parseFromString(rhombusSvg(80, 60, 'd1'), 'text/xml');
+    expect(doc.querySelector('text').textContent).toBe('d1');
+  });
+});
+
+describe('parallelogramSvg', () => {
+  it('produces well-formed XML', () => {
+    const { valid, error } = validateXml(parallelogramSvg(100, 60, 25));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('contains a <polygon> with 4 points', () => {
+    const doc = new DOMParser().parseFromString(parallelogramSvg(100, 60, 25), 'text/xml');
+    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/);
+    expect(pts.length).toBe(4);
+  });
+  it('top edge is shifted right by skew', () => {
+    const doc = new DOMParser().parseFromString(parallelogramSvg(100, 60, 30), 'text/xml');
+    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/)
+      .map(p => p.split(',').map(Number));
+    // pts: BL, BR, TR, TL — bottom y > top y, TL.x > BL.x
+    const [BL, , , TL] = pts;
+    expect(TL[0]).toBeGreaterThan(BL[0]);
+  });
+});
+
+describe('trapezoidSvg', () => {
+  it('produces well-formed XML', () => {
+    const { valid, error } = validateXml(trapezoidSvg(60, 100, 60));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('contains a <polygon> with 4 points', () => {
+    const doc = new DOMParser().parseFromString(trapezoidSvg(60, 100, 60), 'text/xml');
+    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/);
+    expect(pts.length).toBe(4);
+  });
+  it('top edge is narrower than bottom edge', () => {
+    const doc = new DOMParser().parseFromString(trapezoidSvg(60, 100, 60), 'text/xml');
+    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/)
+      .map(p => p.split(',').map(Number));
+    const [BL, BR, TR, TL] = pts;
+    const botWidth = BR[0] - BL[0];
+    const topWidth = TR[0] - TL[0];
+    expect(topWidth).toBeLessThan(botWidth);
+  });
+});
+
+describe('regularPolygonSvg', () => {
+  it('produces well-formed XML for pentagon', () => {
+    const { valid, error } = validateXml(regularPolygonSvg(5, 80));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('produces well-formed XML for hexagon', () => {
+    const { valid, error } = validateXml(regularPolygonSvg(6, 80));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('polygon has exactly n points', () => {
+    for (const n of [3, 5, 6, 8]) {
+      const doc = new DOMParser().parseFromString(regularPolygonSvg(n, 80), 'text/xml');
+      const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/);
+      expect(pts.length, `n=${n}`).toBe(n);
+    }
+  });
+  it('renders label when provided', () => {
+    const doc = new DOMParser().parseFromString(regularPolygonSvg(6, 80, 'hexagone'), 'text/xml');
+    expect(doc.querySelector('text').textContent).toBe('hexagone');
+  });
+});
+
+// ─── New 3D shapes ───────────────────────────────────────────────────────────
+
+describe('cuboidSvg', () => {
+  it('produces well-formed XML', () => {
+    const { valid, error } = validateXml(cuboidSvg(80, 50, 30));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('contains 5 <polygon> elements (3 faces × 2 layers - 1)', () => {
+    const doc = new DOMParser().parseFromString(cuboidSvg(80, 50, 30), 'text/xml');
+    expect(doc.querySelectorAll('polygon').length).toBe(5);
+  });
+  it('matches snapshot', () => {
+    expect(cuboidSvg(80, 50, 30)).toMatchSnapshot();
+  });
+});
+
+describe('triangularPrismSvg', () => {
+  it('produces well-formed XML', () => {
+    const { valid, error } = validateXml(triangularPrismSvg(80, 70, 40));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('contains 5 <polygon> elements (3 faces × 2 layers - 1)', () => {
+    const doc = new DOMParser().parseFromString(triangularPrismSvg(80, 70, 40), 'text/xml');
+    expect(doc.querySelectorAll('polygon').length).toBe(5);
+  });
+  it('matches snapshot', () => {
+    expect(triangularPrismSvg(80, 70, 40)).toMatchSnapshot();
+  });
+});
+
+describe('squarePyramidSvg', () => {
+  it('produces well-formed XML', () => {
+    const { valid, error } = validateXml(squarePyramidSvg(80, 80));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('contains 5 <polygon> elements (3 faces × 2 layers - 1)', () => {
+    const doc = new DOMParser().parseFromString(squarePyramidSvg(80, 80), 'text/xml');
+    expect(doc.querySelectorAll('polygon').length).toBe(5);
+  });
+  it('matches snapshot', () => {
+    expect(squarePyramidSvg(80, 80)).toMatchSnapshot();
+  });
+});
+
+describe('tetrahedronSvg', () => {
+  it('produces well-formed XML', () => {
+    const { valid, error } = validateXml(tetrahedronSvg(80));
+    expect(valid, `parse error: ${error}`).toBe(true);
+  });
+  it('contains 5 <polygon> elements (3 faces × 2 layers - 1)', () => {
+    const doc = new DOMParser().parseFromString(tetrahedronSvg(80), 'text/xml');
+    expect(doc.querySelectorAll('polygon').length).toBe(5);
+  });
+  it('matches snapshot', () => {
+    expect(tetrahedronSvg(80)).toMatchSnapshot();
+  });
+});
+
 // ─── SVGO bloat check ────────────────────────────────────────────────────────
 // Each SVG function's output is run through SVGO (multipass). If the optimiser
 // can reduce the output by more than 75 %, the generator is considered bloated
@@ -216,5 +389,36 @@ describe('SVGO bloat check (threshold: <75% reducible)', () => {
   });
   it('triangleSvg', () => {
     expect(svgoBloat(triangleSvg(60, 80, '6 cm', '8 cm', '10 cm'))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('equilateralTriangleSvg', () => {
+    expect(svgoBloat(equilateralTriangleSvg(80, '6 cm'))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('isoscelesTriangleSvg', () => {
+    expect(svgoBloat(isoscelesTriangleSvg(80, 70, 'base', 'côté'))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('rhombusSvg', () => {
+    expect(svgoBloat(rhombusSvg(80, 60, 'd1', 'd2'))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('parallelogramSvg', () => {
+    expect(svgoBloat(parallelogramSvg(100, 60, 25, 'b', 'h'))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('trapezoidSvg', () => {
+    expect(svgoBloat(trapezoidSvg(60, 100, 60, 'top', 'bot', 'h'))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('regularPolygonSvg', () => {
+    expect(svgoBloat(regularPolygonSvg(5, 80))).toBeLessThan(BLOAT_THRESHOLD);
+    expect(svgoBloat(regularPolygonSvg(6, 80))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('cuboidSvg', () => {
+    expect(svgoBloat(cuboidSvg(80, 50, 30))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('triangularPrismSvg', () => {
+    expect(svgoBloat(triangularPrismSvg(80, 70, 40))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('squarePyramidSvg', () => {
+    expect(svgoBloat(squarePyramidSvg(80, 80))).toBeLessThan(BLOAT_THRESHOLD);
+  });
+  it('tetrahedronSvg', () => {
+    expect(svgoBloat(tetrahedronSvg(80))).toBeLessThan(BLOAT_THRESHOLD);
   });
 });

@@ -1,0 +1,45 @@
+<!--
+  T-shape (upside-down T) for perimeter exercises.
+  All angles are right angles.
+  Top bar: 10 cm wide × 2 cm tall. Stem: 4 cm wide × 4 cm tall, centered.
+  Sides (clockwise from top-left):
+    top: 10 cm | right: 2 cm | right-step-in: 3 cm | stem-right: 4 cm
+    bottom: 4 cm | stem-left: 4 cm | left-step-in: 3 cm | left: 2 cm
+  Perimeter = 10+2+3+4+4+4+3+2 = 32 cm
+  Scale: 10 px per cm. Origin at (15,15).
+    A(15,15) B(115,15) C(115,35) D(85,35) E(85,75) F(55,75) G(55,35) H(15,35)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="5 5 130 80" width="130" height="80">
+  <polygon points="15,15 115,15 115,35 85,35 85,75 55,75 55,35 15,35"
+           fill="var(--sf, white)" stroke="var(--ct, #334155)" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Right-angle marks (4 px squares) -->
+  <g fill="none" stroke="var(--ct, #334155)" stroke-width="1">
+    <!-- A top-left -->
+    <path d="M15,19 L19,19 L19,15"/>
+    <!-- B top-right -->
+    <path d="M111,15 L111,19 L115,19"/>
+    <!-- C outer right -->
+    <path d="M115,31 L111,31 L111,35"/>
+    <!-- D inner right step -->
+    <path d="M85,39 L81,39 L81,35"/>
+    <!-- E stem bottom-right -->
+    <path d="M85,71 L81,71 L81,75"/>
+    <!-- F stem bottom-left -->
+    <path d="M59,75 L59,71 L55,71"/>
+    <!-- G inner left step -->
+    <path d="M55,39 L51,39 L51,35"/>
+    <!-- H outer left -->
+    <path d="M15,31 L19,31 L19,35"/>
+  </g>
+
+  <!-- Side labels -->
+  <text x="65"  y="10"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">10 cm</text>
+  <text x="122" y="27"  text-anchor="start"  font-family="Arial" font-size="9" fill="var(--ct, #334155)">2 cm</text>
+  <text x="100" y="43"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">3 cm</text>
+  <text x="93"  y="58"  text-anchor="start"  font-family="Arial" font-size="9" fill="var(--ct, #334155)">4 cm</text>
+  <text x="70"  y="84"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">4 cm</text>
+  <text x="47"  y="58"  text-anchor="end"    font-family="Arial" font-size="9" fill="var(--ct, #334155)">4 cm</text>
+  <text x="30"  y="43"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">3 cm</text>
+  <text x="8"   y="27"  text-anchor="end"    font-family="Arial" font-size="9" fill="var(--ct, #334155)">2 cm</text>
+</svg>

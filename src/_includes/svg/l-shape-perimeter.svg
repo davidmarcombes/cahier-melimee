@@ -1,0 +1,36 @@
+<!--
+  L-shape for perimeter exercises.
+  All angles are right angles. Sides (clockwise from top-left):
+    top: 4 cm | right-step-down: 3 cm | step-right: 4 cm
+    right: 3 cm | bottom: 8 cm | left: 6 cm
+  Perimeter = 4+3+4+3+8+6 = 28 cm
+  Scale: 10 px per cm. Shape: A(20,18)→B(60,18)→C(60,48)→D(100,48)→E(100,78)→F(20,78)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="5 5 120 90" width="120" height="90">
+  <polygon points="20,18 60,18 60,48 100,48 100,78 20,78"
+           fill="var(--sf, white)" stroke="var(--ct, #334155)" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Right-angle marks (4 px squares at convex corners) -->
+  <g fill="none" stroke="var(--ct, #334155)" stroke-width="1">
+    <!-- A top-left -->
+    <path d="M20,22 L24,22 L24,18"/>
+    <!-- B top-right of short top -->
+    <path d="M56,18 L56,22 L60,22"/>
+    <!-- C inner step (re-entrant) -->
+    <path d="M60,44 L64,44 L64,48"/>
+    <!-- D outer step -->
+    <path d="M96,48 L96,52 L100,52"/>
+    <!-- E bottom-right -->
+    <path d="M100,74 L96,74 L96,78"/>
+    <!-- F bottom-left -->
+    <path d="M24,78 L24,74 L20,74"/>
+  </g>
+
+  <!-- Side labels -->
+  <text x="40"  y="12"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">4 cm</text>
+  <text x="68"  y="35"  text-anchor="start"  font-family="Arial" font-size="9" fill="var(--ct, #334155)">3 cm</text>
+  <text x="80"  y="61"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">4 cm</text>
+  <text x="108" y="65"  text-anchor="start"  font-family="Arial" font-size="9" fill="var(--ct, #334155)">3 cm</text>
+  <text x="60"  y="91"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">8 cm</text>
+  <text x="12"  y="50"  text-anchor="end"    font-family="Arial" font-size="9" fill="var(--ct, #334155)">6 cm</text>
+</svg>

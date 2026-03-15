@@ -1,0 +1,37 @@
+<!--
+  2-step staircase shape for perimeter exercises.
+  All angles are right angles.
+  Sides (clockwise from top-left):
+    top: 6 cm | right-step-1: 2 cm | step-left: 4 cm
+    right-step-2: 2 cm | bottom: 2 cm | left: 4 cm
+  Perimeter = 6+2+4+2+2+4 = 20 cm
+  Scale: 10 px per cm. Shape: A(20,18)→B(80,18)→C(80,38)→D(40,38)→E(40,58)→F(20,58)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="5 5 105 65" width="105" height="65">
+  <polygon points="20,18 80,18 80,38 40,38 40,58 20,58"
+           fill="var(--sf, white)" stroke="var(--ct, #334155)" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Right-angle marks -->
+  <g fill="none" stroke="var(--ct, #334155)" stroke-width="1">
+    <!-- A top-left -->
+    <path d="M20,22 L24,22 L24,18"/>
+    <!-- B top-right -->
+    <path d="M76,18 L76,22 L80,22"/>
+    <!-- C outer step-right -->
+    <path d="M80,34 L76,34 L76,38"/>
+    <!-- D inner step -->
+    <path d="M40,42 L36,42 L36,38"/>
+    <!-- E bottom-right of stem -->
+    <path d="M40,54 L36,54 L36,58"/>
+    <!-- F bottom-left -->
+    <path d="M24,58 L24,54 L20,54"/>
+  </g>
+
+  <!-- Side labels -->
+  <text x="50"  y="12"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">6 cm</text>
+  <text x="88"  y="30"  text-anchor="start"  font-family="Arial" font-size="9" fill="var(--ct, #334155)">2 cm</text>
+  <text x="60"  y="50"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">4 cm</text>
+  <text x="48"  y="52"  text-anchor="start"  font-family="Arial" font-size="9" fill="var(--ct, #334155)">2 cm</text>
+  <text x="30"  y="68"  text-anchor="middle" font-family="Arial" font-size="9" fill="var(--ct, #334155)">2 cm</text>
+  <text x="12"  y="40"  text-anchor="end"    font-family="Arial" font-size="9" fill="var(--ct, #334155)">4 cm</text>
+</svg>

@@ -26,6 +26,13 @@
     "earth": {
       "500": "#6a563b"
     },
+    "figure": {
+      "red":    { "light": "#c94040", "dark": "#e06868" },
+      "green":  { "light": "#3a9a55", "dark": "#5cc478" },
+      "purple": { "light": "#7040c9", "dark": "#9a70e0" },
+      "pink":   { "light": "#c94080", "dark": "#e068a8" },
+      "orange": { "light": "#c97040", "dark": "#e09058" }
+    },
     "dark": {
       "500": "#2e3940"
     },

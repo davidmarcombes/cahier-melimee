@@ -59,7 +59,13 @@
       "Bash(/dev/null cat:*)",
       "Bash(npx vitest:*)",
       "Bash(sort -k5 -nr)",
-      "Bash(node -e \"require\\(''''./.eleventy.js''''\\)\")"
+      "Bash(node -e \"require\\(''''./.eleventy.js''''\\)\")",
+      "Bash(sed -n '65,485p' e:/Code/cahier-melimee/src/assets/js/app.js)",
+      "Read(//tmp/**)",
+      "Bash(do echo:*)",
+      "Read(//e/Code/cahier-melimee/**)",
+      "Bash(head -10 grep -n \"embedSvg\\\\|function embed\" \"e:/Code/cahier-melimee/src/assets/js/svg.js\")",
+      "Bash(node -e \"console.log\\(require\\(''crypto''\\).randomBytes\\(4\\).toString\\(''hex''\\)\\)\")"
     ]
   }
 }
