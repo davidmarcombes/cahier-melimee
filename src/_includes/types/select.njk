@@ -41,6 +41,7 @@
   {# Verify button #}
   <div class="flex justify-center">
     <button
+      type="button"
       @click="check()"
       :disabled="solved || selectAnswers.some(v => !v)"
       class="px-8 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95

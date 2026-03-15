@@ -65,7 +65,9 @@
       "Bash(do echo:*)",
       "Read(//e/Code/cahier-melimee/**)",
       "Bash(head -10 grep -n \"embedSvg\\\\|function embed\" \"e:/Code/cahier-melimee/src/assets/js/svg.js\")",
-      "Bash(node -e \"console.log\\(require\\(''crypto''\\).randomBytes\\(4\\).toString\\(''hex''\\)\\)\")"
+      "Bash(node -e \"console.log\\(require\\(''crypto''\\).randomBytes\\(4\\).toString\\(''hex''\\)\\)\")",
+      "Bash(npx html-validate:*)",
+      "Bash(grep -A1 \"<button$\" src/_includes/components/header.njk src/_includes/types/checkbox.njk src/_layouts/series-player.njk)"
     ]
   }
 }

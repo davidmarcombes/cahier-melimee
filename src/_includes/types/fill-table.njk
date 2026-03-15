@@ -8,7 +8,7 @@
       <thead x-show="cur.table && cur.table.headers && cur.table.headers.length">
         <tr>
           <template x-for="(h, hi) in (cur.table ? cur.table.headers : [])" :key="hi">
-            <th class="px-3 py-2 text-center font-bold border border-slate-300 dark:border-slate-600"
+            <th scope="col" class="px-3 py-2 text-center font-bold border border-slate-300 dark:border-slate-600"
                 :class="cur.table.headerCol ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200' : 'bg-slate-100 dark:bg-slate-800 text-content-default'"
                 x-html="h"></th>
           </template>
@@ -22,7 +22,7 @@
                   :class="cur.table.headerCol && ci === 0 ? 'bg-primary-100 dark:bg-primary-900/30' : ''">
                 <span x-show="!cell.blank" x-html="cell.value"
                       :class="cur.table.headerCol && ci === 0 ? 'font-bold text-primary-800 dark:text-primary-200' : 'font-semibold text-content-default'"></span>
-                <input x-show="cell.blank" inputmode="decimal"
+                <input x-show="cell.blank" type="text" inputmode="decimal"
                        :value="tableInputs[cell.idx] || ''"
                        @input="tableInputs[cell.idx] = $event.target.value"
                        @keydown.enter="check()" :disabled="solved"
@@ -37,7 +37,7 @@
     </table>
   </div>
   <div x-show="!solved" class="flex justify-center pt-2">
-    <button @click="check()" :disabled="tableInputs.some(v => !v.trim())"
+    <button type="button" @click="check()" :disabled="tableInputs.some(v => !v.trim())"
       class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
       Vérifier
     </button>

@@ -33,7 +33,7 @@ needsPocketBase: true
         <p class="text-sm text-content-subtle mt-1">Mon cahier personnel</p>
       </div>
       <div class="ml-auto">
-        <button @click="logout()" class="text-xs px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-content-subtle hover:text-content-default hover:bg-surface-subtle transition-all">
+        <button type="button" @click="logout()" class="text-xs px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-content-subtle hover:text-content-default hover:bg-surface-subtle transition-all">
           Déconnexion
         </button>
       </div>
@@ -45,7 +45,7 @@ needsPocketBase: true
         <p class="text-xs font-semibold text-blue-800 dark:text-blue-300 mb-0.5">Ton lien secret (marque-le !)</p>
         <code class="text-xs text-blue-600 dark:text-blue-400 font-mono break-all" x-text="shareUrl"></code>
       </div>
-      <button @click="copyLink()" class="shrink-0 px-3 py-1.5 text-xs font-bold border border-blue-200 dark:border-blue-700 rounded-lg text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-slate-700 transition-all active:scale-95">
+      <button type="button" @click="copyLink()" class="shrink-0 px-3 py-1.5 text-xs font-bold border border-blue-200 dark:border-blue-700 rounded-lg text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-slate-700 transition-all active:scale-95">
         <span x-show="!recentlyCopied">📋 Copier</span>
         <span x-show="recentlyCopied" class="text-green-600 dark:text-green-400">✅ Copié !</span>
       </button>

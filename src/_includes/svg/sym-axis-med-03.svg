@@ -1,0 +1,8 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="var(--sf, white)"/>
+  <polygon points="65,50 135,50 165,150 35,150"
+    fill="color-mix(in srgb, var(--p, #2a85bf) 10%, transparent)"
+    stroke="var(--ct, #1e293b)" stroke-width="2" stroke-linejoin="round"/>
+  <line x1="100" y1="2" x2="100" y2="198"
+    stroke="var(--ct, #1e293b)" stroke-width="1.5" stroke-dasharray="7,4" opacity="0.6"/>
+</svg>

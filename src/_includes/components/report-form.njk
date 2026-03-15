@@ -12,7 +12,7 @@
          class="relative w-full max-w-md bg-surface-chrome border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl p-6 space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="font-bold text-content-default text-lg">Signaler un problème</h2>
-        <button @click="showForm = false" class="text-content-subtle hover:text-content-default text-xl leading-none">&times;</button>
+        <button type="button" @click="showForm = false" class="text-content-subtle hover:text-content-default text-xl leading-none">&times;</button>
       </div>
       <div x-show="!sent" class="space-y-3">
         <textarea
@@ -25,6 +25,7 @@
         ></textarea>
         <div class="flex items-center gap-2">
           <button
+            type="button"
             @click="submit()"
             :disabled="!message.trim() || sending"
             class="px-4 py-1.5 text-sm font-bold rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
@@ -32,7 +33,7 @@
             <span x-show="!sending">Envoyer</span>
             <span x-show="sending">Envoi…</span>
           </button>
-          <button @click="showForm = false; message = ''" class="px-4 py-1.5 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+          <button type="button" @click="showForm = false; message = ''" class="px-4 py-1.5 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
             Annuler
           </button>
           <span x-show="error" class="text-xs text-red-500" x-text="error"></span>

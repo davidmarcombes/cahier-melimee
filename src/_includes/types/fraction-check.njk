@@ -61,6 +61,7 @@
 
   {# Verify button #}
   <button
+    type="button"
     @click="check()"
     :disabled="solved || !rfInputs[0].trim() || !rfInputs[1].trim()"
     class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95

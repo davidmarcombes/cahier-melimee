@@ -1,0 +1,60 @@
+{
+  "extends": ["html-validate:recommended"],
+  "rules": {
+    "doctype-style": "off",
+    "attribute-boolean-style": "off",
+    "text-content": "off",
+    "empty-heading": "off",
+    "unrecognized-char-ref": "off",
+    "no-implicit-input-type": "off",
+    "no-inline-style": "off",
+    "prefer-native-element": "off"
+  },
+  "elements": [
+    "html5",
+    {
+      "global": {
+        "attributes": {
+          "x-data": {},
+          "x-init": {},
+          "x-show": {},
+          "x-html": {},
+          "x-text": {},
+          "x-model": {},
+          "x-cloak": {},
+          "x-ref": {},
+          "x-initial": {},
+          "x-transition": {},
+          "x-transition:enter": {},
+          "x-transition:enter-start": {},
+          "x-transition:enter-end": {},
+          "x-transition:leave": {},
+          "x-transition:leave-start": {},
+          "x-transition:leave-end": {},
+          "@click": {},
+          "@click.outside": {},
+          "@click.window": {},
+          "@keydown.escape.window": {},
+          "@hashchange.window": {},
+          "@resize.window.debounce": {},
+          "@test:validate.window": {},
+          "@test:report.window": {},
+          ":class": {},
+          ":style": {},
+          ":href": {},
+          ":src": {},
+          ":key": {},
+          ":aria-label": {},
+          ":aria-expanded": {},
+          ":disabled": {}
+        }
+      },
+      "template": {
+        "attributes": {
+          "x-if": {},
+          "x-for": {}
+        }
+      }
+    }
+  ]
+}

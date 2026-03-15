@@ -10,6 +10,7 @@
   <div class="flex flex-wrap justify-center gap-4 mb-8">
     <template x-for="(tile, i) in (cur.tiles || [])" :key="i">
       <button
+        type="button"
         @click="tileTap(i)"
         :disabled="solved"
         class="min-w-[6rem] px-6 py-5 text-3xl font-bold rounded-2xl border-2
@@ -38,6 +39,7 @@
 
   {# Verify button #}
   <button
+    type="button"
     @click="check()"
     :disabled="solved || tileSelected.length === 0"
     class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95

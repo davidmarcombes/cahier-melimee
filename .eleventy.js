@@ -540,6 +540,7 @@ module.exports = async function (eleventyConfig) {
         }
         if (ex.data.type === 'drag-sort' && ex.data.tiles) {
           // Pre-render known SVG generators as HTML strings so tiles work without window[fn] calls
+          // NOTE: keep in sync with slicedPieSvg() in src/assets/js/svg.js
           const preRenderTile = (t) => {
             if (!t || typeof t !== 'object' || !t.gen) return interpolate(String(t));
             const par = t.par || {};
@@ -547,19 +548,17 @@ module.exports = async function (eleventyConfig) {
               const n = Number(par.n),
                 d = Number(par.d),
                 size = Number(par.size) || 80;
-              const cx = size / 2,
-                r = size / 2 - 2;
-              let paths = '';
+              const c = size / 2, r = size / 2 - 2;
+              const f = v => Math.round(v * 100) / 100;
+              let filled = '', empty = '';
               for (let i = 0; i < d; i++) {
                 const a0 = (i * 2 * Math.PI) / d - Math.PI / 2;
                 const a1 = ((i + 1) * 2 * Math.PI) / d - Math.PI / 2;
-                const x1 = (cx + r * Math.cos(a0)).toFixed(2),
-                  y1 = (cx + r * Math.sin(a0)).toFixed(2);
-                const x2 = (cx + r * Math.cos(a1)).toFixed(2),
-                  y2 = (cx + r * Math.sin(a1)).toFixed(2);
-                paths += `<path d="M${cx} ${cx}L${x1} ${y1}A${r} ${r} 0 0 1 ${x2} ${y2}Z" fill="${i < n ? 'var(--p)' : 'var(--sf)'}" stroke="var(--cs)" stroke-width="1"/>`;
+                const p = `M${c},${c}L${f(c+r*Math.cos(a0))},${f(c+r*Math.sin(a0))}A${r},${r},0,0,1,${f(c+r*Math.cos(a1))},${f(c+r*Math.sin(a1))}Z`;
+                if (i < n) filled += `<path d="${p}" fill="var(--p)"/>`;
+                else empty += `<path d="${p}" fill="var(--sf)"/>`;
               }
-              const pie = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
+              const pie = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><g stroke="var(--cs)" stroke-width="1">${filled}${empty}</g></svg>`;
               return `<span style="display:inline-flex;flex-direction:column;align-items:center;gap:0.4rem">${pie}<span class="frac text-lg"><span class="fn">${n}</span><span class="fd">${d}</span></span></span>`;
             }
             // Unknown gen → keep as runtime object (fallback)

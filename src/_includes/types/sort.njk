@@ -7,7 +7,7 @@
   {# Tile pool — unselected items #}
   <div class="flex flex-wrap gap-2 min-h-[3rem] p-3 rounded-xl bg-surface-subtle border border-slate-200 dark:border-slate-700">
     <template x-for="(item, i) in sortShuffled" :key="i">
-      <button x-show="!sortPicked.includes(i)"
+      <button type="button" x-show="!sortPicked.includes(i)"
         @click="sortTap(i)" :disabled="solved"
         class="px-4 py-2 rounded-xl border-2 font-semibold text-base transition-all active:scale-95 select-none border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-content-default hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
         x-text="item">
@@ -28,7 +28,7 @@
   {# Answer track — placed items + empty slots #}
   <div class="flex flex-wrap gap-2">
     <template x-for="(idx, rank) in sortPicked" :key="rank">
-      <button @click="sortUnpick(rank)" :disabled="solved"
+      <button type="button" @click="sortUnpick(rank)" :disabled="solved"
         class="px-4 py-2 rounded-xl border-2 font-semibold text-base transition-all active:scale-95 select-none"
         :class="{
           'border-green-400 bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200': solved,
@@ -48,7 +48,7 @@
 
   {# Verify button #}
   <div x-show="!solved && sortPicked.length === (cur.items ? cur.items.length : 0)" class="flex justify-center pt-2">
-    <button @click="check()"
+    <button type="button" @click="check()"
       class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95">
       Vérifier
     </button>

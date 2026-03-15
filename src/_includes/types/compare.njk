@@ -18,6 +18,7 @@
 
       <div class="flex gap-1 shrink-0">
         <button
+          type="button"
           @click="if(!solved){cmpInputs[i]='<';cmpErrors=cmpErrors.filter(e=>e!==i)}"
           :disabled="solved"
           class="w-10 h-10 rounded-lg border-2 text-lg font-bold transition-all inline-flex items-center justify-center"
@@ -26,6 +27,7 @@
             : 'border-slate-300 dark:border-slate-600 text-content-subtle hover:border-primary-400'"
         >&lt;</button>
         <button
+          type="button"
           @click="if(!solved){cmpInputs[i]='>';cmpErrors=cmpErrors.filter(e=>e!==i)}"
           :disabled="solved"
           class="w-10 h-10 rounded-lg border-2 text-lg font-bold transition-all inline-flex items-center justify-center"
@@ -42,6 +44,7 @@
   {# Verify button #}
   <div x-show="!solved" class="flex justify-center pt-2">
     <button
+      type="button"
       @click="check()"
       :disabled="cmpInputs.some(v => v === null)"
       class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"

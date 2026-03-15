@@ -13,6 +13,7 @@
   <div class="space-y-2 mb-5">
     <template x-for="(stmt, i) in (cur.statements || [])" :key="i">
       <button
+        type="button"
         @click="checkTap(i)"
         :disabled="solved"
         class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left
@@ -58,6 +59,7 @@
   {# Verify button #}
   <div class="flex justify-center">
     <button
+      type="button"
       @click="check()"
       :disabled="solved || checkSelected.length === 0"
       class="px-8 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95

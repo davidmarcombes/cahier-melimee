@@ -15,6 +15,7 @@
   <div class="grid gap-2" :class="cur.mcqCompact ? 'grid-cols-2' : 'grid-cols-1'">
     <template x-for="(choice, i) in cur.mcqChoices" :key="i">
       <button
+        type="button"
         @click="mcqTap(i)"
         :disabled="solved"
         class="w-full px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all"

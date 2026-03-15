@@ -1,0 +1,8 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="var(--sf, white)"/>
+  <rect x="35" y="50" width="130" height="100"
+    fill="color-mix(in srgb, var(--p, #2a85bf) 10%, transparent)"
+    stroke="var(--ct, #1e293b)" stroke-width="2"/>
+  <line x1="5" y1="195" x2="195" y2="5"
+    stroke="var(--ct, #1e293b)" stroke-width="1.5" stroke-dasharray="7,4" opacity="0.6"/>
+</svg>

@@ -6,7 +6,7 @@
     </a>
 
     {# Desktop nav #}
-    <nav class="hidden md:flex items-center gap-4">
+    <nav aria-label="Navigation principale" class="hidden md:flex items-center gap-4">
       {% for item in navigation[lang or 'fr'] %}
         {% if item.url == '/fr/onboarding/' %}
           <template x-if="cahierUser">
@@ -27,16 +27,16 @@
       {% if site.testEnabled and isSeriesPage %}
       {# Test dropdown #}
       <div class="relative" @click.outside="testOpen = false">
-        <button @click="testOpen = !testOpen"
+        <button type="button" @click="testOpen = !testOpen"
                 class="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 transition-colors"
                 :aria-expanded="testOpen">Test</button>
         <div x-show="testOpen" x-cloak x-transition
              class="absolute right-0 mt-2 w-52 bg-surface-chrome border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg py-1 z-50">
-          <button @click="window.dispatchEvent(new Event('test:validate')); testOpen = false"
+          <button type="button" @click="window.dispatchEvent(new Event('test:validate')); testOpen = false"
                   class="block w-full text-left px-4 py-2 text-sm hover:bg-surface-subtle transition-colors">
             Valider la série
           </button>
-          <button @click="window.dispatchEvent(new Event('test:report')); testOpen = false"
+          <button type="button" @click="window.dispatchEvent(new Event('test:report')); testOpen = false"
                   class="block w-full text-left px-4 py-2 text-sm hover:bg-surface-subtle transition-colors">
             Signaler un problème
           </button>
@@ -50,6 +50,7 @@
     <div class="flex items-center gap-1 md:hidden">
       {% include "components/theme-toggle.njk" %}
       <button
+        type="button"
         @click="mobileOpen = !mobileOpen"
         class="p-2 rounded-lg text-content-subtle hover:text-content-default hover:bg-surface-subtle transition-colors"
         :aria-label="mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'"
@@ -66,7 +67,7 @@
   </div>
 
   {# Mobile dropdown #}
-  <nav
+  <nav aria-label="Navigation mobile"
     x-show="mobileOpen"
     x-cloak
     x-transition:enter="transition ease-out duration-200"
@@ -100,11 +101,11 @@
     {% if site.testEnabled and isSeriesPage %}
     <div class="border-t border-slate-200 dark:border-slate-700 mt-2 pt-2">
       <span class="block py-2 text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide">Test</span>
-      <button @click="window.dispatchEvent(new Event('test:validate')); mobileOpen = false"
+      <button type="button" @click="window.dispatchEvent(new Event('test:validate')); mobileOpen = false"
               class="block w-full text-left py-2 text-sm text-content-default hover:text-primary-500 transition-colors">
         Valider la série
       </button>
-      <button @click="window.dispatchEvent(new Event('test:report')); mobileOpen = false"
+      <button type="button" @click="window.dispatchEvent(new Event('test:report')); mobileOpen = false"
               class="block w-full text-left py-2 text-sm text-content-default hover:text-primary-500 transition-colors">
         Signaler un problème
       </button>

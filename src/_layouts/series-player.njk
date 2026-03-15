@@ -12,14 +12,18 @@ isSeriesPage: true
 {% set exercises = collections[folder or "exercices"] | seriesExercises(series) %}
 {% set usedTypes = exercises | extractTypes %}
 {% set hasGenerators = false %}
+{% set needsSvgJs = false %}
 {% set needsKatex = false %}
 {% for ex in exercises %}
-  {% if ex.data.generator %}{% set hasGenerators = true %}{% endif %}
+  {% if ex.data.generator %}{% set hasGenerators = true %}{% set needsSvgJs = true %}{% endif %}
+  {% if ex.data.svg %}{% set needsSvgJs = true %}{% endif %}
   {% if '$' in (ex.data.title or '') %}{% set needsKatex = true %}{% endif %}
 {% endfor %}
 
-{% if hasGenerators %}
+{% if needsSvgJs %}
 <script src="{{ '/assets/js/svg.js' | url }}"></script>
+{% endif %}
+{% if hasGenerators %}
 <script src="{{ '/assets/js/generators.js' | url }}"></script>
 {% endif %}
 {% if needsKatex %}
@@ -100,6 +104,7 @@ isSeriesPage: true
       }"
     />
     <button
+      type="button"
       @click="check()"
       :disabled="solved || !userInput.trim()"
       class="shrink-0 px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
@@ -215,7 +220,7 @@ isSeriesPage: true
         <p class="text-content-subtle mb-8">Bravo, tu as réussi tous les exercices de cette série.</p>
         
         <div class="flex flex-col gap-3">
-          <button x-show="hasGenerators" @click="regenerateAll(); goTo(0)"
+          <button type="button" x-show="hasGenerators" @click="regenerateAll(); goTo(0)"
             class="w-full px-6 py-3 bg-primary-500 text-white font-bold rounded-2xl hover:bg-primary-600 transition-all active:scale-95 shadow-lg shadow-primary-500/20">
             Recommencer la série
           </button>
@@ -237,7 +242,7 @@ isSeriesPage: true
          class="relative w-full max-w-md bg-surface-chrome border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl p-6 space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="font-bold text-content-default text-lg">Valider la série</h2>
-        <button @click="showValidationPanel = false" class="text-content-subtle hover:text-content-default text-xl leading-none">&times;</button>
+        <button type="button" @click="showValidationPanel = false" class="text-content-subtle hover:text-content-default text-xl leading-none">&times;</button>
       </div>
       <div x-show="!testSent" class="space-y-3">
         <textarea x-model="testNotes"
@@ -246,13 +251,13 @@ isSeriesPage: true
                   class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none
                          bg-surface-subtle text-content-default border-slate-200 dark:border-slate-700"></textarea>
         <div class="flex items-center gap-2">
-          <button @click="submitValidation()"
+          <button type="button" @click="submitValidation()"
                   :disabled="testSending"
                   class="px-4 py-1.5 text-sm font-bold rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
             <span x-show="!testSending">Envoyer</span>
             <span x-show="testSending">Envoi…</span>
           </button>
-          <button @click="showValidationPanel = false" class="px-4 py-1.5 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+          <button type="button" @click="showValidationPanel = false" class="px-4 py-1.5 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
             Annuler
           </button>
           <span x-show="testError" class="text-xs text-red-500" x-text="testError"></span>

@@ -33,6 +33,7 @@
               x-text="pos + 1"></span>
         {# Tile button #}
         <button
+          type="button"
           @click="dragTap(+pos)"
           :disabled="solved"
           class="w-full px-2 py-3 text-3xl font-bold rounded-2xl border-2 transition-all duration-150 select-none bg-white dark:bg-slate-800"
@@ -62,6 +63,7 @@
   {# Verify button #}
   <div class="flex justify-center">
     <button
+      type="button"
       @click="check()"
       :disabled="solved"
       class="px-8 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95

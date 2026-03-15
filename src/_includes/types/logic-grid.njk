@@ -9,9 +9,9 @@
     <table class="mx-auto border-collapse">
       <thead>
         <tr>
-          <th class="w-20 sm:w-24"></th>
+          <th scope="col" class="w-20 sm:w-24"></th>
           <template x-for="(col, c) in (cur.grid ? cur.grid.columns : [])" :key="'gc'+c">
-            <th class="w-12 sm:w-14 px-1 py-2 text-center text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600" x-html="col"></th>
+            <th scope="col" class="w-12 sm:w-14 px-1 py-2 text-center text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600" x-html="col"></th>
           </template>
         </tr>
       </thead>
@@ -22,6 +22,7 @@
             <template x-for="(col, c) in (cur.grid ? cur.grid.columns : [])" :key="'gc'+r+'-'+c">
               <td class="border border-slate-200 dark:border-slate-600 p-0">
                 <button
+                  type="button"
                   @click="gridTap(r, c)" :disabled="solved"
                   class="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-xl font-bold transition-colors select-none"
                   :class="{

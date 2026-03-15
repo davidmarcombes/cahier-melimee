@@ -48,15 +48,7 @@ exports[`SVG generators > rectangleSvg > matches snapshot (with labels) 1`] = `
     </svg>"
 `;
 
-exports[`SVG generators > slicedPieSvg > matches snapshot (3 of 4 slices filled) 1`] = `
-"<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <path d="M 50 50 L 50 2 A 48 48 0 0 1 98 50 Z"
-      fill="var(--p)" stroke="var(--cs)" stroke-width="1" /><path d="M 50 50 L 98 50 A 48 48 0 0 1 50 98 Z"
-      fill="var(--p)" stroke="var(--cs)" stroke-width="1" /><path d="M 50 50 L 50 98 A 48 48 0 0 1 2 50.00000000000001 Z"
-      fill="var(--p)" stroke="var(--cs)" stroke-width="1" /><path d="M 50 50 L 2 50.00000000000001 A 48 48 0 0 1 49.99999999999999 2 Z"
-      fill="var(--sf)" stroke="var(--cs)" stroke-width="1" />
-    </svg>"
-`;
+exports[`SVG generators > slicedPieSvg > matches snapshot (3 of 4 slices filled) 1`] = `"<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g stroke="var(--cs)" stroke-width="1"><path d="M50,50L50,2A48,48,0,0,1,98,50Z" fill="var(--p)"/><path d="M50,50L98,50A48,48,0,0,1,50,98Z" fill="var(--p)"/><path d="M50,50L50,98A48,48,0,0,1,2,50Z" fill="var(--p)"/><path d="M50,50L2,50A48,48,0,0,1,50,2Z" fill="var(--sf)"/></g></svg>"`;
 
 exports[`SVG generators > squareSvg > matches snapshot 1`] = `
 "<svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">

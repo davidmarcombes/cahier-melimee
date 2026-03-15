@@ -26,22 +26,18 @@ function mathGridSvg(cols, rows, filled, color = 'var(--p)') {
 }
 
 function slicedPieSvg(n, k, size = 100, color = 'var(--p)') {
-  const center = size / 2;
-  const radius = size / 2 - 2;
-  let paths = '';
+  const c = size / 2;
+  const r = size / 2 - 2;
+  const f = v => Math.round(v * 100) / 100;
+  let filled = '', empty = '';
   for (let i = 0; i < n; i++) {
-    const startAngle = (i * 2 * Math.PI) / n - Math.PI / 2;
-    const endAngle = ((i + 1) * 2 * Math.PI) / n - Math.PI / 2;
-    const x1 = center + radius * Math.cos(startAngle);
-    const y1 = center + radius * Math.sin(startAngle);
-    const x2 = center + radius * Math.cos(endAngle);
-    const y2 = center + radius * Math.sin(endAngle);
-    paths += `<path d="M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z"
-      fill="${i < k ? color : 'var(--sf)'}" stroke="var(--cs)" stroke-width="1" />`;
+    const a0 = (i * 2 * Math.PI) / n - Math.PI / 2;
+    const a1 = ((i + 1) * 2 * Math.PI) / n - Math.PI / 2;
+    const d = `M${c},${c}L${f(c+r*Math.cos(a0))},${f(c+r*Math.sin(a0))}A${r},${r},0,0,1,${f(c+r*Math.cos(a1))},${f(c+r*Math.sin(a1))}Z`;
+    if (i < k) filled += `<path d="${d}" fill="${color}"/>`;
+    else empty += `<path d="${d}" fill="var(--sf)"/>`;
   }
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-      ${paths}
-    </svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><g stroke="var(--cs)" stroke-width="1">${filled}${empty}</g></svg>`;
 }
 
 function circleSvg(r, label = '', fillColor = 'var(--sf)') {
