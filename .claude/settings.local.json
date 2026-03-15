@@ -67,7 +67,9 @@
       "Bash(head -10 grep -n \"embedSvg\\\\|function embed\" \"e:/Code/cahier-melimee/src/assets/js/svg.js\")",
       "Bash(node -e \"console.log\\(require\\(''crypto''\\).randomBytes\\(4\\).toString\\(''hex''\\)\\)\")",
       "Bash(npx html-validate:*)",
-      "Bash(grep -A1 \"<button$\" src/_includes/components/header.njk src/_includes/types/checkbox.njk src/_layouts/series-player.njk)"
+      "Bash(grep -A1 \"<button$\" src/_includes/components/header.njk src/_includes/types/checkbox.njk src/_layouts/series-player.njk)",
+      "Bash(git -C \"e:/Code/cahier-melimee\" log --oneline -20)",
+      "Bash(git -C \"e:/Code/cahier-melimee\" diff HEAD~5 HEAD --stat)"
     ]
   }
 }

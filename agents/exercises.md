@@ -20,6 +20,12 @@ Use `generator` + `repeat` + optional `params` in front-matter. At build time, `
 
 Generators live in `src/assets/js/generators.js` (single source, dual export: `window.AppGenerators` for browser, `module.exports` for Node.js).
 
+### Script loading in series-player.njk
+
+- **`svg.js`** is loaded when ANY exercise in the series has a `generator:` OR `svg:` field.
+- **`generators.js`** is loaded only when an exercise has a `generator:` field.
+- **KaTeX CSS** is loaded when any exercise title contains `$` (LaTeX).
+
 ## Exercise Types
 
 | Type | Partial | Description |
@@ -38,12 +44,12 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `mcq` | `types/mcq.njk` | Multiple choice — click the correct answer among 3-5 shuffled choices. |
 | `ruler` | `types/ruler.njk` | Graduated ruler with markers — read a value. SVG via `rulerSvg` getter. |
 | `sort` | `types/sort.njk` | Order items by clicking them in sequence. Items listed in correct order in YAML, shuffled at runtime. |
-| `drag-sort` | `types/drag-sort.njk` | Sort tiles by clicking pairs to swap them. Direction indicator (🐭 petit → 🐘 grand). Tiles support HTML via `x-html`. Fields: `tiles[]` (strings), `direction` (`asc`/`desc`). |
+| `drag-sort` | `types/drag-sort.njk` | Sort tiles by clicking pairs to swap them. Direction indicator. Tiles support HTML via `x-html`. Fields: `tiles[]` (strings), `direction` (`asc`/`desc`). |
 | `fill-table` | `types/fill-table.njk` | Table with blank cells — student fills each digit/value. Supports `cur.svg` above the table. Uses `blankCount`, `headers`, `rows` (cells: `{blank, idx, answer}`). |
 | `checkbox` | `types/checkbox.njk` | Tick all valid statements — multi-select with a verify button. Fields: `statements[]` (HTML strings), `checkedAnswers[]` (integer indices). Supports `cur.svg`. |
 | `select` | `types/select.njk` | Complete sentences by choosing a word from a dropdown. Fields: `choices[]` (option list), `statements[]` (each with `template` using `___` placeholder, and `answer`). |
 | `svg-tiles` | `types/svg-tiles.njk` | Display grids of SVGs. User clicks on correct ones. Fields: `tiles[]` (Array of objects with `gen` and `par`), `answers[]` (integer indices). |
-| `tile-select` | `types/tile-select.njk` | Click to select all correct tiles (multi-select). Fields: `tiles[]` (HTML strings), `tileAnswers[]` (0-indexed correct indices). |
+| `tile-select` | `types/tile-select.njk` | Click to select all correct tiles (multi-select). Fields: `tiles[]` (HTML strings), `tileAnswers[]` (0-indexed correct indices). Supports `svg:` field for SVG rendering. |
 | `fraction` | `types/fraction.njk` | Visual fraction representation — shade a shape. Fields: `shape` (`circle`/`rect`), `numerator`, `denominator`, `answer`. |
 | `fraction-check` | `types/fraction-check.njk` | Stacked fraction input (numerator/denominator boxes). Fields: `answers[]` (two strings: numerator, denominator). Supports `cur.operation` and `cur.svg`. |
 | `base-10` | `types/base-10.njk` | Base-10 blocks visual — decompose a number into hundreds/tens/ones. Fields: `answer`, plus either `number` or `hundreds`+`tens`+`ones`. |
@@ -51,6 +57,61 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `click-blocks` | `types/click-blocks.njk` | Click cells to fill columns from the bottom up (place-value blocks). Fields: `columns[]` (each with `label`, `value`, `color`, `answer`, `max`). Supports generators. |
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
+
+## SVG Snippets
+
+SVG files in `src/_includes/svg/` are embedded at build time using the `gen: file` pattern (see below). They use CSS custom properties with hardcoded fallbacks for standalone preview.
+
+### Available SVG files
+
+| Category | Files | Purpose |
+|----------|-------|---------|
+| **Perimeter (grid)** | `shape-on-grid-00.svg` through `shape-on-grid-03.svg` | Shapes on a grid for perimeter counting |
+| **Perimeter (figures)** | `l-shape-perimeter.svg`, `t-shape-perimeter.svg`, `u-shape-perimeter.svg`, `staircase-perimeter.svg` | Composite figures with labeled dimensions |
+| **Symmetry lines** | `symmetry-line-none-01.svg`, `symmetry-line-one-01.svg`, `symmetry-line-two-02.svg`, `symmetry-line-four-01.svg`, `symmetry-line-four-02.svg`, `symmetry-line-five-01.svg`, `symmetry-line-six-01.svg`, `symmetry-line-infinite-01.svg` | Figures for counting lines of symmetry |
+| **Symmetry axes** | `sym-axis-easy-*.svg`, `sym-axis-med-*.svg`, `sym-axis-hard-*.svg` (5 each) | Figures for identifying the correct axis of symmetry |
+| **Geometric shapes** | `grid.svg`, `isosceles-trapezoid.svg`, `kite.svg` | Standalone shape illustrations |
+
+### CSS variable usage in SVGs
+
+SVGs use CSS custom properties defined in `design-tokens.json`:
+```xml
+<rect fill="var(--green, #3a9a55)" stroke="var(--cs, #475569)" />
+```
+The first value is the CSS var (works when embedded in HTML); the fallback is for standalone SVG preview in editors.
+
+## The `gen: file` / `embedSvg` Pattern
+
+To embed a static SVG from `_includes/svg/` into an exercise:
+
+### In front-matter (YAML):
+```yaml
+svg:
+  gen: file
+  par:
+    name: "shape-on-grid-00.svg"
+```
+
+### What happens at build time:
+`.eleventy.js` reads `src/_includes/svg/shape-on-grid-00.svg`, and transforms the payload to:
+```json
+{ "gen": "embedSvg", "par": { "svg": "<svg ...>...</svg>" } }
+```
+
+### At runtime:
+`embedSvg()` in `svg.js` simply returns its argument (the SVG markup string). The template renders it via `window[cur.svg.gen](...Object.values(cur.svg.par))`.
+
+### `tile-select` with `svg:` field
+
+The `tile-select` type supports an `svg:` field on individual tiles, rendered the same way:
+```yaml
+tiles:
+  - text: "Rectangle"
+    svg:
+      gen: file
+      par:
+        name: "shape-on-grid-01.svg"
+```
 
 ## Adding a New Exercise Type
 
@@ -64,7 +125,7 @@ Create `src/_includes/types/your-type.njk`.
 
 ### 2. `series-player.njk` — two places
 ```njk
-{# Conditional include (~line 52, with other type includes) #}
+{# Conditional include (~line 57, with other type includes) #}
 {% if 'your-type' in usedTypes %}{% include "types/your-type.njk" %}{% endif %}
 
 {# Error feedback span (~line 130, inside the showError div) #}
@@ -108,7 +169,7 @@ Create at least one series under `src/fr/exercices/`, then run `npm run generate
 ## Adding a New Generator
 
 1. Add the generator function in `src/assets/js/generators.js` (single source for both build and runtime)
-2. Generators must return seriesPayload-compatible items:
+2. Generators must return seriesPlayer-compatible items:
    ```javascript
    { type: 'number-check', operation: '5 + 3', answers: ['8'] }
    ```
@@ -121,6 +182,18 @@ Create at least one series under `src/fr/exercices/`, then run `npm run generate
      min: 1
      max: 100
    ```
+
+## SVG Generation Helpers (svg.js)
+
+Functions in `src/assets/js/svg.js` (loaded on series pages that need SVG):
+
+| Function | Purpose |
+|----------|---------|
+| `embedSvg(svg)` | Identity function — returns its argument. Used for build-time embedded SVGs. |
+| `mathGridSvg(cols, rows, filled, color)` | Rectangular grid with filled/empty cells. |
+| `slicedPieSvg(n, k, size, color)` | Pie chart with `k` of `n` slices filled. Optimized: 2dp rounding, `<g>` wrapper for shared stroke. |
+
+Note: `.eleventy.js` has a build-time duplicate of `slicedPieSvg` for pre-rendering. Keep both in sync.
 
 ## Front-Matter Schema
 
@@ -188,6 +261,10 @@ tiles:                     # tile-select — HTML strings (can include markup/fr
   - "2/3"
   - "3/4"
 tileAnswers: [0]           # tile-select — 0-indexed correct tiles
+svg:                       # tile-select / fill-table / checkbox — optional SVG display
+  gen: file
+  par:
+    name: "shape-on-grid-00.svg"
 columns:                   # click-blocks — place-value columns
   - label: "100"
     value: 100
@@ -232,3 +309,21 @@ difficulty: facile         # facile, moyen, difficile
 # level, topic, subtopic are derived from directory path:
 # src/fr/exercices/{level}/maths/{subtopic}/{leaf}/
 ```
+
+## Example Series
+
+### Perimeter on grid (`perimetre-quadrillage`)
+Location: `src/fr/applications/cm1/maths/mesures/perimetre-quadrillage/`
+Uses `shape-on-grid-*.svg` files via `gen: file` pattern. Students count grid units around a shape.
+
+### Perimeter of composite figures (`perimetre-figures`)
+Location: `src/fr/applications/cm1/maths/mesures/perimetre-figures/`
+Uses `l-shape-perimeter.svg`, `t-shape-perimeter.svg`, etc. Students calculate perimeter from labeled dimensions.
+
+### Axes of symmetry (`axes-symetrie-01`)
+Location: `src/fr/exercices/cm1/maths/geometrie/axes-symetrie-01/`
+Uses `symmetry-line-*.svg` files. Students count how many lines of symmetry a figure has.
+
+### Symmetry axis identification (`symetrie-axe-01` through `symetrie-axe-03`)
+Location: `src/fr/exercices/cm1/maths/geometrie/symetrie-axe-01/` (and 02, 03)
+Uses `sym-axis-*.svg` files. Students identify which drawn line is the correct axis of symmetry.

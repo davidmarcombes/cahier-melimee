@@ -8,12 +8,14 @@
 - Dark mode: class-based with `.dark` on `<html>`
 - Responsive: mobile-first with Tailwind breakpoints (sm, md, lg)
 - No hardcoded colors/fonts — always use token values
+- SVG files use CSS custom properties with fallbacks: `var(--green, #3a9a55)`
 
 ## Templates (Nunjucks)
 
 - Layout inheritance via `layout` in front-matter
 - Reusable components in `_includes/components/`
 - Exercise type partials in `_includes/types/` (conditionally included at build time)
+- SVG snippets in `_includes/svg/` (embedded at build time via `gen: file` pattern)
 - Data access: `{{ site.title }}` for global, `{{ title }}` for page
 - Language: French only for now. Use `{{ lang }}` variable.
 
@@ -21,8 +23,14 @@
 
 - Declarative: behavior defined in HTML with `x-data`, `x-show`, `x-for`, etc.
 - Two main components in `app.js`: `seriesPlayer()` and `challengePlayer()`
+- `localStore` manages offline progress in `localStorage` (key: `melimee_v1`)
+- `themeToggle()` handles dark mode, persisted to `localStorage`
 - Component-level state only, no global state management
 - Dark mode toggle stored in `localStorage`
+
+### Alpine.js attribute conventions in HTML
+
+Alpine.js attributes (`x-data`, `x-show`, `x-for`, `@click`, `:class`, etc.) are globally allowed in `.htmlvalidate.json`. When adding new Alpine.js attributes to templates, register them in the `elements` section of `.htmlvalidate.json` so html-validate does not flag them as errors.
 
 ## Content (Markdown)
 
@@ -56,3 +64,15 @@
 - Keyboard navigation and visible focus states
 - WCAG AA color contrast minimum
 - `lang` attribute on `<html>`
+
+### Buttons
+
+All `<button>` elements **must** have `type="button"` to prevent unintended form submission. The HTML minifier has `removeRedundantAttributes: true` which strips `type="submit"` from buttons inside forms, but explicit `type="button"` is kept and required for Alpine.js click handlers.
+
+### Tables
+
+All `<th>` elements **must** have `scope="col"` (or `scope="row"` where appropriate) for screen reader accessibility.
+
+### Navigation
+
+When multiple `<nav>` elements exist on a page, each **must** have a distinct `aria-label` attribute to help screen readers distinguish them (e.g., `aria-label="Menu principal"`, `aria-label="Retour aux exercices"`).
