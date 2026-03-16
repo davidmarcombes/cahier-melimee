@@ -2,6 +2,8 @@
 node_modules/
 yarn.lock
 pnpm-lock.yaml
+# bun.lockb — remove this line if your team uses Bun as the primary package manager
+bun.lockb
 
 # Lockfiles
 # Keep package-lock.json committed for reproducible npm installs in projects created from this template

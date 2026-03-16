@@ -1,0 +1,13 @@
+# Bun configuration for cahier-melimee
+# https://bun.sh/docs/runtime/bunfig
+#
+# Quick start with Bun:
+#   bun install     — install packages (creates bun.lockb alongside package-lock.json)
+#   bun run dev:bun — dev server using Bun runtime
+#   bun run build   — production build
+#
+# npm remains the primary package manager; package-lock.json is the canonical lockfile.
+# Commit bun.lockb if your whole team uses Bun.
+
+[install]
+# Bun will save a bun.lockb in addition to respecting package-lock.json

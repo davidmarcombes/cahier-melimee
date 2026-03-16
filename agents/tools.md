@@ -9,6 +9,7 @@ All available commands (run `npm run help` for a live list):
 | Command | Description |
 |---------|-------------|
 | `npm start` / `npm run dev` | Start dev server (Eleventy + Tailwind watch mode) |
+| `bun run dev:bun` | Same, using Bun runtime (faster if Bun is installed) |
 | `npm run build` | Full production build: test → validate → tokens → eleventy → css → html-validate |
 | `npm run clean` | Remove `_site/` build output |
 | `npm run serve:local` | Serve the built `_site/` locally (useful for testing subpath deployments) |
@@ -99,6 +100,20 @@ Config file: `.htmlvalidate.json`
 - Alpine.js attributes (`x-data`, `x-show`, `@click`, `:class`, etc.) are registered globally so they are not flagged as unknown
 - `template` element gets `x-if` and `x-for` attributes
 - Key disabled rules are documented in `agents/performance.md`
+
+## Bun Support
+
+Bun is an optional faster alternative for the dev server. npm remains the primary package manager.
+
+```bash
+bun install       # install packages (~10× faster than npm install)
+bun run dev:bun   # dev server using Bun runtime
+```
+
+`dev:bun` runs `bun run tokens` then starts `dev:bun:site` + `dev:css` concurrently.
+`npm run dev` is unchanged and works without Bun installed.
+
+`bunfig.toml` documents Bun settings. `bun.lockb` is git-ignored by default — remove the ignore line to commit it if your team standardises on Bun.
 
 ## Token Compression
 

@@ -10,6 +10,8 @@
     "start": "npm run dev",
     "dev": "npm run tokens && concurrently \"npm:dev:site\" \"npm:dev:css\"",
     "dev:site": "npm run tokens && eleventy --serve",
+    "dev:bun": "bun run tokens && concurrently \"bun run dev:bun:site\" \"bun run dev:css\"",
+    "dev:bun:site": "eleventy --serve",
     "dev:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --minify --watch",
     "test": "vitest run",
     "svg:stats": "node scripts/svg-stats.js",

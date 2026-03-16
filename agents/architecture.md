@@ -72,6 +72,7 @@ project-root/
 | `postcss.config.js`  | PostCSS plugins: Tailwind, Autoprefixer                       |
 | `.htmlvalidate.json` | HTML validation rules; Alpine.js attributes allowed globally  |
 | `vitest.config.js`   | Test runner config (happy-dom environment)                    |
+| `bunfig.toml`        | Bun runtime config; documents Bun usage (optional, npm is primary) |
 | `marp.config.mjs`    | Marp config, only for md files in doc not site                |
 
 ## Build Commands
@@ -79,6 +80,7 @@ project-root/
 ```bash
 npm start             # Dev server with live reload (localhost:8080)
 npm run dev           # Eleventy + Tailwind in watch mode
+bun run dev:bun       # Same, using Bun runtime (optional faster alternative)
 npm run build         # Production: test → validate:exercises → tokens → eleventy → build:css → validate:html
 npm run clean         # Remove _site/ directory
 npm run report        # Generate exercises-report.csv — fast lookup of any exercise/app
