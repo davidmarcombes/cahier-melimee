@@ -29,7 +29,7 @@ needsPocketBase: true
     <div class="flex items-center gap-5 mb-10 p-6 bg-surface-subtle rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
       <div class="text-6xl leading-none" x-text="pupil.sticker_id"></div>
       <div>
-        <h1 class="text-2xl font-extrabold text-content-default leading-tight" x-text="pupil.username"></h1>
+        <h1 class="text-2xl font-extrabold text-content-default leading-tight" x-text="pupil?.username || 'Cahier personnel'">Cahier personnel</h1>
         <p class="text-sm text-content-subtle mt-1">Mon cahier personnel</p>
       </div>
       <div class="ml-auto">

@@ -27,6 +27,7 @@ All available commands (run `npm run help` for a live list):
 | `npm run format` | Auto-format with Prettier |
 | `npm run spellcheck` | Spellcheck markdown files with cspell |
 | `npm run check:duplicates` | Check for duplicate exercise entries |
+| `npm run test:a11y` | Accessibility audit (WCAG2AA) on built `_site/` — requires `npm run build` first |
 
 ### Code generation & tokens
 
@@ -77,6 +78,7 @@ All scripts are in `scripts/`. Key files:
 | `generate-maths-ex.js` | Interactive CLI for scaffolding new exercises. Has `TYPE_CHOICES` and `TEMPLATES`. |
 | `generate-ids.js` | Assigns 8-char hex IDs to series `index.yaml` files missing an `id`. |
 | `svg-stats.js` | Analyzes SVG files in `_includes/svg/` and reports count, sizes, CSS var usage. |
+| `a11y-test.js` | Accessibility test suite using pa11y (WCAG2AA). Starts a local server, tests static pages + sampled exercises/applications. Use `--sample N` to control how many exercise/application pages to sample (default: 3). |
 | `compress.js` | Post-build compression of output files. |
 | `serve-subpath.js` | Local HTTP server for testing subpath deployment. |
 | `set-env.js` | Switches `.env` between dev/prod/test environments. |

@@ -12,8 +12,9 @@ needsPocketBase: true
 
     {# Step 1: Enter 3-word username #}
     <div x-show="step === 1">
-      <label class="block text-sm font-bold text-content-default mb-2">Ton nom d'animal</label>
+      <label for="username-input" class="block text-sm font-bold text-content-default mb-2">Ton nom d'animal</label>
       <input
+        id="username-input"
         type="text"
         x-model="username"
         @keydown.enter="findPupils()"

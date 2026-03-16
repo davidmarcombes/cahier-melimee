@@ -40,7 +40,8 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "clean:yaml": "node scripts/clean-yaml.js",
-    "report": "node scripts/generate-report.js"
+    "report": "node scripts/generate-report.js",
+    "test:a11y": "node scripts/a11y-test.js"
   },
   "keywords": [
     "eleventy",
@@ -68,6 +69,7 @@
     "html-validate": "^10.9.0",
     "js-yaml": "^4.1.1",
     "jsdom": "^28.1.0",
+    "pa11y": "^9.1.1",
     "postcss": "^8.4.32",
     "prettier": "^3.8.1",
     "svgo": "^4.0.1",
