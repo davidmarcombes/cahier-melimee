@@ -73,7 +73,9 @@
       "Bash(for d:*)",
       "Bash(mv src/fr/applications/ce1/maths/numeration/blocs-valeur-position-01/index.yaml /tmp/test-index.yaml)",
       "Bash(mv /tmp/test-index.yaml src/fr/applications/ce1/maths/numeration/blocs-valeur-position-01/index.yaml)",
-      "Bash(npx cspell:*)"
+      "Bash(npx cspell:*)",
+      "Bash(sed -n '160,185p' /home/david/Code/web/cahier-melimee/src/assets/js/app.js)",
+      "Bash(sed -n '780,820p' /home/david/Code/web/cahier-melimee/src/assets/js/app.js)"
     ]
   }
 }

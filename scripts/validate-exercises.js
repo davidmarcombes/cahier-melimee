@@ -24,6 +24,7 @@ const TYPE_SCHEMAS = {
   sort: { required: ['items'], arrays: ['items'] },
   'drag-sort': { required: ['tiles'], arrays: ['tiles'] },
   'fill-table': { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
+  'column-op':    { required: ['top', 'operation', 'result'] },
   ruler: { required: [] },
   'fraction-check': { required: [], requireOneOf: [['answer'], ['answers']], arrays: ['answers'] },
   'tile-select': { required: ['tiles', 'tileAnswers'], arrays: ['tiles', 'tileAnswers'] },

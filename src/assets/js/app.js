@@ -171,7 +171,8 @@ function seriesPlayer(exercises, seriesId) {
       this.regenerateAll();
       this.syncFromHash();
       const _blanks0 = (this.cur.operation || '').split('?').length - 1;
-      this.trouInputs = _blanks0 > 0 ? Array(_blanks0).fill('') : [];
+      const _colOpBlanks0 = this.cur.colOp ? (this.cur.colOp.result || []).filter(d => d === '?').length : 0;
+      this.trouInputs = (_blanks0 + _colOpBlanks0) > 0 ? Array(_blanks0 + _colOpBlanks0).fill('') : [];
       const _ia = this.cur.sequence || this.cur.bounding || this.cur.convert;
       this.seqInputs = _ia ? _ia.answers.map(() => '') : [];
       if (this.cur.grid) {
@@ -1038,6 +1039,23 @@ function seriesPlayer(exercises, seriesId) {
       this.sortPicked = this.sortPicked.slice(0, rank);
     },
 
+    colOpColor(posFromRight) {
+      const p = [
+        'bg-red-100 border-red-400 text-red-700 dark:bg-red-900/20 dark:border-red-500 dark:text-red-300',
+        'bg-green-100 border-green-400 text-green-700 dark:bg-green-900/20 dark:border-green-500 dark:text-green-300',
+        'bg-blue-100 border-blue-400 text-blue-700 dark:bg-blue-900/20 dark:border-blue-500 dark:text-blue-300',
+        'bg-orange-100 border-orange-400 text-orange-700 dark:bg-orange-900/20 dark:border-orange-500 dark:text-orange-300',
+        'bg-purple-100 border-purple-400 text-purple-700 dark:bg-purple-900/20 dark:border-purple-500 dark:text-purple-300',
+        'bg-sky-100 border-sky-400 text-sky-700 dark:bg-sky-900/20 dark:border-sky-500 dark:text-sky-300',
+      ];
+      return p[posFromRight % p.length];
+    },
+
+    colOpTrouIdx(i) {
+      return (this.cur.colOp?.result || []).slice(0, i).filter(d => d === '?').length;
+    },
+
+
     goTo(idx) {
       this.currentIndex = idx;
       this.userInput = '';
@@ -1049,7 +1067,8 @@ function seriesPlayer(exercises, seriesId) {
       this.rfInputs = ['', ''];
       const _e = this.exercises[idx] || {};
       const _blanks = (_e.operation || '').split('?').length - 1;
-      this.trouInputs = _blanks > 0 ? Array(_blanks).fill('') : [];
+      const _colOpBlanks = _e.colOp ? (_e.colOp.result || []).filter(d => d === '?').length : 0;
+      this.trouInputs = (_blanks + _colOpBlanks) > 0 ? Array(_blanks + _colOpBlanks).fill('') : [];
       const _s = _e.sequence || _e.bounding || _e.convert;
       this.seqInputs = _s ? _s.answers.map(() => '') : [];
       this.seqErrors = [];

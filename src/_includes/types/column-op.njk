@@ -1,0 +1,69 @@
+{# column-op — vertical arithmetic with coloured digit tiles #}
+<div x-show="cur.type === 'column-op'" class="flex justify-center my-2">
+  <template x-if="cur.colOp">
+    <div class="inline-block">
+      <table class="border-separate border-spacing-1">
+        <tbody>
+
+          {# ── top row ── #}
+          <tr>
+            <td class="w-7"></td>
+            <template x-for="(d, i) in cur.colOp.top" :key="'t'+i">
+              <td>
+                <div class="w-11 h-11 flex items-center justify-center rounded-lg border-2 text-xl font-bold select-none"
+                     :class="d === ' ' ? 'border-transparent' : colOpColor(cur.colOp.top.length - 1 - i)"
+                     x-text="d === ' ' ? '' : d"></div>
+              </td>
+            </template>
+          </tr>
+
+          {# ── operator + bottom row ── #}
+          <template x-if="cur.colOp.bottom">
+            <tr>
+              <td class="text-center text-2xl font-bold text-content-default align-middle" x-text="cur.colOp.operation"></td>
+              <template x-for="(d, i) in cur.colOp.bottom" :key="'b'+i">
+                <td>
+                  <div class="w-11 h-11 flex items-center justify-center rounded-lg border-2 text-xl font-bold select-none"
+                       :class="d === ' ' ? 'border-transparent' : colOpColor(cur.colOp.bottom.length - 1 - i)"
+                       x-text="d === ' ' ? '' : d"></div>
+                </td>
+              </template>
+            </tr>
+          </template>
+
+          {# ── separator line ── #}
+          <tr>
+            <td :colspan="(cur.colOp.top || []).length + 1" class="p-0">
+              <div class="border-t-2 border-slate-500 dark:border-slate-400 my-0.5 mx-1"></div>
+            </td>
+          </tr>
+
+          {# ── result row ── #}
+          <tr>
+            <td></td>
+            <template x-for="(d, i) in cur.colOp.result" :key="'r'+i">
+              <td>
+                <template x-if="d === '?'">
+                  <input type="text" inputmode="numeric" maxlength="2"
+                         :value="trouInputs[colOpTrouIdx(i)] || ''"
+                         @input="trouInputs[colOpTrouIdx(i)] = $event.target.value.replace(/[^0-9]/g,'').slice(-1); $event.target.value = trouInputs[colOpTrouIdx(i)]"
+                         @keydown.enter="check()"
+                         :disabled="solved"
+                         class="w-11 h-11 text-center rounded-lg border-2 text-xl font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+                         :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : showError ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : colOpColor(cur.colOp.result.length - 1 - i)"
+                         placeholder="?" />
+                </template>
+                <template x-if="d !== '?'">
+                  <div class="w-11 h-11 flex items-center justify-center rounded-lg border-2 text-xl font-bold select-none"
+                       :class="d === ' ' ? 'border-transparent' : colOpColor(cur.colOp.result.length - 1 - i)"
+                       x-text="d === ' ' ? '' : d"></div>
+                </template>
+              </td>
+            </template>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </template>
+</div>

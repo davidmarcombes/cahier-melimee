@@ -1460,6 +1460,54 @@ const generators = {
   },
 };
 
+  comptageFruits: {
+    generate(params = {}) {
+      const pool = ['🍎', '🍊', '🍋', '🍇', '🍓', '🍑', '🍒', '🫐', '🍌', '🍉'];
+      const emoji = pool[rand(0, pool.length - 1)];
+      const icons = (n) => Array(n).fill(emoji).join(' ');
+      const mode = params.mode ?? 'emoji';
+      if (mode === 'emoji') {
+        const a = rand(params.minA ?? 1, params.maxA ?? 4);
+        const b = rand(params.minB ?? 1, params.maxB ?? 4);
+        return { type: 'number-check', operation: `${icons(a)} + ${icons(b)}`, answers: [String(a + b)] };
+      }
+      if (mode === 'add-trou') {
+        const count = rand(params.countMin ?? 1, params.countMax ?? 5);
+        const missing = rand(params.opMin ?? 1, params.opMax ?? 4);
+        return { type: 'number-check', operation: `${icons(count)} + ? = ${count + missing}`, answers: [String(missing)] };
+      }
+      if (mode === 'sub-trou') {
+        const total = rand(params.totalMin ?? 3, params.totalMax ?? 9);
+        const remaining = rand(params.remainMin ?? 1, total - 1);
+        const missing = total - remaining;
+        return { type: 'number-check', operation: `${icons(total)} − ? = ${remaining}`, answers: [String(missing)] };
+      }
+      // mode: 'number' — emoji group + number
+      const count = rand(params.countMin ?? 2, params.countMax ?? 6);
+      const n = rand(params.opMin ?? 1, params.opMax ?? 4);
+      return { type: 'number-check', operation: `${icons(count)} + ${n}`, answers: [String(count + n)] };
+    },
+  },
+
+  comptageInsectes: {
+    generate(params = {}) {
+      const pool = ['🐞', '🐜', '🕷️', '🦗', '🦋', '🐝', '🪲', '🐛'];
+      const emoji = pool[rand(0, pool.length - 1)];
+      const count = rand(params.countMin ?? 2, params.countMax ?? 5);
+      const opMin = params.opMin ?? 1;
+      const opMax = params.opMax ?? 3;
+      const canSub = count - 1 >= opMin;
+      const useAdd = !canSub || Math.random() > 0.5;
+      const icons = Array(count).fill(emoji).join(' ');
+      if (useAdd) {
+        const n = rand(opMin, opMax);
+        return { type: 'number-check', operation: `${icons} + ${n}`, answers: [String(count + n)] };
+      }
+      const n = rand(opMin, Math.min(opMax, count - 1));
+      return { type: 'number-check', operation: `${icons} − ${n}`, answers: [String(count - n)] };
+    },
+  },
+
 // Dual export: Node.js (build time) + browser (runtime)
 if (typeof module !== 'undefined') module.exports = generators;
 if (typeof window !== 'undefined') window.AppGenerators = generators;

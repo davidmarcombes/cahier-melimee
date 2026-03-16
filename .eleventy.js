@@ -627,6 +627,36 @@ module.exports = async function (eleventyConfig) {
           };
         }
 
+        if (ex.data.type === 'column-op') {
+          const clean = (s) => String(s).replace(/\s+/g, '');
+          const top    = clean(ex.data.top    || '');
+          const bottom = ex.data.bottom != null ? clean(ex.data.bottom) : null;
+          const result = clean(ex.data.result || '');
+          const maxLen = Math.max(top.length, bottom ? bottom.length : 0, result.length);
+          const pad = (s, n) => s.padStart(n, ' ');
+          item.colOp = {
+            operation: ex.data.operation || '+',
+            top:    pad(top,    maxLen).split(''),
+            bottom: bottom ? pad(bottom, maxLen).split('') : null,
+            result: pad(result, maxLen).split(''),
+          };
+          if (ex.data.answers) {
+            item.answers = ex.data.answers.map(String);
+          } else {
+            // auto-compute answers for each '?' in result
+            const topN = parseInt(top, 10);
+            const botN = bottom ? parseInt(bottom, 10) : 0;
+            const op   = item.colOp.operation;
+            let resN = op === '+' ? topN + botN : op === '-' ? topN - botN : topN * botN;
+            const resStr = String(Math.abs(resN)).padStart(result.length, '0');
+            item.answers = [];
+            for (let i = 0; i < result.length; i++) {
+              if (result[i] === '?') item.answers.push(resStr[i] || '0');
+            }
+          }
+        }
+
+
         payload.push(item);
       }
     });
