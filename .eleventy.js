@@ -508,12 +508,31 @@ module.exports = async function (eleventyConfig) {
           item.comparisons = ex.data.comparisons.map((c) => {
             const l = interpolate(String(c.left));
             const r = interpolate(String(c.right));
-            return {
-              left: l,
-              right: r,
-              answer: Number(l) < Number(r) ? '<' : '>',
-            };
+            let answer;
+            if (c.answer) {
+              answer = c.answer.trim();
+            } else {
+              const nl = Number(l);
+              const nr = Number(r);
+              answer = nl < nr ? '<' : nl > nr ? '>' : '=';
+            }
+            return { left: l, right: r, answer };
           });
+        }
+
+        if (ex.data.type === 'fraction-paint') {
+          let num = ex.data.numerator;
+          let den = ex.data.denominator;
+          if ((num == null || den == null) && ex.data.decimal != null) {
+            const s = String(ex.data.decimal);
+            const decs = s.includes('.') ? s.split('.')[1].length : 0;
+            const factor = Math.pow(10, decs);
+            num = Math.round(parseFloat(s) * factor);
+            den = factor;
+          }
+          item.numerator = Number(num);
+          item.denominator = Number(den);
+          item.direction = ex.data.direction || 'cols';
         }
 
         if (ex.data.type === 'ruler') {

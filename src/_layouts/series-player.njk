@@ -71,6 +71,7 @@ isSeriesPage: true
   {% if 'base-10' in usedTypes %}{% include "types/base-10.njk" %}{% endif %}
   {% if 'ruler' in usedTypes %}{% include "types/ruler.njk" %}{% endif %}
   {% if 'fraction-check' in usedTypes %}{% include "types/fraction-check.njk" %}{% endif %}
+  {% if 'fraction-paint' in usedTypes %}{% include "types/fraction-paint.njk" %}{% endif %}
   {% if 'tile-select' in usedTypes %}{% include "types/tile-select.njk" %}{% endif %}
   {% if 'sort' in usedTypes %}{% include "types/sort.njk" %}{% endif %}
   {% if 'drag-sort' in usedTypes %}{% include "types/drag-sort.njk" %}{% endif %}
@@ -151,6 +152,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'fraction-check' in usedTypes %}
     <span x-show="cur.type === 'fraction-check'">Ce n'est pas la bonne fraction. Essaie encore !</span>
+    {% endif %}
+    {% if 'fraction-paint' in usedTypes %}
+    <span x-show="cur.type === 'fraction-paint'">Ce n'est pas le bon nombre de cases. Essaie encore !</span>
     {% endif %}
     {% if 'tile-select' in usedTypes %}
     <span x-show="cur.type === 'tile-select'">Certaines tuiles ne sont pas correctes. Essaie encore !</span>

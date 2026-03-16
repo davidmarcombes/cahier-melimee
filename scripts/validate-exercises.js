@@ -158,11 +158,38 @@ function validateSeries(seriesDir, errors) {
   return mdFiles.length;
 }
 
+// Find all directories that contain .md files but no index.yaml (orphaned series)
+function findOrphanedSeriesDirs(dir) {
+  const orphans = [];
+  if (!fs.existsSync(dir)) return orphans;
+  const walk = (d) => {
+    const entries = fs.readdirSync(d, { withFileTypes: true });
+    const hasIndex = entries.some((e) => e.isFile() && e.name === 'index.yaml');
+    const hasMd = entries.some((e) => e.isFile() && e.name.endsWith('.md'));
+    if (hasMd && !hasIndex) orphans.push(d);
+    if (!hasIndex) {
+      for (const e of entries) {
+        if (e.isDirectory()) walk(path.join(d, e.name));
+      }
+    }
+  };
+  walk(dir);
+  return orphans;
+}
+
 // Main
 const errors = [];
 let seriesCount = 0;
 let exerciseCount = 0;
 const dirs = ['src/fr/exercices', 'src/fr/applications'];
+
+// First: flag any series folder missing index.yaml
+for (const dir of dirs) {
+  for (const orphan of findOrphanedSeriesDirs(dir)) {
+    const rel = path.relative(process.cwd(), orphan).replace(/\\/g, '/');
+    errors.push(`${rel}: missing index.yaml`);
+  }
+}
 
 for (const dir of dirs) {
   const indexFiles = findFiles(dir, 'index.yaml');

@@ -528,6 +528,67 @@ function tetrahedronSvg(size = 80, color = 'var(--p)', opacity = 1) {
   </svg>`;
 }
 
+// rowsOfSvg — equal rows of items (multiplication / division intuition)
+// rows: number of rows, cols: items per row
+// emoji: any emoji char, or '●' for filled dot
+// color: CSS color/var for dots (ignored for emoji)
+function rowsOfSvg(rows, cols, emoji = '●', color = 'var(--p)') {
+  const ITEM = 26, CGAP = 6, RGAP = 12, PAD = 10;
+  const useEmoji = emoji !== '●';
+  const W = cols * (ITEM + CGAP) - CGAP + PAD * 2;
+  const H = rows * (ITEM + RGAP) - RGAP + PAD * 2;
+  let g = '';
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cx = PAD + c * (ITEM + CGAP) + ITEM / 2;
+      const cy = PAD + r * (ITEM + RGAP) + ITEM / 2;
+      if (useEmoji) {
+        g += `<text x="${cx}" y="${cy + 1}" text-anchor="middle" font-size="${ITEM}" font-family="system-ui,sans-serif">${emoji}</text>`;
+      } else {
+        g += `<circle cx="${cx}" cy="${cy}" r="${ITEM / 2 - 2}" fill="${color}"/>`;
+      }
+    }
+  }
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${g}</svg>`;
+}
+
+// packetsOfSvg — groups of items in rounded packets (multiplication / division intuition)
+// packets: number of groups, perPacket: items per group
+// emoji: any emoji char, or '●' for filled dot
+// color: CSS color/var for dots and packet border
+function packetsOfSvg(packets, perPacket, emoji = '●', color = 'var(--p)') {
+  const ITEM = 22, IGAP = 5, IPAD = 8, PGAP = 14, PAD = 8;
+  const useEmoji = emoji !== '●';
+  const pCols = perPacket <= 3 ? perPacket : Math.ceil(Math.sqrt(perPacket));
+  const pRows = Math.ceil(perPacket / pCols);
+  const pW = pCols * ITEM + (pCols - 1) * IGAP + IPAD * 2;
+  const pH = pRows * ITEM + (pRows - 1) * IGAP + IPAD * 2;
+  const maxPerRow = Math.min(packets, 5);
+  const pRowCount = Math.ceil(packets / maxPerRow);
+  const W = maxPerRow * pW + (maxPerRow - 1) * PGAP + PAD * 2;
+  const H = pRowCount * pH + (pRowCount - 1) * PGAP + PAD * 2;
+  let g = '';
+  for (let p = 0; p < packets; p++) {
+    const pCol = p % maxPerRow;
+    const pRow = Math.floor(p / maxPerRow);
+    const px = PAD + pCol * (pW + PGAP);
+    const py = PAD + pRow * (pH + PGAP);
+    g += `<rect x="${px}" y="${py}" width="${pW}" height="${pH}" rx="10" fill="var(--sf)" stroke="${color}" stroke-width="2"/>`;
+    for (let i = 0; i < perPacket; i++) {
+      const ic = i % pCols;
+      const ir = Math.floor(i / pCols);
+      const ix = px + IPAD + ic * (ITEM + IGAP) + ITEM / 2;
+      const iy = py + IPAD + ir * (ITEM + IGAP) + ITEM / 2;
+      if (useEmoji) {
+        g += `<text x="${ix}" y="${iy + 1}" text-anchor="middle" font-size="${ITEM}" font-family="system-ui,sans-serif">${emoji}</text>`;
+      } else {
+        g += `<circle cx="${ix}" cy="${iy}" r="${ITEM / 2 - 2}" fill="${color}"/>`;
+      }
+    }
+  }
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${g}</svg>`;
+}
+
 function rulerExerciseSvg(r) {
   if (!r) return '';
   const W = 420, PAD = 40, Y = 60;

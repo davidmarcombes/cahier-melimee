@@ -1,0 +1,40 @@
+{# Fraction Paint — click/drag to colour strips. Supports n/d or decimal. #}
+<div x-show="cur.type === 'fraction-paint'" class="space-y-4">
+
+  <div class="flex justify-center"
+    @mouseup.window="paintDragging = false"
+    @touchend.window="paintDragging = false"
+    @touchmove.window.prevent="paintTouchMove($event)"
+  >
+    <div
+      class="flex border-2 rounded-lg overflow-hidden cursor-pointer"
+      :class="cur.direction === 'rows' ? 'flex-col' : 'flex-row'"
+      style="width:300px;height:220px;border-color:var(--p)"
+    >
+      <template x-for="(active, i) in paintCells" :key="i">
+        <div
+          class="flex-1 transition-colors duration-75"
+          :class="{ 'h-full': cur.direction !== 'rows', 'w-full': cur.direction === 'rows', 'border-r': cur.direction !== 'rows' && i < paintCells.length - 1, 'border-b': cur.direction === 'rows' && i < paintCells.length - 1 }"
+          style="border-color:var(--p)"
+          :style="active ? (solved ? 'background:var(--green,#4daa60);opacity:0.75' : 'background:var(--p);opacity:0.6') : ''"
+          :data-paint-idx="i"
+          @mousedown.prevent="if(!solved){ paintDragging=true; paintDragValue=!active; paintCells[i]=paintDragValue }"
+          @mouseenter="if(!solved && paintDragging) paintCells[i]=paintDragValue"
+          @touchstart.prevent="if(!solved){ paintDragging=true; paintDragValue=!active; paintCells[i]=paintDragValue }"
+        ></div>
+      </template>
+    </div>
+  </div>
+
+  <p class="text-center text-sm text-content-subtle">
+    <span x-text="paintCells.filter(Boolean).length"></span> / <span x-text="cur.denominator"></span> colorié<span x-show="paintCells.filter(Boolean).length !== 1">s</span>
+  </p>
+
+  <div x-show="!solved" class="flex justify-center pt-1">
+    <button
+      type="button"
+      @click="check()"
+      class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95"
+    >Vérifier</button>
+  </div>
+</div>

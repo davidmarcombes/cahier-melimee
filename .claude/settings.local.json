@@ -69,7 +69,11 @@
       "Bash(npx html-validate:*)",
       "Bash(grep -A1 \"<button$\" src/_includes/components/header.njk src/_includes/types/checkbox.njk src/_layouts/series-player.njk)",
       "Bash(git -C \"e:/Code/cahier-melimee\" log --oneline -20)",
-      "Bash(git -C \"e:/Code/cahier-melimee\" diff HEAD~5 HEAD --stat)"
+      "Bash(git -C \"e:/Code/cahier-melimee\" diff HEAD~5 HEAD --stat)",
+      "Bash(for d:*)",
+      "Bash(mv src/fr/applications/ce1/maths/numeration/blocs-valeur-position-01/index.yaml /tmp/test-index.yaml)",
+      "Bash(mv /tmp/test-index.yaml src/fr/applications/ce1/maths/numeration/blocs-valeur-position-01/index.yaml)",
+      "Bash(npx cspell:*)"
     ]
   }
 }

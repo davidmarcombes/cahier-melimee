@@ -1,4 +1,4 @@
-{# Compare — pick < or > between two numbers #}
+{# Compare — single cycling symbol tile: ? → > → < → = → > … #}
 <div x-show="cur.type === 'compare'" class="space-y-3">
   <template x-if="cur.svg">
     <div class="flex justify-center mb-4" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
@@ -16,26 +16,20 @@
     >
       <span class="text-lg font-mono text-content-default flex-1 text-right" x-text="c.left"></span>
 
-      <div class="flex gap-1 shrink-0">
-        <button
-          type="button"
-          @click="if(!solved){cmpInputs[i]='<';cmpErrors=cmpErrors.filter(e=>e!==i)}"
-          :disabled="solved"
-          class="w-10 h-10 rounded-lg border-2 text-lg font-bold transition-all inline-flex items-center justify-center"
-          :class="cmpInputs[i]==='<'
-            ? (solved ? 'border-green-500 bg-green-500 text-white' : 'border-primary-500 bg-primary-500 text-white')
-            : 'border-slate-300 dark:border-slate-600 text-content-subtle hover:border-primary-400'"
-        >&lt;</button>
-        <button
-          type="button"
-          @click="if(!solved){cmpInputs[i]='>';cmpErrors=cmpErrors.filter(e=>e!==i)}"
-          :disabled="solved"
-          class="w-10 h-10 rounded-lg border-2 text-lg font-bold transition-all inline-flex items-center justify-center"
-          :class="cmpInputs[i]==='>'
-            ? (solved ? 'border-green-500 bg-green-500 text-white' : 'border-primary-500 bg-primary-500 text-white')
-            : 'border-slate-300 dark:border-slate-600 text-content-subtle hover:border-primary-400'"
-        >&gt;</button>
-      </div>
+      <button
+        type="button"
+        @click="if(!solved){ cmpInputs[i] = cmpInputs[i]==='>' ? '<' : cmpInputs[i]==='<' ? '=' : '>'; cmpErrors=cmpErrors.filter(e=>e!==i) }"
+        :disabled="solved"
+        class="w-12 h-12 rounded-xl border-2 text-xl font-bold transition-all active:scale-90 shrink-0 inline-flex items-center justify-center select-none"
+        :class="solved
+          ? 'border-green-500 bg-green-500 text-white cursor-default'
+          : cmpErrors.includes(i)
+            ? 'border-red-400 bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400'
+            : cmpInputs[i]
+              ? 'border-primary-500 bg-primary-500 text-white cursor-pointer'
+              : 'border-slate-300 dark:border-slate-600 text-content-subtle cursor-pointer hover:border-primary-400 hover:text-content-default'"
+        x-text="cmpInputs[i] || '?'"
+      ></button>
 
       <span class="text-lg font-mono text-content-default flex-1 text-left" x-text="c.right"></span>
     </div>

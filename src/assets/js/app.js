@@ -110,6 +110,9 @@ function seriesPlayer(exercises, seriesId) {
     _dragErrTimer: null,
     clickBlockLevels: [],
     clickBlockErrors: [],
+    paintCells: [],
+    paintDragging: false,
+    paintDragValue: true,
     showValidationPanel: false,
     testNotes: '',
     testSending: false,
@@ -120,6 +123,16 @@ function seriesPlayer(exercises, seriesId) {
     get fractionShapes() {
       if (this.cur.type !== 'fraction' || !this.cur.fraction) return [];
       return fractionShapesSvg(this.cur.fraction);
+    },
+
+    /* Fraction Paint touch-drag handler */
+    paintTouchMove(e) {
+      if (!this.paintDragging || this.solved) return;
+      const t = e.touches[0];
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      if (el && el.dataset.paintIdx !== undefined) {
+        this.paintCells[parseInt(el.dataset.paintIdx)] = this.paintDragValue;
+      }
     },
 
     /* Ruler SVG */
@@ -200,6 +213,9 @@ function seriesPlayer(exercises, seriesId) {
       if (this.cur.columns) {
         this.clickBlockLevels = this.cur.columns.map(() => 0);
         this.clickBlockErrors = [];
+      }
+      if (this.cur.denominator && this.cur.type === 'fraction-paint') {
+        this.paintCells = Array(this.cur.denominator).fill(false);
       }
       const _focusFirst = () => {
         let ref;
@@ -339,6 +355,21 @@ function seriesPlayer(exercises, seriesId) {
             this.dragErrors = [];
             this._dragErrTimer = null;
           }, 2000);
+        }
+        return;
+      }
+      if (this.cur.type === 'fraction-paint') {
+        if (this.solved) return;
+        const count = this.paintCells.filter(Boolean).length;
+        if (count === this.cur.numerator) {
+          this.solvedFlags[this.currentIndex] = true;
+          this.showError = false;
+          if (this.currentIndex < this.exercises.length - 1) {
+            setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+          }
+        } else {
+          this.showError = true;
+          setTimeout(() => { this.showError = false; }, 2000);
         }
         return;
       }
@@ -1079,6 +1110,8 @@ function seriesPlayer(exercises, seriesId) {
         this.clickBlockLevels = [];
       }
       this.clickBlockErrors = [];
+      this.paintCells = (_e.type === 'fraction-paint' && _e.denominator) ? Array(_e.denominator).fill(false) : [];
+      this.paintDragging = false;
       this.selectAnswers = new Array((_e.selectStatements || []).length).fill('');
       this.selectErrors = [];
       if (_e.tiles) {
