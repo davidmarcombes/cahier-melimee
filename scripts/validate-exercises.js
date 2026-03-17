@@ -32,6 +32,9 @@ const TYPE_SCHEMAS = {
   select: { required: ['choices', 'statements'], arrays: ['choices', 'statements'] },
   'svg-tiles': { required: ['tiles', 'answers'], arrays: ['tiles', 'answers'], arrayFields: { tiles: ['gen'] } },
   'click-blocks': { required: ['columns'], arrays: ['columns'] },
+  'number-hunt': { required: [] },
+  'compare-groups': { required: [] },
+  'count-objects': { required: [] },
 };
 
 const COLORS = {

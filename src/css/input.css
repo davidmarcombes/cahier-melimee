@@ -85,6 +85,23 @@
     text-align: center;
   }
 
+  /* Operation box / highlight shorthands */
+  .op-box {
+    display: inline-flex;
+    align-items: center;
+    border: 2px solid var(--a);
+    border-radius: 6px;
+    padding: 0 4px;
+    margin: 0 1px;
+    font-weight: inherit;
+  }
+  .op-hl {
+    display: inline;
+    background: color-mix(in srgb, var(--p) 20%, transparent);
+    border-radius: 4px;
+    padding: 0 3px;
+  }
+
   /* Minimal prose — replaces @tailwindcss/typography (14K → ~1K) */
   .prose {
     max-width: 65ch;

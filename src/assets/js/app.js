@@ -50,6 +50,16 @@ const localStore = (() => {
 })();
 window.localStore = localStore;
 
+/* Operation shorthand renderer — mirrors .eleventy.js renderShorthands for runtime use.
+   Converts &box(content) → <span class="op-box">content</span>
+   Converts &highlight(content) → <span class="op-hl">content</span> */
+function renderOpShorthands(str) {
+  if (!str) return str;
+  return str
+    .replace(/&box\(([^)]*)\)/g, (_, c) => `<span class="op-box">${c}</span>`)
+    .replace(/&highlight\(([^)]*)\)/g, (_, c) => `<span class="op-hl">${c}</span>`);
+}
+
 /* Theme toggle */
 function themeToggle() {
   return {
@@ -90,6 +100,7 @@ function seriesPlayer(exercises, seriesId) {
     mqErrors: [],
     mcqSelected: null,
     mcqWrong: null,
+    cmpGroupWrong: null,
     rfInputs: ['', ''],
     tileSelected: [],
     tileErrors: [],
@@ -113,6 +124,9 @@ function seriesPlayer(exercises, seriesId) {
     paintCells: [],
     paintDragging: false,
     paintDragValue: true,
+    huntClicked: [],
+    huntNext: 1,
+    huntError: -1,
     showValidationPanel: false,
     testNotes: '',
     testSending: false,
@@ -239,15 +253,25 @@ function seriesPlayer(exercises, seriesId) {
     get cur() {
       return this.exercises[this.currentIndex] || {};
     },
+    /* Rendered operation with shorthands expanded to HTML (for non-trou display) */
+    get operationHtml() {
+      return renderOpShorthands(this.cur.operation || '');
+    },
     /* Parse operation à trou into structured parts for fraction rendering */
     get trouParts() {
       const op = this.cur.operation;
       if (!op || !op.includes('?')) return null;
+      // Stash &box / &highlight spans as indexed tokens so the regex doesn't break on them
+      const stash = [];
+      const safe = op.replace(/&(?:box|highlight)\([^)]*\)/g, (match) => {
+        stash.push(renderOpShorthands(match));
+        return `\x00${stash.length - 1}\x00`;
+      });
       const parts = [];
       let ii = 0;
-      const re = /(\d+\/\d+|\?\/\d+|\?|[^?\d]+(?:\d+(?!\/\d))?[^?\d]*|\d+(?!\/\d))/g;
+      const re = /(\d+\/\d+|\?\/\d+|\?|[^?\d\x00]+(?:\d+(?!\/\d))?[^?\d\x00]*|\x00\d+\x00|\d+(?!\/\d))/g;
       let m;
-      while ((m = re.exec(op)) !== null) {
+      while ((m = re.exec(safe)) !== null) {
         const t = m[1];
         if (/^\d+\/\d+$/.test(t)) {
           const [n, d] = t.split('/');
@@ -257,7 +281,9 @@ function seriesPlayer(exercises, seriesId) {
         } else if (t === '?') {
           parts.push({ t: 'i', idx: ii++ });
         } else {
-          parts.push({ t: 'x', v: t });
+          // Restore any stashed shorthand tokens inside this text fragment
+          const v = t.replace(/\x00(\d+)\x00/g, (_, i) => stash[+i]);
+          parts.push({ t: 'x', v });
         }
       }
       return parts;
@@ -277,6 +303,24 @@ function seriesPlayer(exercises, seriesId) {
       const idx = this.tileSelected.indexOf(i);
       this.tileSelected = idx === -1 ? [...this.tileSelected, i] : this.tileSelected.filter((s) => s !== i);
       this.tileErrors = [];
+    },
+
+    huntTap(i) {
+      if (this.solved) return;
+      const v = (this.cur.grid || [])[i];
+      if (v !== this.huntNext) {
+        this.huntError = i;
+        setTimeout(() => { this.huntError = -1; }, 500);
+        return;
+      }
+      this.huntClicked = [...this.huntClicked, i];
+      this.huntNext++;
+      if (this.huntNext > this.cur.count) {
+        this.solvedFlags[this.currentIndex] = true;
+        if (this.currentIndex < this.exercises.length - 1) {
+          setTimeout(() => this.goTo(this.currentIndex + 1), 2000);
+        }
+      }
     },
 
     dragRender(tile) {
@@ -927,6 +971,20 @@ function seriesPlayer(exercises, seriesId) {
       return this.pyramidErrors.includes(this.pyramidFlatIdx(r, c));
     },
 
+    groupsTap(i) {
+      if (this.solved) return;
+      if (i === this.cur.cmpGroupAnswer) {
+        this.cmpGroupWrong = null;
+        this.solvedFlags[this.currentIndex] = true;
+        if (this.currentIndex < this.exercises.length - 1) {
+          setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+        }
+      } else {
+        this.cmpGroupWrong = i;
+        setTimeout(() => { this.cmpGroupWrong = null; }, 800);
+      }
+    },
+
     mcqTap(i) {
       if (this.solved) return;
       if (i === this.cur.mcqAnswer) {
@@ -1103,6 +1161,7 @@ function seriesPlayer(exercises, seriesId) {
       this.mqErrors = [];
       this.mcqSelected = null;
       this.mcqWrong = null;
+      this.cmpGroupWrong = null;
       this.tileSelected = [];
       this.tileErrors = [];
       this.svgSelected = [];
@@ -1131,6 +1190,9 @@ function seriesPlayer(exercises, seriesId) {
       this.clickBlockErrors = [];
       this.paintCells = (_e.type === 'fraction-paint' && _e.denominator) ? Array(_e.denominator).fill(false) : [];
       this.paintDragging = false;
+      this.huntClicked = [];
+      this.huntNext = 1;
+      this.huntError = -1;
       this.selectAnswers = new Array((_e.selectStatements || []).length).fill('');
       this.selectErrors = [];
       if (_e.tiles) {

@@ -15,6 +15,8 @@ const markdownIt = require('markdown-it');
 // Add entries here as new shorthands are needed.
 const _shorthands = {
   frac: (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`,
+  box: (...parts) => `<span class="op-box">${parts.join(', ')}</span>`,
+  highlight: (...parts) => `<span class="op-hl">${parts.join(', ')}</span>`,
 };
 function renderShorthands(str) {
   return str.replace(/&(\w+)\(([^)]*)\)/g, (match, fn, args) => {

@@ -80,6 +80,9 @@ isSeriesPage: true
   {% if 'checkbox' in usedTypes %}{% include "types/checkbox.njk" %}{% endif %}
   {% if 'select' in usedTypes %}{% include "types/select.njk" %}{% endif %}
   {% if 'svg-tiles' in usedTypes %}{% include "types/svg-tiles.njk" %}{% endif %}
+  {% if 'number-hunt' in usedTypes %}{% include "types/number-hunt.njk" %}{% endif %}
+  {% if 'compare-groups' in usedTypes %}{% include "types/compare-groups.njk" %}{% endif %}
+  {% if 'count-objects' in usedTypes %}{% include "types/count-objects.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}

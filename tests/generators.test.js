@@ -147,11 +147,19 @@ describe('compterDeN', () => {
 });
 
 describe('comparerNombres', () => {
-  it('returns a compare exercise with correct structure', () => {
-    const result = generators.comparerNombres.generate({ count: 2 });
-    expect(result.type).toBe('compare');
-    expect(result.comparisons).toHaveLength(2);
-    result.comparisons.forEach((c) => expect(['<', '>']).toContain(c.answer));
+  it('returns a tile-select exercise with correct structure', () => {
+    const result = generators.comparerNombres.generate({ count: 2, goal: 'max' });
+    expect(result.type).toBe('tile-select');
+    expect(result.tiles).toHaveLength(2);
+    expect(result.tileAnswers).toHaveLength(1);
+    expect(result.tileAnswers[0]).toBeGreaterThanOrEqual(0);
+    expect(Number(result.tiles[result.tileAnswers[0]])).toBe(Math.max(...result.tiles.map(Number)));
+  });
+
+  it('works with 3 tiles', () => {
+    const result = generators.comparerNombres.generate({ count: 3, goal: 'min' });
+    expect(result.tiles).toHaveLength(3);
+    expect(Number(result.tiles[result.tileAnswers[0]])).toBe(Math.min(...result.tiles.map(Number)));
   });
 });
 

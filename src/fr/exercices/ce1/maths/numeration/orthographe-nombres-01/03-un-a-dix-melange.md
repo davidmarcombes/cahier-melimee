@@ -1,0 +1,25 @@
+---
+type: matching
+title: "Relie les nombres"
+pairs:
+  - left: "1"
+    right: "un"
+  - left: "2"
+    right: "deux"
+  - left: "3"
+    right: "trois"
+  - left: "4"
+    right: "quatre"
+  - left: "5"
+    right: "cinq"
+  - left: "6"
+    right: "six"
+  - left: "7"
+    right: "sept"
+  - left: "8"
+    right: "huit"
+  - left: "9"
+    right: "neuf"
+  - left: "10"
+    right: "dix"
+---

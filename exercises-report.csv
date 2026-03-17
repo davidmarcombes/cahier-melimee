@@ -1,11 +1,18 @@
 kind,path,id,seriesTitle,level,subject,topic,difficulty,exerciseCount,repeatTotal,types,generators
+application,fr/applications/cp/maths/calcul/grouper-10-01,p5l2m941,Grouper pour faire 10 (petits ajouts),CP,maths,calcul,facile,1,10,number-check,grouper10
+application,fr/applications/cp/maths/calcul/grouper-10-02,q6m3n052,Grouper pour faire 10 (grands ajouts),CP,maths,calcul,moyen,1,12,number-check,grouper10
 exercice,fr/exercices/cp/maths/geometrie/figures-01,bb4ea68d,Les figures planes,CP,maths,geometrie,facile,5,5,mcq,
 exercice,fr/exercices/cp/maths/geometrie/solides-01,51ab7ca3,Les solides,CP,maths,geometrie,facile,3,3,matching | true-false,
+application,fr/applications/cp/maths/numeration/chasse-aux-nombres-01,f5b2d847,Chasse aux nombres (1 → 15),CP,maths,numeration,facile,1,6,number-hunt,huntNombres
+application,fr/applications/cp/maths/numeration/comparer-groupes-01,h7d4f163,"Autant, plus ou moins ? (petits nombres)",CP,maths,numeration,facile,1,8,compare-groups,comparerGroupes
 application,fr/applications/cp/maths/numeration/comparer-nombres,9e2f72e9,Comparer des nombres,CP,maths,numeration,facile,1,8,compare,comparerNombres
+application,fr/applications/cp/maths/numeration/complement-10-01,n3j0k729,Compléter jusqu'à 10 (avec dessin),CP,maths,numeration,facile,1,10,count-objects,complementA10Emoji
 application,fr/applications/cp/maths/numeration/compter-de-n,57232e9f,Compter de N en N,CP,maths,numeration,facile,1,10,sequence,compterDeN
+application,fr/applications/cp/maths/numeration/compter-objets-01,l1h8i507,Compter des objets (petits nombres),CP,maths,numeration,facile,1,10,count-objects,compterObjets
 application,fr/applications/cp/maths/numeration/decompo-gen,75a9828d,Dizaines et unités,CP,maths,numeration,facile,1,10,number-check,decompositionBase10
 application,fr/applications/cp/maths/numeration/pair-ou-impair,3a999cd6,Pair ou impair ?,CP,maths,numeration,facile,1,12,number-check,pairOuImpair
 application,fr/applications/cp/maths/numeration/regle-graduee-gen,bb9d74ac,Lecture sur la règle graduée,CP,maths,numeration,facile,1,10,ruler,ruler
+application,fr/applications/cp/maths/numeration/trier-nombres-01,j9f6g385,Trier des nombres (3 nombres),CP,maths,numeration,facile,1,8,drag-sort,trierNombres
 exercice,fr/exercices/cp/maths/numeration/comparer-01,4cb28460,Comparer des nombres,CP,maths,numeration,facile,4,4,compare,
 exercice,fr/exercices/cp/maths/numeration/decompo-100-01,4e5c714d,Dizaines et unités jusqu'à 100,CP,maths,numeration,facile,5,5,base-10,
 exercice,fr/exercices/cp/maths/numeration/decompo-20-01,871cbf14,Décomposer les nombres jusqu'à 20,CP,maths,numeration,facile,5,5,number-check,
@@ -14,6 +21,11 @@ exercice,fr/exercices/cp/maths/numeration/pairs-impairs-01,28ab94b9,Nombres pair
 exercice,fr/exercices/cp/maths/numeration/regle-graduee-01,6ba1da64,Lecture sur la règle graduée,CP,maths,numeration,facile,5,5,ruler,
 exercice,fr/exercices/cp/maths/numeration/suites-01,dc15cc4b,Suites de nombres,CP,maths,numeration,facile,5,5,sequence,
 application,fr/applications/cp/maths/numeration/arrondir-dizaine,d5d4ec4f,Arrondir à la dizaine,CP,maths,numeration,moyen,1,10,number-check,arrondirNombre
+application,fr/applications/cp/maths/numeration/chasse-aux-nombres-02,g6c3e958,Chasse aux nombres (1 → 25),CP,maths,numeration,moyen,1,6,number-hunt,huntNombres
+application,fr/applications/cp/maths/numeration/comparer-groupes-02,i8e5g274,"Autant, plus ou moins ? (grands nombres)",CP,maths,numeration,moyen,1,8,compare-groups,comparerGroupes
+application,fr/applications/cp/maths/numeration/complement-10-02,o4k1l830,Compléter jusqu'à 10 (calcul),CP,maths,numeration,moyen,1,12,number-check,complementA10Nombre
+application,fr/applications/cp/maths/numeration/compter-objets-02,m2i9j618,Compter des objets (grands nombres),CP,maths,numeration,moyen,1,10,count-objects,compterObjets
+application,fr/applications/cp/maths/numeration/trier-nombres-02,k0g7h496,Trier des nombres (5 nombres),CP,maths,numeration,moyen,1,8,drag-sort,trierNombres
 exercice,fr/exercices/cp/maths/numeration/encadrement-01,0fdc8c91,Encadrer à la dizaine,CP,maths,numeration,moyen,5,5,bounding,
 application,fr/applications/cp/maths/operations/addition-facile,b1c2d3e4,Addition facile,CP,maths,operations,facile,1,10,number-check,additionFacile
 application,fr/applications/cp/maths/operations/ajouter-10,cafd4a96,Ajouter ou enlever 10,CP,maths,operations,facile,1,10,number-check,ajouterSoustraire10
@@ -49,18 +61,26 @@ application,fr/applications/ce1/maths/numeration/pairs-impairs,121a53c7,Nombres 
 application,fr/applications/ce1/maths/numeration/regle-graduee,d226ef83,Lecture sur la règle graduée,CE1,maths,numeration,facile,1,8,ruler,ruler
 exercice,fr/exercices/ce1/maths/numeration/base10-01,41c73e82,Les blocs de base 10,CE1,maths,numeration,facile,2,2,base-10,
 exercice,fr/exercices/ce1/maths/numeration/encadrement-01,46662d3a,Encadrement de nombres,CE1,maths,numeration,facile,4,4,bounding,
+exercice,fr/exercices/ce1/maths/numeration/orthographe-nombres-01,0842853d,Orthographe des nombres — 1 à 10,CE1,maths,numeration,facile,3,3,matching,
 exercice,fr/exercices/ce1/maths/numeration/regle-graduee-01,df12040a,Lecture sur la règle graduée,CE1,maths,numeration,facile,4,4,ruler,
+exercice,fr/exercices/ce1/maths/numeration/suite-nombres-01,06fa1711,Suites de nombres — pas de 5,CE1,maths,numeration,facile,1,8,fill-table,suiteNombres
+exercice,fr/exercices/ce1/maths/numeration/suite-nombres-02,9591cbd5,Suites de nombres — pas de 2,CE1,maths,numeration,facile,1,8,fill-table,suiteNombres
+exercice,fr/exercices/ce1/maths/numeration/suite-nombres-03,b2c96643,Suites de nombres — pas de 10,CE1,maths,numeration,facile,1,8,fill-table,suiteNombres
 exercice,fr/exercices/ce1/maths/numeration/suites-01,ffaa8232,Suites de nombres,CE1,maths,numeration,facile,3,3,sequence,
 application,fr/applications/ce1/maths/numeration/arrondir-centaine,c4305c95,Arrondir à la centaine,CE1,maths,numeration,moyen,1,10,number-check,arrondirNombre
 application,fr/applications/ce1/maths/numeration/comparer-1000,1aca14c0,Comparer des nombres jusqu'à 1 000,CE1,maths,numeration,moyen,1,10,compare,comparerNombres
 application,fr/applications/ce1/maths/numeration/decompo-gen,cf457f3d,"Centaines, dizaines et unités",CE1,maths,numeration,moyen,1,10,number-check,decompositionCentaines
 application,fr/applications/ce1/maths/numeration/suites-ce1,488ac8c6,Suites de nombres,CE1,maths,numeration,moyen,1,10,sequence,compterDeNCE1
+exercice,fr/exercices/ce1/maths/numeration/orthographe-nombres-02,f778c825,Orthographe des nombres — 11 à 20,CE1,maths,numeration,moyen,3,3,matching,
+exercice,fr/exercices/ce1/maths/numeration/orthographe-nombres-03,4d8f4365,Orthographe des nombres — dizaines,CE1,maths,numeration,difficile,3,3,matching,
 application,fr/applications/ce1/maths/operations/addition-1,7fb8f411,Table d'addition de 1,CE1,maths,operations,facile,1,10,number-check,additionFacile
 application,fr/applications/ce1/maths/operations/addition-2,1b1643b2,Table d'addition de 2,CE1,maths,operations,facile,1,10,number-check,additionFacile
 application,fr/applications/ce1/maths/operations/addition-3,75b31049,Table d'addition de 3,CE1,maths,operations,facile,1,10,number-check,additionFacile
 application,fr/applications/ce1/maths/operations/addition-4,d5b12470,Table d'addition de 4,CE1,maths,operations,facile,1,10,number-check,additionFacile
 application,fr/applications/ce1/maths/operations/addition-5,eb192211,Table d'addition de 5,CE1,maths,operations,facile,1,10,number-check,additionFacile
 application,fr/applications/ce1/maths/operations/doubles-moities,d4f7c81d,Doubles et moitiés,CE1,maths,operations,facile,1,10,number-check,doublesMoities
+application,fr/applications/ce1/maths/operations/fruits-facile,3a48dc2d,Additions de fruits (Facile),CE1,maths,operations,facile,1,10,number-check,comptageFruits
+application,fr/applications/ce1/maths/operations/insectes-facile,4ea05afd,Compter et calculer (Facile),CE1,maths,operations,facile,1,10,number-check,comptageInsectes
 application,fr/applications/ce1/maths/operations/pyramides,48742bae,Pyramides d'additions,CE1,maths,operations,facile,1,8,pyramid,pyramideAdditions
 application,fr/applications/ce1/maths/operations/soustraction-1,27b2a4a2,Table de soustraction de 1,CE1,maths,operations,facile,1,10,number-check,soustractionFacile
 application,fr/applications/ce1/maths/operations/soustraction-2,6e52f745,Table de soustraction de 2,CE1,maths,operations,facile,1,10,number-check,soustractionFacile
@@ -73,6 +93,7 @@ application,fr/applications/ce1/maths/operations/table-de-3,cbcd21db,Table de 3,
 application,fr/applications/ce1/maths/operations/table-de-4,01fc2463,Table de 4,CE1,maths,operations,facile,1,10,number-check,multiplicationSimple
 application,fr/applications/ce1/maths/operations/table-de-5,d85624e3,Table de 5,CE1,maths,operations,facile,1,10,number-check,multiplicationSimple
 exercice,fr/exercices/ce1/maths/operations/additions-01,c6217178,Additions CE1,CE1,maths,operations,facile,3,3,number-check,
+exercice,fr/exercices/ce1/maths/operations/pyramides-02,7f1ed47b,Pyramides d'additions (facile),CE1,maths,operations,facile,6,6,pyramid,
 exercice,fr/exercices/ce1/maths/operations/tables-01,981b1d9c,Tables de multiplication,CE1,maths,operations,facile,4,4,number-check,
 application,fr/applications/ce1/maths/operations/addition-10,9c936346,Table d'addition de 10,CE1,maths,operations,moyen,1,10,number-check,additionFacile
 application,fr/applications/ce1/maths/operations/addition-11,87a0efc1,Table d'addition de 11,CE1,maths,operations,moyen,1,10,number-check,additionFacile
@@ -85,6 +106,8 @@ application,fr/applications/ce1/maths/operations/addition-trou,a1b2c3d4,Addition
 application,fr/applications/ce1/maths/operations/ajouter-100,2ad23fe1,Ajouter ou soustraire 100,CE1,maths,operations,moyen,1,10,number-check,ajouterSoustraire100
 application,fr/applications/ce1/maths/operations/ajouter-soustraire-10,e2cfe849,Ajouter ou soustraire 10,CE1,maths,operations,moyen,1,10,number-check,ajouterSoustraire10
 application,fr/applications/ce1/maths/operations/complements-100,16a90f5f,Compléments à 100,CE1,maths,operations,moyen,1,10,number-check,complementNombre
+application,fr/applications/ce1/maths/operations/fruits-moyen,3f51c4dc,Additions de fruits (Moyen),CE1,maths,operations,moyen,1,10,number-check,comptageFruits
+application,fr/applications/ce1/maths/operations/insectes-moyen,a01ef6c8,Compter et calculer (Moyen),CE1,maths,operations,moyen,1,10,number-check,comptageInsectes
 application,fr/applications/ce1/maths/operations/multiplication-simple,4ae726c4,Multiplications,CE1,maths,operations,moyen,1,10,number-check,multiplicationSimple
 application,fr/applications/ce1/maths/operations/multiplication-trou,e5f6a7b8,Multiplication à trou,CE1,maths,operations,moyen,1,10,number-check,multiplicationTrou
 application,fr/applications/ce1/maths/operations/soustraction-10,739642ca,Table de soustraction de 10,CE1,maths,operations,moyen,1,10,number-check,soustractionFacile
@@ -96,8 +119,16 @@ application,fr/applications/ce1/maths/operations/soustraction-9,47672530,Table d
 application,fr/applications/ce1/maths/operations/soustraction-simple,a3410763,Soustractions,CE1,maths,operations,moyen,1,10,number-check,soustractionSimple
 application,fr/applications/ce1/maths/operations/soustraction-trou,cf4da89c,Soustraction à trou,CE1,maths,operations,moyen,1,10,number-check,soustractionTrou
 exercice,fr/exercices/ce1/maths/operations/pyramides-01,411862ee,Pyramides d'additions,CE1,maths,operations,moyen,2,2,pyramid,
+exercice,fr/exercices/ce1/maths/operations/pyramides-03,e036faca,Pyramides d'additions (moyen),CE1,maths,operations,moyen,6,6,pyramid,
 exercice,fr/exercices/ce1/maths/operations/trous-01,69630b5c,Opérations à trou,CE1,maths,operations,moyen,4,4,number-check,
 exercice,fr/exercices/ce1/maths/problemes/quotidien-01,45271391,Problèmes du quotidien,CE1,maths,problemes,facile,5,5,problem,
+application,fr/applications/ce2/maths/calcul/ajouter-8-12-01,69594af8,Ajouter 8 ou 12,CE2,maths,calcul,facile,1,10,number-check,add8ou12
+application,fr/applications/ce2/maths/calcul/ajouter-9-11-01,42eda1c3,Ajouter 9 ou 11,CE2,maths,calcul,facile,1,10,number-check,add9ou11
+application,fr/applications/ce2/maths/calcul/soustraire-8-12-01,b192f1e8,Soustraire 8 ou 12,CE2,maths,calcul,facile,1,10,number-check,sub8ou12
+application,fr/applications/ce2/maths/calcul/soustraire-9-11-01,40287c3f,Soustraire 9 ou 11,CE2,maths,calcul,facile,1,10,number-check,sub9ou11
+exercice,fr/exercices/ce2/maths/calcul/grouper-a-10-01,3300723f,Grouper pour faire 10 (facile),CE2,maths,calcul,facile,1,10,number-check,groupeA10
+exercice,fr/exercices/ce2/maths/calcul/grouper-a-10-02,6ff3b82e,Grouper pour faire 10 (moyen),CE2,maths,calcul,moyen,1,10,number-check,groupeA10
+exercice,fr/exercices/ce2/maths/calcul/grouper-a-10-03,b782d9d6,Grouper pour faire 10 (difficile),CE2,maths,calcul,difficile,1,10,number-check,groupeA10
 exercice,fr/exercices/ce2/maths/fractions/fractions-01,026633aa,Fractions simples,CE2,maths,fractions,facile,5,5,true-false | number-check | mcq,
 exercice,fr/exercices/ce2/maths/fractions/lire-fraction-01,a3f1d920,Lire des fractions,CE2,maths,fractions,facile,5,5,fraction,
 exercice,fr/exercices/ce2/maths/geometrie/proprietes-01,e819299b,Propriétés des figures,CE2,maths,geometrie,facile,1,1,checkbox,
@@ -113,9 +144,12 @@ exercice,fr/exercices/ce2/maths/grandeurs/contenances-01,139269f7,Les contenance
 exercice,fr/exercices/ce2/maths/grandeurs/durees-01,827f5809,Les durées,CE2,maths,grandeurs,moyen,3,3,matching | number-check | true-false,
 exercice,fr/exercices/ce2/maths/grandeurs/masses-01,9d145297,Les masses,CE2,maths,grandeurs,moyen,2,2,convert | true-false,
 exercice,fr/exercices/ce2/maths/logique/enigmes-fruits-01,ae577336,Énigmes de fruits,CE2,maths,logique,moyen,3,3,problem,
+exercice,fr/exercices/ce2/maths/mesures/balance-01,36c2f0d2,La balance — trouver un poids,CE2,maths,mesures,facile,5,5,number-check,
 exercice,fr/exercices/ce2/maths/mesures/heure-01,d168f178,Lire l'heure — heures et demies,CE2,maths,mesures,facile,5,5,clock,
 application,fr/applications/ce2/maths/mesures,844d3901,Lire l'heure — multiples de 5 minutes,CE2,maths,mesures,moyen,1,10,clock,lireHeure
+exercice,fr/exercices/ce2/maths/mesures/balance-02,2d4499bb,La balance — possible ou impossible ?,CE2,maths,mesures,moyen,8,8,tile-select,
 exercice,fr/exercices/ce2/maths/mesures/durees-01,b3d9c041,Intuition des durées,CE2,maths,mesures,moyen,10,10,mcq,
+exercice,fr/exercices/ce2/maths/mesures/durees-02,c2a6e481,Estimer une durée,CE2,maths,mesures,moyen,6,6,matching,
 exercice,fr/exercices/ce2/maths/mesures/heure-02,c65bed24,Lire l'heure — multiples de 5 minutes,CE2,maths,mesures,moyen,5,5,clock,
 exercice,fr/exercices/ce2/maths/mesures/longueurs-01,1dcd3e6f,Mesures de longueurs,CE2,maths,mesures,moyen,3,3,convert,
 application,fr/applications/ce2/maths/numeration/arabic-to-roman-facile,e22820d6,Ecrire chiffres romains,CE2,maths,numeration,facile,1,10,number-check,romanNumeralsReverse
@@ -124,6 +158,7 @@ application,fr/applications/ce2/maths/numeration/blocs-valeur-position-01,b5d1c4
 application,fr/applications/ce2/maths/numeration/complement-a-10,dc4839da,Complément à 10,CE2,maths,numeration,facile,1,10,number-check,complementNombre
 application,fr/applications/ce2/maths/numeration/estimation-somme-facile,efd73d44,Estimer une somme à la dizaine,CE2,maths,numeration,facile,1,10,mcq,estimationSomme
 application,fr/applications/ce2/maths/numeration/nombres-pairs-impairs,a790dc59,Nombres pairs et impairs,CE2,maths,numeration,facile,3,30,checkbox,nombresPairsImpairs
+application,fr/applications/ce2/maths/numeration/ordre-nombres-01,d3f7a192,Le plus grand ou le plus petit (2 nombres),CE2,maths,numeration,facile,1,10,tile-select,comparerNombres
 application,fr/applications/ce2/maths/numeration/recomposer-facile,7f9aa6e1,Recomposer un nombre (2-3 chiffres),CE2,maths,numeration,facile,1,10,number-check,recomposerNombre
 application,fr/applications/ce2/maths/numeration/roman-to-arabic-facile,71e2e9bd,Lire chiffres romains,CE2,maths,numeration,facile,1,10,number-check,romanNumerals
 exercice,fr/exercices/ce2/maths/numeration/lire-boulier,f97f1def,Lire un boulier,CE2,maths,numeration,facile,3,18,number-check,lireAbacus
@@ -135,6 +170,7 @@ application,fr/applications/ce2/maths/numeration/arrondir-centaine,43b47175,Arro
 application,fr/applications/ce2/maths/numeration/comparer-10000,fa708ecd,Comparer des nombres jusqu'à 10 000,CE2,maths,numeration,moyen,1,10,compare,comparerNombres
 application,fr/applications/ce2/maths/numeration/complement-a-100,95fced06,Complément à 100,CE2,maths,numeration,moyen,1,10,number-check,complementNombre
 application,fr/applications/ce2/maths/numeration/estimation-somme-moyen,daedfbe2,Estimer 3 nombres à la dizaine,CE2,maths,numeration,moyen,1,10,mcq,estimationSomme
+application,fr/applications/ce2/maths/numeration/ordre-nombres-02,e4c8b203,Le plus grand ou le plus petit (3 nombres),CE2,maths,numeration,moyen,1,10,tile-select,comparerNombres
 application,fr/applications/ce2/maths/numeration/recomposer-moyen,20d36fc7,Recomposer un nombre (3-4 chiffres),CE2,maths,numeration,moyen,1,10,number-check,recomposerNombre
 application,fr/applications/ce2/maths/numeration/roman-to-arabic-moyen,709be8f4,Lire chiffres romains,CE2,maths,numeration,moyen,1,10,number-check,romanNumerals
 application,fr/applications/ce2/maths/numeration/suites-ce2,2a47755e,Suites de nombres,CE2,maths,numeration,moyen,1,10,sequence,compterDeNCE1
@@ -146,7 +182,11 @@ application,fr/applications/ce2/maths/numeration/complement-a-1000,9761a242,Comp
 application,fr/applications/ce2/maths/numeration/estimation-somme-difficile,7ef6eb3b,Estimer une somme à la centaine,CE2,maths,numeration,difficile,1,10,mcq,estimationSomme
 application,fr/applications/ce2/maths/numeration/recomposer-difficile,ead3b372,Recomposer un nombre (5-6 chiffres),CE2,maths,numeration,difficile,1,10,number-check,recomposerNombre
 application,fr/applications/ce2/maths/numeration/roman-to-arabic-difficile,7eaa8805,Lire chiffres romains,CE2,maths,numeration,difficile,1,10,number-check,romanNumerals
+application,fr/applications/ce2/maths/operations/addition-trou-facile,36298962,Additions à trou (Facile),CE2,maths,operations,facile,1,12,number-check,additionTrou
 application,fr/applications/ce2/maths/operations/doubles-moities,f3648f2c,Doubles et moitiés,CE2,maths,operations,facile,1,10,number-check,doublesMoities
+application,fr/applications/ce2/maths/operations/fruits-addition-trou,cf7fac37,Additions à trou — Fruits,CE2,maths,operations,facile,1,12,number-check,comptageFruits
+application,fr/applications/ce2/maths/operations/fruits-soustraction-trou,6f502b32,Soustractions à trou — Fruits,CE2,maths,operations,facile,1,12,number-check,comptageFruits
+application,fr/applications/ce2/maths/operations/soustraction-trou-facile,a3d25ced,Soustractions à trou (Facile),CE2,maths,operations,facile,1,12,number-check,soustractionTrou
 application,fr/applications/ce2/maths/operations/table-02,4d68cbd4,Table de 2,CE2,maths,operations,facile,1,10,number-check,multiplicationSimple
 application,fr/applications/ce2/maths/operations/table-03,a257fde9,Table de 3,CE2,maths,operations,facile,1,10,number-check,multiplicationSimple
 application,fr/applications/ce2/maths/operations/table-04,d76efb42,Table de 4,CE2,maths,operations,facile,1,10,number-check,multiplicationSimple
@@ -156,6 +196,10 @@ application,fr/applications/ce2/maths/operations/table-07,d21c6ffa,Table de 7,CE
 application,fr/applications/ce2/maths/operations/table-08,99a7c848,Table de 8,CE2,maths,operations,facile,1,10,number-check,multiplicationSimple
 application,fr/applications/ce2/maths/operations/table-09,b9ca21f1,Table de 9,CE2,maths,operations,facile,1,10,number-check,multiplicationSimple
 application,fr/applications/ce2/maths/operations/table-10,23fccc48,Table de 10,CE2,maths,operations,facile,1,10,number-check,multiplicationSimple
+exercice,fr/exercices/ce2/maths/operations/addition-ou-multiplication-01,a7d4f819,Addition ou multiplication ? (1),CE2,maths,operations,facile,10,10,tile-select,
+exercice,fr/exercices/ce2/maths/operations/multiplication-01,f1e9c305,De l'addition à la multiplication,CE2,maths,operations,facile,8,8,multi-question,
+exercice,fr/exercices/ce2/maths/operations/pose-addition-01,722213c6,Poser une addition,CE2,maths,operations,facile,5,5,column-op,
+exercice,fr/exercices/ce2/maths/operations/pose-soustraction-01,d6345999,Poser une soustraction,CE2,maths,operations,facile,5,5,column-op,
 exercice,fr/exercices/ce2/maths/operations/vocabulaire-01,e5b3c817,Vocabulaire des opérations,CE2,maths,operations,facile,3,3,select,
 application,fr/applications/ce2/maths/operations/addition-trou,be7e0175,Additions à trou,CE2,maths,operations,moyen,1,10,number-check,additionTrou
 application,fr/applications/ce2/maths/operations/division-simple,f66022f9,Divisions,CE2,maths,operations,moyen,1,10,number-check,divisionSimple
@@ -164,6 +208,7 @@ application,fr/applications/ce2/maths/operations/multiplication-trou,287d6d42,Mu
 application,fr/applications/ce2/maths/operations/perimetre,889f94bd,Périmètres,CE2,maths,operations,moyen,1,10,number-check,perimetreFormes
 application,fr/applications/ce2/maths/operations/pyramides,1111a0d7,Pyramides d'additions,CE2,maths,operations,moyen,1,8,pyramid,pyramideAdditions
 application,fr/applications/ce2/maths/operations/soustraction-trou,71922bac,Soustractions à trou,CE2,maths,operations,moyen,1,10,number-check,soustractionTrou
+exercice,fr/exercices/ce2/maths/operations/addition-ou-multiplication-02,b8e5c920,Addition ou multiplication ? (2),CE2,maths,operations,moyen,10,10,tile-select,
 exercice,fr/exercices/ce2/maths/operations/additions-01,627fefc7,Additions à trois chiffres,CE2,maths,operations,moyen,4,4,number-check,
 exercice,fr/exercices/ce2/maths/operations/pyramides-01,6350695c,Pyramides d'additions CE2,CE2,maths,operations,moyen,4,4,pyramid,
 exercice,fr/exercices/ce2/maths/operations/soustractions-01,89c9330a,Soustractions à trois chiffres,CE2,maths,operations,moyen,4,4,number-check,

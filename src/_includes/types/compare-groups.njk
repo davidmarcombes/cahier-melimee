@@ -1,0 +1,36 @@
+{# Compare groups — scattered emoji grid, click Autant / Plus / Moins #}
+<div x-show="cur.type === 'compare-groups'" class="space-y-6">
+
+  {# Scattered SVG wrapped in a styled container #}
+  <div class="flex justify-center">
+    <div class="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-surface-subtle overflow-hidden"
+         x-html="cur.svgHtml"></div>
+  </div>
+
+  {# Question #}
+  <p class="text-center text-base font-medium text-content-default" x-html="cur.title"></p>
+
+  {# Autant / Plus / Moins tiles #}
+  <div class="flex flex-wrap justify-center gap-4">
+    <template x-for="(label, i) in ['Autant', 'Plus', 'Moins']" :key="i">
+      <button
+        type="button"
+        @click="groupsTap(i)"
+        :disabled="solved"
+        class="px-8 py-4 text-xl font-bold rounded-2xl border-2 transition-all duration-150 select-none active:scale-95"
+        :class="{
+          'border-green-500 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400':
+            solved && i === cur.cmpGroupAnswer,
+          'border-red-400 bg-red-50 dark:bg-red-900/20 text-red-500 animate-bounce':
+            !solved && cmpGroupWrong === i,
+          'opacity-30 cursor-not-allowed border-slate-200 dark:border-slate-700 bg-surface-subtle':
+            solved && i !== cur.cmpGroupAnswer,
+          'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-content-default hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer':
+            !solved && cmpGroupWrong !== i
+        }"
+        x-text="label"
+      ></button>
+    </template>
+  </div>
+
+</div>

@@ -625,3 +625,153 @@ function rulerExerciseSvg(r) {
   }
   return s;
 }
+
+/* Large emoji display for unit-of-measure exercises.
+   Shows the emoji centred, large enough for young children. */
+function objectMeasureSvg(emoji) {
+  return `<svg width="120" height="110" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg">
+    <text x="60" y="90" text-anchor="middle"
+          font-family="system-ui,sans-serif" font-size="80">${emoji}</text>
+  </svg>`;
+}
+
+/* Two-step jump arrow diagram — shows the "pass through the ten" strategy.
+   step1 is always ±10, step2 is the ±1 correction.
+   Uses palette vars: var(--p) for the big jump, var(--a) for the small correction. */
+function jumpArrowSvg(start, step1, step2) {
+  const mid = start + step1;
+  const end = mid + step2;
+  const lbl = (n) => n > 0 ? `+${n}` : `\u2212${Math.abs(n)}`;
+
+  const W = 300, H = 72;
+  // Three node x-centres; leave room for 3-digit numbers
+  const nx = [46, 150, 254];
+  const ny = 54; // number baseline
+  const ay = 32; // arrow y
+
+  const arrow = (x1, x2, label, color) => {
+    const ax = x1 + 22, bx = x2 - 22;
+    const mx = (ax + bx) / 2;
+    return `
+      <line x1="${ax}" y1="${ay}" x2="${bx - 8}" y2="${ay}"
+            stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+      <polygon points="${bx},${ay} ${bx - 9},${ay - 5} ${bx - 9},${ay + 5}" fill="${color}"/>
+      <text x="${mx}" y="${ay - 6}" text-anchor="middle"
+            font-family="system-ui,sans-serif" font-size="13" font-weight="700"
+            fill="${color}">${label}</text>`;
+  };
+
+  const num = (x, val) =>
+    `<text x="${x}" y="${ny}" text-anchor="middle"
+           font-family="system-ui,sans-serif" font-size="22" font-weight="800"
+           fill="var(--ct)">${val}</text>`;
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    ${num(nx[0], start)}
+    ${arrow(nx[0], nx[1], lbl(step1), 'var(--p)')}
+    ${num(nx[1], mid)}
+    ${arrow(nx[1], nx[2], lbl(step2), 'var(--a)')}
+    ${num(nx[2], end)}
+  </svg>`;
+}
+
+/* Balance scale SVG — shows a balanced or tilted two-pan scale.
+   leftItems / rightItems: arrays of values — numbers render as weight blocks,
+   strings render as emoji. Items stack side-by-side on their pan.
+   tilt: 'balanced' (default) | 'left' (left pan lower) | 'right' (right pan lower).
+   Called via  scaleSvg(leftArray, rightArray, tilt).
+   Structural elements use palette vars; weight blocks use fixed dark fill so
+   they look like physical weights in both light and dark modes. */
+function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
+  const W = 380, H = 175;
+
+  const left  = Array.isArray(leftItems)  ? leftItems  : [leftItems];
+  const right = Array.isArray(rightItems) ? rightItems : [rightItems];
+
+  // Tilt offset: positive = that end goes DOWN
+  const TILT = 18;
+  const lOff = tilt === 'left' ? TILT : tilt === 'right' ? -TILT : 0;
+  const rOff = tilt === 'right' ? TILT : tilt === 'left' ? -TILT : 0;
+
+  // Geometry
+  const cx   = W / 2;
+  const beamY = 75;
+  const lx = 78, rx = 302;
+  const rodLen = 40;
+  const panRx = 42, panRy = 10;
+  // Each pan hangs at the bottom of its rod, level regardless of tilt
+  const lPanY = beamY + lOff + rodLen;
+  const rPanY = beamY + rOff + rodLen;
+
+  // Weight block (always dark fill so it reads as a physical weight)
+  const weightW = 30, weightH = 26;
+  const wBlock = (val, x, y) =>
+    `<rect x="${x - weightW / 2}" y="${y - weightH}" width="${weightW}" height="${weightH}" rx="5"
+           fill="#475569" stroke="#1e293b" stroke-width="1"/>
+     <text x="${x}" y="${y - 7}" text-anchor="middle"
+           font-family="system-ui,sans-serif" font-size="12" font-weight="800" fill="white">${val}</text>`;
+
+  // Emoji sitting on pan surface
+  const eBlock = (em, x, y) =>
+    `<text x="${x}" y="${y}" text-anchor="middle"
+           font-family="system-ui,sans-serif" font-size="34">${em}</text>`;
+
+  // Layout items above a pan; items sit directly on the pan surface
+  const renderItems = (items, panX, panY) => {
+    const isNum = (v) => !isNaN(Number(v)) && String(v).trim() !== '';
+    const weights = items.filter(isNum);
+    const emojis  = items.filter((v) => !isNum(v));
+    let s = '';
+    const panTop = panY - panRy;
+
+    if (weights.length > 0) {
+      const gap = 3;
+      const totalW = weights.length * weightW + (weights.length - 1) * gap;
+      weights.forEach((w, i) => {
+        const x = panX - totalW / 2 + weightW / 2 + i * (weightW + gap);
+        s += wBlock(Number(w), x, panTop);
+      });
+    }
+    if (emojis.length > 0) {
+      const emojiBase = weights.length > 0 ? panTop - weightH - 2 : panTop + 2;
+      emojis.forEach((em, i) => {
+        const x = panX + (i - (emojis.length - 1) / 2) * 40;
+        s += eBlock(em, x, emojiBase);
+      });
+    }
+    return s;
+  };
+
+  // Tilted beam: line from (lx, beamY+lOff) to (rx, beamY+rOff)
+  const lBy = beamY + lOff, rBy = beamY + rOff;
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"
+               xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balance">
+    <!-- Central post -->
+    <rect x="${cx - 5}" y="${beamY + 8}" width="10" height="50" rx="3" fill="var(--cs)"/>
+    <!-- Base -->
+    <rect x="${cx - 36}" y="${beamY + 54}" width="72" height="12" rx="5" fill="var(--cs)"/>
+    <!-- Pivot cap -->
+    <circle cx="${cx}" cy="${beamY + 8}" r="8" fill="var(--ct)" opacity="0.7"/>
+    <!-- Beam (tilted) -->
+    <line x1="${lx}" y1="${lBy}" x2="${rx}" y2="${rBy}"
+          stroke="var(--ct)" stroke-width="10" stroke-linecap="round" opacity="0.85"/>
+    <!-- Left rod -->
+    <line x1="${lx}" y1="${lBy}" x2="${lx}" y2="${lPanY - panRy - 1}"
+          stroke="var(--cs)" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Right rod -->
+    <line x1="${rx}" y1="${rBy}" x2="${rx}" y2="${rPanY - panRy - 1}"
+          stroke="var(--cs)" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Left pan -->
+    <ellipse cx="${lx}" cy="${lPanY}" rx="${panRx}" ry="${panRy}" fill="var(--cs)"/>
+    <ellipse cx="${lx}" cy="${lPanY - panRy * 0.4}" rx="${panRx}" ry="${panRy * 0.6}"
+             fill="var(--ct)" opacity="0.15"/>
+    <!-- Right pan -->
+    <ellipse cx="${rx}" cy="${rPanY}" rx="${panRx}" ry="${panRy}" fill="var(--cs)"/>
+    <ellipse cx="${rx}" cy="${rPanY - panRy * 0.4}" rx="${panRx}" ry="${panRy * 0.6}"
+             fill="var(--ct)" opacity="0.15"/>
+    <!-- Items -->
+    ${renderItems(left, lx, lPanY)}
+    ${renderItems(right, rx, rPanY)}
+  </svg>`;
+}
