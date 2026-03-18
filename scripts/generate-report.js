@@ -7,7 +7,7 @@
  *
  * Columns:
  *   kind, path, id, seriesTitle, level, subject, topic, difficulty,
- *   exerciseCount, repeatTotal, types, generators
+ *   exerciseCount, repeatTotal, types, generators, classes
  */
 'use strict';
 const fs = require('fs');
@@ -101,6 +101,7 @@ for (const { dir: scanRoot, kind } of SCAN) {
 
     const types = new Set();
     const generators = new Set();
+    const classes = new Set();
     let repeatTotal = 0;
 
     for (const mdPath of mdFiles) {
@@ -109,6 +110,7 @@ for (const { dir: scanRoot, kind } of SCAN) {
       const t = data.type || 'number-check';
       types.add(t);
       if (data.generator) generators.add(data.generator);
+      if (data.class) classes.add(data.class);
       const repeat = data.repeat ?? 1;
       repeatTotal += repeat;
     }
@@ -126,6 +128,7 @@ for (const { dir: scanRoot, kind } of SCAN) {
       repeatTotal,
       types: [...types].join(' | '),
       generators: [...generators].join(' | '),
+      classes: [...classes].sort().join(' | '),
     });
   }
 }
@@ -160,6 +163,7 @@ const COLUMNS = [
   'repeatTotal',
   'types',
   'generators',
+  'classes',
 ];
 
 const lines = [COLUMNS.join(',')];
@@ -208,6 +212,33 @@ for (const [t, cnt] of Object.entries(byType).sort((a, b) => b[1] - a[1])) {
 // Generator usage
 const genSeries = rows.filter((r) => r.generators).length;
 console.log(`\n${C.cyan}Generator-based series:${C.reset} ${genSeries} / ${rows.length}`);
+
+// Vergnaud class coverage
+const byClass = {};
+for (const r of rows) {
+  for (const cls of r.classes.split(' | ').filter(Boolean)) {
+    byClass[cls] = (byClass[cls] || 0) + 1;
+  }
+}
+const ALL_CODES = [
+  'A1.1','A1.2',
+  'A2.1','A2.2','A2.3','A2.4',
+  'A3.1','A3.2','A3.3',
+  'A4.1','A4.2','A4.3',
+  'M1.1','M1.2','M1.3','M1.4',
+  'M2.1','M2.2','M2.3',
+  'M3.1','M3.2','M3.3','M3.4',
+];
+console.log(`\n${C.cyan}Vergnaud class coverage (series count):${C.reset}`);
+for (const code of ALL_CODES) {
+  const cnt = byClass[code] || 0;
+  const bar = cnt ? `${'█'.repeat(Math.min(cnt, 20))} ${cnt}` : `${C.dim}—${C.reset}`;
+  console.log(`  ${code.padEnd(6)} ${bar}`);
+}
+const uncovered = ALL_CODES.filter((c) => !byClass[c]);
+if (uncovered.length) {
+  console.log(`\n${C.yellow}⚠  Codes with no exercises: ${uncovered.join(', ')}${C.reset}`);
+}
 
 // Missing fields (level/subject/topic are always inferred from path, not checked)
 const missing = rows.filter((r) => !r.id || !r.difficulty);

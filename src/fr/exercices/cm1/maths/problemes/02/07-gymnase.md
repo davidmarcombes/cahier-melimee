@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "M1.1"
 title: "L'inventaire du gymnase"
 answer: "102"
 ---

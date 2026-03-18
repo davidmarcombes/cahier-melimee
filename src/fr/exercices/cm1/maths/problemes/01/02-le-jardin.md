@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "M3.1"
 title: "Le jardin"
 answer: "26"
 ---

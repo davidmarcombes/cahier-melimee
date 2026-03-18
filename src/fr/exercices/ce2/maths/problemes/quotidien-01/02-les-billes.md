@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "A2.2"
 title: "Les billes"
 answer: "37"
 ---

@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "M1.2"
 title: "Les billes de Léa"
 answer: "10"
 ---

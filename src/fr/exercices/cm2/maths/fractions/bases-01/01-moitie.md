@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "M1.2"
 title: "La moitié d'un nombre"
 answer: "6"
 ---

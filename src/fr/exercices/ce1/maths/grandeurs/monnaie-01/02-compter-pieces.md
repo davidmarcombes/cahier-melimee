@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "A1.1"
 title: "Compter des pièces"
 body: |
   J'ai 3 pièces de **1 euro** et 2 pièces de **50 centimes**.

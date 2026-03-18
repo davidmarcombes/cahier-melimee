@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "A3.1"
 title: "Le saut en longueur"
 answer: "25"
 ---

@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "M1.4"
 title: "La recette"
 answer: "400"
 ---

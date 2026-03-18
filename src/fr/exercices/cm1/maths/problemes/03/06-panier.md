@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "A1.1"
 title: "Le poids du panier"
 answer: "2500"
 ---

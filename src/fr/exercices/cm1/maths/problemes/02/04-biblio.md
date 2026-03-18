@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "M1.1"
 title: "La bibliothèque"
 answer: "245"
 ---

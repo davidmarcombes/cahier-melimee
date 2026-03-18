@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "A2.1"
 title: "Les pommes de Léo"
 answer: "5"
 ---

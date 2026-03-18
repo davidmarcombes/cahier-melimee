@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "M1.2"
 title: "Le quart d'un nombre"
 answer: "5"
 ---

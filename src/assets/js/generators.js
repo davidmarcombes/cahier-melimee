@@ -1829,6 +1829,26 @@ const generators = {
     },
   },
 
+  // fractionDuNombre: calcul de moitié / tiers / quart d'un nombre
+  // params: denominators ([2,4]), min (4), max (20)
+  fractionDuNombre: {
+    generate(params = {}) {
+      const NAMES = { 2: 'moitié', 3: 'tiers', 4: 'quart' };
+      const denominators = params.denominators ?? [2, 4];
+      const d = denominators[Math.floor(Math.random() * denominators.length)];
+      const minVal = params.min ?? d * 2;
+      const maxVal = params.max ?? d * 10;
+      const first = Math.ceil(minVal / d) * d;
+      const last  = Math.floor(maxVal / d) * d;
+      const n = first + Math.floor(Math.random() * ((last - first) / d + 1)) * d;
+      return {
+        type: 'number-check',
+        operation: `${NAMES[d] || `1/${d}`} de ${n} = ?`,
+        answers: [String(n / d)],
+      };
+    },
+  },
+
   // grouper10: addition en passant par 10 — &box highlights the pair that makes 10
   // params: maxExtra (9)  — the third addend range (1..maxExtra)
   grouper10: {

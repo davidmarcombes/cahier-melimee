@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "M1.1"
 title: "La pâtisserie"
 answer: "132"
 ---

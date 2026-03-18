@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "A1.1"
 title: "Le bouquet du fleuriste"
 answer: "35"
 ---

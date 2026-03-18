@@ -1,5 +1,6 @@
 ---
 type: problem
+class: "A1.2"
 title: "Les pages du roman"
 answer: "135"
 ---
