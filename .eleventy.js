@@ -135,6 +135,35 @@ module.exports = async function (eleventyConfig) {
     return collectionApi.getFilteredByGlob('src/fr/exercices/**/*.md');
   });
 
+  eleventyConfig.addCollection('defis', function (collectionApi) {
+    return collectionApi.getFilteredByGlob('src/fr/defis/**/*.md');
+  });
+
+  // Timed challenges metadata (parallel to seriesMeta but for src/fr/defis/)
+  eleventyConfig.addCollection('defisMeta', function () {
+    const dir = path.join('src/fr', 'defis');
+    const result = [];
+    for (const yamlPath of findIndexYamls(dir)) {
+      const meta = yaml.load(fs.readFileSync(yamlPath, 'utf8'));
+      if (!meta.id) continue;
+      const seriesDir = path.dirname(yamlPath);
+      const relPath = path.relative(dir, seriesDir).replace(/\\/g, '/');
+      const parts = relPath.split('/');
+      result.push({
+        series:      relPath,
+        id:          meta.id,
+        seriesTitle: meta.seriesTitle || path.basename(seriesDir),
+        level:       (parts[0] || '').toUpperCase(),
+        topic:       parts[1] || '',
+        subtopic:    parts[2] || '',
+        difficulty:  meta.difficulty || '',
+        duration:    meta.duration   ?? 60,
+        folder:      'defis',
+      });
+    }
+    return result;
+  });
+
   // Recursively find all index.yaml files under a directory
   function findIndexYamls(dir) {
     const results = [];
@@ -674,15 +703,16 @@ module.exports = async function (eleventyConfig) {
   const DIFF_CODES = { facile: '1', moyen: '2', difficile: '3' };
   const csvWarnings = [];
 
-  eleventyConfig.addFilter('csvPayload', function (seriesMeta) {
+  eleventyConfig.addFilter('csvPayload', function (seriesMeta, defisMeta) {
     csvWarnings.length = 0;
+    const allMeta = [...seriesMeta, ...(defisMeta || [])];
     const lines = ['id,l,s,t,title,d,f'];
-    for (const s of seriesMeta) {
+    for (const s of allMeta) {
       const l = LEVEL_CODES[s.level] || '?';
       const subj = (s.topic || '').charAt(0).toUpperCase() || '?';
       const t = s.subtopic || '';
       const d = DIFF_CODES[s.difficulty] || '?';
-      const f = s.folder === 'applications' ? 'a' : 'e';
+      const f = s.folder === 'applications' ? 'a' : s.folder === 'defis' ? 'd' : 'e';
       const title = (s.seriesTitle || '').replace(/,/g, ' ');
       if (t.length > 12) csvWarnings.push(`topic > 12 chars: "${t}" in ${s.series}`);
       if (title.includes(',')) csvWarnings.push(`title had comma (replaced): "${s.seriesTitle}" in ${s.series}`);

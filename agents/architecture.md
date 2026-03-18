@@ -47,19 +47,24 @@ project-root/
     ├── css/input.css    # Tailwind entry point + custom prose styles + design-token CSS vars
     ├── assets/          # Images, fonts, JS
     │   └── js/
-    │       ├── app.js        # Alpine components (seriesPlayer, challengePlayer, themeToggle, localStore)
-    │       ├── svg.js        # SVG generation helpers (embedSvg, slicedPieSvg, mathGridSvg, etc.)
-    │       └── generators.js # Exercise generators (single source: Node.js + browser)
+    │       ├── app.js           # Alpine components (seriesPlayer, themeToggle, localStore, exercises store)
+    │       ├── svg.js           # SVG generation helpers (embedSvg, slicedPieSvg, clockSvg, partagerSvg, etc.)
+    │       ├── generators.js    # Exercise generators (single source: Node.js + browser)
+    │       └── timed-player.js  # Alpine component for timed challenges (timedPlayer)
     └── fr/              # French content (only language currently)
         ├── exercices/   # Exercise series (nested: {level}/maths/{topic}/{leaf}/)
         │   ├── exercices.json   # Data cascade (tags, permalink: false)
         │   ├── series-pages.njk # Pagination template
+        │   ├── data.csv.njk     # Generates /fr/exercices/data.csv for the listing page
         │   ├── ce1/maths/       # CE1 exercises
         │   ├── ce2/maths/       # CE2 exercises
         │   ├── cm1/maths/       # CM1 exercises
         │   ├── cm2/maths/       # CM2 exercises
         │   └── cp/maths/        # CP exercises
-        └── applications/ # Generated exercise series (same nested structure)
+        ├── applications/ # Generated exercise series (same nested structure)
+        └── defis/        # Timed challenges (nested: {level}/maths/{topic}/{leaf}/)
+            ├── defi-pages.njk   # Pagination template → layout: timed-player
+            └── ce2/maths/       # CE2 defis (e.g. additions-rapides, tables-multiplication)
 ```
 
 ## Configuration Files

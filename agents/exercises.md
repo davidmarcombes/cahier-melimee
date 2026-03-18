@@ -58,6 +58,43 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
 
+## Timed Challenges (Défis)
+
+Timed challenges live under `src/fr/defis/` (same nested structure as `exercices/`). They use a separate layout and Alpine component designed for fluency practice.
+
+### Structure
+
+Each défi series has the same `index.yaml` as a regular series **plus** a required `duration` field (seconds):
+
+```yaml
+id: "a2b3c4d5"
+seriesTitle: "Tables de multiplication"
+difficulty: moyen
+duration: 90
+```
+
+The exercise `.md` files are identical to exercises — most defis use `generator:` with `repeat:` for fresh numbers each session.
+
+### Layout & Component
+
+- Layout: `src/_layouts/timed-player.njk` — 3-phase UI: ready → playing → done
+- Component: `src/assets/js/timed-player.js` — `timedPlayer(exercises, seriesId, opts)`
+  - Expands `_gen` placeholders at runtime via `window.AppGenerators`
+  - Shuffles the pool, advances instantly on correct answer (120ms flash) or after brief err flash (380ms)
+  - Countdown timer bar (green → amber → red); score report with rate/min stat
+
+### Collections & CSV
+
+- `collections.defis` — Eleventy collection of all `*.md` under `src/fr/defis/`
+- `collections.defisMeta` — structured metadata like `seriesMeta` but adds `duration`; folder code `'d'`
+- `defi-pages.njk` — pagination template generating pages at `/fr/defis/{id}/`
+- Defis are included in `data.csv` with folder code `d`; `FOLDERS` map in `app.js` resolves `d` → `defis`
+- Cards in the exercise listing show a ⏱ badge when `s.isDefi === true`
+
+### Validation
+
+`scripts/validate-exercises.js` validates defis like exercises and additionally checks that `duration` is present in each `index.yaml`.
+
 ## SVG Snippets
 
 SVG files in `src/_includes/svg/` are embedded at build time using the `gen: file` pattern (see below). They use CSS custom properties with hardcoded fallbacks for standalone preview.

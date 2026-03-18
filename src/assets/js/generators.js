@@ -88,6 +88,100 @@ const generators = {
     },
   },
 
+  sommesCibles: {
+    generate: (params = {}) => {
+      const target       = params.target       ?? 1000;
+      const step         = params.step         ?? 100;
+      const correctCount = params.correctCount ?? 3;
+      const count        = params.count        ?? 8;
+
+      const shuffle = (arr) => {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) { const j = rand(0, i); [a[i], a[j]] = [a[j], a[i]]; }
+        return a;
+      };
+      const mkKey = (a, b) => `${Math.min(a, b)}+${Math.max(a, b)}`;
+      const used = new Set();
+
+      // Correct pairs: a + b = target, both multiples of step
+      const corrects = [];
+      for (let attempts = 0; corrects.length < correctCount && attempts < 200; attempts++) {
+        const lo = step, hi = target - step;
+        const slots = Math.floor((hi - lo) / step) + 1;
+        if (slots < 1) break;
+        const a = lo + rand(0, slots - 1) * step;
+        const b = target - a;
+        if (b <= 0) continue;
+        const key = mkKey(a, b);
+        if (used.has(key)) continue;
+        used.add(key);
+        corrects.push([a, b]);
+      }
+
+      // Incorrect pairs: sum ≠ target, same visual style
+      const incorrects = [];
+      for (let attempts = 0; incorrects.length < count - correctCount && attempts < 400; attempts++) {
+        let a, b;
+        if (step === 1) {
+          // Arbitrary numbers: take valid pair and shift one addend by ±(1..50)
+          const base = rand(Math.ceil(target * 0.1), Math.floor(target * 0.9));
+          const offset = rand(1, Math.max(1, Math.floor(target * 0.05))) * (rand(0, 1) ? 1 : -1);
+          a = base;
+          b = target - base + offset; // a + b = target + offset ≠ target
+        } else {
+          const maxSteps = Math.floor(target / step / 3);
+          const delta = rand(1, Math.max(1, maxSteps)) * step * (rand(0, 1) ? 1 : -1);
+          const fake = target + delta;
+          if (fake < step * 2) continue;
+          const lo2 = step, hi2 = fake - step;
+          if (hi2 < lo2) continue;
+          const slots2 = Math.floor((hi2 - lo2) / step) + 1;
+          a = lo2 + rand(0, slots2 - 1) * step;
+          b = fake - a;
+          if (b <= 0) continue;
+        }
+        if (a <= 0 || b <= 0) continue;
+        if (a + b === target) continue;
+        const key = mkKey(a, b);
+        if (used.has(key)) continue;
+        used.add(key);
+        incorrects.push([a, b]);
+      }
+
+      const all = shuffle([
+        ...corrects.map(p => ({ p, ok: true })),
+        ...incorrects.map(p => ({ p, ok: false })),
+      ]);
+
+      const fmt = n => n.toLocaleString('fr-FR');
+      return {
+        type: 'tile-select',
+        tiles: all.map(({ p }) => `${fmt(p[0])} + ${fmt(p[1])}`),
+        tileAnswers: all.map(({ ok }, i) => ok ? i : -1).filter(i => i !== -1),
+        body: `Sélectionne toutes les cases dont le résultat est <strong>${fmt(target)}</strong>.`,
+      };
+    },
+  },
+
+  partagerEquitable: {
+    generate: (params = {}) => {
+      const EMOJIS = ['🍎', '🍬', '🏀', '⭐', '🌸', '🎈', '🍓', '🐣', '🌼', '🍕'];
+      const emoji = EMOJIS[rand(0, EMOJIS.length - 1)];
+      const parts = rand(params.minParts ?? 2, params.maxParts ?? 4);
+      const q = rand(params.minQ ?? 2, params.maxQ ?? 6);
+      const total = parts * q;
+      const opTerms = Array(parts).fill('?').join(' + ');
+      const answers = Array(parts).fill(String(q));
+      return {
+        type: 'number-check',
+        svg: { gen: 'partagerSvg', par: { emoji, total, parts } },
+        operation: `${opTerms} = ${total}`,
+        answers,
+        body: `<p class="text-xl mt-2">${parts} × ...... = ${total}</p>`,
+      };
+    },
+  },
+
   divisionSimple: {
     generate: (params = {}) => {
       const b = rand(params.minDivisor ?? 2, params.maxDivisor ?? 5);
@@ -238,9 +332,20 @@ const generators = {
   complementNombre: {
     generate: (params = {}) => {
       const target = params.target ?? 10 ** rand(1, 4);
-      const num = rand(1, target - 1);
+      const step   = params.step ?? 1;
+      const min    = params.min ?? step;
+      const max    = params.max ?? target - step;
+      const slots  = Math.floor((max - min) / step) + 1;
+      const num    = min + rand(0, slots - 1) * step;
       const complement = target - num;
-      return { type: 'number-check', operation: num, answers: [String(complement)] };
+      const fmt = n => n.toLocaleString('fr-FR');
+      const side = params.side === 'random'
+        ? (rand(0, 1) ? 'right' : 'left')
+        : (params.side ?? 'right');
+      const op = side === 'right'
+        ? `${fmt(num)} + ? = ${fmt(target)}`
+        : `? + ${fmt(num)} = ${fmt(target)}`;
+      return { type: 'number-check', operation: op, answers: [String(complement)] };
     },
   },
 
@@ -1107,6 +1212,59 @@ const generators = {
     },
   },
 
+  // Matching: mini clock SVGs (left) ↔ French time labels (right)
+  // params: step (5/15/30), pairs (default 4), clockSize (default 72)
+  lireHeureMatching: {
+    generate(params = {}) {
+      const step      = params.step      ?? 5;
+      const pairCount = params.pairs     ?? 4;
+      const size      = params.clockSize ?? 72;
+
+      const toFrench = (h, m) => {
+        const h12   = h % 12 || 12;
+        const hNext = (h12 % 12) + 1;
+        const after = { 5:'cinq', 10:'dix', 15:'et quart', 20:'vingt', 25:'vingt-cinq', 30:'et demie' };
+        const before = { 35:'vingt-cinq', 40:'vingt', 45:'le quart', 50:'dix', 55:'cinq' };
+        if (m === 0)  return `${h12}h pile`;
+        if (m <= 30)  return `${h12}h ${after[m]}`;
+        return `${hNext}h moins ${before[m]}`;
+      };
+
+      // Build pool of all (h, m) slots and pick pairCount unique ones
+      const slotsPerHour = 60 / step;
+      const total = 12 * slotsPerHour;
+      const indices = Array.from({ length: total }, (_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = rand(0, i);
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      const chosen = indices.slice(0, pairCount).map(idx => ({
+        h: Math.floor(idx / slotsPerHour) + 1,
+        m: (idx % slotsPerHour) * step,
+      }));
+
+      // Shuffle right side independently
+      const labels = chosen.map(({ h, m }) => toFrench(h, m));
+      const rightOrder = Array.from({ length: pairCount }, (_, i) => i);
+      for (let i = rightOrder.length - 1; i > 0; i--) {
+        const j = rand(0, i);
+        [rightOrder[i], rightOrder[j]] = [rightOrder[j], rightOrder[i]];
+      }
+
+      // answers[leftIdx] = rightIdx (position in shuffled right array)
+      const answers = chosen.map((_, li) => rightOrder.indexOf(li));
+
+      return {
+        type: 'matching',
+        pairs: {
+          left:    chosen.map(({ h, m }) => clockSvg(h, m, size)),
+          right:   rightOrder.map(ri => labels[ri]),
+          answers,
+        },
+      };
+    },
+  },
+
   // MCQ: compare two volumes expressed in different units
   // params: level ('moyen' | 'difficile'), equalProb (0.2)
   // moyen     — pairs among mL/cL/dL/L
@@ -1896,6 +2054,410 @@ const generators = {
         operation: `${start} \u2212 ${op} = ?`,
         answers: [String(start - op)],
         svg: { gen: 'jumpArrowSvg', par: { start, step1: -10, step2 } },
+      };
+    },
+  },
+
+  // comparaisonNombres: compare numbers written in standard and/or CDU (centaines-dizaines-unités) form
+  // params: min (100), max (999), pairs (5), style ('standard'|'cdu'|'mixed')
+  comparaisonNombres: {
+    generate(params = {}) {
+      const min   = params.min   ?? 100;
+      const max   = params.max   ?? 999;
+      const pairs = params.pairs ?? 5;
+      const style = params.style ?? 'mixed';
+
+      // Convert integer to CDU notation, always showing all positions for the range
+      const toCDU = (n) => {
+        const c = Math.floor(n / 100);
+        const d = Math.floor((n % 100) / 10);
+        const u = n % 10;
+        if (max >= 100) return `${c}c${d}d${u}u`;
+        if (max >= 10)  return `${d}d${u}u`;
+        return `${u}u`;
+      };
+
+      const rand = () => min + Math.floor(Math.random() * (max - min + 1));
+
+      // Generate a tricky pair: same number of digits, close in value
+      const makePair = () => {
+        const a = rand();
+        let b;
+        const roll = Math.random();
+        if (roll < 0.25) {
+          b = a; // equal
+        } else if (roll < 0.6) {
+          // Same hundreds, differ only in tens/units
+          const base = Math.floor(a / 100) * 100;
+          b = base + Math.floor(Math.random() * 100);
+          b = Math.max(min, Math.min(max, b));
+        } else {
+          b = rand();
+        }
+        return [a, b];
+      };
+
+      const fmt = (n, forceCDU) => forceCDU ? toCDU(n) : String(n);
+
+      const comparisons = Array.from({ length: pairs }, () => {
+        const [a, b] = makePair();
+        let left, right;
+
+        if (style === 'standard') {
+          left = fmt(a, false); right = fmt(b, false);
+        } else if (style === 'cdu') {
+          // CDU vs CDU: identical pairs are trivial, so force b ≠ a
+          if (a === b) b = a === max ? a - 1 : a + 1;
+          left = fmt(a, true); right = fmt(b, true);
+        } else {
+          // mixed: equal pairs are the key learning moment (standard = CDU)
+          // unequal pairs: randomly mix standard/CDU on each side
+          if (a === b) {
+            left = fmt(a, false); right = fmt(b, true); // always standard = CDU
+          } else {
+            const r = Math.random();
+            left  = fmt(a, r < 0.4);
+            right = fmt(b, r >= 0.4 && r < 0.8);
+          }
+        }
+
+        const answer = a > b ? '>' : a < b ? '<' : '=';
+        return { left, right, answer };
+      });
+
+      return {
+        type: 'compare',
+        title: 'Compare les nombres en écrivant &gt;, &lt; ou =.',
+        comparisons,
+      };
+    },
+  },
+
+  // chiffrePlaceValeur: show a number, ask for the digit at a given place
+  // params: maxNum (999), places (array of 0-based position indices, 0=unités)
+  chiffrePlaceValeur: {
+    generate(params = {}) {
+      const NAMES = ['unités', 'dizaines', 'centaines', 'milliers',
+                     'dizaines de milliers', 'centaines de milliers'];
+      const places = params.places ?? [0, 1, 2];
+      const maxNum = params.maxNum ?? 999;
+
+      // Pick a random place to test
+      const pos = places[Math.floor(Math.random() * places.length)];
+
+      // Ensure the number has enough digits for this place (≥ 10^pos)
+      const minNum = Math.pow(10, pos);
+      const number = minNum + Math.floor(Math.random() * (maxNum - minNum + 1));
+
+      const digit = Math.floor(number / Math.pow(10, pos)) % 10;
+
+      // French-style thousands separator (narrow no-break space)
+      const formatted = number.toLocaleString('fr-FR');
+
+      return {
+        type: 'number-check',
+        title: `Dans <strong>${formatted}</strong>, quel est le chiffre des <strong>${NAMES[pos]}</strong>&nbsp;?`,
+        operation: '?',
+        answers: [String(digit)],
+        svg: { gen: 'placeValueSvg', par: { number, pos } },
+      };
+    },
+  },
+
+  // multiplicationsDirectes: a × round-number = ? (no decomposition hint)
+  // params: powers (array, default [10,100,1000]), aMin (2), aMax (9), bMin (2), bMax (9)
+  multiplicationsDirectes: {
+    generate(params = {}) {
+      const powers = params.powers ?? [10, 100, 1000];
+      const aMin   = params.aMin   ?? 2;
+      const aMax   = params.aMax   ?? 9;
+      const bMin   = params.bMin   ?? 2;
+      const bMax   = params.bMax   ?? 9;
+      const r = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+
+      const power  = powers[Math.floor(Math.random() * powers.length)];
+      const a      = r(aMin, aMax);
+      const b      = r(bMin, bMax);
+      const zeroes = '0'.repeat(Math.log10(power));
+
+      return {
+        type: 'number-check',
+        title: 'Calcule directement.',
+        operation: `${a} × ${b}${zeroes} = ?`,
+        answers: [String(a * b * power)],
+      };
+    },
+  },
+
+  // multiplicationsEtapes: step-by-step ×10/×100/×1000 decomposition
+  // params: power (10|100|1000), aMin (2), aMax (9), bMin (2), bMax (9)
+  multiplicationsEtapes: {
+    generate(params = {}) {
+      const power  = params.power  ?? 10;
+      const aMin   = params.aMin   ?? 2;
+      const aMax   = params.aMax   ?? 9;
+      const bMin   = params.bMin   ?? 2;
+      const bMax   = params.bMax   ?? 9;
+      const r = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+
+      const a = r(aMin, aMax);
+      const b = r(bMin, bMax);
+      const zeroes  = '0'.repeat(Math.log10(power));
+      const product = a * b;
+      const result  = product * power;
+
+      return {
+        type: 'number-check',
+        title: 'Calcule étape par étape.',
+        operation: `${a} × ${b}${zeroes} = &box(${a} × ${b}) × ${power} = ? × ${power} = ?`,
+        answers: [String(product), String(result)],
+      };
+    },
+  },
+
+  // multDecimales: decimal × power-of-10 (CM1)
+  // params: powers (array), maxDec (0-3 decimal places in input), wholeMax (99)
+  // Uses integer arithmetic to avoid floating-point drift.
+  multDecimales: {
+    generate(params = {}) {
+      const powers  = params.powers  ?? [10, 100, 1000];
+      const maxDec  = params.maxDec  ?? 2;
+      const wholeMax = params.wholeMax ?? 99;
+
+      const power = powers[rand(0, powers.length - 1)];
+      const pExp  = Math.round(Math.log10(power)); // 1-4
+      const d     = rand(0, maxDec);               // decimal places in input
+
+      // Whole part
+      const whole = rand(1, wholeMax);
+
+      // Decimal part: d digits, last digit non-zero (no trailing zero)
+      let decStr = '';
+      if (d > 0) {
+        for (let i = 0; i < d - 1; i++) decStr += rand(0, 9);
+        decStr += rand(1, 9);
+      }
+
+      // Mantissa = whole * 10^d + parseInt(decStr)
+      const decNum   = d > 0 ? parseInt(decStr, 10) : 0;
+      const mantissa = whole * Math.pow(10, d) + decNum;
+
+      // result = mantissa × 10^(pExp-d)  [pure integer arithmetic]
+      const shift = pExp - d;
+      const fmtFr = n => n.toLocaleString('fr-FR');
+
+      let resultStr;
+      if (shift >= 0) {
+        resultStr = fmtFr(mantissa * Math.pow(10, shift));
+      } else {
+        const absShift = -shift;
+        const s = String(mantissa).padStart(absShift + 1, '0');
+        const intPart = s.slice(0, -absShift);
+        const decPart = s.slice(-absShift).replace(/0+$/, '');
+        resultStr = decPart ? `${fmtFr(parseInt(intPart, 10))},${decPart}` : fmtFr(parseInt(intPart, 10));
+      }
+
+      const inputStr = d === 0 ? String(whole) : `${whole},${decStr}`;
+      return {
+        type: 'number-check',
+        operation: `${inputStr} × ${fmtFr(power)} = ?`,
+        answers: [resultStr],
+      };
+    },
+  },
+
+  // divDecimales: decimal ÷ power-of-10 (CM1) — twin of multDecimales
+  // Generate the RESULT first (nice decimal), compute dividend = result × power.
+  // params: powers, maxDec (decimal places in result), wholeMin (0), wholeMax (99)
+  divDecimales: {
+    generate(params = {}) {
+      const powers   = params.powers   ?? [10, 100, 1000];
+      const maxDec   = params.maxDec   ?? 1;
+      const wholeMin = params.wholeMin ?? 1;
+      const wholeMax = params.wholeMax ?? 99;
+
+      const power = powers[rand(0, powers.length - 1)];
+      const pExp  = Math.round(Math.log10(power)); // 1-4
+      const d     = rand(0, maxDec); // decimal places in RESULT
+
+      const whole = rand(wholeMin, wholeMax);
+      let decStr = '';
+      if (d > 0) {
+        for (let i = 0; i < d - 1; i++) decStr += rand(0, 9);
+        decStr += rand(1, 9); // no trailing zero
+      }
+
+      const decNum   = d > 0 ? parseInt(decStr, 10) : 0;
+      const mantissa = whole * Math.pow(10, d) + decNum; // result as integer × 10^d
+
+      // dividend = result × power = mantissa × 10^(pExp-d)
+      const shift = pExp - d;
+      const fmtFr = n => n.toLocaleString('fr-FR');
+
+      // Format RESULT (what student must find)
+      const resultStr = d === 0 ? String(whole) : `${whole},${decStr}`;
+
+      // Format DIVIDEND
+      let dividendStr;
+      if (shift >= 0) {
+        dividendStr = fmtFr(mantissa * Math.pow(10, shift));
+      } else {
+        const abs = -shift;
+        const s = String(mantissa).padStart(abs + 1, '0');
+        const intPart = s.slice(0, -abs);
+        const decPart = s.slice(-abs).replace(/0+$/, '');
+        dividendStr = decPart
+          ? `${fmtFr(parseInt(intPart, 10))},${decPart}`
+          : fmtFr(parseInt(intPart, 10));
+      }
+
+      return {
+        type: 'number-check',
+        operation: `${dividendStr} \u00f7 ${fmtFr(power)} = ?`,
+        answers: [resultStr],
+      };
+    },
+  },
+
+  // multDivTrou: mixed ×/÷ powers-of-10 with randomised hole position (CM1)
+  // Variants:
+  //   mult_result  —  a × p = ?        (find result)
+  //   mult_input   —  ? × p = r        (find input)
+  //   div_result   —  r ÷ p = ?        (find result = input)
+  //   div_power    —  a × ? = r  or  r ÷ ? = a  (find the power)
+  // params: powers, maxDec, wholeMin, wholeMax, variants (array of hole types)
+  multDivTrou: {
+    generate(params = {}) {
+      const powers   = params.powers   ?? [10, 100, 1000];
+      const maxDec   = params.maxDec   ?? 2;
+      const wholeMin = params.wholeMin ?? 1;
+      const wholeMax = params.wholeMax ?? 99;
+      const variants = params.variants ?? ['mult_input', 'div_result', 'div_power'];
+
+      const power = powers[rand(0, powers.length - 1)];
+      const pExp  = Math.round(Math.log10(power));
+      const d     = rand(0, maxDec);
+      const whole = rand(wholeMin, wholeMax);
+
+      let decStr = '';
+      if (d > 0) {
+        for (let i = 0; i < d - 1; i++) decStr += rand(0, 9);
+        decStr += rand(1, 9);
+      }
+
+      const decNum   = d > 0 ? parseInt(decStr, 10) : 0;
+      const mantissa = whole * Math.pow(10, d) + decNum;
+      const shift    = pExp - d;
+      const fmtFr    = n => n.toLocaleString('fr-FR');
+
+      const inputStr = d === 0 ? String(whole) : `${whole},${decStr}`;
+
+      let resultStr;
+      if (shift >= 0) {
+        resultStr = fmtFr(mantissa * Math.pow(10, shift));
+      } else {
+        const abs = -shift;
+        const s = String(mantissa).padStart(abs + 1, '0');
+        const intPart = s.slice(0, -abs);
+        const decPart = s.slice(-abs).replace(/0+$/, '');
+        resultStr = decPart
+          ? `${fmtFr(parseInt(intPart, 10))},${decPart}`
+          : fmtFr(parseInt(intPart, 10));
+      }
+
+      const powerStr = fmtFr(power);
+      const v = variants[rand(0, variants.length - 1)];
+
+      let operation, answers;
+      if (v === 'mult_result') {
+        operation = `${inputStr} × ${powerStr} = ?`;
+        answers   = [resultStr];
+      } else if (v === 'mult_input') {
+        operation = `? × ${powerStr} = ${resultStr}`;
+        answers   = [inputStr];
+      } else if (v === 'div_result') {
+        operation = `${resultStr} \u00f7 ${powerStr} = ?`;
+        answers   = [inputStr];
+      } else {
+        // div_power: randomly show as × or ÷ form
+        const asMult = rand(0, 1);
+        operation = asMult
+          ? `${inputStr} × ? = ${resultStr}`
+          : `${resultStr} \u00f7 ? = ${inputStr}`;
+        answers = [String(power), powerStr];
+      }
+
+      return { type: 'number-check', operation, answers };
+    },
+  },
+
+  // tableauProportion: proportionality table — 2 rows × (label + 3 values), 2 blanks in row 2.
+  // Coefficient stored as num/den (integer fraction) to avoid float drift.
+  // params: den (1=integer, 2=half, 4=quarter), numMin, numMax, xMax, anchorAtStart
+  tableauProportion: {
+    generate(params = {}) {
+      const CONTEXTS = [
+        { row1: 'Crêpes',     row2: 'Œufs' },
+        { row1: 'Huile (L)',  row2: 'Prix (€)' },
+        { row1: 'Cahiers',   row2: 'Prix (€)' },
+        { row1: 'Baguettes', row2: 'Prix (€)' },
+        { row1: 'Farine (kg)', row2: 'Prix (€)' },
+        { row1: 'Livres',    row2: 'Prix (€)' },
+        { row1: 'Boîtes',    row2: 'Stylos' },
+        { row1: 'Mètres',    row2: 'Prix (€)' },
+        { row1: 'Litres',    row2: 'Prix (€)' },
+        { row1: 'km',        row2: 'Essence (L)' },
+      ];
+      const ctx = CONTEXTS[rand(0, CONTEXTS.length - 1)];
+
+      const den    = params.den    ?? 1;
+      const numMin = params.numMin ?? 2 * den + 1; // ensure coeff > 1 and fractional
+      const numMax = params.numMax ?? 9 * den;
+      const xMax   = params.xMax   ?? 12;
+
+      // Pick num not divisible by den so the fraction doesn't reduce to integer
+      let num;
+      do { num = rand(numMin, numMax); } while (den > 1 && num % den === 0);
+
+      // x values: always include 1; x2 and x3 are multiples of den (ensures anchor is integer)
+      const x2slots = Math.floor((xMax - den) / den);
+      const x2 = den + rand(0, Math.max(0, x2slots - 1)) * den;
+      const x3 = x2 + den * rand(1, Math.max(1, Math.floor((xMax - x2) / den)));
+      const xs = [1, x2, x3];
+
+      // y = x * num / den  (exact integer arithmetic when x is multiple of den)
+      const computeY = (x) => {
+        const raw = x * num;
+        if (raw % den === 0) return String(raw / den);
+        // Render as decimal with comma
+        const dec = raw % den;
+        const intPart = (raw - dec) / den;
+        // Express remainder as decimal: dec/den rounded to 2 places
+        const frac = Math.round(dec / den * 100) / 100;
+        const combined = intPart + frac;
+        return String(Math.round(combined * 100) / 100).replace('.', ',');
+      };
+      const ys = xs.map(computeY);
+
+      // Anchor NOT at x=1 (position 0) by default — forces ratio calculation
+      const anchorIdx = params.anchorAtStart ? rand(0, 2) : rand(1, 2);
+
+      let blankIdx = 0;
+      const yRow = ys.map((y, i) =>
+        i === anchorIdx ? { value: y } : { blank: true, idx: blankIdx++, answer: y }
+      );
+
+      return {
+        type: 'fill-table',
+        table: {
+          headerCol: true,
+          inputClass: 'w-16',
+          blankCount: 2,
+          rows: [
+            [{ value: ctx.row1 }, ...xs.map(x => ({ value: String(x) }))],
+            [{ value: ctx.row2 }, ...yRow],
+          ],
+        },
       };
     },
   },

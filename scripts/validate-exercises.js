@@ -186,9 +186,10 @@ const errors = [];
 let seriesCount = 0;
 let exerciseCount = 0;
 const dirs = ['src/fr/exercices', 'src/fr/applications'];
+const defiDirs = ['src/fr/defis'];
 
 // First: flag any series folder missing index.yaml
-for (const dir of dirs) {
+for (const dir of [...dirs, ...defiDirs]) {
   for (const orphan of findOrphanedSeriesDirs(dir)) {
     const rel = path.relative(process.cwd(), orphan).replace(/\\/g, '/');
     errors.push(`${rel}: missing index.yaml`);
@@ -202,6 +203,24 @@ for (const dir of dirs) {
     seriesCount++;
     const mdCount = validateSeries(seriesDir, errors);
     if (mdCount) exerciseCount += mdCount;
+  }
+}
+
+// Validate defis — same as exercises plus require "duration"
+for (const dir of defiDirs) {
+  const indexFiles = findFiles(dir, 'index.yaml');
+  for (const indexFile of indexFiles) {
+    const seriesDir = path.dirname(indexFile);
+    seriesCount++;
+    const mdCount = validateSeries(seriesDir, errors);
+    if (mdCount) exerciseCount += mdCount;
+    // Extra: duration is required for timed challenges
+    const rel = path.relative(process.cwd(), seriesDir).replace(/\\/g, '/');
+    let meta;
+    try { meta = yaml.load(fs.readFileSync(indexFile, 'utf8')); } catch { meta = null; }
+    if (meta && meta.duration == null) {
+      errors.push(`${rel}/index.yaml: missing "duration" (required for timed challenges)`);
+    }
   }
 }
 

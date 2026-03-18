@@ -626,13 +626,121 @@ function rulerExerciseSvg(r) {
   return s;
 }
 
+/* Place-value grid — highlights the target column in amber.
+   number: integer, pos: 0-based index from the right (0=units, 1=tens, …).
+   Labels use French abbreviations: U D C M DM CM. */
+function placeValueSvg(number, pos) {
+  const digits = String(number).split('').map(Number);
+  const n = digits.length;
+  const LABELS = ['U', 'D', 'C', 'M', 'DM', 'CM'];
+
+  const cw = 52, rh = 44, gap = 3;
+  const W = n * (cw + gap) + gap;
+  const H = 2 * (rh + gap) + gap;
+
+  let s = '';
+  for (let i = 0; i < n; i++) {
+    const pfr = n - 1 - i;       // position from right
+    const hl  = pfr === pos;
+    const x   = gap + i * (cw + gap);
+    const y1  = gap;
+    const y2  = gap + rh + gap;
+
+    // Label cell
+    s += `<rect x="${x}" y="${y1}" width="${cw}" height="${rh}" rx="6"
+               fill="${hl ? 'var(--a)' : 'var(--sc)'}"/>
+          <text x="${x + cw / 2}" y="${y1 + rh - 11}" text-anchor="middle"
+                font-family="system-ui,sans-serif" font-size="15" font-weight="800"
+                fill="${hl ? '#fff' : 'var(--cs)'}">${LABELS[pfr] || '?'}</text>`;
+
+    // Digit cell
+    s += `<rect x="${x}" y="${y2}" width="${cw}" height="${rh}" rx="6"
+               fill="var(--sf)" stroke="${hl ? 'var(--a)' : 'var(--cs)'}"
+               stroke-width="${hl ? 2.5 : 1}"/>
+          <text x="${x + cw / 2}" y="${y2 + rh - 9}" text-anchor="middle"
+                font-family="system-ui,sans-serif" font-size="26" font-weight="800"
+                fill="${hl ? 'var(--a)' : 'var(--ct)'}">${digits[i]}</text>`;
+  }
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"
+               xmlns="http://www.w3.org/2000/svg">
+    ${s}
+  </svg>`;
+}
+
 /* Large emoji display for unit-of-measure exercises.
    Shows the emoji centred, large enough for young children. */
+/* Minimal analog clock — circle + two hands, no numbers, no tick marks.
+   Designed for compact use in matching exercises (size ≈ 72–80px).
+   hour: 1-12, minute: 0-59, size: px (default 72).
+   Hand colors follow palette: hour = var(--ct), minute = var(--p). */
+function clockSvg(hour, minute, size = 72) {
+  const cx = size / 2, cy = size / 2, r = size / 2 - 2;
+  const toXY = (deg, len) => {
+    const rad = (deg - 90) * Math.PI / 180;
+    return [+(cx + Math.cos(rad) * len).toFixed(2), +(cy + Math.sin(rad) * len).toFixed(2)];
+  };
+  const hAngle = ((hour % 12) + minute / 60) * 30;
+  const mAngle = minute * 6;
+  const [hx, hy] = toXY(hAngle, r * 0.55);
+  const [mx, my] = toXY(mAngle, r * 0.82);
+  const hw = +(size / 14).toFixed(1);
+  const mw = +(size / 22).toFixed(1);
+  const pr = +(size / 18).toFixed(1);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">` +
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--sf)" stroke="var(--ct)" stroke-width="1.5"/>` +
+    `<line x1="${cx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="var(--ct)" stroke-width="${hw}" stroke-linecap="round"/>` +
+    `<line x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}" stroke="var(--p)" stroke-width="${mw}" stroke-linecap="round"/>` +
+    `<circle cx="${cx}" cy="${cy}" r="${pr}" fill="var(--ct)"/>` +
+    `</svg>`;
+}
+
 function objectMeasureSvg(emoji) {
   return `<svg width="120" height="110" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg">
     <text x="60" y="90" text-anchor="middle"
           font-family="system-ui,sans-serif" font-size="80">${emoji}</text>
   </svg>`;
+}
+
+/* Sharing diagram — emoji grid (rows=parts, cols=quotient) + partition rectangle.
+   Conveys "fair sharing": each row is one share, rectangle shows the structure.
+   parts: divisor (number of shares), total: dividend, emoji: item to share. */
+function partagerSvg(emoji, total, parts) {
+  const q = total / parts;
+  const ITEM = 22, CGAP = 6, RGAP = 8, GPAD = 10;
+  const cols = q, rows = parts;
+  const gridW = cols * (ITEM + CGAP) - CGAP + GPAD * 2;
+  const gridH = rows * (ITEM + RGAP) - RGAP + GPAD * 2;
+
+  // Partition rectangle: top cell = total, bottom row = parts blank cells
+  const CW = Math.max(44, Math.round(gridW / parts)), CH = 36, SW = 1.5;
+  const rectW = parts * CW, rectH = CH * 2;
+
+  const MID = 24;
+  const W = gridW + MID + rectW;
+  const H = Math.max(gridH, rectH);
+  const gridY = (H - gridH) / 2;
+  const rectX = gridW + MID;
+  const rectY = (H - rectH) / 2;
+
+  let g = '';
+  // Emoji grid
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const x = GPAD + c * (ITEM + CGAP) + ITEM / 2;
+      const y = gridY + GPAD + r * (ITEM + RGAP) + ITEM / 2 + 7;
+      g += `<text x="${x}" y="${y}" text-anchor="middle" font-size="${ITEM}" font-family="system-ui,sans-serif">${emoji}</text>`;
+    }
+  }
+  // Top cell
+  g += `<rect x="${rectX}" y="${rectY}" width="${rectW}" height="${CH}" fill="var(--sf)" stroke="var(--ct)" stroke-width="${SW}"/>`;
+  g += `<text x="${rectX + rectW / 2}" y="${rectY + CH / 2 + 7}" text-anchor="middle" font-size="18" font-weight="bold" font-family="system-ui,sans-serif" fill="var(--ct)">${total}</text>`;
+  // Bottom cells
+  for (let i = 0; i < parts; i++) {
+    g += `<rect x="${rectX + i * CW}" y="${rectY + CH}" width="${CW}" height="${CH}" fill="var(--sf)" stroke="var(--ct)" stroke-width="${SW}"/>`;
+  }
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${g}</svg>`;
 }
 
 /* Two-step jump arrow diagram — shows the "pass through the ten" strategy.

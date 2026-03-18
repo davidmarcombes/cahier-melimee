@@ -454,8 +454,9 @@ function seriesPlayer(exercises, seriesId) {
         (this.cur.table?.rows || []).forEach((row) =>
           row.forEach((cell) => {
             if (cell.blank) {
-              const u = this.tableInputs[cell.idx].replace(',', '.').trim();
-              const a = cell.answer.replace(',', '.').trim();
+              const normT = s => s.replace(',', '.').replace(/[\s\u00a0\u202f]/g, '').trim();
+              const u = normT(this.tableInputs[cell.idx]);
+              const a = normT(cell.answer);
               if (u !== a) errors.push(cell.idx);
             }
           })
@@ -834,14 +835,14 @@ function seriesPlayer(exercises, seriesId) {
           return;
         }
         let isCorrect;
+        const norm = (s) => s.trim().toLowerCase().replace(/,/g, '.').replace(/[\s\u00a0\u202f]/g, '');
         if (this.trouInputs.length === 1) {
           // Single blank: answers are alternatives
-          const input = this.trouInputs[0].trim().toLowerCase().replace(/,/g, '.');
-          isCorrect = (this.cur.answers || []).some((a) => a.replace(/,/g, '.') === input);
+          isCorrect = (this.cur.answers || []).some((a) => norm(a) === norm(this.trouInputs[0]));
         } else {
           // Multi-blank: answers are positional
           isCorrect = this.trouInputs.every(
-            (v, i) => v.trim().toLowerCase().replace(/,/g, '.') === (this.cur.answers[i] || '').replace(/,/g, '.')
+            (v, i) => norm(v) === norm(this.cur.answers[i] || '')
           );
         }
         if (isCorrect) {
@@ -1229,7 +1230,7 @@ function seriesPlayer(exercises, seriesId) {
 document.addEventListener('alpine:init', () => {
   const LEVELS = { 1: 'CP', 2: 'CE1', 3: 'CE2', 4: 'CM1', 5: 'CM2' };
   const DIFFS = { 1: 'facile', 2: 'moyen', 3: 'difficile' };
-  const FOLDERS = { e: 'exercices', a: 'applications' };
+  const FOLDERS = { e: 'exercices', a: 'applications', d: 'defis' };
 
   Alpine.store('exercises', {
     data: null,
@@ -1279,6 +1280,7 @@ document.addEventListener('alpine:init', () => {
               topic: t,
               title,
               difficulty: DIFFS[d] || d,
+              isDefi: f === 'd',
               seriesUrl: (window.__pathPrefix || '/') + 'fr/' + (FOLDERS[f] || 'exercices') + '/' + id + '/',
             };
           });

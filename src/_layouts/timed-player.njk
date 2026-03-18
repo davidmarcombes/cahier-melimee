@@ -1,0 +1,157 @@
+---
+layout: base
+isSeriesPage: true
+---
+<script src="{{ '/assets/js/svg.js' | url }}"></script>
+<script src="{{ '/assets/js/generators.js' | url }}"></script>
+<script src="{{ '/assets/js/timed-player.js' | url }}"></script>
+
+{% set exercises = collections.defis | seriesExercises(series) %}
+
+<div
+  x-data='timedPlayer({{ exercises | seriesPayload | safe }}, "{{ id }}", { duration: {{ duration or 60 }} })'
+  x-cloak
+  class="max-w-xl mx-auto py-8 px-4"
+>
+
+  {# ── READY SCREEN ───────────────────────────────────── #}
+  <div x-show="phase === 'ready'" class="flex flex-col items-center justify-center min-h-[60vh] text-center gap-6">
+    <a href="/fr/" class="self-start text-slate-400 hover:text-primary-500 transition-colors" aria-label="Retour">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <div class="text-7xl select-none">⏱️</div>
+    <h1 class="text-3xl font-black text-content-default">{{ seriesTitle }}</h1>
+    <p class="text-content-subtle text-lg">
+      Tu as <strong>{{ duration or 60 }} secondes</strong> pour répondre à un maximum de questions.
+    </p>
+    <button
+      @click="start()"
+      class="px-10 py-4 bg-primary-500 text-white text-xl font-black rounded-2xl shadow-lg shadow-primary-500/30 hover:bg-primary-600 active:scale-95 transition-all"
+    >
+      C'est parti !
+    </button>
+  </div>
+
+  {# ── PLAYING SCREEN ─────────────────────────────────── #}
+  <div x-show="phase === 'playing'" class="flex flex-col gap-6">
+
+    {# Timer bar #}
+    <div class="relative h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+      <div
+        class="absolute inset-y-0 left-0 rounded-full transition-all duration-1000"
+        :class="timerClass"
+        :style="'width:' + timerPct + '%'"
+      ></div>
+    </div>
+
+    {# Stats row #}
+    <div class="flex items-center justify-between text-sm font-semibold">
+      <span class="text-green-600 dark:text-green-400" x-text="correct + ' ✓'"></span>
+      <span
+        class="text-2xl font-black tabular-nums"
+        :class="timeLeft <= 10 ? 'text-red-500 animate-pulse' : 'text-content-default'"
+        x-text="timeLeft + 's'"
+      ></span>
+      <span class="text-content-subtle" x-text="attempted + ' tentatives'"></span>
+    </div>
+
+    {# Question card #}
+    <div
+      class="rounded-2xl border-4 transition-colors duration-75 p-8 text-center"
+      :class="{
+        'border-green-400 bg-green-50 dark:bg-green-900/20': flashState === 'ok',
+        'border-red-400 bg-red-50 dark:bg-red-900/20':       flashState === 'err',
+        'border-slate-200 dark:border-slate-700 bg-surface-subtle': !flashState
+      }"
+    >
+      <div
+        class="text-4xl sm:text-5xl font-black text-content-default tracking-wide"
+        x-html="opHtml"
+      ></div>
+    </div>
+
+    {# Answer input #}
+    <input
+      type="text"
+      inputmode="numeric"
+      x-ref="input"
+      x-model="userInput"
+      @keydown.enter="check()"
+      :disabled="flashState !== null"
+      placeholder="?"
+      autocomplete="off"
+      class="w-full px-4 py-4 text-3xl text-center font-black border-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
+             bg-white dark:bg-slate-800 text-content-default"
+      :class="{
+        'border-green-400': flashState === 'ok',
+        'border-red-400':   flashState === 'err',
+        'border-primary-300 dark:border-primary-600': !flashState
+      }"
+    />
+
+    {# Validate button (mobile) #}
+    <button
+      type="button"
+      @click="check()"
+      :disabled="!userInput.trim() || flashState !== null"
+      class="w-full py-3 text-lg font-bold rounded-xl transition-all active:scale-95
+             bg-primary-500 text-white hover:bg-primary-600 shadow-md
+             disabled:opacity-30 disabled:cursor-not-allowed"
+    >
+      Valider
+    </button>
+  </div>
+
+  {# ── DONE SCREEN ────────────────────────────────────── #}
+  <div x-show="phase === 'done'" class="flex flex-col items-center text-center gap-5">
+
+    <div class="text-7xl select-none mt-4" x-text="scoreEmoji"></div>
+
+    <div>
+      <div class="text-5xl font-black text-content-default" x-text="correct + ' / ' + attempted"></div>
+      <div class="text-content-subtle mt-1">bonnes réponses</div>
+    </div>
+
+    {# Score bar #}
+    <div class="w-full max-w-xs">
+      <div class="flex justify-between text-sm text-content-subtle mb-1">
+        <span x-text="scorePct + '%'"></span>
+        <span x-text="ratePerMin + ' bonnes/min'"></span>
+      </div>
+      <div class="h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+        <div
+          class="h-full rounded-full transition-all duration-700"
+          :class="scorePct >= 90 ? 'bg-green-500' : scorePct >= 60 ? 'bg-primary-500' : 'bg-amber-500'"
+          :style="'width:' + scorePct + '%'"
+        ></div>
+      </div>
+    </div>
+
+    {# Breakdown #}
+    <div class="w-full max-w-xs grid grid-cols-3 gap-2 text-center">
+      <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-3">
+        <div class="text-2xl font-black text-green-600 dark:text-green-400" x-text="correct"></div>
+        <div class="text-xs text-content-subtle mt-0.5">correctes</div>
+      </div>
+      <div class="bg-red-50 dark:bg-red-900/20 rounded-xl p-3">
+        <div class="text-2xl font-black text-red-500" x-text="attempted - correct"></div>
+        <div class="text-xs text-content-subtle mt-0.5">erreurs</div>
+      </div>
+      <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+        <div class="text-2xl font-black text-content-default" x-text="totalTime + 's'"></div>
+        <div class="text-xs text-content-subtle mt-0.5">durée</div>
+      </div>
+    </div>
+
+    <button
+      @click="restart()"
+      class="w-full max-w-xs px-6 py-3 bg-primary-500 text-white font-bold rounded-2xl shadow-lg shadow-primary-500/20 hover:bg-primary-600 active:scale-95 transition-all"
+    >
+      Rejouer
+    </button>
+    <a href="/fr/" class="text-content-subtle hover:text-primary-500 transition-colors text-sm">
+      Retour à l'accueil
+    </a>
+  </div>
+
+</div>

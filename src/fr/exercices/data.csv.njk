@@ -2,4 +2,4 @@
 permalink: /fr/exercices/data.csv
 eleventyExcludeFromCollections: true
 ---
-{{ collections.seriesMeta | csvPayload | safe }}
+{{ collections.seriesMeta | csvPayload(collections.defisMeta) | safe }}

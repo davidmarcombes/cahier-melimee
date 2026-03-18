@@ -88,7 +88,10 @@ layout: base
           <a :href="s.seriesUrl" :title="s.title + ' - Niveau ' + s.level + ' - Difficult&#233; ' + s.difficulty" class="block p-3 bg-surface-subtle rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-md transition-all group">
             <div class="flex justify-between items-start gap-2 mb-1">
               <h2 class="text-sm font-extrabold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400 leading-tight line-clamp-1" x-text="s.title"></h2>
-              <span class="text-xs shrink-0" x-text="s.difficulty === 'difficile' ? '&#x1F41E;' : s.difficulty === 'moyen' ? '&#x1F41D;' : '&#x1F997;'"></span>
+              <div class="flex items-center gap-1 shrink-0">
+                <span x-show="s.isDefi" class="text-xs" title="Défi chronométré">&#x23F1;&#xFE0F;</span>
+                <span class="text-xs" x-text="s.difficulty === 'difficile' ? '&#x1F41E;' : s.difficulty === 'moyen' ? '&#x1F41D;' : '&#x1F997;'"></span>
+              </div>
             </div>
             <div class="flex items-center gap-1.5 text-[11px] text-content-subtle">
               <span class="font-bold text-primary-600 dark:text-primary-400 uppercase shrink-0" x-text="s.level"></span>

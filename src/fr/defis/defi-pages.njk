@@ -1,0 +1,19 @@
+---
+pagination:
+  data: collections.defisMeta
+  size: 1
+  alias: s
+layout: timed-player
+tags: []
+permalink: "/fr/defis/{{ s.id }}/"
+eleventyComputed:
+  series: "{{ s.series }}"
+  seriesTitle: "{{ s.seriesTitle }}"
+  folder: "defis"
+  level: "{{ s.level }}"
+  topic: "{{ s.topic }}"
+  subtopic: "{{ s.subtopic }}"
+  difficulty: "{{ s.difficulty }}"
+  duration: "{{ s.duration }}"
+  id: "{{ s.id }}"
+---
