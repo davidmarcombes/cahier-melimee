@@ -75,7 +75,23 @@
       "Bash(mv /tmp/test-index.yaml src/fr/applications/ce1/maths/numeration/blocs-valeur-position-01/index.yaml)",
       "Bash(npx cspell:*)",
       "Bash(sed -n '160,185p' /home/david/Code/web/cahier-melimee/src/assets/js/app.js)",
-      "Bash(sed -n '780,820p' /home/david/Code/web/cahier-melimee/src/assets/js/app.js)"
+      "Bash(sed -n '780,820p' /home/david/Code/web/cahier-melimee/src/assets/js/app.js)",
+      "Bash(tr '|' '\\\\n')",
+      "WebSearch",
+      "WebFetch(domain:ent2d.ac-bordeaux.fr)",
+      "WebFetch(domain:fr.ixl.com)",
+      "WebFetch(domain:soutien67.fr)",
+      "WebFetch(domain:maitresseowl.fr)",
+      "WebFetch(domain:laclassedemallory.net)",
+      "WebFetch(domain:www.classeetgrimaces.fr)",
+      "WebFetch(domain:pedagogie.ac-toulouse.fr)",
+      "WebFetch(domain:mathovore.fr)",
+      "WebFetch(domain:ressources.sesamath.net)",
+      "WebFetch(domain:maitrelucas.fr)",
+      "WebFetch(domain:www.education.gouv.fr)",
+      "WebFetch(domain:prim76.ac-normandie.fr)",
+      "WebFetch(domain:www.enseignants.hachette-education.com)",
+      "WebFetch(domain:mespetitesrevues.com)"
     ]
   }
 }

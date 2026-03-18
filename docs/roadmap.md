@@ -322,12 +322,52 @@ Le niveau CM2 est **le plus sous-représenté** (26 séries vs 79–120 pour les
 
 ### Types à créer (ou adapter)
 
-| Type potentiel | Description | Usage |
-|---------------|-------------|-------|
-| **`number-line`** | Placer un nombre sur une droite graduée (drag ou click) | CP→CM2 (fractions, décimaux) |
-| **`grid-locate`** | Placer/lire des coordonnées sur un quadrillage | CE1→CM2 |
-| **`angle-draw`** | Reconnaître/classer des angles (visuel) | CE2→CM2 — difficile |
-| **`word-sort`** | Trier des expressions textuelles (vocab géo) | CE1→CM1 |
+> Mis à jour 2026-03-18 après comparaison avec les fiches publiques françaises (Pass-Éducation, Bout de Gomme, Lutin Bazar, MathALÉA, Soutien67, Mathia…).
+
+#### Haute priorité — formats universels absents
+
+| Type potentiel | Description | Niveaux | Notes |
+|---------------|-------------|---------|-------|
+| **`number-line`** | Placer un nombre sur une droite graduée (mode lecture : lire la valeur d'un point marqué ; mode placement : positionner un nombre donné). Supports : entiers, décimaux, fractions. Graduations fixes ou cachées (estimation). | CP→CM2 | Format le plus fréquent sur les fiches papier après le calcul posé. Remplace avantageusement beaucoup de `ruler` statiques. MathALÉA en fait un usage intensif. |
+| **`coordinate-grid`** | Cliquer pour poser un point à des coordonnées données, ou lire les coordonnées d'un point existant. Extension : tracer un déplacement pas-à-pas (3 droite, 2 haut). | CE2→CM2 | Compétence géométrique de cycle 3 peu couverte. Variante « repérage sur plan » (CE2). |
+| **`bar-chart`** | Diagramme en bâtons interactif : soit lire des valeurs depuis un graphique donné (questions `multi-question`), soit construire — faire glisser les barres à la bonne hauteur depuis une table de données. | CE1→CM2 | Traitement de données au programme dès CE1. Absent de la plateforme, difficile à couvrir avec les types actuels. |
+
+#### Priorité moyenne — formats courants, implémentation maîtrisable
+
+| Type potentiel | Description | Niveaux | Notes |
+|---------------|-------------|---------|-------|
+| **`calendar`** | Afficher un calendrier mensuel et poser des questions : quel jour est le 15 ? Combien de lundis ? Quelle date dans 3 semaines ? Durée entre deux dates. | CE1→CM2 | Très présent sur fiches papier. Distinct de `clock`. Format simple à rendre sous forme SVG + `mcq`. |
+| **`decomp-tree`** | Arbre de décomposition descendant : un nombre en racine, deux branches montrant la décomposition (ex. 14 → 10 + 4). Certains nœuds sont blancs. Différent de `pyramid` (ascendant/addition) et `base-10` (blocs). | CP→CE2 | Utilisé pour les liens numériques (number bonds) dès CP. Très fréquent sur les fiches bout-de-gomme / lutin-bazar. |
+| **`calc-chain`** | Chaîne de calcul horizontal : `47 + 8 = 47 + 3 + __ = __ + 5 = __`. L'élève complète les cases intermédiaires d'une stratégie de calcul réfléchi (passage par la dizaine, décomposition). | CE1→CM2 | Pédagogie *calcul réfléchi* — non couverte par aucun type existant. |
+
+#### Basse priorité — niche ou partiellement couvrable autrement
+
+| Type potentiel | Description | Niveaux | Notes |
+|---------------|-------------|---------|-------|
+| **`money-pick`** | Cliquer sur des pièces et billets pour former une somme donnée. Variante : calculer la monnaie rendue. | CE1→CE2 | Les problèmes de monnaie fonctionnent en `problem` ; le format interactif « sélecteur de pièces » est plus engageant mais non prioritaire. |
+| **`pie-chart`** | Diagramme circulaire SVG avec secteurs étiquetés + questions de lecture (quelle fraction ? quelle catégorie est la plus grande ?). | CM1→CM2 | Peut être approximé avec `multi-question` + SVG statique pour l'instant. |
+| **`protractor`** | Rapporteur virtuel : mesurer un angle affiché ou classifier (aigu / droit / obtus / plat). | CM1→CM2 | La classification peut utiliser `mcq` ou `tile-select` ; la mesure interactive est coûteuse à développer. |
+| **`grid-locate`** | *(Ancien nom de `coordinate-grid` ci-dessus — unifié.)* | — | — |
+| **`angle-draw`** | Reconnaître/classer des angles (visuel) | CE2→CM2 | Cas d'usage partiel couvert par `mcq` + SVG statique. |
+| **`word-sort`** | Trier des expressions textuelles (vocab géo) | CE1→CM1 | `drag-sort` avec items texte couvre déjà ce besoin. |
+
+---
+
+## Domaines de contenu absents (analyse comparative)
+
+> Comparaison effectuée le 2026-03-18 contre les fiches publiques françaises et les plateformes numériques (MathALÉA, Pass-Éducation, Bout de Gomme, Lutin Bazar, Mathia).
+
+Ces lacunes sont **thématiques** — le format peut exister mais le contenu manque entièrement.
+
+| Domaine | Programme | Niveaux | État | Remarque |
+|---------|-----------|---------|------|----------|
+| **Traitement de données** — lecture de diagrammes en bâtons, tally tables, tableaux de fréquences | Cycle 2–3 | CE1→CM2 | ❌ quasi absent | Quelques `fill-table` de proportionnalité, mais aucun diagramme statistique |
+| **Repérage sur quadrillage / plan** | Cycle 3 | CE2→CM2 | ❌ absent | Mentionné dans les gaps géométrie de chaque niveau mais aucune série créée |
+| **Calendrier — lecture et calcul** | Cycle 2 | CE1→CM2 | ❌ absent | `clock` couvre l'heure ; les exercices calendrier (jours, semaines, mois, dates) n'existent pas |
+| **Suites logiques figurales** | Cycle 2 | CP→CE2 | ❌ absent | `sequence` gère les suites numériques ; les suites de figures géométriques / couleurs n'existent pas |
+| **Calcul réfléchi — stratégies explicites** | Cycle 2–3 | CE1→CM2 | ⚠️ partiel | Le calcul mental est exercé (`number-check`), mais les stratégies (passage par la dizaine, décomposition) ne sont jamais rendues explicites |
+| **Données CM2** — diagrammes circulaires, graphiques à double entrée | Cycle 3 | CM2 | ❌ absent | Fortement au programme CM2 |
+| **CM2 global** | Cycle 3 | CM2 | ❌ très lacunaire | 14 séries exercices vs 87 en CM1 — écart critique |
 
 ---
 
