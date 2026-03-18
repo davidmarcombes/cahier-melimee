@@ -32,8 +32,8 @@
 | **Tables d'addition (0→9)** | ⚠️ | Tables 1–5 manquantes individuellement (CE1 les a) |
 | **Compléments à 10** | ✅ | number-check |
 | **Doubles et moitiés** | ✅ | — |
-| **Additions posées sans/avec retenue** | ❌ | `column-op` à créer pour CP |
-| **Soustractions posées** | ❌ | `column-op` à créer pour CP |
+| **Additions posées sans/avec retenue** | ✅ | `pose-addition-01` + `pose-addition-02` |
+| **Soustractions posées** | ❌ | `column-op` à créer pour CP (non prioritaire) |
 | Additions/soustractions à trou | ✅ | — |
 | **Approche multiplication (addition réitérée)** | ⚠️ | 1 série intro seulement |
 
@@ -41,9 +41,9 @@
 
 | Thème programme | État | Manque / À faire |
 |----------------|------|-----------------|
-| **Longueurs (règle, comparer)** | ❌ | `ruler` + `convert` simples |
-| **Durées et dates** | ❌ | `matching` h/min/s simples |
-| **Température (thermomètre)** | ❌ | `number-check` ou `ruler` |
+| **Longueurs (règle, comparer)** | ✅ | `longueurs-01` (ruler + mcq) |
+| **Durées et dates** | ✅ | `durees-01` (mcq + matching) |
+| **Température (thermomètre)** | ✅ | `temperature-01` (ruler + matching + mcq) |
 
 ### Géométrie
 
@@ -67,8 +67,8 @@
 | Comparer/ordonner jusqu'à 1 000 | ✅ | — |
 | Suites | ✅ | — |
 | Tables d'addition complètes (1→11) | ✅ | — |
-| Additions posées | ⚠️ | `column-op` facile manque |
-| Soustractions posées | ⚠️ | `column-op` facile manque |
+| Additions posées | ✅ | `pose-addition-01` (3 chiffres) |
+| Soustractions posées | ✅ | `pose-soustraction-01` |
 | Additions/soustractions à trou | ✅ | — |
 | **Tables de multiplication 1→5** | ✅ | — |
 | **Multiplier par multiple de 10** | ⚠️ | 1 série seulement |
@@ -378,20 +378,25 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 1. ~~**CM2 complet**~~ — ⏳ traité ultérieurement (voir section CM2 ci-dessus)
 
 2. **Problèmes Vergnaud** — 20/23 codes couverts ✅ ; reste A4.2 (CM1), A4.3 et M3.4 (CM2)
-   - Prochain : A4.2 CE2/CM1 (composition de transformations avec bilan)
-   - Renforcer A2.4 CE2 (2e série — type le plus difficile pour les élèves)
-   - Ajouter A3.1 CE1 (comparaison → écart, manque encore à ce niveau)
+   - ~~Prochain : A4.2 CE2/CM1 (composition de transformations avec bilan)~~ ✅ CE2 créé (5 séries)
+   - ~~Renforcer A2.4 CE2 (2e série — type le plus difficile pour les élèves)~~ ✅ `transformation-etat-initial-03` non-congruente (5 exercices, 2026-03-18)
+   - ~~Ajouter A3.1 CE1 (comparaison → écart, manque encore à ce niveau)~~ ✅ `comparaison-ecart-02` CE1 (5 exercices, 2026-03-18)
 
-3. **Fractions CE2** — ✅ 4 séries créées (fraction-du-nombre, fractions-collection, fractions-comparer)
-   - Reste : parties d'un groupe, lire/écrire en chiffres
+3. **Fractions CE2** — ✅ 6 séries créées
+   - ~~Reste : parties d'un groupe~~ ✅ `fractions-parties-groupe-01` (5 exercices, 2026-03-18)
+   - ~~lire/écrire en chiffres~~ ✅ `ecrire-fraction-01` (5 exercices, 2026-03-18)
 
 ### Priorité moyenne
 
-4. **CP mesures** — longueurs (ruler), durées (matching simple), température
-5. **CP/CE1 additions posées** — `column-op` sans/avec retenue
-6. **CE2 résolution de problèmes** — choix de l'opération
-7. **CM1/CM2 additionner/soustraire fractions** — `fraction-check` ou `number-check`
-8. **CM2 proportionnalité complète** — fill-table + problem
+4. ~~**CP mesures** — longueurs (ruler), durées (matching simple), température~~ ✅ 3 séries créées 2026-03-18
+5. ~~**CP/CE1 additions posées** — `column-op` sans/avec retenue~~ ✅ 4 séries créées 2026-03-18
+   - CP `pose-addition-01` (sans retenue, 5 ex) + `pose-addition-02` (avec retenue, 5 ex)
+   - CE1 `pose-addition-01` (3 chiffres, 5 ex) + `pose-soustraction-01` (5 ex)
+6. ~~**CE2 résolution de problèmes** — choix de l'opération~~ ✅ `choix-operation-01` (5 ex : 3 select + 2 multi-question, 2026-03-18)
+7. ~~**CM1/CM2 additionner/soustraire fractions** — `fraction-check` ou `number-check`~~ ✅ 2026-03-18
+   - CM1 `operations-fractions-01` (5 ex, même dénominateur)
+   - CM2 `operations-fractions-01` (5 ex, résultats > 1 inclus)
+8. ~~**CM2 proportionnalité complète** — fill-table + problem~~ ✅ `proportionnalite-02` (5 ex : 2 fill-table + 3 problem, 2026-03-18)
 
 ---
 
@@ -409,12 +414,12 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 | **A2.1** | Transformation + → Ef | 3 | CP, CE1, CM1 |
 | **A2.2** | Transformation − → Ef | 5 | CP, CE1, CE2, CM2 |
 | **A2.3** | Transformation → T inconnu | 3 | CE1, CE2, CM1 |
-| **A2.4** | Transformation → Ei inconnu | 3 | CE2, CM1 |
+| **A2.4** | Transformation → Ei inconnu | 4 | CE2 (×3, dont non-congruente), CM1 |
 | **A3.1** | Comparaison → Écart | 4 | CP, CE1, CE2, CM1 |
 | **A3.2** | Comparaison → État comparé | 4 | CE1 (×2), CE2 (dont 1 non-congruent) |
 | **A3.3** | Comparaison → Référent | 3 | CE2, CM1 (dont 1 non-congruent) |
 | **A4.1** | Bilan de 2 variations | 1 | CM1 |
-| **A4.2** | Transformation composée → bilan | 1 | CM1 |
+| **A4.2** | Transformation composée → bilan | 2 | CM1, CE2 |
 | A4.3 | Transformation composée → T inconnu | 0 | ❌ (CM2) |
 | **M1.1** | Multiplication directe | 6 | CE1→CM2 |
 | **M1.2** | Division-Partage | 4 | CE1, CE2, CM1, CM2 |
@@ -442,7 +447,7 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 | A3.3 non-congruent CE2 (série 2) | A3.3 | CE2 | Renforcer avec formulation piège |
 | A2.4 non-congruent CM1 (série 2) | A2.4 | CM1 | Variante difficile — inversion nécessaire |
 | M2.2 CE2 (intro) | M2.2 | CE2 | Transition naturelle depuis M2.1 CE2 |
-| A4.2 CE2 (intro) | A4.2 | CE2 | A4 introduit au CM1, enrichir CE2 |
+| ~~A4.2 CE2 (intro)~~ ✅ | A4.2 | CE2 | 5 exercices créés 2026-03-18 |
 
 ### Observations
 
