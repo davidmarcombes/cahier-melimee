@@ -21,6 +21,7 @@ All available commands (run `npm run help` for a live list):
 | `npm test` | Run vitest test suite |
 | `npm run test:watch` | Run vitest in watch mode |
 | `npm run validate:exercises` | Validate exercise YAML front-matter against type schemas |
+| `npm run validate:llm` | LLM-powered answer checker (requires Ollama — see `agents/ollama.md`) |
 | `npm run validate:html` | Run html-validate on all `_site/**/*.html` files |
 | `npm run validate` | Validate project configuration files |
 | `npm run lint` | Run ESLint + Prettier checks |
@@ -74,6 +75,7 @@ All scripts are in `scripts/`. Key files:
 |--------|---------|
 | `generate-tailwind-from-tokens.js` | Reads `design-tokens.json`, generates `tailwind.config.js` and CSS var block in `input.css`. Contains `varAliases` map for short CSS var names. |
 | `validate-exercises.js` | Validates all exercise `.md` front-matter against `TYPE_SCHEMAS`. Run via `npm run validate:exercises`. |
+| `validate-llm.js` | LLM-powered answer validator using local Ollama. Caches results in `validate-llm-cache.csv` by file hash. See `agents/ollama.md` for setup. |
 | `generate-report.js` | Produces `exercises-report.csv` for quick exercise lookup. |
 | `generate-maths-ex.js` | Interactive CLI for scaffolding new exercises. Has `TYPE_CHOICES` and `TEMPLATES`. |
 | `generate-ids.js` | Assigns 8-char hex IDs to series `index.yaml` files missing an `id`. |

@@ -94,7 +94,13 @@
       "WebFetch(domain:mespetitesrevues.com)",
       "Bash(sort find /home/david/Code/web/cahier-melimee/src/fr/exercices/cp/maths/grandeurs -name \"*.md\")",
       "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/cp/maths/numeration/regle-graduee-01/01-entier-3.md cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce1/maths/grandeurs/durees-01/01*.md)",
-      "Bash(for id:*)"
+      "Bash(for id:*)",
+      "Bash(while read:*)",
+      "Bash(node -e \"require\\(''''./scripts/validate-llm.js''''\\)\")",
+      "Bash(mkdir -p .scratch)",
+      "Bash(mv exercises-report.csv reports/)",
+      "Bash(mv scripts/validate-llm-cache.csv reports/)",
+      "Bash(mv scripts/validate-llm-errors.md .scratch/)"
     ]
   }
 }

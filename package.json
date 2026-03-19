@@ -18,6 +18,8 @@
     "test:watch": "vitest",
     "build": "npm run test && npm run validate:exercises && npm run tokens && eleventy && npm run build:css && npm run validate:html",
     "validate:html": "html-validate \"_site/**/*.html\"",
+    "validate:llm": "node scripts/validate-llm.js",
+    "validate:llm:smoke": "node scripts/validate-llm.js --one --verbose",
     "compress": "node scripts/compress.js",
     "build:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --minify",
     "clean": "node -e \"const fs=require('fs');fs.rmSync('_site',{recursive:true,force:true});console.log('Cleaned _site/')\"",

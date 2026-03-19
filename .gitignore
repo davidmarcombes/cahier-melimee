@@ -63,7 +63,7 @@ coverage/
 *.tmp
 *.temp
 .tmp/
-agents/.scrap/
+.scratch/
 
 # Debug
 debug/

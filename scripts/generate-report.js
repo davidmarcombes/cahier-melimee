@@ -20,9 +20,10 @@ const ROOT = path.resolve(__dirname, '..');
 const SCAN = [
   { dir: path.join(ROOT, 'src/fr/exercices'), kind: 'exercice' },
   { dir: path.join(ROOT, 'src/fr/applications'), kind: 'application' },
+  { dir: path.join(ROOT, 'src/fr/defis'), kind: 'defi' },
 ];
 const outputArg = process.argv.find((a) => a.startsWith('--output='));
-const OUTPUT = outputArg ? path.resolve(outputArg.split('=')[1]) : path.join(ROOT, 'exercises-report.csv');
+const OUTPUT = outputArg ? path.resolve(outputArg.split('=')[1]) : path.join(ROOT, 'reports/exercises-report.csv');
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
