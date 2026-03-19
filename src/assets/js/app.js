@@ -135,6 +135,10 @@ function seriesPlayer(exercises, seriesId) {
     nlVal: null,
     cgInputs: ['', ''],
     cgPoint: null,
+    bcValues: [],
+    bcErrors: [],
+    bcInputs: [],
+    bcSolved: [],
 
     /* Fraction Helpers */
     get fractionShapes() {
@@ -180,6 +184,15 @@ function seriesPlayer(exercises, seriesId) {
     get numberLineSvg() {
       if (this.cur.type !== 'number-line' || !this.cur.nl) return '';
       return numberLineSvg(this.cur.nl);
+    },
+
+    /* Bar-chart Y axis values — from yMax down to yStep (one entry per clickable cell row) */
+    get bcYRange() {
+      if (!this.cur || !this.cur.bc) return [];
+      const { yMax, yStep } = this.cur.bc;
+      const steps = [];
+      for (let v = yMax; v >= yStep; v -= yStep) steps.push(v);
+      return steps;
     },
 
     get nlMarkerSvg() {
@@ -271,6 +284,13 @@ function seriesPlayer(exercises, seriesId) {
       }
       if (this.cur.denominator && this.cur.type === 'fraction-paint') {
         this.paintCells = Array(this.cur.denominator).fill(false);
+      }
+      if (this.cur.bc) {
+        const _bc = this.cur.bc;
+        this.bcValues = _bc.mode === 'build' ? _bc.labels.map(() => 0) : [..._bc.values];
+        this.bcErrors = [];
+        this.bcInputs = (_bc.questions || []).map(() => '');
+        this.bcSolved = (_bc.questions || []).map(() => false);
       }
       const _focusFirst = () => {
         let ref;
@@ -483,6 +503,25 @@ function seriesPlayer(exercises, seriesId) {
     },
 
     check() {
+      if (this.cur.type === 'bar-chart' && this.cur.bc && this.cur.bc.mode === 'build') {
+        if (this.solved) return;
+        const errors = this.cur.bc.values
+          .map((v, i) => (this.bcValues[i] !== v ? i : -1))
+          .filter(i => i >= 0);
+        if (errors.length === 0) {
+          this.solvedFlags[this.currentIndex] = true;
+          this.showError = false;
+          this.bcErrors = [];
+          if (this.currentIndex < this.exercises.length - 1) {
+            setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+          }
+        } else {
+          this.bcErrors = errors;
+          this.showError = true;
+          setTimeout(() => { this.showError = false; this.bcErrors = []; }, 2000);
+        }
+        return;
+      }
       if (this.cur.type === 'drag-sort') {
         if (this.solved) return;
         if (this._dragErrTimer) {
@@ -1194,6 +1233,36 @@ function seriesPlayer(exercises, seriesId) {
       }
     },
 
+    barChartSetValue(colIdx, val) {
+      if (this.solved) return;
+      const newVal = this.bcValues[colIdx] === val ? 0 : val;
+      this.bcValues = this.bcValues.map((v, i) => i === colIdx ? newVal : v);
+      this.bcErrors = this.bcErrors.filter(e => e !== colIdx);
+    },
+
+    bcCheck(i) {
+      if (!this.cur.bc || !this.cur.bc.questions) return;
+      const q = this.cur.bc.questions[i];
+      if (!q || this.bcSolved[i]) return;
+      const input = (this.bcInputs[i] || '').trim().toLowerCase().replace(/,/g, '.');
+      const answer = q.answer.replace(/,/g, '.');
+      if (input === answer) {
+        this.bcSolved = this.bcSolved.map((v, j) => j === i ? true : v);
+        this.bcErrors = this.bcErrors.filter(e => e !== i);
+        if (this.bcSolved.every(Boolean)) {
+          this.solvedFlags[this.currentIndex] = true;
+          if (this.currentIndex < this.exercises.length - 1) {
+            setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+          }
+        }
+      } else {
+        if (!this.bcErrors.includes(i)) {
+          this.bcErrors = [...this.bcErrors, i];
+        }
+        setTimeout(() => { this.bcErrors = this.bcErrors.filter(e => e !== i); }, 2000);
+      }
+    },
+
     updateMatchLines() {
       this._matchLinesSvg = this.matchConnections
         .map((c) => {
@@ -1350,6 +1419,17 @@ function seriesPlayer(exercises, seriesId) {
         this._dragErrTimer = null;
       }
       this.dragErrors = [];
+      if (_e.bc) {
+        this.bcValues = _e.bc.mode === 'build' ? _e.bc.labels.map(() => 0) : [..._e.bc.values];
+        this.bcErrors = [];
+        this.bcInputs = (_e.bc.questions || []).map(() => '');
+        this.bcSolved = (_e.bc.questions || []).map(() => false);
+      } else {
+        this.bcValues = [];
+        this.bcErrors = [];
+        this.bcInputs = [];
+        this.bcSolved = [];
+      }
       window.location.hash = '#' + (idx + 1);
     },
 

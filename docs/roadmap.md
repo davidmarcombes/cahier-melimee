@@ -1,6 +1,6 @@
 # Roadmap — Couverture du programme CP→CM2
 
-> Généré le 2026-03-19. Sources : `docs/maths_*.md` (programme officiel) × `exercises-report.csv` (ce qui existe).
+> Généré le 2026-03-19. Mis à jour le 2026-03-19 (4). Sources : `docs/maths_*.md` (programme officiel) × `exercises-report.csv` (ce qui existe).
 > Légende : ✅ couvert · ⚠️ partiel · ❌ absent · 🔥 priorité haute
 
 ---
@@ -9,10 +9,10 @@
 
 | Niveau | Séries actuelles | Santé globale | Priorité |
 |--------|-----------------|---------------|----------|
-| CP     | 50              | ✅ bon socle | Soustractions posées (non prioritaire) |
-| CE1    | 94              | ✅ complet | — |
-| CE2    | 132             | ✅ le plus complet | — |
-| CM1    | 133             | ✅ très complet | Division posée 2 chiffres (variété) |
+| CP     | 52              | ✅ bon socle | Soustractions posées (non prioritaire) |
+| CE1    | 96              | ✅ complet | — |
+| CE2    | 133             | ✅ le plus complet | — |
+| CM1    | 132             | ✅ très complet | — |
 | CM2    | 28              | ❌ très lacunaire | ⏳ traité ultérieurement |
 
 ---
@@ -29,7 +29,7 @@
 | Comparer / ordonner | ✅ | compare, drag-sort |
 | Suites de nombres | ✅ | sequence |
 | Arrondir à la dizaine | ✅ | — |
-| **Tables d'addition (0→9)** | ⚠️ | Tables 1–5 manquantes individuellement (CE1 les a) |
+| **Tables d'addition (0→9)** | ✅ | `tables-addition-01` (tables 1–5, 2026-03-19) |
 | **Compléments à 10** | ✅ | number-check |
 | **Doubles et moitiés** | ✅ | — |
 | **Additions posées sans/avec retenue** | ✅ | `pose-addition-01` + `pose-addition-02` |
@@ -53,7 +53,7 @@
 | Solides | ✅ | matching/true-false |
 | **Se repérer sur quadrillage** | ❌ | exercise type à définir (grid-locate ?) |
 | **Suite de dessins** | ❌ | conceptuel, difficile à automatiser |
-| **Axe de symétrie** | ❌ | tile-select (déjà fait en CE1+) |
+| **Axe de symétrie** | ✅ | `symetrie-01` (true-false + mcq, 2026-03-19) |
 
 ---
 
@@ -73,6 +73,7 @@
 | **Tables de multiplication 1→5** | ✅ | — |
 | **Multiplier par multiple de 10** | ⚠️ | 1 série seulement |
 | **Approche division (partage)** | ✅ | `division-partage-01` (problem, M1.2) |
+| **Calcul réfléchi** | ✅ | `calcul-reflechi-01` (passage par 10, doubles, soustraction, 2026-03-19) |
 
 ### Grandeurs et mesures
 
@@ -92,7 +93,7 @@
 | Solides | ✅ | — |
 | Angle droit | ✅ | — |
 | Symétrie | ✅ | — |
-| **Se repérer sur quadrillage (coordonnées)** | ❌ | nouveau type ou mcq |
+| **Se repérer sur quadrillage (coordonnées)** | ✅ | `quadrillage-lire-01` + `quadrillage-placer-01` (grille 4×4, 2026-03-19) |
 
 ### Problèmes
 
@@ -115,6 +116,8 @@
 | **Tables 6→9 (fluency)** | ✅ | — |
 | Additions/soustractions posées | ✅ | `pose-addition-01` + `pose-soustraction-01` |
 | Multiplications posées (2×1, 3×1) | ✅ | `multiplications-posees-01` (column-op ×) |
+| **Droite graduée** | ✅ | `droite-graduee-01` (0–100 step 10, 0–1000 step 100, 2026-03-19) |
+| **Calcul réfléchi** | ✅ | `calcul-reflechi-01` (passage centaine, décomposition, −9, complément 100, 2026-03-19) |
 | **Division (sens, partage/groupement)** | ⚠️ | `number-check` present mais pas `problem` sens |
 | **Ordre de grandeur** | ✅ | mcq estimation |
 | **Compléments à 10 et 100** | ✅ | — |
@@ -136,7 +139,7 @@
 | Longueurs (convertir) | ✅ | — |
 | Masses | ✅ | — |
 | Contenances | ✅ | — |
-| **Périmètre carré/rectangle** | ⚠️ | 1 série opérations mais pas dédiée |
+| **Périmètre carré/rectangle** | ✅ | `perimetre-01` (carré, rectangle, triangle, côté inconnu, 2026-03-19) |
 | **Monnaie (rendre la monnaie)** | ✅ | — |
 
 ### Résolution de problèmes
@@ -155,8 +158,9 @@
 |----------------|------|-----------------|
 | Figures planes, triangles | ✅ | — |
 | Angles | ✅ | — |
-| Droites parallèles/perpendiculaires | ⚠️ | seulement checkbox 1 série |
+| Droites parallèles/perpendiculaires | ✅ | `paralleles-perpendiculaires-01` (checkbox + true-false, 2026-03-19) |
 | Symétrie | ✅ | — |
+| **Se repérer sur quadrillage** | ✅ | `quadrillage-lire-01` + `quadrillage-placer-01` |
 | **Reproduire/tracer des figures** | ❌ | non modélisable facilement |
 
 ---
@@ -174,13 +178,14 @@
 | Multiplications (toutes formes) | ✅ | — |
 | ×÷ puissances de 10 | ✅ | — |
 | Division (sans/avec reste) | ✅ | — |
-| **Division posée par 2 chiffres** | ⚠️ | 2 séries mais peu de variété |
+| **Division posée par 2 chiffres** | ✅ | `division-posee-01` (144÷12 → 312÷24, avec reste, 2026-03-19) |
 | Fractions simples et équivalentes | ✅ | — |
 | Fractions décimales | ✅ | — |
 | Additionner/soustraire fractions même dénominateur | ✅ | `operations-fractions-01` |
 | Décimaux (lire, comparer, ordonner) | ✅ | — |
 | **Décimaux × 10/100/1 000** | ✅ | — |
 | **Additionner/soustraire décimaux** | ✅ | — |
+| **Droite graduée — décimaux** | ✅ | `droite-graduee-01` (lire, 0–1/0–2/0–5) + `droite-graduee-02` (placer, 2026-03-19) |
 | Proportionnalité | ✅ | fill-table (3 niveaux) |
 
 ### Calcul mental
@@ -212,6 +217,7 @@
 | Combinatoire (M3.2) | ✅ | 1 série |
 | A2.4 CM1 (état initial) | ✅ | `transformation-etat-initial-01` |
 | **A2.4 non-congruent CM1** | ✅ | `transformation-etat-initial-02` (difficile, 5 ex) |
+| **Se repérer sur quadrillage** | ✅ | `quadrillage-lire-01` + `quadrillage-placer-01` (grille 8×8, 2026-03-19) |
 | **Modéliser avec schéma/tableau** | ❌ | `multi-question` enrichis |
 
 ---
@@ -310,6 +316,8 @@ Le niveau CM2 est **le plus sous-représenté** (26 séries vs 79–120 pour les
 | `number-hunt` | CP | ★ | Spécifique CP |
 | `count-objects` | CP | ★ | Spécifique CP |
 | `compare-groups` | CP | ★ | Spécifique CP |
+| `number-line` | CE1 | ★ | Droite graduée — 2 séries CE1 (`droite-graduee-01/02`) |
+| `coordinate-grid` | CE2 | ★ | Repérage quadrillage — 2 séries CE2 (`quadrillage-lire/placer-01`) |
 
 ### Types à mieux exploiter
 
@@ -329,8 +337,8 @@ Le niveau CM2 est **le plus sous-représenté** (26 séries vs 79–120 pour les
 
 | Type potentiel | Description | Niveaux | Notes |
 |---------------|-------------|---------|-------|
-| **`number-line`** | Placer un nombre sur une droite graduée (mode lecture : lire la valeur d'un point marqué ; mode placement : positionner un nombre donné). Supports : entiers, décimaux, fractions. Graduations fixes ou cachées (estimation). | CP→CM2 | Format le plus fréquent sur les fiches papier après le calcul posé. Remplace avantageusement beaucoup de `ruler` statiques. MathALÉA en fait un usage intensif. |
-| **`coordinate-grid`** | Cliquer pour poser un point à des coordonnées données, ou lire les coordonnées d'un point existant. Extension : tracer un déplacement pas-à-pas (3 droite, 2 haut). | CE2→CM2 | Compétence géométrique de cycle 3 peu couverte. Variante « repérage sur plan » (CE2). |
+| ~~**`number-line`**~~ | ~~Placer un nombre sur une droite graduée~~ | ~~CP→CM2~~ | ✅ **Créé** — `droite-graduee-01` + `droite-graduee-02` (CE1) |
+| ~~**`coordinate-grid`**~~ | ~~Cliquer pour poser un point à des coordonnées données, ou lire les coordonnées d'un point existant~~ | ~~CE2→CM2~~ | ✅ **Créé** — `quadrillage-lire-01` + `quadrillage-placer-01` (CE2) |
 | **`bar-chart`** | Diagramme en bâtons interactif : soit lire des valeurs depuis un graphique donné (questions `multi-question`), soit construire — faire glisser les barres à la bonne hauteur depuis une table de données. | CE1→CM2 | Traitement de données au programme dès CE1. Absent de la plateforme, difficile à couvrir avec les types actuels. |
 
 #### Priorité moyenne — formats courants, implémentation maîtrisable
@@ -363,10 +371,10 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 | Domaine | Programme | Niveaux | État | Remarque |
 |---------|-----------|---------|------|----------|
 | **Traitement de données** — lecture de diagrammes en bâtons, tally tables, tableaux de fréquences | Cycle 2–3 | CE1→CM2 | ❌ quasi absent | Quelques `fill-table` de proportionnalité, mais aucun diagramme statistique |
-| **Repérage sur quadrillage / plan** | Cycle 3 | CE2→CM2 | ❌ absent | Mentionné dans les gaps géométrie de chaque niveau mais aucune série créée |
+| **Repérage sur quadrillage / plan** | Cycle 3 | CE2→CM2 | ⚠️ partiel | CE1 + CE2 + CM1 couverts (`quadrillage-lire/placer-01`) ; CM2 non couvert |
 | **Calendrier — lecture et calcul** | Cycle 2 | CE1→CM2 | ❌ absent | `clock` couvre l'heure ; les exercices calendrier (jours, semaines, mois, dates) n'existent pas |
 | **Suites logiques figurales** | Cycle 2 | CP→CE2 | ❌ absent | `sequence` gère les suites numériques ; les suites de figures géométriques / couleurs n'existent pas |
-| **Calcul réfléchi — stratégies explicites** | Cycle 2–3 | CE1→CM2 | ⚠️ partiel | `calcul-reflechi-01` créé pour CM1 ; CE1/CE2 non couverts |
+| **Calcul réfléchi — stratégies explicites** | Cycle 2–3 | CE1→CM2 | ⚠️ partiel | CE1 + CE2 + CM1 couverts ; CM2 non couvert |
 | **Données CM2** — diagrammes circulaires, graphiques à double entrée | Cycle 3 | CM2 | ❌ absent | Fortement au programme CM2 |
 | **CM2 global** | Cycle 3 | CM2 | ❌ très lacunaire | 14 séries exercices vs 87 en CM1 — écart critique |
 
@@ -404,7 +412,7 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 ## Couverture Vergnaud (classification des problèmes)
 
 > Source : champ `class:` dans les frontmatters + `exercises-report.csv`. Voir `docs/maths_classification_vergnaud.md`.
-> Dernière mise à jour : 2026-03-19 — 437 séries totales (CP 50, CE1 94, CE2 132, CM1 133, CM2 28).
+> Dernière mise à jour : 2026-03-19 — 447 séries totales (CP 52, CE1 96, CE2 133, CM1 132, CM2 28).
 
 ### État actuel
 

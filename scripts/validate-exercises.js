@@ -37,6 +37,7 @@ const TYPE_SCHEMAS = {
   'number-hunt': { required: [] },
   'compare-groups': { required: [] },
   'count-objects': { required: [] },
+  'bar-chart': { required: ['labels', 'values', 'yMax', 'yStep'], arrays: ['labels', 'values'] },
 };
 
 const COLORS = {

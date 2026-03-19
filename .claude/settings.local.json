@@ -100,7 +100,15 @@
       "Bash(mkdir -p .scratch)",
       "Bash(mv exercises-report.csv reports/)",
       "Bash(mv scripts/validate-llm-cache.csv reports/)",
-      "Bash(mv scripts/validate-llm-errors.md .scratch/)"
+      "Bash(mv scripts/validate-llm-errors.md .scratch/)",
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce2/maths/geometrie/proprietes-01/*.md)",
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/cm1/maths/operations/divisions-01/*.md)",
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/cm1/maths/operations/divisions-02/*.md)",
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce1/maths/geometrie/symetrie-01/*.md)",
+      "Bash(head -60 /home/david/Code/web/cahier-melimee/src/fr/exercices/cm1/maths/operations/divisions-03/*.md)",
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/cm1/maths/geometrie/paralleles-perpendiculaires-01/*.md)",
+      "Bash(head -30 /home/david/Code/web/cahier-melimee/src/fr/exercices/ce2/maths/geometrie/symetrie-01/*.md)",
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce2/maths/geometrie/vrai-faux-01/*.md)"
     ]
   }
 }

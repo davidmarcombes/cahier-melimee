@@ -86,6 +86,7 @@ isSeriesPage: true
   {% if 'count-objects' in usedTypes %}{% include "types/count-objects.njk" %}{% endif %}
   {% if 'number-line' in usedTypes %}{% include "types/number-line.njk" %}{% endif %}
   {% if 'coordinate-grid' in usedTypes %}{% include "types/coordinate-grid.njk" %}{% endif %}
+  {% if 'bar-chart' in usedTypes %}{% include "types/bar-chart.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -192,6 +193,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'coordinate-grid' in usedTypes %}
     <span x-show="cur.type === 'coordinate-grid'">Ce n'est pas le bon point. Essaie encore !</span>
+    {% endif %}
+    {% if 'bar-chart' in usedTypes %}
+    <span x-show="cur.type === 'bar-chart'">Certaines barres ne sont pas correctes. Essaie encore !</span>
     {% endif %}
   </div>
 

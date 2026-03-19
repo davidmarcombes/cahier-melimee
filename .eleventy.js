@@ -604,6 +604,21 @@ module.exports = async function (eleventyConfig) {
           };
         }
 
+        if (ex.data.type === 'bar-chart') {
+          item.bc = {
+            mode: ex.data.mode || 'build',
+            labels: (ex.data.labels || []).map(String),
+            values: (ex.data.values || []).map(Number),
+            yMax: Number(ex.data.yMax ?? 10),
+            yStep: Number(ex.data.yStep ?? 1),
+            unit: String(ex.data.unit || ''),
+            questions: (ex.data.questions || []).map(q => ({
+              text: String(q.text),
+              answer: String(q.answer).trim().toLowerCase(),
+            })),
+          };
+        }
+
         if (ex.data.type === 'convert' && ex.data.items) {
           item.convert = {
             items: ex.data.items.map((it) => ({

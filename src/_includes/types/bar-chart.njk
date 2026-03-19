@@ -1,0 +1,100 @@
+{# Bar chart — build mode: click cells to set bar heights; read mode: static bars + question inputs #}
+<div x-show="cur.type === 'bar-chart'" class="space-y-4">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm"></div>
+
+  <div x-show="cur.bc" class="bg-surface-subtle rounded-2xl border border-slate-200 dark:border-slate-700 p-4">
+
+    {# Chart area: y-axis labels + bar columns #}
+    <div class="flex gap-1 overflow-x-auto pb-1">
+
+      {# Y-axis labels — one per step from top (yMax) to bottom (yStep) #}
+      <div class="flex flex-col shrink-0">
+        <template x-for="v in bcYRange" :key="v">
+          <div class="h-8 w-8 flex items-center justify-end pr-1">
+            <span class="text-xs font-mono text-slate-500" x-text="v"></span>
+          </div>
+        </template>
+        <div class="h-6"></div>
+      </div>
+
+      {# Bar columns #}
+      <div class="flex gap-0.5 flex-1 justify-center">
+        <template x-for="(label, colIdx) in (cur.bc ? cur.bc.labels : [])" :key="colIdx">
+          <div class="flex flex-col items-center shrink-0">
+
+            {# Cells from top (yMax) to bottom (yStep) — filled when bcValues[colIdx] >= v #}
+            <template x-for="v in bcYRange" :key="v">
+              <div
+                class="w-10 h-8 border border-slate-200 dark:border-slate-600 transition-colors"
+                :class="{
+                  'bg-primary-400 dark:bg-primary-500 border-primary-300 dark:border-primary-600': bcValues[colIdx] >= v && !bcErrors.includes(colIdx),
+                  'bg-red-300 dark:bg-red-700 border-red-300': bcValues[colIdx] >= v && bcErrors.includes(colIdx),
+                  'bg-white dark:bg-slate-800 hover:bg-primary-100 dark:hover:bg-primary-900/30 cursor-pointer': bcValues[colIdx] < v && cur.bc && cur.bc.mode === 'build' && !solved,
+                  'bg-white dark:bg-slate-800': bcValues[colIdx] < v && (!cur.bc || cur.bc.mode !== 'build' || solved)
+                }"
+                @click="cur.bc && cur.bc.mode === 'build' && !solved && barChartSetValue(colIdx, v)"
+              ></div>
+            </template>
+
+            {# Column label #}
+            <div class="h-6 w-10 flex items-center justify-center mt-0.5">
+              <span class="text-xs text-content-muted text-center leading-tight" x-text="label"></span>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    {# Unit label #}
+    <div x-show="cur.bc && cur.bc.unit" class="text-center text-xs text-content-muted mt-1 italic" x-text="cur.bc ? cur.bc.unit : ''"></div>
+
+    {# Build mode: verify button #}
+    <div x-show="cur.bc && cur.bc.mode === 'build'" class="flex justify-center mt-4">
+      <button
+        type="button"
+        @click="check()"
+        :disabled="solved || bcValues.some(v => v === 0)"
+        class="px-6 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95
+               disabled:opacity-40 disabled:cursor-not-allowed"
+        :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+      >
+        <span x-show="!solved">Vérifier</span>
+        <span x-show="solved">Bravo !</span>
+      </button>
+    </div>
+
+    {# Read mode: question inputs #}
+    <div x-show="cur.bc && cur.bc.mode === 'read'" class="space-y-3 mt-4">
+      <template x-for="(q, i) in (cur.bc && cur.bc.questions ? cur.bc.questions : [])" :key="i">
+        <div
+          class="flex items-center gap-3 p-3 rounded-xl border transition-colors"
+          :class="{
+            'border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20': bcSolved[i],
+            'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20': bcErrors.includes(i),
+            'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800': !bcSolved[i] && !bcErrors.includes(i)
+          }"
+        >
+          <p class="flex-1 text-sm text-content-default" x-html="q.text"></p>
+          <input
+            type="text"
+            inputmode="numeric"
+            x-model="bcInputs[i]"
+            @keydown.enter="bcCheck(i)"
+            :disabled="bcSolved[i]"
+            placeholder="?"
+            class="w-24 px-3 py-2 text-center text-sm font-mono border-2 rounded-lg
+                   focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
+                   bg-white dark:bg-slate-800 text-content-default"
+            :class="{
+              'border-green-500': bcSolved[i],
+              'border-red-400': bcErrors.includes(i),
+              'border-slate-200 dark:border-slate-700': !bcSolved[i] && !bcErrors.includes(i)
+            }"
+          />
+          <span x-show="bcSolved[i]" class="text-green-500 text-lg">&#x2714;</span>
+        </div>
+      </template>
+    </div>
+
+  </div>
+</div>
