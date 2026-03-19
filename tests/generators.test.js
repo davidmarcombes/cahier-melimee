@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createRequire } from 'node:module';
 
+// generators.js calls svg.js functions (clockSvg) as browser globals — stub them for Node tests
+global.clockSvg = (h, m) => `<circle data-h="${h}" data-m="${m}"/>`;
+
 const require = createRequire(import.meta.url);
 const generators = require('../src/assets/js/generators.js');
 

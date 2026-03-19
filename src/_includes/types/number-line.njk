@@ -1,0 +1,39 @@
+{# Number line — read mode: type the labeled value; place mode: click to place a point #}
+<div x-show="cur.type === 'number-line'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
+       x-show="cur.body" x-html="cur.body"></div>
+
+  <p x-show="cur.nl && cur.nl.mode === 'place'"
+     class="text-center text-base font-semibold mb-4 text-content-default">
+    Place le nombre
+    <span class="text-primary-600 dark:text-primary-400 font-bold"
+          x-text="cur.answers && cur.answers[0]"></span>
+    sur la droite graduée.
+  </p>
+
+  <div class="relative"
+       @click="cur.nl && cur.nl.mode === 'place' && !solved && nlPlace($event)"
+       :class="cur.nl && cur.nl.mode === 'place' && !solved ? 'cursor-crosshair' : ''">
+    <svg viewBox="0 0 500 90" class="w-full text-content-default" x-html="numberLineSvg"></svg>
+    <svg x-show="cur.nl && cur.nl.mode === 'place' && nlVal !== null"
+         viewBox="0 0 500 90"
+         class="absolute inset-0 w-full h-full pointer-events-none"
+         x-html="nlMarkerSvg"></svg>
+  </div>
+
+  <div x-show="cur.nl && cur.nl.mode === 'place'" class="flex justify-center mt-4">
+    <button
+      type="button"
+      @click="nlCheck()"
+      :disabled="solved || nlVal === null"
+      class="shrink-0 px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
+             disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved
+        ? 'bg-green-500 text-white'
+        : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+  </div>
+</div>

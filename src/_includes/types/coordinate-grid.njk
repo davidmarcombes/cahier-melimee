@@ -1,0 +1,102 @@
+{# Coordinate grid — read mode: type (x ; y) for a labeled point; place mode: click to place a point #}
+<div x-show="cur.type === 'coordinate-grid'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-3 text-content-subtle"
+       x-show="cur.body" x-html="cur.body"></div>
+
+  {# Place mode instruction #}
+  <p x-show="cur.cg && cur.cg.mode === 'place'"
+     class="text-center text-base font-semibold mb-3 text-content-default">
+    Place le point
+    <span class="text-primary-600 dark:text-primary-400 font-bold"
+          x-text="cur.cg && cur.cg.placeLabel"></span>
+    de coordonnées
+    <span class="font-bold"
+          x-text="cur.answers && cur.answers[0] ? '(' + cur.answers[0].replace(',', ' ; ') + ')' : ''"></span>.
+  </p>
+
+  {# SVG container — click target for place mode #}
+  <div class="relative"
+       @click="cur.cg && cur.cg.mode === 'place' && !solved && cgPlace($event)"
+       :class="cur.cg && cur.cg.mode === 'place' && !solved ? 'cursor-crosshair' : ''">
+    <svg viewBox="0 0 420 410" class="w-full text-content-default" x-html="coordinateGridSvg"></svg>
+    {# Placed point overlay (place mode only) #}
+    <svg x-show="cur.cg && cur.cg.mode === 'place' && cgPoint !== null"
+         viewBox="0 0 420 410"
+         class="absolute inset-0 w-full h-full pointer-events-none"
+         x-html="cgMarkerSvg"></svg>
+  </div>
+
+  {# Read mode: (x ; y) inputs + verify button #}
+  <div x-show="cur.cg && cur.cg.mode !== 'place'"
+       class="flex justify-center items-center gap-2 mt-4 flex-wrap">
+    <span class="text-xl font-bold text-content-subtle select-none">(</span>
+    <input
+      type="text"
+      inputmode="numeric"
+      x-model="cgInputs[0]"
+      @keydown.enter="cgInputs[1].trim() ? check() : $refs.cgY.focus()"
+      :disabled="solved"
+      placeholder="x"
+      aria-label="Abscisse x"
+      x-ref="cgX"
+      class="w-16 h-12 text-center text-2xl font-bold border-2 rounded-xl
+             focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
+             bg-white dark:bg-slate-800 text-content-default"
+      :class="{
+        'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+        'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
+        'border-slate-300 dark:border-slate-600': !solved && !showError
+      }"
+    />
+    <span class="text-xl font-bold text-content-subtle select-none"> ; </span>
+    <input
+      type="text"
+      inputmode="numeric"
+      x-model="cgInputs[1]"
+      @keydown.enter="check()"
+      :disabled="solved"
+      placeholder="y"
+      aria-label="Ordonnée y"
+      x-ref="cgY"
+      class="w-16 h-12 text-center text-2xl font-bold border-2 rounded-xl
+             focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
+             bg-white dark:bg-slate-800 text-content-default"
+      :class="{
+        'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+        'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
+        'border-slate-300 dark:border-slate-600': !solved && !showError
+      }"
+    />
+    <span class="text-xl font-bold text-content-subtle select-none">)</span>
+    <button
+      type="button"
+      @click="check()"
+      :disabled="solved || !cgInputs[0].trim() || !cgInputs[1].trim()"
+      class="ml-1 px-5 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95
+             disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved
+        ? 'bg-green-500 text-white'
+        : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+  </div>
+
+  {# Place mode verify button #}
+  <div x-show="cur.cg && cur.cg.mode === 'place'" class="flex justify-center mt-4">
+    <button
+      type="button"
+      @click="cgCheck()"
+      :disabled="solved || cgPoint === null"
+      class="px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95
+             disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved
+        ? 'bg-green-500 text-white'
+        : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+  </div>
+</div>

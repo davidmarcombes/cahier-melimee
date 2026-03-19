@@ -132,6 +132,9 @@ function seriesPlayer(exercises, seriesId) {
     testSending: false,
     testSent: false,
     testError: '',
+    nlVal: null,
+    cgInputs: ['', ''],
+    cgPoint: null,
 
     /* Fraction Helpers */
     get fractionShapes() {
@@ -153,6 +156,43 @@ function seriesPlayer(exercises, seriesId) {
     get rulerSvg() {
       if (this.cur.type !== 'ruler' || !this.cur.ruler) return '';
       return rulerExerciseSvg(this.cur.ruler);
+    },
+
+    /* Coordinate-grid SVG */
+    get coordinateGridSvg() {
+      if (this.cur.type !== 'coordinate-grid' || !this.cur.cg) return '';
+      return coordinateGridSvg(this.cur.cg);
+    },
+
+    get cgMarkerSvg() {
+      if (!this.cur.cg || this.cgPoint === null) return '';
+      const { cols = 6, rows = 6 } = this.cur.cg;
+      const PL = 40, PT = 20;
+      const cw = 360 / cols, ch = 360 / rows;
+      const px = PL + this.cgPoint.x * cw;
+      const py = PT + (rows - this.cgPoint.y) * ch;
+      const lbl = this.cur.cg.placeLabel || 'A';
+      return `<circle cx="${px}" cy="${py}" r="6" class="fill-primary-500"/>` +
+        `<text x="${px + 9}" y="${py - 6}" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${lbl}</text>`;
+    },
+
+    /* Number-line SVG */
+    get numberLineSvg() {
+      if (this.cur.type !== 'number-line' || !this.cur.nl) return '';
+      return numberLineSvg(this.cur.nl);
+    },
+
+    get nlMarkerSvg() {
+      if (!this.cur.nl || this.nlVal === null) return '';
+      const { min = 0, max = 10 } = this.cur.nl;
+      const range = max - min;
+      if (range <= 0) return '';
+      const PAD = 40, W = 420, LY = 58;
+      const mx = PAD + (this.nlVal - min) * (W / range);
+      const lbl = String(this.nlVal);
+      return `<circle cx="${mx}" cy="${LY}" r="6" class="fill-primary-500"/>` +
+        `<line x1="${mx}" y1="${LY - 6}" x2="${mx}" y2="${LY - 15}" stroke-width="2" class="stroke-primary-500"/>` +
+        `<text x="${mx}" y="${LY - 19}" text-anchor="middle" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${lbl}</text>`;
     },
 
     regenerateAll() {
@@ -235,6 +275,7 @@ function seriesPlayer(exercises, seriesId) {
       const _focusFirst = () => {
         let ref;
         if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum;
+        else if (this.cur.type === 'coordinate-grid' && this.cur.cg && this.cur.cg.mode !== 'place') ref = this.$refs.cgX;
         else if (this.trouInputs.length > 0)
           ref = Array.from(this.$el.querySelectorAll('.js-trou input')).find((el) => el.offsetHeight > 0);
         else if (this.seqInputs.length > 0)
@@ -320,6 +361,73 @@ function seriesPlayer(exercises, seriesId) {
         if (this.currentIndex < this.exercises.length - 1) {
           setTimeout(() => this.goTo(this.currentIndex + 1), 2000);
         }
+      }
+    },
+
+    nlPlace(event) {
+      if (this.solved || !this.cur.nl) return;
+      const rect = event.currentTarget.getBoundingClientRect();
+      const ratio = (event.clientX - rect.left) / rect.width;
+      const svgX = ratio * 500;
+      const { min = 0, max = 10, step = 1, subdivisions = 0 } = this.cur.nl;
+      const range = max - min;
+      const PAD = 40, W = 420;
+      const raw = min + (svgX - PAD) / (W / range);
+      const clamped = Math.max(min, Math.min(max, raw));
+      const snapStep = subdivisions > 0 ? step / subdivisions : step;
+      const snapped = Math.round(clamped / snapStep) * snapStep;
+      this.nlVal = Math.round(snapped * 1e9) / 1e9;
+    },
+
+    nlCheck() {
+      if (this.solved || this.nlVal === null || !this.cur.nl) return;
+      const { step = 1, subdivisions = 0 } = this.cur.nl;
+      const snapStep = subdivisions > 0 ? step / subdivisions : step;
+      const tol = snapStep * 0.51;
+      const isCorrect = (this.cur.answers || []).some(a => Math.abs(Number(a) - this.nlVal) <= tol);
+      if (isCorrect) {
+        this.solvedFlags[this.currentIndex] = true;
+        this.showError = false;
+        if (this.currentIndex < this.exercises.length - 1) {
+          setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+        }
+      } else {
+        this.showError = true;
+        setTimeout(() => { this.showError = false; }, 2000);
+      }
+    },
+
+    cgPlace(event) {
+      if (this.solved || !this.cur.cg) return;
+      const { cols = 6, rows = 6 } = this.cur.cg;
+      const VW = 420, VH = 410, PL = 40, PT = 20;
+      const GW = 360, GH = 360;
+      const rect = event.currentTarget.getBoundingClientRect();
+      const svgX = (event.clientX - rect.left) / rect.width * VW;
+      const svgY = (event.clientY - rect.top) / rect.height * VH;
+      const rawX = (svgX - PL) / (GW / cols);
+      const rawY = rows - (svgY - PT) / (GH / rows);
+      this.cgPoint = {
+        x: Math.round(Math.max(0, Math.min(cols, rawX))),
+        y: Math.round(Math.max(0, Math.min(rows, rawY))),
+      };
+    },
+
+    cgCheck() {
+      if (this.solved || this.cgPoint === null || !this.cur.cg) return;
+      const isCorrect = (this.cur.answers || []).some((a) => {
+        const [ax, ay] = a.split(',').map((s) => parseInt(s.trim(), 10));
+        return this.cgPoint.x === ax && this.cgPoint.y === ay;
+      });
+      if (isCorrect) {
+        this.solvedFlags[this.currentIndex] = true;
+        this.showError = false;
+        if (this.currentIndex < this.exercises.length - 1) {
+          setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+        }
+      } else {
+        this.showError = true;
+        setTimeout(() => { this.showError = false; }, 2000);
       }
     },
 
@@ -619,6 +727,31 @@ function seriesPlayer(exercises, seriesId) {
           setTimeout(() => {
             this.showError = false;
           }, 2000);
+        }
+        return;
+      }
+      if (this.cur.type === 'coordinate-grid' && this.cur.cg && this.cur.cg.mode !== 'place') {
+        if (this.solved) return;
+        const xi = this.cgInputs[0].trim();
+        const yi = this.cgInputs[1].trim();
+        if (!xi || !yi) {
+          this.showError = true;
+          setTimeout(() => { this.showError = false; }, 2000);
+          return;
+        }
+        const isCorrect = (this.cur.answers || []).some((a) => {
+          const parts = a.split(',');
+          return xi === parts[0].trim() && yi === parts[1].trim();
+        });
+        if (isCorrect) {
+          this.solvedFlags[this.currentIndex] = true;
+          this.showError = false;
+          if (this.currentIndex < this.exercises.length - 1) {
+            setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+          }
+        } else {
+          this.showError = true;
+          setTimeout(() => { this.showError = false; }, 2000);
         }
         return;
       }
@@ -1119,6 +1252,9 @@ function seriesPlayer(exercises, seriesId) {
       this.currentIndex = idx;
       this.userInput = '';
       this.showError = false;
+      this.nlVal = null;
+      this.cgInputs = ['', ''];
+      this.cgPoint = null;
       this.matchSelected = null;
       this.matchConnections = [];
       this.matchErrors = [];

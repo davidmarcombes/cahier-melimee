@@ -93,7 +93,8 @@
       "WebFetch(domain:www.enseignants.hachette-education.com)",
       "WebFetch(domain:mespetitesrevues.com)",
       "Bash(sort find /home/david/Code/web/cahier-melimee/src/fr/exercices/cp/maths/grandeurs -name \"*.md\")",
-      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/cp/maths/numeration/regle-graduee-01/01-entier-3.md cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce1/maths/grandeurs/durees-01/01*.md)"
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/cp/maths/numeration/regle-graduee-01/01-entier-3.md cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce1/maths/grandeurs/durees-01/01*.md)",
+      "Bash(for id:*)"
     ]
   }
 }

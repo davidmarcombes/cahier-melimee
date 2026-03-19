@@ -626,6 +626,140 @@ function rulerExerciseSvg(r) {
   return s;
 }
 
+function numberLineSvg(nl) {
+  if (!nl) return '';
+  const min = nl.min ?? 0;
+  const max = nl.max ?? 10;
+  const range = max - min;
+  if (range <= 0) return '';
+
+  const PAD = 40, W = 420, LY = 58;
+  const uw = W / range;
+  const step = nl.step ?? 1;
+  const subs = nl.subdivisions ?? 0;
+
+  let s = '';
+
+  // Horizontal line with right arrowhead
+  s += `<line x1="${PAD}" y1="${LY}" x2="${PAD + W + 8}" y2="${LY}" stroke="currentColor" stroke-width="2"/>`;
+  s += `<polygon points="${PAD + W + 14},${LY} ${PAD + W + 5},${LY - 5} ${PAD + W + 5},${LY + 5}" fill="currentColor"/>`;
+
+  // Major ticks and labels
+  for (let v = min, i = 0; v <= max + 1e-9; v = Math.round((v + step) * 1e9) / 1e9, i++) {
+    const x = PAD + (v - min) * uw;
+    s += `<line x1="${x}" y1="${LY - 10}" x2="${x}" y2="${LY + 6}" stroke="currentColor" stroke-width="2"/>`;
+    const lbl = Number.isInteger(v) ? String(v) : String(Math.round(v * 1000) / 1000);
+    s += `<text x="${x}" y="${LY + 21}" text-anchor="middle" fill="currentColor" font-size="12" font-weight="500">${lbl}</text>`;
+
+    // Minor ticks (subdivisions) between this major tick and the next
+    if (subs > 0 && v < max - 1e-9) {
+      const subStep = step / subs;
+      for (let si = 1; si < subs; si++) {
+        const sv = Math.round((v + si * subStep) * 1e9) / 1e9;
+        if (sv >= max - 1e-9) break;
+        const sx = PAD + (sv - min) * uw;
+        s += `<line x1="${sx}" y1="${LY - 5}" x2="${sx}" y2="${LY + 3}" stroke="currentColor" stroke-width="1.5"/>`;
+      }
+    }
+  }
+
+  // Named point in read mode
+  if (nl.mode !== 'place' && nl.value != null) {
+    const mx = PAD + (nl.value - min) * uw;
+    const lbl = nl.label || 'A';
+    s += `<circle cx="${mx}" cy="${LY}" r="6" class="fill-primary-500"/>`;
+    s += `<line x1="${mx}" y1="${LY - 6}" x2="${mx}" y2="${LY - 15}" stroke-width="2" class="stroke-primary-500"/>`;
+    s += `<text x="${mx}" y="${LY - 19}" text-anchor="middle" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${lbl}</text>`;
+  }
+
+  return s;
+}
+
+/* Coordinate grid — quadrillage with axes, ticks, labels, and optional named points.
+   cg: { cols, rows, points: [{x, y, label}] }
+   ViewBox: 420×410. Grid area 360×360 with PAD_LEFT=40, PAD_RIGHT=20, PAD_TOP=20, PAD_BOTTOM=30.
+   Cell size: 360/cols × 360/rows (60px/cell for 6×6, 36px for 10×10). */
+function coordinateGridSvg(cg) {
+  if (!cg) return '';
+  const cols = cg.cols ?? 6;
+  const rows = cg.rows ?? 6;
+
+  const VW = 420, VH = 410;
+  const PL = 40, PR = 20, PT = 20, PB = 30;
+  const GW = VW - PL - PR; // 360
+  const GH = VH - PT - PB; // 360
+  const cw = GW / cols;
+  const ch = GH / rows;
+
+  // SVG coords: col/row → pixel (row 0 at bottom, y flipped)
+  const toX = (col) => PL + col * cw;
+  const toY = (row) => PT + (rows - row) * ch;
+
+  let s = '';
+
+  // Grid lines (very light)
+  for (let c = 0; c <= cols; c++) {
+    const x = toX(c);
+    s += `<line x1="${x}" y1="${PT}" x2="${x}" y2="${PT + GH}" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>`;
+  }
+  for (let r = 0; r <= rows; r++) {
+    const y = toY(r);
+    s += `<line x1="${PL}" y1="${y}" x2="${PL + GW}" y2="${y}" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>`;
+  }
+
+  // x-axis (y=0 → top of axis is at bottom of grid)
+  const ay = toY(0);
+  s += `<line x1="${PL}" y1="${ay}" x2="${PL + GW + 10}" y2="${ay}" stroke="currentColor" stroke-width="2"/>`;
+  s += `<polygon points="${PL + GW + 15},${ay} ${PL + GW + 7},${ay - 4} ${PL + GW + 7},${ay + 4}" fill="currentColor"/>`;
+  s += `<text x="${PL + GW + 18}" y="${ay + 5}" font-size="12" fill="currentColor" font-style="italic">x</text>`;
+
+  // y-axis (x=0 → left edge of grid)
+  const ax = toX(0);
+  s += `<line x1="${ax}" y1="${PT + GH}" x2="${ax}" y2="${PT - 10}" stroke="currentColor" stroke-width="2"/>`;
+  s += `<polygon points="${ax},${PT - 15} ${ax - 4},${PT - 7} ${ax + 4},${PT - 7}" fill="currentColor"/>`;
+  s += `<text x="${ax}" y="${PT - 18}" font-size="12" fill="currentColor" font-style="italic" text-anchor="middle">y</text>`;
+
+  // Origin label "O"
+  s += `<text x="${ax - 9}" y="${ay + 16}" font-size="11" fill="currentColor" text-anchor="middle">0</text>`;
+
+  // x-axis ticks and labels (1 … cols)
+  for (let c = 1; c <= cols; c++) {
+    const x = toX(c);
+    s += `<line x1="${x}" y1="${ay - 4}" x2="${x}" y2="${ay + 4}" stroke="currentColor" stroke-width="1.5"/>`;
+    s += `<text x="${x}" y="${ay + 16}" text-anchor="middle" font-size="11" fill="currentColor">${c}</text>`;
+  }
+
+  // y-axis ticks and labels (1 … rows)
+  for (let r = 1; r <= rows; r++) {
+    const y = toY(r);
+    s += `<line x1="${ax - 4}" y1="${y}" x2="${ax + 4}" y2="${y}" stroke="currentColor" stroke-width="1.5"/>`;
+    s += `<text x="${ax - 9}" y="${y + 4}" text-anchor="end" font-size="11" fill="currentColor">${r}</text>`;
+  }
+
+  // Intersection dots (for grids ≤ 10×10, aids readability)
+  if (cols <= 10 && rows <= 10) {
+    for (let c = 0; c <= cols; c++) {
+      for (let r = 0; r <= rows; r++) {
+        if (c === 0 && r === 0) continue; // skip origin, already labelled
+        const x = toX(c), y = toY(r);
+        s += `<circle cx="${x}" cy="${y}" r="1.5" fill="currentColor" opacity="0.3"/>`;
+      }
+    }
+  }
+
+  // Named points
+  (cg.points || []).forEach((pt) => {
+    const px = toX(pt.x);
+    const py = toY(pt.y);
+    s += `<circle cx="${px}" cy="${py}" r="5" class="fill-primary-500"/>`;
+    if (pt.label) {
+      s += `<text x="${px + 9}" y="${py - 6}" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${pt.label}</text>`;
+    }
+  });
+
+  return s;
+}
+
 /* Place-value grid — highlights the target column in amber.
    number: integer, pos: 0-based index from the right (0=units, 1=tens, …).
    Labels use French abbreviations: U D C M DM CM. */

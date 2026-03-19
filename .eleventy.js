@@ -579,6 +579,31 @@ module.exports = async function (eleventyConfig) {
           };
         }
 
+        if (ex.data.type === 'number-line') {
+          item.nl = {
+            mode: ex.data.mode || 'read',
+            min: Number(interpolate(String(ex.data.min ?? 0))),
+            max: Number(interpolate(String(ex.data.max ?? 10))),
+            step: Number(interpolate(String(ex.data.step ?? 1))),
+            subdivisions: Number(interpolate(String(ex.data.subdivisions ?? 0))),
+            value: ex.data.value != null ? Number(interpolate(String(ex.data.value))) : null,
+            label: String(ex.data.label || 'A'),
+          };
+        }
+
+        if (ex.data.type === 'coordinate-grid') {
+          item.cg = {
+            mode: ex.data.mode || 'read',
+            cols: Number(ex.data.cols ?? 6),
+            rows: Number(ex.data.rows ?? 6),
+            placeLabel: String(ex.data.placeLabel || 'A'),
+            points: (ex.data.points || []).map(p => ({
+              x: Number(p.x), y: Number(p.y),
+              label: p.label ? String(p.label) : '',
+            })),
+          };
+        }
+
         if (ex.data.type === 'convert' && ex.data.items) {
           item.convert = {
             items: ex.data.items.map((it) => ({

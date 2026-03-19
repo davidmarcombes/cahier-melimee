@@ -17,6 +17,7 @@ isSeriesPage: true
 {% for ex in exercises %}
   {% if ex.data.generator %}{% set hasGenerators = true %}{% set needsSvgJs = true %}{% endif %}
   {% if ex.data.svg %}{% set needsSvgJs = true %}{% endif %}
+  {% if ex.data.type === 'ruler' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' %}{% set needsSvgJs = true %}{% endif %}
   {% if '$' in (ex.data.title or '') %}{% set needsKatex = true %}{% endif %}
 {% endfor %}
 
@@ -83,6 +84,8 @@ isSeriesPage: true
   {% if 'number-hunt' in usedTypes %}{% include "types/number-hunt.njk" %}{% endif %}
   {% if 'compare-groups' in usedTypes %}{% include "types/compare-groups.njk" %}{% endif %}
   {% if 'count-objects' in usedTypes %}{% include "types/count-objects.njk" %}{% endif %}
+  {% if 'number-line' in usedTypes %}{% include "types/number-line.njk" %}{% endif %}
+  {% if 'coordinate-grid' in usedTypes %}{% include "types/coordinate-grid.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -90,8 +93,8 @@ isSeriesPage: true
   {% endif %}
 
   {# Answer input + check button (for number-check, problem, clock, fraction and base-10) #}
-  {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes %}
-  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler') && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6">
+  {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes or 'number-line' in usedTypes %}
+  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || (cur.type === 'number-line' && cur.nl && cur.nl.mode !== 'place')) && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6">
     <input
       type="text"
       x-model="userInput"
@@ -154,6 +157,9 @@ isSeriesPage: true
     {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes %}
     <span x-show="cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler'">Ce n'est pas la bonne réponse. Essaie encore !</span>
     {% endif %}
+    {% if 'number-line' in usedTypes %}
+    <span x-show="cur.type === 'number-line'">Ce n'est pas la bonne réponse. Essaie encore !</span>
+    {% endif %}
     {% if 'fraction-check' in usedTypes %}
     <span x-show="cur.type === 'fraction-check'">Ce n'est pas la bonne fraction. Essaie encore !</span>
     {% endif %}
@@ -183,6 +189,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'svg-tiles' in usedTypes %}
     <span x-show="cur.type === 'svg-tiles'">Certaines formes ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
+    {% if 'coordinate-grid' in usedTypes %}
+    <span x-show="cur.type === 'coordinate-grid'">Ce n'est pas le bon point. Essaie encore !</span>
     {% endif %}
   </div>
 

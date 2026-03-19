@@ -1,6 +1,6 @@
 # Roadmap — Couverture du programme CP→CM2
 
-> Généré le 2026-03-18. Sources : `docs/maths_*.md` (programme officiel) × `exercises-report.csv` (ce qui existe).
+> Généré le 2026-03-19. Sources : `docs/maths_*.md` (programme officiel) × `exercises-report.csv` (ce qui existe).
 > Légende : ✅ couvert · ⚠️ partiel · ❌ absent · 🔥 priorité haute
 
 ---
@@ -9,11 +9,11 @@
 
 | Niveau | Séries actuelles | Santé globale | Priorité |
 |--------|-----------------|---------------|----------|
-| CP     | 44              | ⚠️ numération forte, reste faible | 🔥 mesures, calcul posé |
-| CE1    | 87              | ⚠️ opérations fortes, mesures légères | mesures, A3.3 manquant |
-| CE2    | 123             | ✅ le plus complet | A3.3 non-congruent à renforcer |
-| CM1    | 130             | ✅ très complet | A2.4 ✅, A4.2 série 2 à envisager |
-| CM2    | 26              | ❌ très lacunaire | ⏳ traité ultérieurement |
+| CP     | 50              | ✅ bon socle | Soustractions posées (non prioritaire) |
+| CE1    | 94              | ✅ complet | — |
+| CE2    | 132             | ✅ le plus complet | — |
+| CM1    | 133             | ✅ très complet | Division posée 2 chiffres (variété) |
+| CM2    | 28              | ❌ très lacunaire | ⏳ traité ultérieurement |
 
 ---
 
@@ -72,7 +72,7 @@
 | Additions/soustractions à trou | ✅ | — |
 | **Tables de multiplication 1→5** | ✅ | — |
 | **Multiplier par multiple de 10** | ⚠️ | 1 série seulement |
-| **Approche division (partage)** | ❌ | `number-check` ou `problem` |
+| **Approche division (partage)** | ✅ | `division-partage-01` (problem, M1.2) |
 
 ### Grandeurs et mesures
 
@@ -81,7 +81,7 @@
 | Longueurs (convertir m/dm/cm) | ✅ | convert |
 | Masses | ✅ | convert |
 | Durées | ✅ | — |
-| **Lire l'heure complète** | ⚠️ | Seulement heure/demie ; manque quarts, 5 min |
+| **Lire l'heure complète** | ✅ | `heure-02` (quarts + 5 min, 6 exercices) |
 | **Monnaie** | ✅ | — |
 
 ### Géométrie
@@ -98,9 +98,9 @@
 
 | Thème | État | À faire |
 |-------|------|---------|
-| Problèmes à une étape (A1, A2) | ✅ | 4 séries (A1.1, A1.2, A2.1, A2.2, A2.3) |
-| **A3.1 — Comparaison → Écart** | ❌ | `problem` CE1 |
-| **Problèmes à deux étapes** | ❌ | `problem` + `multi-question` |
+| Problèmes à une étape (A1→A3, M1) | ✅ | A1.1, A1.2, A2.1–A2.4, A3.1, A3.2 (×2), A3.3 (×2), M1.2 |
+| **Approche division (partage)** | ✅ | `division-partage-01` (M1.2) |
+| **Problèmes à deux étapes** | ✅ | `problemes-2-etapes-01` (multi-question, 5 ex) |
 
 ---
 
@@ -113,8 +113,8 @@
 | Numération jusqu'à 10 000 | ✅ | — |
 | Tables de multiplication 0→10 | ✅ | — |
 | **Tables 6→9 (fluency)** | ✅ | — |
-| Additions/soustractions posées | ⚠️ | `column-op` 3–4 chiffres manque |
-| Multiplications posées (2×1, 3×1) | ⚠️ | `column-op` manque |
+| Additions/soustractions posées | ✅ | `pose-addition-01` + `pose-soustraction-01` |
+| Multiplications posées (2×1, 3×1) | ✅ | `multiplications-posees-01` (column-op ×) |
 | **Division (sens, partage/groupement)** | ⚠️ | `number-check` present mais pas `problem` sens |
 | **Ordre de grandeur** | ✅ | mcq estimation |
 | **Compléments à 10 et 100** | ✅ | — |
@@ -124,15 +124,15 @@
 | Thème programme | État | Manque / À faire |
 |----------------|------|-----------------|
 | Demi, tiers, quart | ✅ | fraction |
-| **Fractions : parties d'un groupe** | ❌ | `fraction` type étendu ou `mcq` |
-| **Lire/écrire fractions simples** | ⚠️ | 2 séries seulement |
+| Fractions : parties d'un groupe | ✅ | `fractions-parties-groupe-01` |
+| Lire/écrire fractions simples | ✅ | `ecrire-fraction-01` |
 
 ### Grandeurs et mesures
 
 | Thème programme | État | Manque / À faire |
 |----------------|------|-----------------|
 | Lire l'heure | ✅ | clock + matching |
-| Durées (calcul) | ⚠️ | matching present mais calcul manque |
+| Durées (calcul) | ✅ | `durees-calcul-01` (heure fin/début, durée) |
 | Longueurs (convertir) | ✅ | — |
 | Masses | ✅ | — |
 | Contenances | ✅ | — |
@@ -143,10 +143,11 @@
 
 | Thème | État | À faire |
 |-------|------|---------|
-| Problèmes à 1 étape (A2, A3, M1) | ✅ | 6 séries (A2.3, A2.4, A3.1, A3.2, M1.2, M1.3) |
-| **A2.4 — 2e série** | ⚠️ | Type difficile, 1 série insuffisant |
-| **A4.2 — Bilan négatif** | ❌ | `problem` CM1→CE2 |
-| **Choix de la bonne opération** | ❌ | `select` ou `mcq` + `problem` |
+| Problèmes à 1 étape (A2, A3, M1) | ✅ | A2.3–A2.4 (×3), A3.1–A3.3 (×2), M1.2, M1.3, M2.1, M2.2 |
+| A4.2 — Bilan de 2 transformations | ✅ | `composition-transformations-01` |
+| Choix de la bonne opération | ✅ | `choix-operation-01` |
+| **A3.3 non-congruent CE2** | ✅ | `comparaison-referent-02` (difficile, 5 ex) |
+| **M2.2 CE2** — Combien de fois plus ? | ✅ | `combien-de-fois-01` (5 ex) |
 
 ### Géométrie
 
@@ -176,7 +177,7 @@
 | **Division posée par 2 chiffres** | ⚠️ | 2 séries mais peu de variété |
 | Fractions simples et équivalentes | ✅ | — |
 | Fractions décimales | ✅ | — |
-| **Additionner fractions même dénominateur** | ❌ | `number-check` ou `fraction-check` |
+| Additionner/soustraire fractions même dénominateur | ✅ | `operations-fractions-01` |
 | Décimaux (lire, comparer, ordonner) | ✅ | — |
 | **Décimaux × 10/100/1 000** | ✅ | — |
 | **Additionner/soustraire décimaux** | ✅ | — |
@@ -189,7 +190,7 @@
 | Compléments 10/100/1 000 | ✅ | — |
 | Doubles/moitiés | ✅ | — |
 | **Mémoriser tables (défi fluency)** | ✅ | défis créés |
-| **Stratégies décomposition/compensation** | ❌ | `multi-question` ou `mcq` |
+| **Stratégies décomposition/compensation** | ✅ | `calcul-reflechi-01` (multi-question, 5 ex) |
 
 ### Grandeurs et mesures
 
@@ -206,11 +207,11 @@
 | Thème | État | À faire |
 |-------|------|---------|
 | Problèmes à plusieurs étapes | ✅ | 3 séries |
-| Comparaison (A3.3, M2.2, M2.3) | ✅ | 3 nouvelles séries |
-| Bilan variations (A4.1) | ✅ | 1 série |
+| Comparaison (A3.3×2, M2.2, M2.3×2) | ✅ | séries congruentes + non-congruentes |
+| Bilan variations (A4.1, A4.2) | ✅ | 2 séries |
 | Combinatoire (M3.2) | ✅ | 1 série |
-| **A4.2 — Transformation composée** | ❌ | `problem` — dernier code manquant accessible |
-| **Variantes non-congruentes** | ❌ | Enrichir A3.2, A3.3, M2.3 avec formulations pièges |
+| A2.4 CM1 (état initial) | ✅ | `transformation-etat-initial-01` |
+| **A2.4 non-congruent CM1** | ✅ | `transformation-etat-initial-02` (difficile, 5 ex) |
 | **Modéliser avec schéma/tableau** | ❌ | `multi-question` enrichis |
 
 ---
@@ -365,7 +366,7 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 | **Repérage sur quadrillage / plan** | Cycle 3 | CE2→CM2 | ❌ absent | Mentionné dans les gaps géométrie de chaque niveau mais aucune série créée |
 | **Calendrier — lecture et calcul** | Cycle 2 | CE1→CM2 | ❌ absent | `clock` couvre l'heure ; les exercices calendrier (jours, semaines, mois, dates) n'existent pas |
 | **Suites logiques figurales** | Cycle 2 | CP→CE2 | ❌ absent | `sequence` gère les suites numériques ; les suites de figures géométriques / couleurs n'existent pas |
-| **Calcul réfléchi — stratégies explicites** | Cycle 2–3 | CE1→CM2 | ⚠️ partiel | Le calcul mental est exercé (`number-check`), mais les stratégies (passage par la dizaine, décomposition) ne sont jamais rendues explicites |
+| **Calcul réfléchi — stratégies explicites** | Cycle 2–3 | CE1→CM2 | ⚠️ partiel | `calcul-reflechi-01` créé pour CM1 ; CE1/CE2 non couverts |
 | **Données CM2** — diagrammes circulaires, graphiques à double entrée | Cycle 3 | CM2 | ❌ absent | Fortement au programme CM2 |
 | **CM2 global** | Cycle 3 | CM2 | ❌ très lacunaire | 14 séries exercices vs 87 en CM1 — écart critique |
 
@@ -377,7 +378,7 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 
 1. ~~**CM2 complet**~~ — ⏳ traité ultérieurement (voir section CM2 ci-dessus)
 
-2. **Problèmes Vergnaud** — 20/23 codes couverts ✅ ; reste A4.2 (CM1), A4.3 et M3.4 (CM2)
+2. **Problèmes Vergnaud** — 21/23 codes couverts ✅ ; reste A4.3 et M3.4 (CM2, ⏳ reporté)
    - ~~Prochain : A4.2 CE2/CM1 (composition de transformations avec bilan)~~ ✅ CE2 créé (5 séries)
    - ~~Renforcer A2.4 CE2 (2e série — type le plus difficile pour les élèves)~~ ✅ `transformation-etat-initial-03` non-congruente (5 exercices, 2026-03-18)
    - ~~Ajouter A3.1 CE1 (comparaison → écart, manque encore à ce niveau)~~ ✅ `comparaison-ecart-02` CE1 (5 exercices, 2026-03-18)
@@ -403,7 +404,7 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 ## Couverture Vergnaud (classification des problèmes)
 
 > Source : champ `class:` dans les frontmatters + `exercises-report.csv`. Voir `docs/maths_classification_vergnaud.md`.
-> Dernière mise à jour : 2026-03-18 — 411 séries totales (CP 45, CE1 87, CE2 123, CM1 130).
+> Dernière mise à jour : 2026-03-19 — 437 séries totales (CP 50, CE1 94, CE2 132, CM1 133, CM2 28).
 
 ### État actuel
 
@@ -414,23 +415,23 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 | **A2.1** | Transformation + → Ef | 3 | CP, CE1, CM1 |
 | **A2.2** | Transformation − → Ef | 5 | CP, CE1, CE2, CM2 |
 | **A2.3** | Transformation → T inconnu | 3 | CE1, CE2, CM1 |
-| **A2.4** | Transformation → Ei inconnu | 4 | CE2 (×3, dont non-congruente), CM1 |
-| **A3.1** | Comparaison → Écart | 4 | CP, CE1, CE2, CM1 |
-| **A3.2** | Comparaison → État comparé | 4 | CE1 (×2), CE2 (dont 1 non-congruent) |
-| **A3.3** | Comparaison → Référent | 3 | CE2, CM1 (dont 1 non-congruent) |
+| **A2.4** | Transformation → Ei inconnu | 5 | CE2 (×3, dont non-congruente), CM1 (×2, dont non-congruente) |
+| **A3.1** | Comparaison → Écart | 5 | CP, CE1 (×2), CE2, CM1 |
+| **A3.2** | Comparaison → État comparé | 4 | CE1 (×2, dont non-congruent), CE2 (dont non-congruent) |
+| **A3.3** | Comparaison → Référent | 5 | CE1, CE2 (×2, dont non-congruent), CM1 (×2, dont non-congruent) |
 | **A4.1** | Bilan de 2 variations | 1 | CM1 |
-| **A4.2** | Transformation composée → bilan | 2 | CM1, CE2 |
+| **A4.2** | Transformation composée → bilan | 2 | CE2, CM1 |
 | A4.3 | Transformation composée → T inconnu | 0 | ❌ (CM2) |
 | **M1.1** | Multiplication directe | 6 | CE1→CM2 |
-| **M1.2** | Division-Partage | 4 | CE1, CE2, CM1, CM2 |
+| **M1.2** | Division-Partage | 5 | CE1, CE2, CM1, CM2 |
 | **M1.3** | Division-Groupement | 2 | CE2, CM1 |
 | **M1.4** | Valeur unitaire + calcul dérivé | 1 | CE1 |
 | **M2.1** | Scalaire → Produit | 3 | CE2, CM2 |
-| **M2.2** | Scalaire → Facteur | 1 | CM1 |
+| **M2.2** | Scalaire → Facteur | 2 | CE2, CM1 |
 | **M2.3** | Scalaire → Base | 2 | CM1 |
-| **M3.1** | Produit de mesures (Aire/Périmètre) | 1 | CM1 |
+| **M3.1** | Produit de mesures (Aire/Périmètre) | 2 | CE2, CM1 |
 | **M3.2** | Combinatoire | 1 | CM1 |
-| **M3.3** | Vitesse × Temps | 1 | CM2 |
+| **M3.3** | Vitesse × Temps | 2 | CM1, CM2 |
 | M3.4 | Débit × Temps | 0 | ❌ (CM2) |
 
 ### Codes absents — priorités
@@ -442,20 +443,23 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 
 ### Prochaines priorités pour les problèmes
 
-| Action | Code | Niveau | Raison |
-|--------|------|--------|--------|
-| A3.3 non-congruent CE2 (série 2) | A3.3 | CE2 | Renforcer avec formulation piège |
-| A2.4 non-congruent CM1 (série 2) | A2.4 | CM1 | Variante difficile — inversion nécessaire |
-| M2.2 CE2 (intro) | M2.2 | CE2 | Transition naturelle depuis M2.1 CE2 |
-| ~~A4.2 CE2 (intro)~~ ✅ | A4.2 | CE2 | 5 exercices créés 2026-03-18 |
+> Tous les codes prioritaires sont maintenant couverts. Seuls A4.3 et M3.4 restent absents (CM2, ⏳ reporté).
+
+| Action | Code | Niveau | Priorité |
+|--------|------|--------|----------|
+| A4.3 — Transformation composée → inconnue | A4.3 | CM2 | ⏳ CM2 reporté |
+| M3.4 — Débit × Temps | M3.4 | CM2 | ⏳ CM2 reporté |
 
 ### Observations
 
 - **21 des 23 codes couverts** — seuls A4.3 et M3.4 restent (CM2, ⏳ reporté)
-- **A3.1 couvert aux 4 niveaux** CP, CE1, CE2, CM1
-- **A2.3 et A2.4 couverts à 3 niveaux chacun** — bon équilibre
-- **A3.2 : 4 séries** sur 2 niveaux, dont non-congruent à CE1 et CE2
-- **A3.3 : 3 séries** sur CE2 et CM1 — à introduire à CE1 prochainement
+- **A3.1 couvert aux 4 niveaux** CP, CE1 (×2), CE2, CM1
+- **A3.2 couverte aux 2 niveaux** CE1 (×2 dont non-congruent), CE2 (dont non-congruent)
+- **A3.3 couverte à 3 niveaux** CE1, CE2 (×2, dont non-congruent), CM1 (×2, dont non-congruent)
+- **A2.4 couverte à 2 niveaux** CE2 (×3), CM1 (×2, dont variante difficile)
+- **M2.2 maintenant à CE2 et CM1** — progression naturelle M2.1 → M2.2
+- **M1.2 couverte aux 4 niveaux** CE1, CE2, CM1, CM2
+- **column-op** étendu avec `multiplications-posees-01` CE2 (× opérateur)
 - La congruence sémantique n'est pas encore encodée — envisager `congruence: non-congruente` dans le frontmatter pour filtrage futur
 
 ---
