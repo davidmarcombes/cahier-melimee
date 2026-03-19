@@ -6,9 +6,9 @@ html: true
 
 ---
 
-# Le Cahier de Mélimée
+# Architecture & Stack
 
-### **Choix Techniques : La frugalité au service de la pédagogie**
+## **Le Cahier de Mélimée : Frugalité et Souveraineté**
 
 <center><br>
 
@@ -16,155 +16,130 @@ html: true
 
 </center>
 
-> Réfléchir avant de coder, pour ne pas avoir à maintenir.
+> "Simple is better than complex. Complex is better than complicated."
+> — The Zen of Python (applied to Web)
 
 ---
 
-# 1. 11ty : Le Statique Souverain ⚡
+# 1. Le Noyau Statique : Eleventy (11ty) ⚡
 
-### **Pourquoi Eleventy ?**
+### **Génération à l'exécution (Build-time)**
 
-- **Zéro JS côté serveur** : Tout est pré-généré à la compilation.
-- **Vitesse brute** : Pas de base de données à interroger à chaque clic.
-- **Sécurité maximale** : Ce qui n'existe pas ne peut pas être piraté.
-- **Maintenance nulle** : Pas de vulnérabilités PHP/Node en production.
-
-> Un site statique qui se comporte comme une application dynamique.
+- **0ms Time-to-First-Byte (TTFB)** : Pages servies via CDN/Nginx sans calcul serveur.
+- **Data Cascade** : Utilisation intensive des `exercices.json` pour injecter les métadonnées et schémas de validation par dossier.
+- **Isomorphisme JS** : Les générateurs d'exercices (`generators.js`) sont partagés entre Node.js (correction côté build) et Alpine.js (navigation côté client).
+- **Zéro-JS par défaut** : Progressive enhancement strict.
 
 ---
 
-# 2. Alpine.js : L'Interactivité Légère 🧩
+# 2. Réactivité Sans "VDOM" : Alpine.js 🧩
 
-### **La réactivité sans le poids**
+### **L'alternative chirurgicale à React/Vue**
 
-- **Pas de framework lourd** : Pas de bundles React/Vue de 200 Ko.
-- **Logique encapsulée** : Les comportements sont directement dans le HTML.
-- **Empreinte minimale** : ~15 Ko (CDN) pour gérer toute la validation.
-- **Transition fluide** : Idéal pour transformer un document en studio de calcul.
-
----
-
-# 3. PocketBase : L'Identité Anonyme 🔐
-
-### **Le backend qui s'oublie**
-
-- **Go Power** : Un seul binaire ultra-rapide et économe.
-- **Privacy by Design** : Pas d'emails, pas de mots de passe oubliés.
-- **Identités générées** : "Loup Agile", "Hibou Sage"... des pseudos ludiques.
-- **Sync invisible** : Sauvegarde de la progression sans interrompre l'élève.
+- **State Management Local** : Utilisation de `Alpine.store('exercises')` pour synchroniser le score global.
+- **Encapsulation HTML** : Logique métier injectée directement via attributs `x-data`, `x-init` et `x-text`.
+- **Payload Ridicule** : ~15 Ko gzipped pour gérer l'intégralité du cycle de vie des exercices.
+- **Communication Inter-Composants** : `@click` et `$dispatch` pour une architecture événementielle simple.
 
 ---
 
-# 4. Unified Player : Un Moteur Unique 🧠
+# 3. Le Principe 1000 / 10 / 3 🧠
 
-### **Une architecture pour 300+ séries**
+### **Scalabilité par abstraction**
 
-- **3 moteurs Alpine** : `seriesPlayer` (exercices), `defiPlayer` (défis chronométrés), player applicatif.
-- **Modularité** : 25+ types (QCM, Relier, Pyramides, Glisser-déposer) via inclusions conditionnelles.
-- **Scalabilité** : Ajouter un exercice, c'est juste du Markdown. Pas de code à écrire.
-
-> **Le 1000/10/3** : 1000s de fichiers MD, 10s de layouts, 3 moteurs Alpine.
-
----
-
-# 5. Les Défis : La Vitesse (Fluency) ⏱️
-
-### **L'entraînement aux réflexes**
-
-- **Mode Timed** : Une interface dédiée au calcul mental rapide.
-- **Feedback instantané** : Flash de validation en 120ms.
-- **Statistiques réelles** : Calcul de la cadence (réponses/min) en fin de session.
-- **Countdown visuel** : Barre de progression dynamique (Vert → Orange → Rouge).
+1. **1000+ Fichiers Markdown** : Données pures (Front-matter YAML). Pas de duplication de structure.
+2. **10 Layouts Nunjucks** : Templates génériques (`grid.njk`, `pyramid.njk`, `matching.njk`) utilisant des macros.
+3. **3 Moteurs Alpine** :
+    - `seriesPlayer` : Orchestration des exercices.
+    - `defiPlayer` : Gestion du temps réel (RequestAnimationFrame).
+    - `appliPlayer` : Outils interactifs (Glisser-déposer, manipulations).
 
 ---
 
-# 6. Budgets de Performance : La Règle du 18 KB 🏃‍♂️
+# 4. Pipeline de Qualité 🛠️
+
+`npm run build` n'autorise aucune erreur sur la chaîne CI/CD :
+
+1. **Unit Testing** : Vitest pour les algorithmes de génération aléatoire.
+2. **Exercise Validation** : Schémas JSON stricts sur chaque `.md`.
+3. **Token Injection** : Transformation de `design-tokens.json` vers Tailwind & CSS Vars.
+4. **Eleventy Core** : Assemblage Nunjucks + Minification HTML (Terser).
+5. **Atomic CSS** : Build Tailwind optimisé sur le contenu réel.
+6. **Linter WCAG** : `html-validate` sur le rendu final (A11y & Structure).
+
+---
+
+# 5. Budgets de Performance Draconiens 🏃‍♂️
 
 ### **L'accessibilité par la légèreté**
 
-- **Target 18 KB** : Cible maximale pour le HTML d'une page d'exercice.
-- **CSS < 30 KB** : Bundle Tailwind minifié et expurgé.
-- **Inclusion intelligente** : On ne charge `svg.js` ou `KaTeX` que si nécessaire.
-- **Compression Brotli** : Script `compress.js` pour gagner jusqu'à 90% (Quality 11).
+- **Target HTML < 18 KB** : Nettoyage via Nunjucks pour n'inclure que les partials (`types/*.njk`) utilisés sur la page.
+- **Target CSS < 30 KB** : Bundle Tailwind expurgé sans plugins lourds.
+- **Conditional Script Loading** : `svg.js` ou `KaTeX` chargés uniquement via détection de flags (`generator:` ou `$`) dans le front-matter.
+- **Brotli Quality 11** : Scripts de post-compression pour un transfert optimal.
 
 ---
 
-# 7. SVG Gen : Le Dessin Mathématique 🎨
+# 6. Design System  💎
 
-### **Pourquoi générer les figures en JS ?**
+### **De `design-tokens.json` vers le DOM**
 
-- **Poids plume** : Texte brut au lieu de PNG lourds.
-- **Netteté infinie** : Rendu parfait sur tous les écrans (Retina, 4K).
-- **Thémable** : Les couleurs changent via variables CSS selon le mode sombre.
-- **Paramétrable** : Fractions, horloges et réglettes générées chirurgicalement.
+```json
+{ "colors": { "primary-500": { "light": "#2a85bf", "dark": "#4da7d9" } } }
+```
 
----
-
-# 8. Design Tokens : Source Unique 💎
-
-### **`design-tokens.json` pilotent tout**
-
-- **Couleurs & Typo** : Définies une seule fois, injectées partout.
-- **Dual Mode** : Cahier (clair) vs Étang (sombre) via variables CSS courtes.
-- **Génération atomique** : Tailwind est configuré à partir des tokens.
-- **Cohérence** : Les SVGs, le CSS et le JS partagent les mêmes codes couleurs.
+1. **Génération Tailwind** : Les classes `bg-p` ou `text-p` sont créées dynamiquement.
+2. **CSS Custom Properties** : Injection d'un bloc de variables courtes (`--p`, `--a`, `--sf`) dans le `:root`.
+3. **Dual-Theme Natif** : Bascule Cahier (Light) / Étang (Dark) sans rechargement, supportant `prefers-color-scheme`.
 
 ---
 
-# 9. Validation par LLM (Ollama) 🤖
+# 7. Rendu Géométrique (SVG Gen) 🎨
 
-### **L'IA locale comme correcteur de QA**
+### **Pourquoi générer les figures dynamiquement ?**
 
-- **Ollama + Qwen2.5** : Une IA locale qui "résout" les exercices pour détecter les fautes.
-- **Cache par modèle** : Colonne par modèle (`qwen2.5:7b`, `phi4:14b`…) — chaque fichier validé une seule fois par hash.
-- **Override manuel** : Colonne `manual=ok` pour confirmer définitivement un exercice correct.
-- **Souverain** : Zéro donnée envoyée dans le cloud — rapport d'erreurs en `.scratch/`.
-
----
-
-# 10. Audit Pédagogique (Vergnaud) 📊
-
-### **Garder la main sur la progression**
-
-- **Classification de Vergnaud** : Suivi des classes de problèmes mathématiques.
-- **`reports/exercises-report.csv`** : Carte complète du projet générée à chaque build.
-- **Analyse des lacunes** : Détection automatique des niveaux ou thèmes sous-représentés.
-- **Stats SVG** : Monitoring de l'usage des composants graphiques.
+- **Vecteur vs Raster** : 1 Ko de texte (SVG) vs 50 Ko d'image (PNG).
+- **Intégration Design Token** : Utilisation de `fill="var(--green)"` directement dans le code JS.
+- **Précision Chirurgicale** : Générateurs d'`horloges`, `fractions` et `réglettes` avec angles et subdivisions calculés à la volée.
+- **Optimisation** : Arrondi des coordonnées à 2 décimales pour réduire le poids du DOM.
 
 ---
 
-# 11. Pipeline de Qualité : Le Rigorisme 🛠️
+# 8. Backend PocketBase & Privacy 🔐
 
-### **Build en 6 étapes forcées**
+### **Infrastructure "Zero-Maintenance"**
 
-1. **Tests unitaires** (Vitest) sur les générateurs de nombres.
-2. **Validation YAML** : Schémas stricts pour chaque type d'exercice.
-3. **Design Tokens** : Injection des variables CSS et config Tailwind.
-4. **Eleventy Build** : Génération des pages et minification HTML.
-5. **Tailwind Build** : CSS atomique compressé.
-6. **HTML Validate** : `html-validate` pour la structure DOM (WCAG).
+- **Single Binary Go** : Performance I/O maximale pour la persistance des scores.
+- **Anonymous Auth** : Génération de pseudonymes (Loup Agile) pour éviter tout stockage de PII (RGPD by design).
+- **Zéro Tracking GAFAM** : Pas de Google Analytics, pas de polices externes, pas de CDN tiers en production.
+- **PWA Offline-First** : Cache Service Worker pour permettre l'usage en classe sans connexion stable.
 
 ---
 
-# 12. Un Projet Français et Souverain 🇫🇷
+# 9. QA IA : Validation par LLM Local 🤖
 
-### **Liberté, Égalité, Frugalité**
+### **L'IA comme correcteur de bugs, pas de code**
 
-- **Hébergement en France**.
-- **Zéro dépendance GAFAM** : Pas de Google Fonts, pas de trackers, pas d'IA externe.
-- **Licence EUPL v1.2** : Le copyleft européen pour protéger le commun numérique.
-- **PWA Ready** : Téléchargement complet pour usage sans connexion internet.
+- **Ollama Engine** : Utilisation d'un modèle local (`Qwen-2.5-Coder`) pour "jouer" les exercices lors du build.
+- **Détection d'Impasibles** : L'IA identifie si un exercice généré aléatoirement n'a pas de solution ou est ambigu.
+- **Fingerprinting** : Chaque exercice est validé par hash ; si le contenu change, l'IA re-valide.
 
 ---
 
-# <img src="../src/assets/images/salto_none.gif" alt="logo" style="vertical-align:bottom;" width="75px"> Rejoignez l'expédition !
+# 10. Audit Pédagogique 📊
 
-### **On cherche des mains et des neurones**
+### **Le "Data-Mining" éducatif**
 
-**→ GitHub :** [davidmarcombes/cahier-melimee](https://github.com/davidmarcombes/cahier-melimee)
+- **`exercises-report.csv`** : Analyse dimensionnelle de la base de contenu.
+- **Mapping Conceptuel** : Chaque exercice est taggué selon les classes de problèmes de Vergnaud.
+- **Coverage Monitoring** : Scripts d'analyse pour détecter les "trous" dans la progression (ex: "Manque d'exercices sur la division en CM1").
 
-**→ Demo :** [Alpha Version](https://www.marcombes.fr/melimee/fr/index.html)
+---
 
-**→ Plus qu'un site :** Un outil de justice sociale par le code.
+# 11. Souveraineté & Licence EUPL 🇫🇷
 
-> **Salto vous attend pour la prochaine étape !**
+### **Un Commun Numérique**
+
+- **Hébergement Souverain** : Serveurs localisés en France / UE.
+- **Copyleft Européen** : La licence EUPL protège le code contre l'appropriation propriétaire tout en facilitant la réutilisation par les institutions publiques.
+- **Indépendance Technique** : Reproductibilité totale du build sur n'importe quel environnement Linux ou Windows standard.
