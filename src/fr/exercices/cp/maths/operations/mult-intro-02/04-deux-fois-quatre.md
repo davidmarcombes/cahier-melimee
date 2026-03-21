@@ -1,0 +1,8 @@
+---
+type: number-check
+title: "Calculer une multiplication"
+operation: "2 × 4 = ?"
+answer: "8"
+---
+
+Calcule cette multiplication.

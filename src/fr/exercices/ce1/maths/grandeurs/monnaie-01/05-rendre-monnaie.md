@@ -1,8 +1,10 @@
 ---
-type: number-check
+type: problem
 title: "Rendre la monnaie"
-operation: "Achat : 3 € — payé : 5 € — monnaie : ? €"
 answer: "2"
 ---
 
-Combien doit-on rendre en monnaie ?
+J'achète quelque chose qui coûte **3 €**.
+Je paye avec un billet de **5 €**.
+
+Combien me rend-on ? Exprime la réponse **en euros**.

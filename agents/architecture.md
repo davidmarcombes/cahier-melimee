@@ -11,7 +11,8 @@
 | **PostCSS** | ^8.4.32 | CSS processing with Autoprefixer |
 | **@11ty/eleventy-img** | ^4.0.2 | Image optimization |
 | **html-validate** | ^10.9.0 | HTML validation (post-build) |
-| **vitest** | ^4.1.0 | Unit test runner |
+| **vitest** | ^4.1.0 | Unit test runner (generators, Alpine logic) |
+| **Playwright** | ^1.58.2 | E2E browser tests against built `_site/` |
 | **html-minifier-terser** | ^7.1.2 | HTML minification in production |
 | **PocketBase** | Latest | Backend for user progress and auth |
 
@@ -31,10 +32,14 @@ project-root/
 ├── .eleventy.js         # Eleventy config: collections, filters, shortcodes
 ├── .htmlvalidate.json   # html-validate config (Alpine.js attrs, disabled rules)
 ├── postcss.config.js    # PostCSS plugins: Tailwind, Autoprefixer
-├── vitest.config.js     # Vitest test config
+├── vitest.config.js     # Vitest unit test config
+├── playwright.config.js # Playwright E2E test config (baseURL, webServer)
 ├── marp.config.mjs      # Marp config, only for md files in doc not site
-├── scripts/             # Dev/build helper scripts (see Tools doc)
-├── tests/               # Vitest test files + snapshots
+├── scripts/
+│   └── e2e-server.js    # Static HTTP server for E2E tests (serves _site/ at :4173)
+├── tests/
+│   ├── unit/            # Vitest unit tests (generators, algorithms)
+│   └── e2e/             # Playwright E2E tests
 │
 └── src/
     ├── _data/           # Global data (site.json, navigation.json)
@@ -76,7 +81,8 @@ project-root/
 | `design-tokens.json` | Design system source of truth                                 |
 | `postcss.config.js`  | PostCSS plugins: Tailwind, Autoprefixer                       |
 | `.htmlvalidate.json` | HTML validation rules; Alpine.js attributes allowed globally  |
-| `vitest.config.js`   | Test runner config (happy-dom environment)                    |
+| `vitest.config.js`   | Vitest unit test config (happy-dom environment)               |
+| `playwright.config.js` | Playwright E2E config — `baseURL: http://localhost:4173`, auto-starts `scripts/e2e-server.js` |
 | `bunfig.toml`        | Bun runtime config; documents Bun usage (optional, npm is primary) |
 | `marp.config.mjs`    | Marp config, only for md files in doc not site                |
 
@@ -91,7 +97,9 @@ npm run clean         # Remove _site/ directory
 npm run report        # Generate exercises-report.csv — fast lookup of any exercise/app
 npm run validate:html # Run html-validate on all built HTML files
 npm run svg:stats     # Analyze SVG files: count, size, CSS var usage
-npm run test          # Run vitest test suite
+npm run test          # Run vitest unit test suite
+npm run test:e2e      # Run Playwright E2E tests (requires built _site/)
+npm run build:e2e     # Build _site/ for E2E (tokens → eleventy → css, no validate)
 npm run help          # Print all available npm scripts with descriptions
 ```
 
@@ -99,7 +107,7 @@ npm run help          # Print all available npm scripts with descriptions
 
 The `build` script runs these steps sequentially:
 
-1. `npm run test` — run vitest suite
+1. `npm run test` — run vitest unit suite
 2. `npm run validate:exercises` — check exercise YAML schemas
 3. `npm run tokens` — regenerate `tailwind.config.js` from `design-tokens.json`
 4. `eleventy` — build HTML (includes HTML minification transform)

@@ -108,7 +108,13 @@
       "Bash(head -60 /home/david/Code/web/cahier-melimee/src/fr/exercices/cm1/maths/operations/divisions-03/*.md)",
       "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/cm1/maths/geometrie/paralleles-perpendiculaires-01/*.md)",
       "Bash(head -30 /home/david/Code/web/cahier-melimee/src/fr/exercices/ce2/maths/geometrie/symetrie-01/*.md)",
-      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce2/maths/geometrie/vrai-faux-01/*.md)"
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce2/maths/geometrie/vrai-faux-01/*.md)",
+      "Bash(sed 's/.njk//')",
+      "Bash(npx playwright:*)",
+      "Bash(for type:*)",
+      "Bash(grep -n \"sortPicked\\\\|sortCheck\\\\|case ''''sort''''\" src/assets/js/app.js)",
+      "Bash(sed -i 's/generator: comparerNombres/generator: comparerNombresPaires/' src/fr/applications/ce1/maths/numeration/comparer-1000/comparer-1000.md src/fr/applications/ce2/maths/numeration/comparer-10000/comparer-10000.md src/fr/applications/cm1/maths/numeration/comparer-grands-nombres/comparer-grands-nombres.md src/fr/applications/cm2/maths/numeration/comparer-grands-nombres/01-comparer.md src/fr/applications/cp/maths/numeration/comparer-nombres/comparer-nombres.md)",
+      "Bash(sed -i 's/generator: choisirNombre/generator: comparerNombres/' src/fr/applications/ce2/maths/numeration/ordre-nombres-01/ordre-nombres-01.md src/fr/applications/ce2/maths/numeration/ordre-nombres-02/ordre-nombres-02.md)"
     ]
   }
 }

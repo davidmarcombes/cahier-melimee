@@ -37,8 +37,6 @@
           "@keydown.escape.window": {},
           "@hashchange.window": {},
           "@resize.window.debounce": {},
-          "@test:validate.window": {},
-          "@test:report.window": {},
           ":class": {},
           ":style": {},
           ":href": {},

@@ -1,7 +1,7 @@
 ---
 type: compare
 title: "Comparer des grands nombres"
-generator: comparerNombres
+generator: comparerNombresPaires
 repeat: 12
 params:
   min: 100000

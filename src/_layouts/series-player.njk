@@ -1,6 +1,5 @@
 ---
 layout: base
-needsPocketBase: true
 isSeriesPage: true
 ---
 
@@ -33,10 +32,11 @@ isSeriesPage: true
 
 {% if 'base-10' in usedTypes %}{% include "svg-defs.njk" %}{% endif %}
 
+<script id="series-meta" type="application/json">{"id":"{{ id }}","url":"{{ page.url }}"}</script>
+
 <div
   x-data='seriesPlayer({{ exercises | seriesPayload | safe }}, "{{ id }}")'
   @hashchange.window="syncFromHash()" @resize.window.debounce="updateMatchLines()"
-  {% if site.testEnabled %}@test:validate.window="showValidationPanel = true"{% endif %}
   x-cloak class="max-w-xl mx-auto py-8"
 >
   {# Series header #}
@@ -87,6 +87,7 @@ isSeriesPage: true
   {% if 'number-line' in usedTypes %}{% include "types/number-line.njk" %}{% endif %}
   {% if 'coordinate-grid' in usedTypes %}{% include "types/coordinate-grid.njk" %}{% endif %}
   {% if 'bar-chart' in usedTypes %}{% include "types/bar-chart.njk" %}{% endif %}
+  {% if 'calc-chain' in usedTypes %}{% include "types/calc-chain.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -197,6 +198,9 @@ isSeriesPage: true
     {% if 'bar-chart' in usedTypes %}
     <span x-show="cur.type === 'bar-chart'">Certaines barres ne sont pas correctes. Essaie encore !</span>
     {% endif %}
+    {% if 'calc-chain' in usedTypes %}
+    <span x-show="cur.type === 'calc-chain'">Certains résultats ne sont pas corrects. Essaie encore !</span>
+    {% endif %}
   </div>
 
   {# Success feedback #}
@@ -253,44 +257,6 @@ isSeriesPage: true
     </div>
   </template>
 
-  {% if site.testEnabled %}
-  {# Validation modal #}
-  <div x-show="showValidationPanel" x-cloak
-       class="fixed inset-0 z-50 flex items-center justify-center p-4"
-       @keydown.escape.window="showValidationPanel = false">
-    <div class="absolute inset-0 bg-black/40" @click="showValidationPanel = false"></div>
-    <div x-show="showValidationPanel" x-transition
-         class="relative w-full max-w-md bg-surface-chrome border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl p-6 space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="font-bold text-content-default text-lg">Valider la série</h2>
-        <button type="button" @click="showValidationPanel = false" class="text-content-subtle hover:text-content-default text-xl leading-none">&times;</button>
-      </div>
-      <div x-show="!testSent" class="space-y-3">
-        <textarea x-model="testNotes"
-                  aria-label="Commentaires"
-                  placeholder="Commentaires (optionnel)…"
-                  rows="3"
-                  class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none
-                         bg-surface-subtle text-content-default border-slate-200 dark:border-slate-700"></textarea>
-        <div class="flex items-center gap-2">
-          <button type="button" @click="submitValidation()"
-                  :disabled="testSending"
-                  class="px-4 py-1.5 text-sm font-bold rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
-            <span x-show="!testSending">Envoyer</span>
-            <span x-show="testSending">Envoi…</span>
-          </button>
-          <button type="button" @click="showValidationPanel = false" class="px-4 py-1.5 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
-            Annuler
-          </button>
-          <span x-show="testError" class="text-xs text-red-500" x-text="testError"></span>
-        </div>
-      </div>
-      <p x-show="testSent" class="text-green-600 dark:text-green-400 text-sm text-center">
-        Validation envoyée !
-      </p>
-    </div>
-  </div>
 
-  {% include "components/report-form.njk" %}
-  {% endif %}
+  {% include "components/debug-panel.njk" %}
 </div>

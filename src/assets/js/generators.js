@@ -552,7 +552,7 @@ const generators = {
     },
   },
 
-  comparerNombres: {
+  comparerNombresPaires: {
     generate: (params = {}) => {
       const min = params.min ?? 1;
       const max = params.max ?? 100;
@@ -2120,7 +2120,7 @@ const generators = {
       const fmt = (n, forceCDU) => forceCDU ? toCDU(n) : String(n);
 
       const comparisons = Array.from({ length: pairs }, () => {
-        const [a, b] = makePair();
+        let [a, b] = makePair();
         let left, right;
 
         if (style === 'standard') {

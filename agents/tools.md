@@ -18,8 +18,13 @@ All available commands (run `npm run help` for a live list):
 
 | Command | Description |
 |---------|-------------|
-| `npm test` | Run vitest test suite |
+| `npm test` | Run vitest unit test suite (generators, Alpine logic) |
 | `npm run test:watch` | Run vitest in watch mode |
+| `npm run test:e2e` | Run Playwright E2E tests — requires built `_site/` (auto-starts static server) |
+| `npm run test:e2e:ui` | Playwright with interactive UI |
+| `npm run test:e2e:headed` | Playwright in headed (visible browser) mode |
+| `npm run test:e2e:debug` | Playwright in debug mode |
+| `npm run build:e2e` | Build `_site/` for E2E (tokens → eleventy → css) without full validation |
 | `npm run validate:exercises` | Validate exercise YAML front-matter against type schemas |
 | `npm run validate:llm` | LLM-powered answer checker (requires Ollama — see `agents/ollama.md`) |
 | `npm run validate:html` | Run html-validate on all `_site/**/*.html` files |
@@ -80,6 +85,7 @@ All scripts are in `scripts/`. Key files:
 | `generate-maths-ex.js` | Interactive CLI for scaffolding new exercises. Has `TYPE_CHOICES` and `TEMPLATES`. |
 | `generate-ids.js` | Assigns 8-char hex IDs to series `index.yaml` files missing an `id`. |
 | `svg-stats.js` | Analyzes SVG files in `_includes/svg/` and reports count, sizes, CSS var usage. |
+| `e2e-server.js` | Static HTTP server that serves `_site/` at port 4173 with no path prefix. Used automatically by `playwright.config.js` via `webServer`. |
 | `a11y-test.js` | Accessibility test suite using pa11y (WCAG2AA). Starts a local server, tests static pages + sampled exercises/applications. Use `--sample N` to control how many exercise/application pages to sample (default: 3). |
 | `compress.js` | Post-build compression of output files. |
 | `serve-subpath.js` | Local HTTP server for testing subpath deployment. |
@@ -95,6 +101,44 @@ All scripts are in `scripts/`. Key files:
 | `import-identities.js` | Imports generated identities into PocketBase. |
 | `sim-server.js` | Simulation server for testing. |
 | `test-auth.js` | Tests PocketBase authentication flow. |
+
+## E2E Testing (Playwright)
+
+E2E tests live in `tests/e2e/` and run against the statically built `_site/` served at `http://localhost:4173`.
+
+### Setup
+
+```bash
+npm run build:e2e   # build _site/ (fast — no vitest or html-validate)
+npm run test:e2e    # run all Playwright tests
+```
+
+`playwright.config.js` auto-starts `scripts/e2e-server.js` before the test run and reuses it if already running (`reuseExistingServer: true`).
+
+### Test files
+
+| File | Coverage |
+|------|----------|
+| `tests/e2e/exercise-player.spec.js` | MCQ, number-check (trou), calc-chain, series progress/navigation |
+| `tests/e2e/exercise-types.spec.js` | One smoke test per exercise type template (24 types covered) |
+
+### Coverage by type
+
+All 27 exercise types that have exercises are covered. 8 types with no exercises yet (`base-10`, `fraction-paint`, `seq-verify`, `click-blocks`, `svg-tiles`, `compare-groups`, `number-hunt`, `count-objects`) and `column-op` (template not wired into `series-player.njk`) are excluded.
+
+Types are tested via ID-based URLs: `/fr/exercices/{id}/`. Use `#N` to navigate to exercise N in a series (e.g. `#2` → second exercise).
+
+### waitForAlpine helper
+
+All tests wait for Alpine.js to finish initialising before interacting:
+
+```js
+async function waitForAlpine(page) {
+  await page.waitForSelector('[x-data]:not([x-cloak])', { timeout: 8000 });
+}
+```
+
+Alpine removes `x-cloak` from the root `x-data` element on boot.
 
 ## html-validate Configuration
 

@@ -38,6 +38,7 @@ const TYPE_SCHEMAS = {
   'compare-groups': { required: [] },
   'count-objects': { required: [] },
   'bar-chart': { required: ['labels', 'values', 'yMax', 'yStep'], arrays: ['labels', 'values'] },
+  'calc-chain': { required: ['chain'] },
 };
 
 const COLORS = {

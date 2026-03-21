@@ -1,7 +1,7 @@
 ---
 type: number-check
 title: "Calculer une somme"
-operation: "1 € + 50 c + 20 c + 10 c = ? c"
+operation: "1 € + 50 c + 20 c + 10 c = ?"
 answer: "180"
 ---
 

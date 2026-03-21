@@ -127,11 +127,6 @@ function seriesPlayer(exercises, seriesId) {
     huntClicked: [],
     huntNext: 1,
     huntError: -1,
-    showValidationPanel: false,
-    testNotes: '',
-    testSending: false,
-    testSent: false,
-    testError: '',
     nlVal: null,
     cgInputs: ['', ''],
     cgPoint: null,
@@ -139,6 +134,8 @@ function seriesPlayer(exercises, seriesId) {
     bcErrors: [],
     bcInputs: [],
     bcSolved: [],
+    ccInputs: [],
+    ccErrors: [],
 
     /* Fraction Helpers */
     get fractionShapes() {
@@ -291,6 +288,10 @@ function seriesPlayer(exercises, seriesId) {
         this.bcErrors = [];
         this.bcInputs = (_bc.questions || []).map(() => '');
         this.bcSolved = (_bc.questions || []).map(() => false);
+      }
+      if (this.cur.chain) {
+        this.ccInputs = this.cur.chain.steps.map(() => '');
+        this.ccErrors = [];
       }
       const _focusFirst = () => {
         let ref;
@@ -996,6 +997,30 @@ function seriesPlayer(exercises, seriesId) {
         }
         return;
       }
+      if (this.cur.type === 'calc-chain') {
+        if (this.solved) return;
+        const steps = (this.cur.chain || {}).steps || [];
+        if (this.ccInputs.some((v) => !v || !v.trim())) {
+          this.showError = true;
+          setTimeout(() => { this.showError = false; }, 2000);
+          return;
+        }
+        const norm = (s) => s.trim().toLowerCase().replace(/,/g, '.').replace(/[\s\u00a0\u202f]/g, '');
+        const errors = steps.map((step, i) => norm(this.ccInputs[i]) !== norm(step.answer) ? i : -1).filter(i => i >= 0);
+        if (errors.length === 0) {
+          this.solvedFlags[this.currentIndex] = true;
+          this.showError = false;
+          this.ccErrors = [];
+          if (this.currentIndex < this.exercises.length - 1) {
+            setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+          }
+        } else {
+          this.ccErrors = errors;
+          this.showError = true;
+          setTimeout(() => { this.showError = false; this.ccErrors = []; }, 2000);
+        }
+        return;
+      }
       // Operation à trou (single or multi-blank)
       if (this.trouInputs.length > 0) {
         if (this.solved) return;
@@ -1174,31 +1199,6 @@ function seriesPlayer(exercises, seriesId) {
         setTimeout(() => {
           this.mcqWrong = null;
         }, 1500);
-      }
-    },
-
-    async submitValidation() {
-      this.testSending = true;
-      this.testError = '';
-      const live = await window.__pbAvailable();
-      if (!live) {
-        this.testError = "Mode démo — la validation n'a pas été envoyée.";
-        this.testSending = false;
-        return;
-      }
-      try {
-        const pb = new PocketBase(window.__pbUrl);
-        const seriesId = window.location.pathname.replace(/\/$/, '').split('/').pop();
-        await pb.collection('validations').create({
-          series_id: seriesId,
-          notes: this.testNotes.trim(),
-        });
-        this.testSent = true;
-      } catch (err) {
-        this.testError = "Erreur d'envoi. Réessayez.";
-        console.error(err);
-      } finally {
-        this.testSending = false;
       }
     },
 
@@ -1430,6 +1430,13 @@ function seriesPlayer(exercises, seriesId) {
         this.bcInputs = [];
         this.bcSolved = [];
       }
+      if (_e.chain) {
+        this.ccInputs = _e.chain.steps.map(() => '');
+        this.ccErrors = [];
+      } else {
+        this.ccInputs = [];
+        this.ccErrors = [];
+      }
       window.location.hash = '#' + (idx + 1);
     },
 
@@ -1439,6 +1446,99 @@ function seriesPlayer(exercises, seriesId) {
         this.currentIndex = h - 1;
       }
     },
+  };
+}
+
+/* Debug panel — right-click on a series page to build an agent-ready prompt */
+function debugPanel() {
+  return {
+    open: false,
+    note: '',
+    copied: false,
+
+    init() {
+      document.addEventListener('contextmenu', (e) => {
+        // Allow default context menu on inputs / selects / textareas
+        if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+        e.preventDefault();
+        this.open = true;
+      });
+    },
+
+    get _meta() {
+      try {
+        return JSON.parse(document.getElementById('series-meta')?.textContent || '{}');
+      } catch (_) { return {}; }
+    },
+
+    get _ex() {
+      try {
+        const el = document.querySelector('[x-data^="seriesPlayer"]');
+        if (!el) return null;
+        const d = Alpine.$data(el);
+        return { index: d.currentIndex, total: d.exercises.length, cur: d.cur };
+      } catch (_) { return null; }
+    },
+
+    get panelSubtitle() {
+      const m = this._meta;
+      const ex = this._ex;
+      const type = ex?.cur?.type || '?';
+      const idx = ex ? ex.index + 1 : '?';
+      const total = ex?.total || '?';
+      return `ID: ${m.id || '?'} · exercice ${idx}/${total} · type: ${type}`;
+    },
+
+    get prompt() {
+      const m = this._meta;
+      const ex = this._ex;
+      const url = window.location.href;
+      const type = ex?.cur?.type || '?';
+      const idx = ex ? ex.index + 1 : '?';
+      const total = ex?.total || '?';
+
+      // Serialize current exercise data as YAML-ish lines
+      let yamlBody = '';
+      if (ex?.cur) {
+        yamlBody = Object.entries(ex.cur)
+          .filter(([k]) => k !== 'type')
+          .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+          .join('\n');
+      }
+
+      const lines = [
+        'You are debugging an exercise in Le Cahier de Mélimée. Follow agents/content.md for conventions.',
+        '',
+        `URL: ${url}`,
+        m.id ? `Series ID: ${m.id}` : '',
+        `Exercise: #${idx} / ${total} — type: ${type}`,
+        '',
+        'Current exercise data:',
+        '```yaml',
+        `type: ${type}`,
+        yamlBody,
+        '```',
+        '',
+        `Problem: ${this.note.trim() || '<describe what is wrong>'}`,
+        '',
+        'Diagnostic commands:',
+        `  node scripts/show-type.js ${type}`,
+        '  npm run validate:exercises',
+      ].filter((l) => l !== null).join('\n');
+
+      return lines;
+    },
+
+    async copy() {
+      try {
+        await navigator.clipboard.writeText(this.prompt);
+        this.copied = true;
+        setTimeout(() => { this.copied = false; }, 2000);
+      } catch (err) {
+        console.warn('Clipboard write failed:', err);
+      }
+    },
+
   };
 }
 

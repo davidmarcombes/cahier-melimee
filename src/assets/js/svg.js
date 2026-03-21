@@ -94,7 +94,7 @@ function triangleSvg(pixA, pixB, labelA = '', labelB = '', labelC = '', fillColo
 }
 
 // pie chart for fraction n/d with the fraction label below
-function fractionShapesSvg(n, d, size = 80) {
+function fractionPieSvg(n, d, size = 80) {
   const pie = slicedPieSvg(d, n, size);
   return `<span style="display:inline-flex;flex-direction:column;align-items:center;gap:0.4rem">${pie}<span class="frac text-lg"><span class="fn">${n}</span><span class="fd">${d}</span></span></span>`;
 }
@@ -987,6 +987,7 @@ function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
   // Tilted beam: line from (lx, beamY+lOff) to (rx, beamY+rOff)
   const lBy = beamY + lOff, rBy = beamY + rOff;
 
+
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"
                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balance">
     <!-- Central post -->
@@ -1016,4 +1017,103 @@ function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
     ${renderItems(left, lx, lPanY)}
     ${renderItems(right, rx, rPanY)}
   </svg>`;
+}
+
+// ── Calendar ──────────────────────────────────────────────────────────────────
+// Renders a monthly calendar grid (Monday-first, French labels).
+// month : 1–12  |  year : e.g. 2025  |  highlight : array of day numbers to circle
+function calendarSvg(month, year, highlight = []) {
+  const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin',
+                     'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const DAYS_SHORT = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+
+  // First day of month: JS getDay() → 0=Sun … 6=Sat → convert to Mon=0 … Sun=6
+  const jsDay    = new Date(year, month - 1, 1).getDay();
+  const startCol = (jsDay + 6) % 7;
+  const totalDays = new Date(year, month, 0).getDate();
+
+  // Build flat cell array (0 = empty, positive int = day number)
+  const cells = Array(startCol).fill(0);
+  for (let d = 1; d <= totalDays; d++) cells.push(d);
+  while (cells.length % 7) cells.push(0);
+
+  const hl = Array.isArray(highlight) ? highlight : [];
+  const rows = cells.length / 7;
+
+  const CW = 32, CH = 28;           // cell width / height
+  const HDR = 32, DNH = 22;        // header height / day-name row height
+  const W = 7 * CW + 2;
+  const H = HDR + DNH + rows * CH + 2;
+
+  let s = '';
+
+  // Outer background
+  s += `<rect width="${W}" height="${H}" rx="6" fill="var(--b1,#fff)" stroke="var(--cs,#cbd5e1)" stroke-width="1"/>`;
+
+  // Month/year header bar
+  s += `<rect width="${W}" height="${HDR}" rx="6" fill="var(--p,#3b82f6)"/>`;
+  s += `<rect y="${HDR - 6}" width="${W}" height="6" fill="var(--p,#3b82f6)"/>`;
+  s += `<text x="${W / 2}" y="21" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="bold" fill="#fff">${MONTHS_FR[month - 1]} ${year}</text>`;
+
+  // Day-name header row
+  for (let c = 0; c < 7; c++) {
+    const x = 1 + c * CW;
+    const bg = c >= 5 ? 'var(--sf,#f0f4f8)' : 'var(--sf,#f1f5f9)';
+    const tc = c >= 5 ? 'var(--er,#dc2626)' : 'var(--bc,#374151)';
+    s += `<rect x="${x}" y="${HDR}" width="${CW}" height="${DNH}" fill="${bg}" stroke="var(--cs,#e2e8f0)" stroke-width="0.5"/>`;
+    s += `<text x="${x + CW / 2}" y="${HDR + 15}" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="bold" fill="${tc}">${DAYS_SHORT[c]}</text>`;
+  }
+
+  // Day cells
+  for (let i = 0; i < cells.length; i++) {
+    const day = cells[i];
+    const col = i % 7;
+    const row = Math.floor(i / 7);
+    const x = 1 + col * CW;
+    const y = HDR + DNH + row * CH;
+    const isWE  = col >= 5;
+    const isHL  = day && hl.includes(day);
+    const fill  = isHL  ? 'var(--p,#3b82f6)'
+                : isWE && day ? 'var(--sf,#fef2f2)'
+                : day ? 'var(--b1,#fff)'
+                :       'var(--b2,#f9fafb)';
+    const tFill = isHL ? '#fff' : isWE && day ? 'var(--er,#dc2626)' : 'var(--bc,#374151)';
+
+    s += `<rect x="${x}" y="${y}" width="${CW}" height="${CH}" fill="${fill}" stroke="var(--cs,#e5e7eb)" stroke-width="0.5"/>`;
+    if (day) {
+      s += `<text x="${x + CW / 2}" y="${y + CH / 2 + 5}" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="${tFill}">${day}</text>`;
+    }
+  }
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+
+/* ─── Decomposition Tree SVG ───────────────────────────────────────────────
+   Renders a 2-branch number-bond tree.
+   top: number at root (string or number)
+   left, right: child values — pass "?" for a blank node.
+   ────────────────────────────────────────────────────────────────────────── */
+function decompTreeSvg(top, left, right) {
+  const W = 260, H = 140;
+  const R = 24;
+  const cx = W / 2, ty = 28, ly = 108, ry = 108;
+  const lx = 72, rx = W - 72;
+
+  const mkCircle = (x, y, val) => {
+    const isBlank = String(val) === '?';
+    const label = isBlank ? '?' : String(val);
+    const bg = isBlank ? 'var(--sf,#f8fafc)' : 'var(--b1,#fff)';
+    const stroke = isBlank ? 'var(--p,#3b82f6)' : 'var(--cs,#cbd5e1)';
+    const tc = isBlank ? 'var(--p,#3b82f6)' : 'var(--bc,#1e293b)';
+    return `<circle cx="${x}" cy="${y}" r="${R}" fill="${bg}" stroke="${stroke}" stroke-width="2.5"/>`
+      + `<text x="${x}" y="${y + 6}" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="${tc}">${label}</text>`;
+  };
+
+  let s = '';
+  s += `<line x1="${cx}" y1="${ty + R}" x2="${lx}" y2="${ly - R}" stroke="var(--cs,#cbd5e1)" stroke-width="2"/>`;
+  s += `<line x1="${cx}" y1="${ty + R}" x2="${rx}" y2="${ry - R}" stroke="var(--cs,#cbd5e1)" stroke-width="2"/>`;
+  s += mkCircle(cx, ty, top);
+  s += mkCircle(lx, ly, left);
+  s += mkCircle(rx, ry, right);
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;max-width:100%">${s}</svg>`;
 }

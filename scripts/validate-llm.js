@@ -441,8 +441,14 @@ function buildPrompt({ data, body }) {
 
     case 'clock': {
       const h = fmt(data.hour), m = fmt(data.minute);
-      const ans = data.answers ? data.answers[0] : fmt(data.answer);
-      return `Type: lire l'heure\nHeure affichée: ${h}h${m.padStart(2,'0')}\nRéponse proposée: ${ans}`;
+      const ans = data.answers ? data.answers.join(' ou ') : fmt(data.answer);
+      const bodyText = strip(body || '');
+      return [
+        `Type: lire l'heure`,
+        bodyText && `Contexte: ${bodyText}`,
+        `Heure affichée: ${h}h${m.padStart(2,'0')}`,
+        `Réponse proposée: ${ans} (formats acceptés : Xh30, XhXX, X:XX, XX:XX)`,
+      ].filter(Boolean).join('\n');
     }
 
     case 'fraction': {
@@ -476,13 +482,16 @@ function buildPrompt({ data, body }) {
     }
 
     case 'coordinate-grid': {
-      const pts = (data.points || []).map(p => `${p.label || 'A'}(${p.x};${p.y})`).join(', ');
+      const pts = (data.points || []).map(p => `${p.label || 'A'}(${p.x} ; ${p.y})`).join(', ');
+      // answer format is "x,y" (comma-separated integers) — reformat as (x ; y) to avoid
+      // confusion with French decimal notation where comma means decimal point
+      const ansCoord = fmt(data.answer).replace(',', ' ; ');
       return [
         `Type: quadrillage (coordonnées)`,
         title && `Contexte: ${title}`,
         `Grille: ${data.cols || 6}×${data.rows || 6}`,
         pts && `Points affichés: ${pts}`,
-        `Réponse proposée: ${fmt(data.answer)}`,
+        `Réponse proposée: (${ansCoord})`,
       ].filter(Boolean).join('\n');
     }
 
@@ -703,7 +712,10 @@ async function main() {
     }
 
     if (relevant.length === 0) {
-      // File has no LLM-checkable exercises — mark as skip for this model
+      // When filtering by type, the file may have exercises of other types — don't
+      // poison its cache entry with a blanket skip.
+      if (FILTER_TYPE) continue;
+      // File genuinely has no LLM-checkable exercises — mark as skip for this model
       const e = entry?.hash === hash ? entry : { seriesId, hash, manual: entry?.manual || '', models: new Map() };
       if (entry?.hash !== hash) e.models.clear();
       e.seriesId = seriesId;
@@ -727,7 +739,8 @@ async function main() {
 
   // 5. Validate
   let ok = 0, fail = 0, skip = 0;
-  const failures = [];
+  const failures = [];   // verdict=fail
+  const llmSkips = [];   // verdict=skip WITH a reason from the LLM (not auto-skip)
 
   await pool(tasks, CONCURRENCY, async ({ relPath, seriesId, hash, exercises }, i) => {
     const fileResults = [];
@@ -741,10 +754,10 @@ async function main() {
         continue;
       }
 
-      let verdict, reason;
+      let verdict, reason, rawResponse;
       try {
-        const response = await askLLM(prompt);
-        ({ verdict, reason } = parseVerdict(response));
+        rawResponse = await askLLM(prompt);
+        ({ verdict, reason } = parseVerdict(rawResponse));
       } catch (err) {
         verdict = 'skip';
         reason  = err.message;
@@ -759,7 +772,7 @@ async function main() {
       }
 
       const label = ex.generatorName ? `[gen:${ex.generatorName}] ` : '';
-      fileResults.push({ verdict, reason, type, title: (label + strip(ex.data.title || ex.body || '')).slice(0, 70) });
+      fileResults.push({ verdict, reason, rawResponse, type, title: (label + strip(ex.data.title || ex.body || '')).slice(0, 70) });
     }
 
     // Aggregate file verdict: fail if any fail, skip if all skip, ok otherwise
@@ -776,21 +789,35 @@ async function main() {
 
     // Count & report
     for (const r of fileResults) {
-      if (r.verdict === 'ok')   ok++;
-      else if (r.verdict === 'fail') { fail++; failures.push({ relPath, ...r }); }
-      else skip++;
+      if (r.verdict === 'ok') {
+        ok++;
+      } else if (r.verdict === 'fail') {
+        fail++;
+        failures.push({ relPath, ...r });
+      } else {
+        skip++;
+        // LLM explicitly skipped with a reason (not a silent auto-skip or missing prompt)
+        if (r.reason && r.reason !== 'no prompt for type') {
+          llmSkips.push({ relPath, ...r });
+        }
+      }
     }
 
+    const fileHasLlmSkip = fileResults.some(r => r.verdict === 'skip' && r.reason && r.reason !== 'no prompt for type');
     const icon = fileVerdict === 'ok' ? `${C.green}✓${C.reset}`
-      : fileVerdict === 'fail' ? `${C.red}✗${C.reset}`
-      : `${C.grey}–${C.reset}`;
+      : fileVerdict === 'fail'        ? `${C.red}✗${C.reset}`
+      : fileHasLlmSkip                ? `${C.yellow}–${C.reset}`
+      :                                 `${C.grey}–${C.reset}`;
 
-    if (!FAILURES_ONLY || fileVerdict === 'fail') {
+    if (!FAILURES_ONLY || fileVerdict === 'fail' || fileHasLlmSkip) {
       process.stdout.write(`  ${icon}  ${relPath}\n`);
       for (const r of fileResults) {
         if (r.verdict === 'fail') {
           console.log(`     ${C.red}✗ [${r.type}] ${r.title}${C.reset}`);
           console.log(`       ${C.yellow}${r.reason}${C.reset}`);
+        } else if (r.verdict === 'skip' && r.reason && r.reason !== 'no prompt for type') {
+          console.log(`     ${C.yellow}– [${r.type}] ${r.title}${C.reset}`);
+          console.log(`       ${C.grey}${r.reason}${C.reset}`);
         }
       }
     }
@@ -805,10 +832,10 @@ async function main() {
   // 7. Report
   const manualOkCount = [...cache.values()].filter(e => e.manual === 'ok').length;
   console.log(`\n${'─'.repeat(60)}`);
-  console.log(`${C.bold}Results:${C.reset}  ${C.green}${ok} correct${C.reset}  ${C.red}${fail} incorrect${C.reset}  ${C.grey}${skip} skipped${C.reset}${manualOkCount ? `  ${C.yellow}${manualOkCount} manual ok${C.reset}` : ''}`);
+  console.log(`${C.bold}Results:${C.reset}  ${C.green}${ok} correct${C.reset}  ${C.red}${fail} incorrect${C.reset}  ${C.grey}${skip} skipped${C.reset}${llmSkips.length ? `  ${C.yellow}${llmSkips.length} needs review${C.reset}` : ''}${manualOkCount ? `  ${C.yellow}${manualOkCount} manual ok${C.reset}` : ''}`);
 
   // Write error report (always, so the file reflects the current run)
-  if (failures.length > 0) {
+  if (failures.length > 0 || llmSkips.length > 0) {
     const ts = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const lines = [
       `# LLM validation errors`,
@@ -816,28 +843,82 @@ async function main() {
       `> Model: \`${MODEL}\` — Run: ${ts}${manualOkCount ? ` — ${manualOkCount} manual override(s) active` : ''}`,
       ``,
     ];
-    // Group by file
-    const byFile = new Map();
-    for (const f of failures) {
-      if (!byFile.has(f.relPath)) byFile.set(f.relPath, []);
-      byFile.get(f.relPath).push(f);
-    }
-    for (const [relPath, items] of byFile) {
-      lines.push(`## [${relPath}](../${relPath})`);
+
+    // Group failures by file
+    if (failures.length > 0) {
+      lines.push(`## ✗ Incorrect answers (${failures.length})`);
       lines.push('');
-      for (const f of items) {
-        lines.push(`- **[${f.type}]** ${f.title}`);
-        if (f.reason) lines.push(`  - ${f.reason}`);
+      const byFile = new Map();
+      for (const f of failures) {
+        if (!byFile.has(f.relPath)) byFile.set(f.relPath, []);
+        byFile.get(f.relPath).push(f);
       }
-      lines.push('');
+      for (const [relPath, items] of byFile) {
+        lines.push(`### [${relPath}](../${relPath})`);
+        lines.push('');
+        for (const f of items) {
+          lines.push(`- **[${f.type}]** ${f.title}`);
+          if (f.reason) lines.push(`  - ${f.reason}`);
+          if (f.rawResponse) {
+            lines.push(`  <details><summary>Réponse brute du modèle</summary>`);
+            lines.push('');
+            lines.push('  ```');
+            lines.push(...f.rawResponse.split('\n').map(l => '  ' + l));
+            lines.push('  ```');
+            lines.push('');
+            lines.push('  </details>');
+          }
+        }
+        lines.push('');
+      }
     }
+
+    // Group llm-skips by file
+    if (llmSkips.length > 0) {
+      lines.push(`## – Needs review — skipped by LLM (${llmSkips.length})`);
+      lines.push('');
+      const byFile = new Map();
+      for (const f of llmSkips) {
+        if (!byFile.has(f.relPath)) byFile.set(f.relPath, []);
+        byFile.get(f.relPath).push(f);
+      }
+      for (const [relPath, items] of byFile) {
+        lines.push(`### [${relPath}](../${relPath})`);
+        lines.push('');
+        for (const f of items) {
+          lines.push(`- **[${f.type}]** ${f.title}`);
+          if (f.reason) lines.push(`  - ${f.reason}`);
+          if (f.rawResponse) {
+            lines.push(`  <details><summary>Réponse brute du modèle</summary>`);
+            lines.push('');
+            lines.push('  ```');
+            lines.push(...f.rawResponse.split('\n').map(l => '  ' + l));
+            lines.push('  ```');
+            lines.push('');
+            lines.push('  </details>');
+          }
+        }
+        lines.push('');
+      }
+    }
+
     fs.writeFileSync(ERRORS_PATH, lines.join('\n'));
 
-    console.log(`\n${C.red}${C.bold}Failures:${C.reset}`);
-    for (const f of failures) {
-      console.log(`  ${f.relPath}`);
-      console.log(`    [${f.type}] ${f.title}`);
-      console.log(`    ${C.yellow}${f.reason}${C.reset}`);
+    if (failures.length > 0) {
+      console.log(`\n${C.red}${C.bold}Failures:${C.reset}`);
+      for (const f of failures) {
+        console.log(`  ${f.relPath}`);
+        console.log(`    [${f.type}] ${f.title}`);
+        console.log(`    ${C.yellow}${f.reason}${C.reset}`);
+      }
+    }
+    if (llmSkips.length > 0) {
+      console.log(`\n${C.yellow}${C.bold}Needs review (skipped by LLM):${C.reset}`);
+      for (const f of llmSkips) {
+        console.log(`  ${f.relPath}`);
+        console.log(`    [${f.type}] ${f.title}`);
+        console.log(`    ${C.grey}${f.reason}${C.reset}`);
+      }
     }
     console.log(`\n${C.yellow}Error report: ${ERRORS_PATH}${C.reset}\n`);
     return 1;

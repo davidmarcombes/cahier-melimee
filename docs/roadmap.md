@@ -1,6 +1,6 @@
 # Roadmap — Couverture du programme CP→CM2
 
-> Généré le 2026-03-19. Mis à jour le 2026-03-19 (4). Sources : `docs/maths_*.md` (programme officiel) × `exercises-report.csv` (ce qui existe).
+> Généré le 2026-03-19. Mis à jour le 2026-03-20 (5). Sources : `docs/maths_*.md` (programme officiel) × `exercises-report.csv` (ce qui existe).
 > Légende : ✅ couvert · ⚠️ partiel · ❌ absent · 🔥 priorité haute
 
 ---
@@ -9,10 +9,10 @@
 
 | Niveau | Séries actuelles | Santé globale | Priorité |
 |--------|-----------------|---------------|----------|
-| CP     | 52              | ✅ bon socle | Soustractions posées (non prioritaire) |
-| CE1    | 96              | ✅ complet | — |
-| CE2    | 133             | ✅ le plus complet | — |
-| CM1    | 132             | ✅ très complet | — |
+| CP     | 56              | ✅ bon socle | Soustractions posées (non prioritaire) |
+| CE1    | 103             | ✅ complet | — |
+| CE2    | 138             | ✅ le plus complet | — |
+| CM1    | 139             | ✅ très complet | — |
 | CM2    | 28              | ❌ très lacunaire | ⏳ traité ultérieurement |
 
 ---
@@ -35,7 +35,9 @@
 | **Additions posées sans/avec retenue** | ✅ | `pose-addition-01` + `pose-addition-02` |
 | **Soustractions posées** | ❌ | `column-op` à créer pour CP (non prioritaire) |
 | Additions/soustractions à trou | ✅ | — |
-| **Approche multiplication (addition réitérée)** | ⚠️ | 1 série intro seulement |
+| **Approche multiplication (addition réitérée)** | ✅ | `mult-intro-01` + `mult-intro-02` (calculer N×M) + `mult-intro-03` (groupes→multiplication, 2026-03-20) |
+| **Décomposer un nombre (arbre)** | ✅ | `liens-numeriques-01` (decompTreeSvg, number-bond, 2026-03-20) |
+| **Suites logiques figurales** | ✅ | `suites-figurales-01` (mcq, patterns AB→AABB, 2026-03-20) |
 
 ### Grandeurs et mesures
 
@@ -51,7 +53,7 @@
 |----------------|------|-----------------|
 | Figures planes | ✅ | mcq |
 | Solides | ✅ | matching/true-false |
-| **Se repérer sur quadrillage** | ❌ | exercise type à définir (grid-locate ?) |
+| **Se repérer sur quadrillage** | ✅ | `quadrillage-lire-01` (coordinate-grid 3×3, 2026-03-21) |
 | **Suite de dessins** | ❌ | conceptuel, difficile à automatiser |
 | **Axe de symétrie** | ✅ | `symetrie-01` (true-false + mcq, 2026-03-19) |
 
@@ -71,9 +73,11 @@
 | Soustractions posées | ✅ | `pose-soustraction-01` |
 | Additions/soustractions à trou | ✅ | — |
 | **Tables de multiplication 1→5** | ✅ | — |
-| **Multiplier par multiple de 10** | ⚠️ | 1 série seulement |
+| **Multiplier par multiple de 10** | ✅ | `mult-multiples-10-01` (2×10→3×30, 2026-03-20) |
 | **Approche division (partage)** | ✅ | `division-partage-01` (problem, M1.2) |
-| **Calcul réfléchi** | ✅ | `calcul-reflechi-01` (passage par 10, doubles, soustraction, 2026-03-19) |
+| **Calcul réfléchi** | ✅ | `calcul-reflechi-01` (passage par 10) + `calcul-reflechi-02` (calc-chain 2 étapes, 2026-03-20) |
+| **Décomposer un nombre (arbre)** | ✅ | `liens-numeriques-01` (decompTreeSvg, 2026-03-20) |
+| **Suites logiques figurales** | ✅ | `suites-figurales-01` (mcq, 2026-03-20) |
 
 ### Grandeurs et mesures
 
@@ -117,8 +121,10 @@
 | Additions/soustractions posées | ✅ | `pose-addition-01` + `pose-soustraction-01` |
 | Multiplications posées (2×1, 3×1) | ✅ | `multiplications-posees-01` (column-op ×) |
 | **Droite graduée** | ✅ | `droite-graduee-01` (0–100 step 10, 0–1000 step 100, 2026-03-19) |
-| **Calcul réfléchi** | ✅ | `calcul-reflechi-01` (passage centaine, décomposition, −9, complément 100, 2026-03-19) |
-| **Division (sens, partage/groupement)** | ⚠️ | `number-check` present mais pas `problem` sens |
+| **Calcul réfléchi** | ✅ | `calcul-reflechi-01` + `calcul-reflechi-02` (calc-chain 3 étapes, 2026-03-20) |
+| **Division (sens, partage/groupement)** | ✅ | `division-sens-01` (problem M1.2 + M1.3, 2026-03-21) |
+| **Décomposer un nombre (arbre)** | ✅ | `liens-numeriques-01` (decompTreeSvg, 2026-03-20) |
+| **Suites logiques figurales** | ✅ | `suites-figurales-01` (mcq, 2026-03-20) |
 | **Ordre de grandeur** | ✅ | mcq estimation |
 | **Compléments à 10 et 100** | ✅ | — |
 
@@ -195,7 +201,7 @@
 | Compléments 10/100/1 000 | ✅ | — |
 | Doubles/moitiés | ✅ | — |
 | **Mémoriser tables (défi fluency)** | ✅ | défis créés |
-| **Stratégies décomposition/compensation** | ✅ | `calcul-reflechi-01` (multi-question, 5 ex) |
+| **Stratégies décomposition/compensation** | ✅ | `calcul-reflechi-01` + `calcul-reflechi-02` (calc-chain 3–4 étapes, grands nombres, 2026-03-20) |
 
 ### Grandeurs et mesures
 
@@ -218,7 +224,7 @@
 | A2.4 CM1 (état initial) | ✅ | `transformation-etat-initial-01` |
 | **A2.4 non-congruent CM1** | ✅ | `transformation-etat-initial-02` (difficile, 5 ex) |
 | **Se repérer sur quadrillage** | ✅ | `quadrillage-lire-01` + `quadrillage-placer-01` (grille 8×8, 2026-03-19) |
-| **Modéliser avec schéma/tableau** | ❌ | `multi-question` enrichis |
+| **Modéliser avec schéma/tableau** | ✅ | `modelisation-01` (multi-question tableaux, 2026-03-21) |
 
 ---
 
@@ -406,6 +412,65 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
    - CM1 `operations-fractions-01` (5 ex, même dénominateur)
    - CM2 `operations-fractions-01` (5 ex, résultats > 1 inclus)
 8. ~~**CM2 proportionnalité complète** — fill-table + problem~~ ✅ `proportionnalite-02` (5 ex : 2 fill-table + 3 problem, 2026-03-18)
+
+---
+
+## Couverture E2E — Tests Playwright
+
+> Mise à jour : 2026-03-21. Fichiers : `tests/e2e/exercise-player.spec.js` + `tests/e2e/exercise-types.spec.js`.
+> **26 types couverts sur 35 templates.** 40 tests au total.
+
+### Types couverts ✅
+
+| Type | Fichier spec | Nature du test |
+|------|-------------|----------------|
+| `mcq` | exercise-player | interaction complète (correct + erreur + désactivation) |
+| `number-check` | exercise-player | interaction complète (correct + erreur + touche Entrée) |
+| `calc-chain` | exercise-player | interaction complète (correct + erreur partielle + bouton désactivé) |
+| `clock` | exercise-types | saisie heure + success |
+| `ruler` | exercise-types | lecture valeur + success |
+| `fraction` | exercise-types | saisie fraction + success |
+| `problem` | exercise-types | saisie réponse + success |
+| `number-line` | exercise-types | placement nombre + success |
+| `sequence` | exercise-types | compléter suite + success |
+| `bounding` | exercise-types | encadrement + success |
+| `convert` | exercise-types | conversion + success |
+| `fraction-check` | exercise-types | numérateur + dénominateur + success |
+| `true-false` | exercise-types | clic Vrai/Faux + success |
+| `multi-question` | exercise-types | saisie multiple + success |
+| `checkbox` | exercise-types | sélection statements + success |
+| `pyramid` | exercise-types | saisie inputs visibles + success |
+| `select` | exercise-types | sélection option + success |
+| `sort` | exercise-types | clic tuiles dans l'ordre YAML + success (×2 : correct + mauvais ordre) |
+| `logic-grid` | exercise-types | grille complète → auto-validate + success |
+| `compare` | exercise-types | cycling boutons → valeurs correctes + success |
+| `coordinate-grid` | exercise-types | clic case + success |
+| `bar-chart` | exercise-types | rendu labels SVG (render-only) |
+| `matching` | exercise-types | rendu cartes (render-only) |
+| `drag-sort` | exercise-types | rendu tuiles pool + zone de dépôt (render-only, ×2) |
+| `tile-select` | exercise-types | rendu grille tuiles (render-only) |
+| `fill-table` | exercise-types | rendu tableau (render-only) |
+
+### Types non couverts ❌
+
+#### Pas d'exercices créés (content needed first)
+
+| Type | Raison | Action requise |
+|------|--------|----------------|
+| `base-10` | Aucune série créée | Créer des exercices CP/CE1 avec ce type |
+| `click-blocks` | Aucune série créée | Créer des exercices (valeur de position) |
+| `seq-verify` | Aucune série créée (partial partagé) | Créer des exercices ou confirmer si supplanté par `sequence` |
+| `svg-tiles` | Aucune série créée | Créer des exercices |
+| `fraction-paint` | Aucune série créée | Créer des exercices (fractions CE2) |
+| `number-hunt` | Aucune série créée | Créer des exercices CP |
+| `compare-groups` | Aucune série créée | Créer des exercices CP |
+| `count-objects` | Aucune série créée | Créer des exercices CP |
+
+#### Problème d'infrastructure
+
+| Type | Raison | Action requise |
+|------|--------|----------------|
+| `column-op` | Template non inclus dans `series-player.njk` | Câbler le type dans le player, puis ajouter un test |
 
 ---
 

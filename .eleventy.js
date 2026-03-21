@@ -728,6 +728,16 @@ module.exports = async function (eleventyConfig) {
         }
 
 
+        if (ex.data.type === 'calc-chain' && ex.data.chain) {
+          item.chain = {
+            start: Number(interpolate(String(ex.data.chain.start))),
+            steps: (ex.data.chain.steps || []).map((s) => ({
+              op: String(s.op),
+              answer: interpolate(String(s.answer)).trim().toLowerCase(),
+            })),
+          };
+        }
+
         payload.push(item);
       }
     });
