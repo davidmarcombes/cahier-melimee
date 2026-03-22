@@ -1,10 +1,13 @@
 {# Base-10 Blocks Visualization #}
 <div x-show="cur.type === 'base-10'" class="flex flex-col items-center mb-6 w-full">
-  <div class="w-full overflow-x-auto">
-    <div class="min-w-max flex justify-center px-12 py-4">
-      <svg 
-        :viewBox="'0 0 ' + cur.base10.width + ' 140'"
-        class="h-auto max-h-48 sm:max-h-64 w-auto drop-shadow-md overflow-visible"
+  <div class="w-full overflow-x-auto flex justify-center py-4">
+    <div class="flex justify-center">
+      <svg
+        :viewBox="'0 0 ' + cur.base10.width + ' ' + cur.base10.height"
+        :width="cur.base10.width"
+        :height="cur.base10.height"
+        class="b10 max-h-40 sm:max-h-48 overflow-visible"
+        style="width:auto;height:auto;display:block"
         x-html="cur.base10.markup"
       >
       </svg>

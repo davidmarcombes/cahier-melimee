@@ -74,7 +74,7 @@ function run() {
     // Check if 'id:' key is missing
     if (!content.match(/^id:/m)) {
       const newId = generateUniqueId(folderName);
-      const updatedContent = `id: "${newId}"\n` + content;
+      const updatedContent = `id: ${newId}\n` + content;
 
       fs.writeFileSync(yamlPath, updatedContent, 'utf8');
       console.log(`✅ Assigned id: ${newId} to: ${path.relative(path.resolve(__dirname, '..'), folderPath)}`);

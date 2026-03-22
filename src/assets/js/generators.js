@@ -2593,9 +2593,11 @@ const generators = {
       const hi = Math.floor(amax / step);
       const anchor   = (lo + Math.floor(Math.random() * (hi - lo + 1))) * step;
       // Anchor position: between index 1 and cells-2 (not first, not last)
+      // Cap so the sequence never starts below 0 (anchor - anchorPos*step >= 0)
+      const maxSafePos = Math.min(cells - 2, Math.floor(anchor / step));
       const anchorPos = params.anchorPos === undefined
-        ? 1 + Math.floor(Math.random() * (cells - 2))
-        : params.anchorPos;
+        ? 1 + Math.floor(Math.random() * maxSafePos)
+        : Math.min(params.anchorPos, maxSafePos);
 
       // Build full sequence centred on anchor
       const sequence = Array.from({ length: cells }, (_, i) => anchor + (i - anchorPos) * step);

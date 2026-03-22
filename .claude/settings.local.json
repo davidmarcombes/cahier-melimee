@@ -115,7 +115,14 @@
       "Bash(grep -n \"sortPicked\\\\|sortCheck\\\\|case ''''sort''''\" src/assets/js/app.js)",
       "Bash(sed -i 's/generator: comparerNombres/generator: comparerNombresPaires/' src/fr/applications/ce1/maths/numeration/comparer-1000/comparer-1000.md src/fr/applications/ce2/maths/numeration/comparer-10000/comparer-10000.md src/fr/applications/cm1/maths/numeration/comparer-grands-nombres/comparer-grands-nombres.md src/fr/applications/cm2/maths/numeration/comparer-grands-nombres/01-comparer.md src/fr/applications/cp/maths/numeration/comparer-nombres/comparer-nombres.md)",
       "Bash(sed -i 's/generator: choisirNombre/generator: comparerNombres/' src/fr/applications/ce2/maths/numeration/ordre-nombres-01/ordre-nombres-01.md src/fr/applications/ce2/maths/numeration/ordre-nombres-02/ordre-nombres-02.md)",
-      "Bash(head -3 grep -c \"dev.js\\\\|Non validées\\\\|humanValidat\\\\|debugPanel\" e:/Code/cahier-melimee/_site/fr/exercices/index.html)"
+      "Bash(head -3 grep -c \"dev.js\\\\|Non validées\\\\|humanValidat\\\\|debugPanel\" e:/Code/cahier-melimee/_site/fr/exercices/index.html)",
+      "Bash(sed -i \"s/^id: ''75220261''/id: 75220261/\" src/fr/exercices/ce1/maths/grandeurs/durees-01/index.yaml)",
+      "Bash(sed -i \"s/^id: ''12686401''/id: 12686401/\" src/fr/exercices/cm1/maths/mesures/volumes-01/index.yaml)",
+      "Bash(grep -rl '^id: \"\"\"\"[A-Za-z0-9_-]*\"\"\"\"' src/fr/)",
+      "Bash(sed -i 's/seriesTitle: \"\"Lire et placer sur la droite graduée \\(1\\)\"\"/seriesTitle: \"\"Droite graduée — lire et placer \\(1\\)\"\"/' src/fr/exercices/ce2/maths/numeration/droite-graduee-01/index.yaml)",
+      "Bash(sed -i 's/seriesTitle: \"\"Lire la droite graduée — décimaux \\(1\\)\"\"/seriesTitle: \"\"Droite graduée — décimaux : lire \\(1\\)\"\"/' src/fr/exercices/cm1/maths/numeration/droite-graduee-01/index.yaml)",
+      "Bash(sed -i 's/seriesTitle: \"\"Placer sur la droite graduée — décimaux \\(1\\)\"\"/seriesTitle: \"\"Droite graduée — décimaux : placer \\(1\\)\"\"/' src/fr/exercices/cm1/maths/numeration/droite-graduee-02/index.yaml)",
+      "Bash(e:/Code/cahier-melimee/src/_includes/svg-defs.njk:*)"
     ]
   }
 }

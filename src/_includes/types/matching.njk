@@ -5,8 +5,8 @@
   <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle" x-show="cur.body" x-html="cur.body"></div>
   <div class="relative" x-ref="matchContainer">
     <svg class="absolute inset-0 w-full h-full pointer-events-none overflow-visible" aria-hidden="true" x-html="_matchLinesSvg"></svg>
-    <div class="flex justify-between gap-4">
-      <div class="flex flex-col gap-3 w-5/12">
+    <div class="flex justify-between gap-8">
+      <div class="flex flex-col gap-3 w-auto shrink-0">
         <template x-for="(label, i) in (cur.pairs ? cur.pairs.left : [])" :key="'l'+i">
           <button type="button" @click="matchTap('left', i)" :disabled="solved"
             class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border-2 text-left font-semibold text-base transition-all active:scale-95 select-none flex-row-reverse"
@@ -16,7 +16,7 @@
           </button>
         </template>
       </div>
-      <div class="flex flex-col gap-3 w-5/12">
+      <div class="flex flex-col gap-3 w-auto shrink-0">
         <template x-for="(label, i) in (cur.pairs ? cur.pairs.right : [])" :key="'r'+i">
           <button type="button" @click="matchTap('right', i)" :disabled="solved"
             class="flex items-center gap-3 w-full px-4 py-3 rounded-xl border-2 text-right font-semibold text-base transition-all active:scale-95 select-none"

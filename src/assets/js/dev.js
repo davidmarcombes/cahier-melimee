@@ -11,11 +11,14 @@ document.addEventListener('alpine:init', () => {
   const orig = window.seriesPlayer;
   if (!orig) return;
   window.seriesPlayer = function (exercises, id) {
-    return Object.assign(orig(exercises, id), {
+    const base = orig(exercises, id);
+    const _origInit = base.init;
+    return Object.assign(base, {
       humanValidated: false,
       humanValidating: false,
       nextUnvalidatedUrl: null,
       init() {
+        _origInit.call(this);
         this._fetchNextUnvalidated();
       },
       async _fetchNextUnvalidated() {

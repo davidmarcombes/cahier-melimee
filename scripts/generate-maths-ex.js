@@ -301,7 +301,7 @@ async function run() {
   const timestamp = new Date().toISOString();
 
   // Write index.yaml
-  const yamlContent = `id: "${id}"
+  const yamlContent = `id: ${id}
 seriesTitle: "${cleanTitle}"
 difficulty: ${difficulty}
 `;

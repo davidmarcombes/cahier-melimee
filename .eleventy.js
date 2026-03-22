@@ -348,27 +348,37 @@ module.exports = async function (eleventyConfig) {
           const t = b.tens !== null ? b.tens : Math.floor((b.number % 100) / 10);
           const u = b.ones !== null ? b.ones : b.number % 10;
 
+          // Inline SVG shape helpers — no external symbols or defs needed
+          const U = 12, TEN_H = 120, PAD = 8, GAP_TYPE = 18, GAP_SAME = 4;
+          const b10Unit = (x, y) =>
+            `<rect x="${x+1}" y="${y+1}" width="${U-2}" height="${U-2}" rx="1" fill="var(--b10-u)" stroke="var(--b10-us)" stroke-width="1"/>`;
+          const b10Ten = (x, y) => {
+            let lines = '';
+            for (let i = 1; i < 10; i++)
+              lines += `<line x1="${x+.5}" y1="${y+i*U}" x2="${x+U-.5}" y2="${y+i*U}" stroke="var(--b10-ts)" stroke-width=".5" opacity=".5"/>`;
+            return `<rect x="${x+.5}" y="${y+.5}" width="${U-1}" height="${TEN_H-1}" rx="1" fill="var(--b10-t)" stroke="var(--b10-ts)" stroke-width="1"/>${lines}`;
+          };
+          const b10Hundred = (x, y) => {
+            let lines = '';
+            for (let i = 1; i < 10; i++) {
+              lines += `<line x1="${x+.5}" y1="${y+i*U}" x2="${x+TEN_H-.5}" y2="${y+i*U}" stroke="var(--b10-hs)" stroke-width=".5" opacity=".5"/>`;
+              lines += `<line x1="${x+i*U}" y1="${y+.5}" x2="${x+i*U}" y2="${y+TEN_H-.5}" stroke="var(--b10-hs)" stroke-width=".5" opacity=".5"/>`;
+            }
+            return `<rect x="${x+.5}" y="${y+.5}" width="${TEN_H-1}" height="${TEN_H-1}" rx="1" fill="var(--b10-h)" stroke="var(--b10-hs)" stroke-width="1"/>${lines}`;
+          };
+
           let svg = '';
-          let currentX = 10;
-          const baseY = 10;
-          for (let i = 0; i < h; i++) {
-            svg += `<use href="#block-hundred" x="${currentX}" y="${baseY}" width="120" height="120" />`;
-            currentX += 115;
-          }
-          if (h > 0 && (t > 0 || u > 0)) currentX += 10;
-          for (let i = 0; i < t; i++) {
-            svg += `<use href="#block-ten" x="${currentX}" y="${baseY}" width="20" height="120" />`;
-            currentX += 18;
-          }
-          if (t > 0 && u > 0) currentX += 10;
-          const uCols = Math.ceil(u / 5);
+          let currentX = PAD;
+          for (let i = 0; i < h; i++) { svg += b10Hundred(currentX, PAD); currentX += TEN_H + GAP_SAME; }
+          if (h > 0 && (t > 0 || u > 0)) currentX += GAP_TYPE - GAP_SAME;
+          for (let i = 0; i < t; i++) { svg += b10Ten(currentX, PAD); currentX += U + GAP_SAME; }
+          if (t > 0 && u > 0) currentX += GAP_TYPE - GAP_SAME;
+          const uCols = Math.ceil(u / 10);
           for (let i = 0; i < u; i++) {
-            const row = i % 5;
-            const col = Math.floor(i / 5);
-            svg += `<use href="#block-unit" x="${currentX + col * 18}" y="${baseY + 100 - row * 12}" width="20" height="20" />`;
+            svg += b10Unit(currentX + Math.floor(i / 10) * (U + GAP_SAME), PAD + TEN_H - (i % 10 + 1) * U);
           }
-          if (u > 0) currentX += uCols * 18;
-          item.base10 = { ...b, markup: svg, width: currentX + 20 };
+          if (u > 0) currentX += uCols * (U + GAP_SAME) - GAP_SAME;
+          item.base10 = { ...b, markup: svg, width: currentX + PAD, height: TEN_H + 2 * PAD };
         }
 
         const parseSvgElement = (dataSvg) => {
@@ -532,7 +542,7 @@ module.exports = async function (eleventyConfig) {
           }
           item.mcqChoices = choices;
           item.mcqAnswer = choices.indexOf(md.renderInline(correct));
-          if (ex.data.mcqCompact) item.mcqCompact = true;
+          if (ex.data.compact || ex.data.mcqCompact) item.mcqCompact = true;
         }
 
         if (ex.data.type === 'compare' && ex.data.comparisons) {
@@ -945,7 +955,7 @@ module.exports = async function (eleventyConfig) {
         const full = path.join(dir, entry.name);
         if (entry.isDirectory()) scan(full);
         else if (entry.name === 'index.yaml') {
-          const m = fs.readFileSync(full, 'utf8').match(/^id:\s*(\S+)/m);
+          const m = fs.readFileSync(full, 'utf8').match(/^id:\s*['"]?([A-Za-z0-9_-]+)['"]?/m);
           if (m) results.push(m[1]);
         }
       }

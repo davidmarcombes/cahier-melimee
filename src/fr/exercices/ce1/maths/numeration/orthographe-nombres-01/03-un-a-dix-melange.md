@@ -18,8 +18,4 @@ pairs:
     right: "sept"
   - left: "8"
     right: "huit"
-  - left: "9"
-    right: "neuf"
-  - left: "10"
-    right: "dix"
 ---

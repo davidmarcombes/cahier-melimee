@@ -2,10 +2,10 @@
   <template x-if="cur.svg">
     <div class="flex justify-center mb-6" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
-  <div x-show="cur.operation && !cur.operation.includes('?')" class="text-center mb-6">
-    <span class="text-5xl font-extrabold text-content-default tracking-wide" x-html="operationHtml + ' = ?'"></span>
+  <div x-show="cur.operation && !cur.operation.includes('?')" class="text-center mb-6 overflow-x-auto">
+    <span class="text-5xl font-extrabold text-content-default tracking-wide whitespace-nowrap" x-html="operationHtml + ' = ?'"></span>
   </div>
-  <div x-show="trouParts" class="js-trou flex items-center justify-center gap-2 mb-6 flex-wrap">
+  <div x-show="trouParts" class="js-trou flex items-center justify-center gap-2 mb-6 overflow-x-auto">
     <template x-for="(p, i) in trouParts" :key="i">
       <span class="contents">
         <span x-show="p.t==='x'" class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide whitespace-nowrap" x-html="p.v"></span>
