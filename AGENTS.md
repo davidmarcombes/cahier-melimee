@@ -27,12 +27,17 @@ AI assistant documentation for **Le Cahier de Melimee** — an elementary school
 ## Quick Reference
 
 ```bash
-npm start            # Dev server (localhost:8080)
-npm run build        # Production build (test + validate + css + html-validate)
-npm run clean        # Remove _site/
-npm run report       # Generate exercises-report.csv
-npm run help         # List all available npm scripts
-npm test             # Unit tests (vitest)
-npm run build:e2e    # Build _site/ for E2E (fast, no validation)
-npm run test:e2e     # E2E tests (Playwright, 40 tests, 27 exercise types)
+npm start                  # Dev server (localhost:8080)
+npm run build              # Production build (test + validate + css + html-validate)
+npm run clean              # Remove _site/
+npm run help               # List all available npm scripts
+npm test                   # Unit tests (vitest)
+npm run build:e2e          # Build _site/ for E2E (fast, no validation)
+npm run test:e2e           # E2E tests (Playwright, 40 tests, 27 exercise types)
+npm run validate:exercises # Validate exercise YAML front-matter
+npm run human:sync         # Dry-run: show new/changed/removed exercise files vs human-validate.csv
+npm run human:sync:write   # Apply: update human-validate.csv (add / invalidate / remove)
+npm run human:validations  # Display human-validate.csv as a table
+npm run list-series        # List all series (--level --type --cat --missing)
+npm run show-type          # Show schema + template for any exercise type
 ```

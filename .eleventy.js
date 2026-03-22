@@ -819,6 +819,27 @@ module.exports = async function (eleventyConfig) {
     return content;
   });
 
+  // Warn when exercise files are newer than human-validate.csv (only during serve)
+  eleventyConfig.on('eleventy.before', () => {
+    if (process.env.ELEVENTY_RUN_MODE !== 'serve') return;
+    if (!fs.existsSync(HUMAN_CSV)) return;
+    const csvMtime = fs.statSync(HUMAN_CSV).mtimeMs;
+    let stale = false;
+    function checkDir(dir) {
+      if (stale || !fs.existsSync(dir)) return;
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        if (stale) return;
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) checkDir(full);
+        else if (entry.name.endsWith('.md') && fs.statSync(full).mtimeMs > csvMtime) stale = true;
+      }
+    }
+    for (const r of ALL_EXERCISE_ROOTS) checkDir(r);
+    if (stale) {
+      console.warn('\x1b[33m⚠  Exercise files changed since last sync. Run: npm run human:sync\x1b[0m');
+    }
+  });
+
   // Post-build page size report + missing ID warning
   eleventyConfig.on('eleventy.after', () => {
     // Warn about series missing IDs
@@ -907,6 +928,154 @@ module.exports = async function (eleventyConfig) {
         fmt(total('imgBytes')).padStart(8) +
         fmt(total('cssBytes')).padStart(8)
     );
+  });
+
+  // Dev-only: POST /api/human-validate → appends to reports/human-validate.csv
+  const HUMAN_CSV = path.join(__dirname, 'reports/human-validate.csv');
+  const EXERCISES_ROOT = path.join(__dirname, 'src/fr/exercices');
+  const ALL_EXERCISE_ROOTS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis']
+    .map((r) => path.join(__dirname, r));
+  const crypto = require('crypto');
+
+  function getAllSeriesIds() {
+    const results = [];
+    function scan(dir) {
+      if (!fs.existsSync(dir)) return;
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) scan(full);
+        else if (entry.name === 'index.yaml') {
+          const m = fs.readFileSync(full, 'utf8').match(/^id:\s*(\S+)/m);
+          if (m) results.push(m[1]);
+        }
+      }
+    }
+    for (const r of ALL_EXERCISE_ROOTS) scan(r);
+    return results;
+  }
+
+  function findSeriesDir(seriesId) {
+    function scan(dir) {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          const result = scan(full);
+          if (result) return result;
+        } else if (entry.name === 'index.yaml') {
+          const content = fs.readFileSync(full, 'utf8');
+          if (content.match(new RegExp(`^id:\\s*${seriesId}\\s*$`, 'm'))) return dir;
+        }
+      }
+      return null;
+    }
+    try { return scan(EXERCISES_ROOT); } catch (_) { return null; }
+  }
+
+  function fileHash(filePath) {
+    return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex').slice(0, 16);
+  }
+
+  function readHumanCsv() {
+    if (!fs.existsSync(HUMAN_CSV)) return new Map();
+    const lines = fs.readFileSync(HUMAN_CSV, 'utf8').split('\n').filter((l) => l.trim());
+    const map = new Map();
+    for (const line of lines.slice(1)) {
+      const parts = line.split(',');
+      map.set(parts[0], { path: parts[0], seriesId: parts[1] || '', hash: parts[2] || '', validatedAt: parts[3] || '' });
+    }
+    return map;
+  }
+
+  function writeHumanCsv(map) {
+    const rows = [...map.values()].sort((a, b) => a.path.localeCompare(b.path));
+    const lines = ['path,seriesId,hash,validatedAt', ...rows.map((r) => `${r.path},${r.seriesId},${r.hash},${r.validatedAt}`)];
+    fs.writeFileSync(HUMAN_CSV, lines.join('\n') + '\n', 'utf8');
+  }
+
+  eleventyConfig.setServerOptions({
+    middleware: [
+      function devValidate(req, res, next) {
+        // GET /api/human-next-unvalidated?current=<id> → next series URL not yet validated
+        if (req.method === 'GET' && req.url.startsWith('/api/human-next-unvalidated')) {
+          const currentId = new URL(req.url, 'http://localhost').searchParams.get('current');
+          const map = readHumanCsv();
+          const seriesFiles = {};
+          for (const { seriesId, validatedAt } of map.values()) {
+            if (!seriesId) continue;
+            if (!seriesFiles[seriesId]) seriesFiles[seriesId] = [];
+            seriesFiles[seriesId].push(validatedAt);
+          }
+          const validatedSet = new Set(
+            Object.entries(seriesFiles)
+              .filter(([, ts]) => ts.length > 0 && ts.every((t) => t))
+              .map(([id]) => id)
+          );
+          const allIds = getAllSeriesIds();
+          const currentPos = allIds.indexOf(currentId);
+          let next = null;
+          for (let i = currentPos + 1; i < allIds.length; i++) {
+            if (!validatedSet.has(allIds[i])) { next = allIds[i]; break; }
+          }
+          if (!next) {
+            for (let i = 0; i < currentPos; i++) {
+              if (!validatedSet.has(allIds[i])) { next = allIds[i]; break; }
+            }
+          }
+          const prefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ id: next, url: next ? `${prefix}/fr/exercices/${next}/` : null }));
+          return;
+        }
+
+        // GET /api/human-validated-ids → seriesIds where ALL files have been validated
+        if (req.method === 'GET' && req.url === '/api/human-validated-ids') {
+          const map = readHumanCsv();
+          const seriesFiles = {};
+          for (const { seriesId, validatedAt } of map.values()) {
+            if (!seriesId) continue;
+            if (!seriesFiles[seriesId]) seriesFiles[seriesId] = [];
+            seriesFiles[seriesId].push(validatedAt);
+          }
+          const ids = Object.entries(seriesFiles)
+            .filter(([, ts]) => ts.length > 0 && ts.every((t) => t))
+            .map(([id]) => id);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(ids));
+          return;
+        }
+
+        if (req.method !== 'POST' || req.url !== '/api/human-validate') return next();
+        let body = '';
+        req.on('data', (chunk) => { body += chunk; });
+        req.on('end', () => {
+          try {
+            const { seriesId, url } = JSON.parse(body);
+            const seriesDir = seriesId ? findSeriesDir(seriesId) : null;
+            const map = readHumanCsv();
+            const ts = new Date().toISOString();
+            if (seriesDir) {
+              const mdFiles = fs.readdirSync(seriesDir).filter((f) => f.endsWith('.md')).sort();
+              for (const f of mdFiles) {
+                const absPath = path.join(seriesDir, f);
+                const relPath = path.relative(__dirname, absPath).replace(/\\/g, '/');
+                const hash = fileHash(absPath);
+                map.set(relPath, { path: relPath, seriesId, hash, validatedAt: ts });
+              }
+            } else {
+              // Series dir not found — record bare entry without path/hash
+              const key = `(unknown)/${seriesId}`;
+              map.set(key, { path: key, seriesId: seriesId || '', hash: '', validatedAt: ts });
+            }
+            writeHumanCsv(map);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ ok: true }));
+          } catch (_) {
+            res.writeHead(400);
+            res.end('Bad request');
+          }
+        });
+      },
+    ],
   });
 
   return {

@@ -6,7 +6,9 @@ layout: base
   filters: JSON.parse(sessionStorage.getItem('exf') || '{&quot;level&quot;:&quot;&quot;,&quot;topic&quot;:&quot;&quot;,&quot;difficulty&quot;:&quot;&quot;}'),
   search: '',
   limit: 12,
-  get all() { return $store.exercises.data || [] },
+  {% if site.devMode %}showUnvalidated: false,
+  validatedIds: new Set(),
+  {% endif %}get all() { return $store.exercises.data || [] },
   get options() {
     const u = (k) => [...new Set(this.all.map(s => s[k]).filter(Boolean))].sort();
     return { level: u('level'), topic: u('topic'), difficulty: u('difficulty') }
@@ -17,17 +19,25 @@ layout: base
       (!this.filters.level || s.level === this.filters.level) &&
       (!this.filters.topic || s.topic === this.filters.topic) &&
       (!this.filters.difficulty || s.difficulty === this.filters.difficulty) &&
-      (!q || (s.title + ' ' + s.topic).toLowerCase().includes(q))
+      (!q || (s.title + ' ' + s.topic).toLowerCase().includes(q)){% if site.devMode %} &&
+      (!this.showUnvalidated || !this.validatedIds.has(s.id)){% endif %}
     )
   },
   get visible() { return this.filtered.slice(0, this.limit) },
-  get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') || this.search !== '' },
-  resetFilters() { 
-    this.filters = { level: '', topic: '', difficulty: '' }; 
+  get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') || this.search !== ''{% if site.devMode %} || this.showUnvalidated{% endif %} },
+  resetFilters() {
+    this.filters = { level: '', topic: '', difficulty: '' };
     this.search = '';
-    this.limit = 12 
-  }
-}" x-init="$store.exercises.load(); $watch('filters', v => { this.limit = 12; sessionStorage.setItem('exf', JSON.stringify(v)) }); $watch('search', () => { this.limit = 12 })" x-cloak class="py-4">
+    {% if site.devMode %}this.showUnvalidated = false;
+    {% endif %}this.limit = 12
+  }{% if site.devMode %},
+  async loadValidatedIds() {
+    try {
+      const res = await fetch('/api/human-validated-ids');
+      if (res.ok) this.validatedIds = new Set(await res.json());
+    } catch (_) {}
+  }{% endif %}
+}" x-init="$store.exercises.load();{% if site.devMode %} loadValidatedIds();{% endif %} $watch('filters', v => { this.limit = 12; sessionStorage.setItem('exf', JSON.stringify(v)) }); $watch('search', () => { this.limit = 12 })" x-cloak class="py-4">
 
   <h1 class="text-3xl font-extrabold text-content-default mb-6">{{ title }}</h1>
 
@@ -76,6 +86,15 @@ layout: base
             <option :value="v" x-text="(v === 'difficile' ? '&#x1F41E; ' : v === 'moyen' ? '&#x1F41D; ' : '&#x1F997; ') + v"></option>
           </template>
         </select>
+
+        {% if site.devMode %}
+        <button type="button" @click="showUnvalidated = !showUnvalidated; limit = 12"
+                :class="showUnvalidated ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700' : 'text-slate-500 border-slate-200 dark:border-slate-700'"
+                class="px-3 py-2 text-sm rounded-xl border transition-all"
+                title="Afficher uniquement les séries non validées">
+          Non validées
+        </button>
+        {% endif %}
 
         <button type="button" x-show="hasActiveFilter" @click="resetFilters()" class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all active:scale-90" title="Réinitialiser les filtres">
           <span class="text-xl leading-none">↶</span>

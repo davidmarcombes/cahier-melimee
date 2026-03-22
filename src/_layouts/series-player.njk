@@ -23,6 +23,9 @@ isSeriesPage: true
 {% if needsSvgJs %}
 <script src="{{ '/assets/js/svg.js' | url }}"></script>
 {% endif %}
+{% if site.devMode %}
+<script src="{{ '/assets/js/dev.js' | url }}"></script>
+{% endif %}
 {% if hasGenerators %}
 <script src="{{ '/assets/js/generators.js' | url }}"></script>
 {% endif %}
@@ -249,7 +252,21 @@ isSeriesPage: true
             class="w-full px-6 py-3 bg-primary-500 text-white font-bold rounded-2xl hover:bg-primary-600 transition-all active:scale-95 shadow-lg shadow-primary-500/20">
             Recommencer la série
           </button>
-          <a href="{{ '/fr/exercices/' | url }}" class="w-full px-6 py-3 border-2 border-slate-200 dark:border-slate-700 text-content-default font-bold rounded-2xl hover:bg-surface-subtle transition-all">
+          {% if site.devMode %}
+          <button type="button" x-show="!humanValidated" @click="humanValidate()"
+            :disabled="humanValidating"
+            class="w-full px-6 py-3 bg-green-500 text-white font-bold rounded-2xl hover:bg-green-600 transition-all active:scale-95 disabled:opacity-40">
+            <span x-show="!humanValidating">✓ Valider la série</span>
+            <span x-show="humanValidating">Envoi…</span>
+          </button>
+          <a x-show="nextUnvalidatedUrl" :href="nextUnvalidatedUrl || '#'"
+            class="w-full px-6 py-3 bg-amber-500 text-white font-bold rounded-2xl hover:bg-amber-600 transition-all active:scale-95 text-center">
+            <span x-show="!humanValidated">→ Suivante non validée</span>
+            <span x-show="humanValidated">✓ Validée — Suivante →</span>
+          </a>
+          <p x-show="humanValidated && !nextUnvalidatedUrl" class="text-green-600 dark:text-green-400 text-sm text-center font-semibold">Toutes les séries sont validées !</p>
+          {% endif %}
+          <a href="{{ '/fr/exercices/' | url }}" class="w-full px-6 py-3 border-2 border-slate-200 dark:border-slate-700 text-content-default font-bold rounded-2xl hover:bg-surface-subtle transition-all text-center">
             Retour aux exercices
           </a>
         </div>
@@ -258,5 +275,5 @@ isSeriesPage: true
   </template>
 
 
-  {% include "components/debug-panel.njk" %}
+  {% if site.devMode %}{% include "components/debug-panel.njk" %}{% endif %}
 </div>

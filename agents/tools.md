@@ -50,6 +50,12 @@ All available commands (run `npm run help` for a live list):
 |---------|-------------|
 | `npm run report` | Generate `exercises-report.csv` — one row per exercise with id, path, type, title, etc. |
 | `npm run svg:stats` | Analyze SVG files: count, size, CSS variable usage |
+| `npm run validate:llm` | LLM answer checker — caches results in `reports/validate-llm-cache.csv` by file hash |
+| `npm run review:failures` | Interactive review of LLM-flagged failures — opens browser, prompts y/n/s per file |
+| `npm run human:sync` | Dry-run: show which exercise files are new/changed vs `reports/human-validate.csv` |
+| `npm run human:sync:write` | Apply: update `human-validate.csv` (add new files, clear stale validations) |
+| `npm run human:validations` | Display the human-validate.csv as a table with progress summary |
+| `npm run cross-validate` | Join human + LLM validation CSVs — shows conflicts, gaps, stale hashes (`--verbose`, `--cat=`) |
 
 ### Data & environment
 
@@ -81,6 +87,12 @@ All scripts are in `scripts/`. Key files:
 | `generate-tailwind-from-tokens.js` | Reads `design-tokens.json`, generates `tailwind.config.js` and CSS var block in `input.css`. Contains `varAliases` map for short CSS var names. |
 | `validate-exercises.js` | Validates all exercise `.md` front-matter against `TYPE_SCHEMAS`. Run via `npm run validate:exercises`. |
 | `validate-llm.js` | LLM-powered answer validator using local Ollama. Caches results in `validate-llm-cache.csv` by file hash. See `agents/ollama.md` for setup. |
+| `review-failures.js` | Interactive review of LLM-flagged failures. Opens browser per file, prompts y/n/s, writes `manual:ok` back to cache. |
+| `sync-human-validations.js` | Syncs `reports/human-validate.csv` with current exercise files. Adds new, clears stale (hash changed), removes deleted. Use `--write` to apply. |
+| `show-human-validations.js` | Displays `reports/human-validate.csv` as a formatted table (`--last N`, `--clear`). |
+| `cross-validate.js` | Joins `human-validate.csv` + `validate-llm-cache.csv` on `path`. Reports agreement, conflicts, coverage gaps, and hash mismatches. Options: `--verbose`, `--cat=<category>`. |
+| `list-series.js` | Lists all exercise series with LEVEL/CATEGORY/SLUG/TYPE/TITLE/ID. Filters: `--level`, `--type`, `--cat`, `--missing`. |
+| `show-type.js` | Shows schema, YAML template and 2 live examples for any exercise type. |
 | `generate-report.js` | Produces `exercises-report.csv` for quick exercise lookup. |
 | `generate-maths-ex.js` | Interactive CLI for scaffolding new exercises. Has `TYPE_CHOICES` and `TEMPLATES`. |
 | `generate-ids.js` | Assigns 8-char hex IDs to series `index.yaml` files missing an `id`. |
@@ -101,6 +113,46 @@ All scripts are in `scripts/`. Key files:
 | `import-identities.js` | Imports generated identities into PocketBase. |
 | `sim-server.js` | Simulation server for testing. |
 | `test-auth.js` | Tests PocketBase authentication flow. |
+
+## Human Validation Workflow
+
+A lightweight QA loop for manually validating exercise series during development. All data lives in `reports/human-validate.csv` (format: `path,seriesId,hash,validatedAt` — one row per `.md` file).
+
+### Typical session
+
+```bash
+# 1. Sync the CSV with current files after adding/editing exercises
+npm run human:sync           # dry-run — shows what would change
+npm run human:sync:write     # apply (adds new files, clears stale validations)
+
+# 2. Start the dev server
+npm run dev
+
+# 3. Open the exercise list → click "Non validées" to see unvalidated series
+#    Navigate to a series, work through all exercises
+#    When done: "Série terminée!" modal → click "✓ Valider la série"
+#    This writes one row per .md file with the current hash + timestamp
+
+# 4. Review what has been validated
+npm run human:validations
+npm run human:validations -- --last 20
+```
+
+### Key rules
+
+- `"Non validées"` filter (visible on `localhost` only) hides series where **all** files have a `validatedAt` timestamp.
+- A series becomes **unvalidated** again automatically if any of its files change (detected by hash mismatch during `sync`).
+- The right-click **debug panel** (on any series page) lets you grab the current exercise state and copy an agent-ready prompt to the clipboard.
+- The CSV can be joined with `reports/validate-llm-cache.csv` on the `path` and `hash` columns.
+
+### CSV columns
+
+| Column | Description |
+|--------|-------------|
+| `path` | Relative path from project root (e.g. `src/fr/exercices/ce1/…/01-foo.md`) |
+| `seriesId` | 8-char series ID from `index.yaml` |
+| `hash` | 16-char SHA-256 of file content at validation time |
+| `validatedAt` | ISO 8601 timestamp, or empty if not yet validated / invalidated by sync |
 
 ## E2E Testing (Playwright)
 
