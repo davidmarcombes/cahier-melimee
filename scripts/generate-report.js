@@ -116,6 +116,9 @@ for (const { dir: scanRoot, kind } of SCAN) {
       repeatTotal += repeat;
     }
 
+    const lengthFlag =
+      repeatTotal < 2 ? 'too-short' : repeatTotal > 12 ? 'too-long' : '';
+
     rows.push({
       kind,
       path: relPath,
@@ -127,6 +130,7 @@ for (const { dir: scanRoot, kind } of SCAN) {
       difficulty: meta.difficulty ?? '',
       exerciseCount: mdFiles.length,
       repeatTotal,
+      lengthFlag,
       types: [...types].join(' | '),
       generators: [...generators].join(' | '),
       classes: [...classes].sort().join(' | '),
@@ -162,6 +166,7 @@ const COLUMNS = [
   'difficulty',
   'exerciseCount',
   'repeatTotal',
+  'lengthFlag',
   'types',
   'generators',
   'classes',
@@ -251,6 +256,21 @@ if (missing.length) {
     if (!r.difficulty) issues.push('no difficulty');
     console.log(`  ${r.path}  [${issues.join(', ')}]`);
   }
+}
+
+// Series length check (target: 2–6 items per series)
+const tooShort = rows.filter((r) => r.lengthFlag === 'too-short');
+const tooLong = rows.filter((r) => r.lengthFlag === 'too-long');
+if (tooShort.length || tooLong.length) {
+  console.log(`\n${C.yellow}⚠  Series length out of range [2–12] (${tooShort.length + tooLong.length}):${C.reset}`);
+  for (const r of tooShort) {
+    console.log(`  ${C.dim}too short${C.reset}  ${r.repeatTotal} items  ${r.path}`);
+  }
+  for (const r of tooLong) {
+    console.log(`  ${C.dim}too long ${C.reset}  ${r.repeatTotal} items  ${r.path}`);
+  }
+} else {
+  console.log(`\n${C.green}✓ All series within length range [2–12]${C.reset}`);
 }
 
 console.log(`\n${C.green}✓ Done${C.reset}\n`);

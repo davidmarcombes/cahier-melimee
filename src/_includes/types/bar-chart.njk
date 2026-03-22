@@ -77,7 +77,6 @@
           <p class="flex-1 text-sm text-content-default" x-html="q.text"></p>
           <input
             type="text"
-            inputmode="numeric"
             x-model="bcInputs[i]"
             @keydown.enter="bcCheck(i)"
             :disabled="bcSolved[i]"

@@ -5,6 +5,6 @@ generator: nombresPairsImpairs
 repeat: 5
 params:
   mode: impairs
-  min: 1
-  max: 30
+  min: 31
+  max: 199
 ---

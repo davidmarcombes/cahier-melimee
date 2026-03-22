@@ -22,6 +22,7 @@ AI assistant documentation for **Le Cahier de Melimee** — an elementary school
 | [agents/content.md](agents/content.md)            | Adding exercises: workflow, type reference, Vergnaud classes  |
 | [agents/11ty.md](agents/11ty.md)                  | Eleventy build pipeline, filters, transforms                  |
 | [agents/svg.md](agents/svg.md)                    | SVG snippet rules, generation helpers, naming conventions     |
+| [docs/js_roadmap.md](docs/js_roadmap.md)          | JS code review findings and maintenance TODO list             |
 
 
 ## Quick Reference

@@ -55,7 +55,7 @@
     <!-- PocketBase SDK — deferred so it doesn't block parsing; runs before Alpine in document order -->
     <script defer src="https://unpkg.com/pocketbase@latest/dist/pocketbase.umd.js"></script>
     {% endif %}
-    <script defer src="{{ '/assets/js/app.js' | url }}"></script>
+    <script defer type="module" src="{{ '/assets/js/app.js' | url }}"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     {% if needsPocketBase %}
     <script>

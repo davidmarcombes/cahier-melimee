@@ -6,26 +6,25 @@ const DIRS_TO_SCAN = [
   path.resolve(__dirname, '../src/fr/exercices'),
   path.resolve(__dirname, '../src/fr/applications'),
 ];
-const existingIds = new Set();
+// id → [paths that use it]
+const idMap = new Map();
+
+function existingIds() {
+  return new Set(idMap.keys());
+}
 
 /**
  * Generates a unique 8-character hex ID.
- * Checks against the existingIds set to prevent collisions.
+ * Checks against idMap to prevent collisions.
  */
 function generateUniqueId(folderName) {
   let newId;
-  let isUnique = false;
-
-  while (!isUnique) {
-    // High-res timer + random ensures the seed is never the same twice
+  while (true) {
     const seed = `${folderName}-${process.hrtime.bigint()}-${Math.random()}`;
     newId = crypto.createHash('md5').update(seed).digest('hex').slice(0, 8);
-
-    if (!existingIds.has(newId)) {
-      isUnique = true;
-      existingIds.add(newId);
-    }
+    if (!idMap.has(newId)) break;
   }
+  idMap.set(newId, []);
   return newId;
 }
 
@@ -53,39 +52,62 @@ function run() {
     return;
   }
 
-  // --- PASS 1: Collect Existing IDs ---
-  yamlPaths.forEach((yamlPath) => {
-    const content = fs.readFileSync(yamlPath, 'utf8');
-    // Look for id: "value" or id: value
-    const match = content.match(/^id:\s*["']?([^"'\n]+)["']?/m);
-    if (match) {
-      existingIds.add(match[1].trim());
-    }
-  });
+  const ROOT = path.resolve(__dirname, '..');
 
-  // --- PASS 2: Assign New IDs ---
-  const preExistingCount = existingIds.size;
+  // --- PASS 1: Collect existing IDs, tracking every path per id ---
+  const quoted = []; // paths where id is quoted
+  for (const yamlPath of yamlPaths) {
+    const content = fs.readFileSync(yamlPath, 'utf8');
+    const raw = content.match(/^id:\s*(.+)/m);
+    if (!raw) continue;
+    const value = raw[1].trim();
+    const isQuoted = /^["']/.test(value);
+    const id = value.replace(/^["']|["']$/g, '').trim();
+    if (!idMap.has(id)) idMap.set(id, []);
+    idMap.get(id).push(path.relative(ROOT, path.dirname(yamlPath)));
+    if (isQuoted) quoted.push(path.relative(ROOT, path.dirname(yamlPath)));
+  }
+
+  // --- Flag quoted IDs ---
+  if (quoted.length) {
+    console.error(`\n⚠️  Quoted IDs (should be bare scalars) (${quoted.length}):`);
+    for (const p of quoted) console.error(`  • ${p}`);
+    console.error('');
+  }
+
+  // --- Flag duplicates ---
+  const duplicates = [...idMap.entries()].filter(([, paths]) => paths.length > 1);
+  if (duplicates.length) {
+    console.error(`\n⚠️  Duplicate IDs found (${duplicates.length}):`);
+    for (const [id, paths] of duplicates) {
+      console.error(`  ${id}`);
+      for (const p of paths) console.error(`    • ${p}`);
+    }
+    console.error('');
+  }
+
+  // --- PASS 2: Assign missing IDs ---
+  const preExistingCount = idMap.size;
   let assignedCount = 0;
-  yamlPaths.forEach((yamlPath) => {
+  for (const yamlPath of yamlPaths) {
     const folderPath = path.dirname(yamlPath);
     const folderName = path.basename(folderPath);
-    let content = fs.readFileSync(yamlPath, 'utf8');
+    const content = fs.readFileSync(yamlPath, 'utf8');
 
-    // Check if 'id:' key is missing
     if (!content.match(/^id:/m)) {
       const newId = generateUniqueId(folderName);
-      const updatedContent = `id: ${newId}\n` + content;
-
-      fs.writeFileSync(yamlPath, updatedContent, 'utf8');
-      console.log(`✅ Assigned id: ${newId} to: ${path.relative(path.resolve(__dirname, '..'), folderPath)}`);
+      fs.writeFileSync(yamlPath, `id: ${newId}\n` + content, 'utf8');
+      console.log(`✅ Assigned id: ${newId} to: ${path.relative(ROOT, folderPath)}`);
       assignedCount++;
     }
-  });
+  }
 
   console.log(`\nScan complete.`);
   console.log(`- Pre-existing IDs found:    ${preExistingCount}`);
+  console.log(`- Quoted IDs detected:       ${quoted.length}`);
+  console.log(`- Duplicates detected:       ${duplicates.length}`);
   console.log(`- New IDs assigned this run: ${assignedCount}`);
-  console.log(`- Total unique IDs in system: ${existingIds.size}`);
+  console.log(`- Total unique IDs in system: ${idMap.size}`);
 }
 
 run();

@@ -1,0 +1,71 @@
+{# Magic-color — pixel-art coloriage magique #}
+<div x-show="cur.type === 'magic-color'" class="space-y-4">
+
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center"></div>
+
+  <div x-show="cur.magicColor" class="flex flex-col items-center gap-4">
+
+    {# Palette selector — click a swatch to pick the active paint color #}
+    <div class="flex gap-3 flex-wrap justify-center">
+      <template x-for="(color, idx) in (cur.magicColor?.palette || [])" :key="idx">
+        <button
+          type="button"
+          @click="mcActiveColor = idx"
+          :style="`background: ${color}`"
+          class="w-9 h-9 rounded-lg border-2 transition-all"
+          :class="mcActiveColor === idx
+            ? 'border-slate-700 dark:border-white scale-110 shadow-md ring-2 ring-slate-400 ring-offset-1'
+            : 'border-slate-300 dark:border-slate-600 hover:scale-105'"
+          :title="(cur.magicColor?.labels || [])[idx] || ''"
+        ></button>
+      </template>
+    </div>
+
+    {# Legend — color swatch + label #}
+    <div x-show="(cur.magicColor?.labels || []).length" class="flex gap-4 flex-wrap justify-center text-sm text-content-default">
+      <template x-for="(label, idx) in (cur.magicColor?.labels || [])" :key="idx">
+        <div class="flex items-center gap-1.5">
+          <div class="w-4 h-4 rounded border border-slate-300" :style="`background: ${cur.magicColor.palette[idx]}`"></div>
+          <span x-text="label"></span>
+        </div>
+      </template>
+    </div>
+
+    {# Pixel grid #}
+    <div
+      class="inline-grid gap-px bg-slate-200 dark:bg-slate-600 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600"
+      :style="`grid-template-columns: repeat(${cur.magicColor?.cols || 1}, 2.5rem)`"
+    >
+      <template x-for="(cell, i) in (cur.magicColor?.cells || [])" :key="i">
+        <div
+          class="w-10 h-10 flex items-center justify-center text-xs font-bold select-none transition-colors"
+          :class="{
+            'cursor-pointer hover:brightness-90 active:scale-95': !solved,
+            'cursor-default': solved,
+            'ring-2 ring-inset ring-red-500': mcErrors.includes(i)
+          }"
+          :style="mcColors[i] != null
+            ? `background: ${cur.magicColor.palette[mcColors[i]]}`
+            : 'background: white'"
+          :title="solved ? '' : (cur.magicColor?.labels || [])[mcActiveColor] || ''"
+          @click="!solved && mcPaint(i)"
+          x-text="cell.value"
+        ></div>
+      </template>
+    </div>
+
+    {# Verify button #}
+    <button
+      type="button"
+      @click="check()"
+      :disabled="solved || !mcAllColored()"
+      class="px-6 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95
+             disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+
+  </div>
+</div>

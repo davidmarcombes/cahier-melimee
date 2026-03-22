@@ -122,7 +122,28 @@
       "Bash(sed -i 's/seriesTitle: \"\"Lire et placer sur la droite graduée \\(1\\)\"\"/seriesTitle: \"\"Droite graduée — lire et placer \\(1\\)\"\"/' src/fr/exercices/ce2/maths/numeration/droite-graduee-01/index.yaml)",
       "Bash(sed -i 's/seriesTitle: \"\"Lire la droite graduée — décimaux \\(1\\)\"\"/seriesTitle: \"\"Droite graduée — décimaux : lire \\(1\\)\"\"/' src/fr/exercices/cm1/maths/numeration/droite-graduee-01/index.yaml)",
       "Bash(sed -i 's/seriesTitle: \"\"Placer sur la droite graduée — décimaux \\(1\\)\"\"/seriesTitle: \"\"Droite graduée — décimaux : placer \\(1\\)\"\"/' src/fr/exercices/cm1/maths/numeration/droite-graduee-02/index.yaml)",
-      "Bash(e:/Code/cahier-melimee/src/_includes/svg-defs.njk:*)"
+      "Bash(e:/Code/cahier-melimee/src/_includes/svg-defs.njk:*)",
+      "Bash(npx eleventy:*)",
+      "WebFetch(domain:classetice.fr)",
+      "WebFetch(domain:forge.apps.education.fr)",
+      "WebFetch(domain:coopmaths.fr)",
+      "WebFetch(domain:mathia.education)",
+      "WebFetch(domain:besancon4.circo25.ac-besancon.fr)",
+      "WebFetch(domain:www.linstit.com)",
+      "WebFetch(domain:mathsmentales.net)",
+      "WebFetch(domain:wims.univ-mrs.fr)",
+      "WebFetch(domain:wims.univ-amu.fr)",
+      "WebFetch(domain:www.editions-hatier.fr)",
+      "WebFetch(domain:www.tactileo.com)",
+      "WebFetch(domain:www.mathsenvie.fr)",
+      "WebFetch(domain:www.skolengo.com)",
+      "WebFetch(domain:www1.ac-grenoble.fr)",
+      "WebFetch(domain:capytale.forge.apps.education.fr)",
+      "WebFetch(domain:pia.ac-paris.fr)",
+      "WebFetch(domain:www.cokojeux.com)",
+      "Bash(head -30 grep -rn \"tileTap\\\\|tileSelected\\\\|tileErrors\\\\|tileAnswers\" e:/Code/cahier-melimee/src/assets/js/)",
+      "Bash(node -e \"require\\(''''./src/assets/js/generators.js''''\\)\")",
+      "Bash(node -e \"require\\(''''pngjs''''\\)\")"
     ]
   }
 }

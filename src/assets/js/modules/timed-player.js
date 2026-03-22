@@ -1,9 +1,12 @@
+import { renderOpShorthands, normalizeAnswer } from './utils.js';
+import { SETTINGS } from './constants.js';
+
 /* ─────────────────────────────────────────────────────────────
    Timed Challenge Player — Alpine.js component.
    Fluency-focused: instant advance on correct, brief pause on wrong,
    countdown timer, end-of-session score report.
    ───────────────────────────────────────────────────────────── */
-function timedPlayer(rawExercises, seriesId, opts = {}) {
+export function timedPlayer(rawExercises, seriesId, opts = {}) {
   return {
     allEx: rawExercises,
     ex: [],
@@ -84,15 +87,13 @@ function timedPlayer(rawExercises, seriesId, opts = {}) {
       this._timerId = setInterval(() => {
         this.timeLeft = Math.max(0, this.timeLeft - 1);
         if (this.timeLeft === 0) this._finish();
-      }, 1000);
+      }, SETTINGS.TIMER_INTERVAL);
       this.$nextTick(() => this.$refs.input?.focus());
     },
 
     check() {
       if (this.phase !== 'playing' || !this.userInput.trim() || this.flashState) return;
-      const norm = (s) =>
-        s.replace(',', '.').replace(/[\s\u00a0\u202f]/g, '').trim().toLowerCase();
-      const ok = (this.cur.answers || []).some((a) => norm(a) === norm(this.userInput));
+      const ok = (this.cur.answers || []).some((a) => normalizeAnswer(a) === normalizeAnswer(this.userInput));
       this.attempted++;
       if (ok) this.correct++;
       this.userInput = '';
@@ -105,7 +106,7 @@ function timedPlayer(rawExercises, seriesId, opts = {}) {
           this._shuffle();
         }
         this.$nextTick(() => this.$refs.input?.focus());
-      }, ok ? 120 : 380);
+      }, ok ? SETTINGS.FAST_ADVANCE_DELAY : SETTINGS.TIMED_WRONG_DELAY);
     },
 
     _finish() {

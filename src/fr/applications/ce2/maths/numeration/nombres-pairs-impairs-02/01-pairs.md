@@ -5,6 +5,6 @@ generator: nombresPairsImpairs
 repeat: 5
 params:
   mode: pairs
-  min: 2
-  max: 30
+  min: 30
+  max: 200
 ---

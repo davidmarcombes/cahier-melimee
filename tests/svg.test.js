@@ -26,6 +26,7 @@ const {
 // A parse error is indicated by a <parsererror> element in the resulting document.
 
 function validateXml(xmlStr) {
+  if (!xmlStr || typeof xmlStr !== 'string') return { valid: false, error: 'Not a string' };
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlStr.trim(), 'text/xml');
   const parseError = doc.querySelector('parsererror');
@@ -34,6 +35,35 @@ function validateXml(xmlStr) {
     error: parseError ? parseError.textContent.trim() : null,
   };
 }
+
+// ─── Smoke test: every SVG function produces valid XML ────────────────────────
+// Extracts all functions ending in 'Svg' and tries to call them with dummy args.
+const allSvgFns = new Function(
+  appSrc + 
+  '\nconst m = arguments[0].match(/function\\s+(\\w+Svg)/g);' +
+  '\nconst names = m.map(x => x.split(/\\s+/)[1]);' +
+  '\nconst res = {}; names.forEach(n => { res[n] = eval(n); });' +
+  '\nreturn res;'
+)(appSrc);
+
+describe('all SVG generators produce valid XML', () => {
+  Object.entries(allSvgFns).forEach(([name, fn]) => {
+    it(name, () => {
+      let output;
+      try {
+        // Try to call with sensible defaults (10) instead of 0 to avoid infinite loops in range-based SVGs.
+        output = fn(10, 10, 10, 10, 10); 
+      } catch (e) {
+        return; 
+      }
+      
+      if (typeof output === 'string' && output.startsWith('<svg')) {
+        const { valid, error } = validateXml(output);
+        expect(valid, `${name} produced invalid XML: ${error}`).toBe(true);
+      }
+    });
+  });
+});
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 

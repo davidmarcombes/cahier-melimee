@@ -1,8 +1,18 @@
-/**
- * Shared generators — single source for both Node.js (build) and browser (runtime).
- * Each generator returns a seriesPlayer-compatible exercise item.
- */
 const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const randItem = (arr) => arr[rand(0, arr.length - 1)];
+const shuffle = (arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = rand(0, i);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+const randUnique = (min, max, count) => {
+  const set = new Set();
+  while (set.size < count) set.add(rand(min, max));
+  return [...set];
+};
 
 const toRoman = (num) => {
   const map = {
@@ -52,26 +62,33 @@ const fromRoman = (str) => {
 const generators = {
   multiplicationSimple: {
     generate: (params = {}) => {
-      const a = rand(params.minA ?? 2, params.maxA ?? 10);
-      const b = rand(params.minB ?? 2, params.maxB ?? 12);
+      let minA = params.minA ?? 2, maxA = params.maxA ?? 10;
+      if (maxA < minA) [minA, maxA] = [maxA, minA];
+      let minB = params.minB ?? 2, maxB = params.maxB ?? 12;
+      if (maxB < minB) [minB, maxB] = [maxB, minB];
+      const a = rand(minA, maxA), b = rand(minB, maxB);
       return { type: 'number-check', operation: `${a} \u00d7 ${b}`, answers: [String(a * b)] };
     },
   },
 
   additionSimple: {
     generate: (params = {}) => {
-      const a = rand(params.minA ?? 10, params.maxA ?? 99);
-      const b = rand(params.minB ?? 10, params.maxB ?? 99);
+      let minA = params.minA ?? 10, maxA = params.maxA ?? 99;
+      if (maxA < minA) [minA, maxA] = [maxA, minA];
+      let minB = params.minB ?? 10, maxB = params.maxB ?? 99;
+      if (maxB < minB) [minB, maxB] = [maxB, minB];
+      const a = rand(minA, maxA), b = rand(minB, maxB);
       return { type: 'number-check', operation: `${a} + ${b}`, answers: [String(a + b)] };
     },
   },
 
   additionTrou: {
     generate: (params = {}) => {
-      const total = rand(params.minTotal ?? 20, params.maxTotal ?? 100);
-      const a = rand(2, total - 5);
-      const b = total - a;
-      const missing = Math.random() > 0.5 ? 'a' : 'b';
+      let minT = params.minTotal ?? 20, maxT = params.maxTotal ?? 100;
+      if (maxT < minT) [minT, maxT] = [maxT, minT];
+      const total = rand(minT, maxT);
+      const a = rand(2, Math.max(2, total - 5));
+      const b = total - a, missing = Math.random() > 0.5 ? 'a' : 'b';
       const op = missing === 'a' ? `? + ${b} = ${total}` : `${a} + ? = ${total}`;
       return { type: 'number-check', operation: op, answers: [String(missing === 'a' ? a : b)] };
     },
@@ -95,11 +112,6 @@ const generators = {
       const correctCount = params.correctCount ?? 3;
       const count        = params.count        ?? 8;
 
-      const shuffle = (arr) => {
-        const a = [...arr];
-        for (let i = a.length - 1; i > 0; i--) { const j = rand(0, i); [a[i], a[j]] = [a[j], a[i]]; }
-        return a;
-      };
       const mkKey = (a, b) => `${Math.min(a, b)}+${Math.max(a, b)}`;
       const used = new Set();
 
@@ -166,7 +178,7 @@ const generators = {
   partagerEquitable: {
     generate: (params = {}) => {
       const EMOJIS = ['🍎', '🍬', '🏀', '⭐', '🌸', '🎈', '🍓', '🐣', '🌼', '🍕'];
-      const emoji = EMOJIS[rand(0, EMOJIS.length - 1)];
+      const emoji = randItem(EMOJIS);
       const parts = rand(params.minParts ?? 2, params.maxParts ?? 4);
       const q = rand(params.minQ ?? 2, params.maxQ ?? 6);
       const total = parts * q;
@@ -514,7 +526,7 @@ const generators = {
       const level = params.level ?? 'mixed';
       // patterns: 1=a+b/10, 2=a+b/10+c/100, 3=b/10+c/100
       const pool = level === 'tenths' ? [1] : level === 'hundredths' ? [2, 3] : [1, 2, 3];
-      const pattern = pool[rand(0, pool.length - 1)];
+      const pattern = randItem(pool);
 
       if (pattern === 1) {
         const a = rand(1, 9);
@@ -770,7 +782,7 @@ const generators = {
         [5, 12, 13],
         [9, 12, 15],
       ];
-      const [ta, tb, tc] = triples[rand(0, triples.length - 1)];
+      const [ta, tb, tc] = randItem(triples);
       const maxLeg = Math.max(ta, tb);
       const ps = 100 / maxLeg;
       return {
@@ -904,15 +916,6 @@ const generators = {
         `<span style="padding:0 3px;text-align:center">${d}</span></span>`;
 
       const P = ' + ';
-      const shuffle = (arr) => {
-        const r = [...arr];
-        for (let i = r.length - 1; i > 0; i--) {
-          const j = rand(0, i);
-          [r[i], r[j]] = [r[j], r[i]];
-        }
-        return r;
-      };
-
       // --- Valid decompositions ---
       const valid = [
         ...(b > 0 ? [`${a}${P}${F(b, 10)}${P}${F(c, 100)}`] : []), // a + b/10 + c/100
@@ -987,7 +990,7 @@ const generators = {
         let pv;
         let attempts = 0;
         do {
-          pv = pvChoices[rand(0, pvChoices.length - 1)];
+          pv = randItem(pvChoices);
           attempts++;
         } while (usedPV.has(pv) && attempts < 20);
         usedPV.add(pv);
@@ -1112,7 +1115,7 @@ const generators = {
         { a: '🐋', va: 9, b: '🐠', vb: 4 },
         { a: '🏆', va: 5, b: '🎖️', vb: 2 },
       ];
-      const pair = PAIRS[rand(0, PAIRS.length - 1)];
+      const pair = randItem(PAIRS);
       const { a, va, b, vb } = pair;
       const na = rand(1, 3);
       const nb = rand(0, 3);
@@ -1233,11 +1236,7 @@ const generators = {
       // Build pool of all (h, m) slots and pick pairCount unique ones
       const slotsPerHour = 60 / step;
       const total = 12 * slotsPerHour;
-      const indices = Array.from({ length: total }, (_, i) => i);
-      for (let i = indices.length - 1; i > 0; i--) {
-        const j = rand(0, i);
-        [indices[i], indices[j]] = [indices[j], indices[i]];
-      }
+      const indices = shuffle(Array.from({ length: total }, (_, i) => i));
       const chosen = indices.slice(0, pairCount).map(idx => ({
         h: Math.floor(idx / slotsPerHour) + 1,
         m: (idx % slotsPerHour) * step,
@@ -1245,11 +1244,7 @@ const generators = {
 
       // Shuffle right side independently
       const labels = chosen.map(({ h, m }) => toFrench(h, m));
-      const rightOrder = Array.from({ length: pairCount }, (_, i) => i);
-      for (let i = rightOrder.length - 1; i > 0; i--) {
-        const j = rand(0, i);
-        [rightOrder[i], rightOrder[j]] = [rightOrder[j], rightOrder[i]];
-      }
+      const rightOrder = shuffle(Array.from({ length: pairCount }, (_, i) => i));
 
       // answers[leftIdx] = rightIdx (position in shuffled right array)
       const answers = chosen.map((_, li) => rightOrder.indexOf(li));
@@ -1421,7 +1416,7 @@ const generators = {
     generate(params = {}) {
       const count = params.count ?? 6;
       const pool = params.divisors || (params.divisor ? [params.divisor] : [2, 3, 5, 10]);
-      const divisor = pool[rand(0, pool.length - 1)];
+      const divisor = randItem(pool);
       const min = params.min ?? Math.max(1, divisor);
       const max = params.max ?? 99;
 
@@ -2681,7 +2676,77 @@ const generators = {
       };
     },
   },
+
+  // ─── Magic Color ─────────────────────────────────────────────────────────────
+  // Pixel-art coloriage magique: a fixed pattern of color-index rows + a rule
+  // that determines which numbers belong to each color zone. At CP level the
+  // "label" mode is 'identity' — cells just show the number directly.
+  magicColorGrid: {
+    generate(params = {}) {
+      const {
+        pattern = ["0"],
+        palette = ["#3b82f6"],
+        rule = "identity",
+        min = 1,
+        max = 20,
+        labels = []
+      } = params;
+
+      // Precompute candidate numbers per color index
+      const numColors = palette.length;
+      // 'direct' rule: cell shows 1, 2, 3… matching palette index 0, 1, 2…
+      // Candidates are fixed; min/max from YAML are ignored.
+      if (rule === 'direct') {
+        const rows = pattern.map(row => [...row].map(Number));
+        const cols = rows[0].length;
+        const cells = rows.flat().map(colorIdx => ({
+          colorIdx,
+          value: colorIdx + 1,
+        }));
+        return { type: 'magic-color', magicColor: { cells, cols, palette, labels } };
+      }
+      const candidates = Array.from({ length: numColors }, () => []);
+      for (let n = min; n <= max; n++) {
+        const idx = magicColorIdx(rule, n, params);
+        if (idx < numColors) candidates[idx].push(n);
+      }
+
+      // Parse compact string rows into flat cell array
+      const rows = pattern.map(row => [...row].map(Number));
+      const cols = rows[0].length;
+      const cells = rows.flat().map(colorIdx => ({
+        colorIdx,
+        value: randItem(candidates[colorIdx].length ? candidates[colorIdx] : [min]),
+      }));
+
+      return {
+        type: 'magic-color',
+        magicColor: { cells, cols, palette, labels },
+      };
+    },
+  },
 };
+
+// Returns the palette color index that the number n belongs to for a given rule.
+function magicColorIdx(rule, n, params) {
+  switch (rule) {
+    case 'direct':       return n - 1;   // cell shows 1, 2, 3… → palette index 0, 1, 2…
+    case 'pairs':        return n % 2 === 0 ? 1 : 0;
+    case 'impairs':      return n % 2 !== 0 ? 1 : 0;
+    case 'multiples-of': return n % (params.value || 2) === 0 ? 1 : 0;
+    case 'lt':           return n <  (params.value ?? 10) ? 1 : 0;
+    case 'gt':           return n >  (params.value ?? 10) ? 1 : 0;
+    case 'ranges': {
+      const ranges = params.ranges || [];
+      for (let i = 0; i < ranges.length; i++) {
+        const [lo, hi] = ranges[i];
+        if (n >= lo && n <= hi) return i;
+      }
+      return 0;
+    }
+    default:             return 0;
+  }
+}
 
 // Dual export: Node.js (build time) + browser (runtime)
 if (typeof module !== 'undefined') module.exports = generators;

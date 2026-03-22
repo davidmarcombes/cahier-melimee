@@ -18,24 +18,64 @@ module.exports = [
     },
   },
 
-  // Browser files (Alpine.js globals)
+  // Browser files (Alpine.js modules & globals)
   {
     files: ['src/assets/js/**/*.js'],
     languageOptions: {
-      sourceType: 'script',
+      sourceType: 'module',
       globals: {
         ...globals.browser,
         Alpine: 'readonly',
         PocketBase: 'readonly',
         module: 'readonly', // dual-export pattern in generators.js
+        // SVG globals (browser only)
+        circleSvg: 'readonly',
+        rectangleSvg: 'readonly',
+        squareSvg: 'readonly',
+        triangleSvg: 'readonly',
+        clockSvg: 'readonly',
+        rulerSvg: 'readonly',
+        abacusSvg: 'readonly',
+        embedSvg: 'readonly',
+        mathGridSvg: 'readonly',
+        slicedPieSvg: 'readonly',
+        fractionPieSvg: 'readonly',
+        cubeSvg: 'readonly',
+        sphereSvg: 'readonly',
+        cylinderSvg: 'readonly',
+        coneSvg: 'readonly',
+        decompoChipsHtml: 'readonly',
+        fractionShapesSvg: 'readonly',
+        equilateralTriangleSvg: 'readonly',
+        isoscelesTriangleSvg: 'readonly',
+        rhombusSvg: 'readonly',
+        parallelogramSvg: 'readonly',
+        trapezoidSvg: 'readonly',
+        regularPolygonSvg: 'readonly',
+        cuboidSvg: 'readonly',
+        triangularPrismSvg: 'readonly',
+        squarePyramidSvg: 'readonly',
+        tetrahedronSvg: 'readonly',
+        rowsOfSvg: 'readonly',
+        packetsOfSvg: 'readonly',
+        rulerExerciseSvg: 'readonly',
+        numberLineSvg: 'readonly',
+        coordinateGridSvg: 'readonly',
+        placeValueSvg: 'readonly',
+        objectMeasureSvg: 'readonly',
+        partagerSvg: 'readonly',
+        jumpArrowSvg: 'readonly',
+        scaleSvg: 'readonly',
+        calendarSvg: 'readonly',
+        decompTreeSvg: 'readonly',
       },
     },
     rules: {
       ...js.configs.recommended.rules,
-      // Functions are called from inline HTML (Alpine x-data), not from JS
+      // Functions are called from inline HTML (Alpine x-data) or used as globals
       'no-unused-vars': [
         'warn',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^(seriesPlayer|themeToggle|challengePlayer)$' },
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^(seriesPlayer|timedPlayer|themeToggle|challengePlayer|.*Svg)$' },
       ],
     },
   },

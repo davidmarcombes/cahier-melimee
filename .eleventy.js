@@ -348,26 +348,27 @@ module.exports = async function (eleventyConfig) {
           const t = b.tens !== null ? b.tens : Math.floor((b.number % 100) / 10);
           const u = b.ones !== null ? b.ones : b.number % 10;
 
-          // Inline SVG shape helpers — no external symbols or defs needed
+          // Inline SVG shape helpers — classes defined in a per-SVG <style> block
           const U = 12, TEN_H = 120, PAD = 8, GAP_TYPE = 18, GAP_SAME = 4;
+          const b10Style = '<style>.h{fill:var(--b10-h);stroke:var(--b10-hs)}.t{fill:var(--b10-t);stroke:var(--b10-ts)}.u{fill:var(--b10-u);stroke:var(--b10-us)}.h,.t,.u{stroke-width:1}.lh{stroke:var(--b10-hs)}.lt{stroke:var(--b10-ts)}.lh,.lt{stroke-width:.5;opacity:.5}</style>';
           const b10Unit = (x, y) =>
-            `<rect x="${x+1}" y="${y+1}" width="${U-2}" height="${U-2}" rx="1" fill="var(--b10-u)" stroke="var(--b10-us)" stroke-width="1"/>`;
+            `<rect class="u" x="${x+1}" y="${y+1}" width="${U-2}" height="${U-2}" rx="1"/>`;
           const b10Ten = (x, y) => {
             let lines = '';
             for (let i = 1; i < 10; i++)
-              lines += `<line x1="${x+.5}" y1="${y+i*U}" x2="${x+U-.5}" y2="${y+i*U}" stroke="var(--b10-ts)" stroke-width=".5" opacity=".5"/>`;
-            return `<rect x="${x+.5}" y="${y+.5}" width="${U-1}" height="${TEN_H-1}" rx="1" fill="var(--b10-t)" stroke="var(--b10-ts)" stroke-width="1"/>${lines}`;
+              lines += `<line class="lt" x1="${x+.5}" y1="${y+i*U}" x2="${x+U-.5}" y2="${y+i*U}"/>`;
+            return `<rect class="t" x="${x+.5}" y="${y+.5}" width="${U-1}" height="${TEN_H-1}" rx="1"/>${lines}`;
           };
           const b10Hundred = (x, y) => {
             let lines = '';
             for (let i = 1; i < 10; i++) {
-              lines += `<line x1="${x+.5}" y1="${y+i*U}" x2="${x+TEN_H-.5}" y2="${y+i*U}" stroke="var(--b10-hs)" stroke-width=".5" opacity=".5"/>`;
-              lines += `<line x1="${x+i*U}" y1="${y+.5}" x2="${x+i*U}" y2="${y+TEN_H-.5}" stroke="var(--b10-hs)" stroke-width=".5" opacity=".5"/>`;
+              lines += `<line class="lh" x1="${x+.5}" y1="${y+i*U}" x2="${x+TEN_H-.5}" y2="${y+i*U}"/>`;
+              lines += `<line class="lh" x1="${x+i*U}" y1="${y+.5}" x2="${x+i*U}" y2="${y+TEN_H-.5}"/>`;
             }
-            return `<rect x="${x+.5}" y="${y+.5}" width="${TEN_H-1}" height="${TEN_H-1}" rx="1" fill="var(--b10-h)" stroke="var(--b10-hs)" stroke-width="1"/>${lines}`;
+            return `<rect class="h" x="${x+.5}" y="${y+.5}" width="${TEN_H-1}" height="${TEN_H-1}" rx="1"/>${lines}`;
           };
 
-          let svg = '';
+          let svg = b10Style;
           let currentX = PAD;
           for (let i = 0; i < h; i++) { svg += b10Hundred(currentX, PAD); currentX += TEN_H + GAP_SAME; }
           if (h > 0 && (t > 0 || u > 0)) currentX += GAP_TYPE - GAP_SAME;

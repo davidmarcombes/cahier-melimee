@@ -3,77 +3,59 @@
    All functions are global so Alpine templates can call them via
    window[gen](...Object.values(par)).
    ───────────────────────────────────────────────────────────── */
+const SVG = {
+  _id: 0,
+  uid: (p = 'id') => `${p}_${SVG._id++}`,
+  f: (v) => Math.round(v * 10) / 10,
+  font: 'system-ui,sans-serif',
+  tag: (w, h, content, attr = '') => `<svg width="${SVG.f(w)}" height="${SVG.f(h)}" viewBox="0 0 ${SVG.f(w)} ${SVG.f(h)}" xmlns="http://www.w3.org/2000/svg" ${attr}>${content}</svg>`,
+};
 
 function embedSvg(svg) {
   return svg;
 }
 
 function mathGridSvg(cols, rows, filled, color = 'var(--p)') {
-  const size = 20;
-  const gap = 1;
-  let svgContent = '';
+  const s = 20, g = 1;
+  let res = '';
   for (let i = 0; i < cols * rows; i++) {
-    const x = (i % cols) * size;
-    const y = Math.floor(i / cols) * size;
-    svgContent += `<rect x="${x}" y="${y}" width="${size - gap}" height="${size - gap}"
-      fill="${i < filled ? color : 'var(--ss)'}" stroke="var(--cs)" stroke-width="0.5" />`;
+    const x = (i % cols) * s, y = Math.floor(i / cols) * s;
+    res += `<rect x="${x}" y="${y}" width="${s - g}" height="${s - g}" fill="${i < filled ? color : 'var(--ss)'}" stroke="var(--cs)" stroke-width="0.5"/>`;
   }
-  const width = cols * size;
-  const height = rows * size;
-  return `<svg width="${width}" height="${height}" viewBox="0 -1 ${width} ${height + 1}" style="display:inline-block; margin:5px;">
-            ${svgContent}
-          </svg>`;
+  return SVG.tag(cols * s, rows * s, res, `viewBox="0 -1 ${cols * s} ${rows * s + 1}" style="display:inline-block;margin:5px"`);
 }
 
 function slicedPieSvg(n, k, size = 100, color = 'var(--p)') {
-  const c = size / 2;
-  const r = size / 2 - 2;
-  const f = v => Math.round(v * 100) / 100;
+  const f = SVG.f, c = size / 2, r = size / 2 - 2;
   let filled = '', empty = '';
   for (let i = 0; i < n; i++) {
-    const a0 = (i * 2 * Math.PI) / n - Math.PI / 2;
-    const a1 = ((i + 1) * 2 * Math.PI) / n - Math.PI / 2;
-    const d = `M${c},${c}L${f(c+r*Math.cos(a0))},${f(c+r*Math.sin(a0))}A${r},${r},0,0,1,${f(c+r*Math.cos(a1))},${f(c+r*Math.sin(a1))}Z`;
+    const a0 = (i * 2 * Math.PI) / n - Math.PI / 2, a1 = ((i + 1) * 2 * Math.PI) / n - Math.PI / 2;
+    const d = `M${f(c)},${f(c)}L${f(c + r * Math.cos(a0))},${f(c + r * Math.sin(a0))}A${r},${r},0,0,1,${f(c + r * Math.cos(a1))},${f(c + r * Math.sin(a1))}Z`;
     if (i < k) filled += `<path d="${d}" fill="${color}"/>`;
     else empty += `<path d="${d}" fill="var(--sf)"/>`;
   }
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><g stroke="var(--cs)" stroke-width="1">${filled}${empty}</g></svg>`;
+  return SVG.tag(size, size, `<g stroke="var(--cs)" stroke-width="1">${filled}${empty}</g>`);
 }
 
 function circleSvg(r, label = '', fillColor = 'var(--sf)') {
-  const pad = label ? 40 : 5;
-  const size = r * 2 + pad * 2;
-  const center = r + pad;
-  let labelHtml = '';
-  if (label) {
-    labelHtml = `
-      <line x1="${center}" y1="${center}" x2="${center + r}" y2="${center}" stroke="var(--ct)" stroke-dasharray="4" />
-      <text x="${center + r / 2}" y="${center - 10}" text-anchor="middle" font-size="14" font-family="Arial" fill="var(--ct)">${label}</text>`;
-  }
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="${center}" cy="${center}" r="${r}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2" />
-      ${labelHtml}
-    </svg>`;
+  const f = SVG.f, pad = label ? 40 : 5, center = r + pad, size = center * 2;
+  const extra = label ? `<line x1="${center}" y1="${center}" x2="${f(center + r)}" y2="${center}" stroke="var(--ct)" stroke-dasharray="4"/><text x="${f(center + r / 2)}" y="${f(center - 10)}" text-anchor="middle" font-size="14" font-family="${SVG.font}" fill="var(--ct)">${label}</text>` : '';
+  return SVG.tag(size, size, `<circle cx="${center}" cy="${center}" r="${r}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>${extra}`);
 }
 
 function rectangleSvg(w, h, labelW = '', labelH = '', fillColor = 'var(--sf)') {
-  const pad = labelW || labelH ? 35 : 5;
-  const totalW = w + pad * 2;
-  const totalH = h + pad * 2;
-  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
-      <rect x="${pad}" y="${pad}" width="${w}" height="${h}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2" />
-      ${labelW ? `<text x="${pad + w / 2}" y="${pad + h + 25}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${labelW}</text>` : ''}
-      ${labelH ? `<text x="${pad - 10}" y="${pad + h / 2}" text-anchor="end" dominant-baseline="middle" font-family="Arial" fill="var(--ct)">${labelH}</text>` : ''}
-    </svg>`;
+  const f = SVG.f, p = labelW || labelH ? 35 : 5, tw = w + p * 2, th = h + p * 2;
+  const res = `<rect x="${p}" y="${p}" width="${w}" height="${h}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
+    ${labelW ? `<text x="${f(p + w / 2)}" y="${f(p + h + 25)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelW}</text>` : ''}
+    ${labelH ? `<text x="${f(p - 10)}" y="${f(p + h / 2)}" text-anchor="end" dominant-baseline="middle" font-family="${SVG.font}" fill="var(--ct)">${labelH}</text>` : ''}`;
+  return SVG.tag(tw, th, res);
 }
 
 function squareSvg(size, label = '', fillColor = 'var(--sf)') {
-  const pad = 35;
-  const total = size + pad * 2;
-  return `<svg width="${total}" height="${total}" viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg">
-      <rect x="${pad}" y="${pad}" width="${size}" height="${size}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2" />
-      ${label ? `<text x="${pad + size / 2}" y="${pad + size + 25}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${label}</text>` : ''}
-    </svg>`;
+  const f = SVG.f, p = 35, t = size + p * 2;
+  const res = `<rect x="${p}" y="${p}" width="${size}" height="${size}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
+    ${label ? `<text x="${f(p + size / 2)}" y="${f(p + size + 25)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${label}</text>` : ''}`;
+  return SVG.tag(t, t, res);
 }
 
 function triangleSvg(pixA, pixB, labelA = '', labelB = '', labelC = '', fillColor = 'var(--sf)') {
@@ -84,12 +66,13 @@ function triangleSvg(pixA, pixB, labelA = '', labelB = '', labelC = '', fillColo
   const x1 = padX + pixA, y1 = padTop + pixB;
   const x2 = padX, y2 = padTop;
   const m = 10;
+  const f = SVG.f;
   return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2" />
-      <polyline points="${x0 + m},${y0} ${x0 + m},${y0 - m} ${x0},${y0 - m}" fill="none" stroke="var(--ct)" stroke-width="1.5" />
-      ${labelA ? `<text x="${(x0 + x1) / 2}" y="${y0 + 20}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${labelA}</text>` : ''}
-      ${labelB ? `<text x="${x0 - 8}" y="${(y0 + y2) / 2}" text-anchor="end" dominant-baseline="middle" font-family="Arial" fill="var(--ct)">${labelB}</text>` : ''}
-      ${labelC ? `<text x="${(x1 + x2) / 2 + 15}" y="${(y1 + y2) / 2 - 6}" text-anchor="start" font-family="Arial" fill="var(--ct)">${labelC}</text>` : ''}
+      <polygon points="${f(x0)},${f(y0)} ${f(x1)},${f(y1)} ${f(x2)},${f(y2)}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2" />
+      <polyline points="${f(x0 + m)},${f(y0)} ${f(x0 + m)},${f(y0 - m)} ${f(x0)},${f(y0 - m)}" fill="none" stroke="var(--ct)" stroke-width="1.5" />
+      ${labelA ? `<text x="${f((x0 + x1) / 2)}" y="${f(y0 + 20)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelA}</text>` : ''}
+      ${labelB ? `<text x="${f(x0 - 8)}" y="${f((y0 + y2) / 2)}" text-anchor="end" dominant-baseline="middle" font-family="${SVG.font}" fill="var(--ct)">${labelB}</text>` : ''}
+      ${labelC ? `<text x="${f((x1 + x2) / 2 + 15)}" y="${f((y1 + y2) / 2 - 6)}" text-anchor="start" font-family="${SVG.font}" fill="var(--ct)">${labelC}</text>` : ''}
     </svg>`;
 }
 
@@ -102,60 +85,44 @@ function fractionPieSvg(n, d, size = 80) {
 // --- 3D Shapes ---
 
 function cubeSvg(size = 50, color = 'var(--p)', opacity = 1) {
-  const tilt = size * 0.4;
-  const w = size;
-  const h = size;
-  const totalW = w + tilt + 4;
-  const totalH = h + tilt + 4;
-  return `<svg width="${totalW}" height="${totalH}" viewBox="-2 -2 ${totalW} ${totalH}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
+  const f = SVG.f, t = f(size * 0.4), w = f(size), h = f(size);
+  const totalW = f(w + t + 4), totalH = f(h + t + 4);
+  return `<svg width="${totalW}" height="${totalH}" viewBox="-2 -2 ${totalW} ${totalH}" style="opacity:${opacity};display:inline-block;margin:4px" xmlns="http://www.w3.org/2000/svg">
     <g stroke="var(--cs)" stroke-width="1.5" stroke-linejoin="round">
-      <polygon points="${tilt},0 ${w + tilt},0 ${w},${tilt} 0,${tilt}" fill="${color}" />
-      <polygon points="${tilt},0 ${w + tilt},0 ${w},${tilt} 0,${tilt}" fill="rgba(255,255,255,0.3)" />
-      <polygon points="${w},${tilt} ${w + tilt},0 ${w + tilt},${h} ${w},${h + tilt}" fill="${color}" />
-      <polygon points="${w},${tilt} ${w + tilt},0 ${w + tilt},${h} ${w},${h + tilt}" fill="rgba(0,0,0,0.2)" />
-      <polygon points="0,${tilt} ${w},${tilt} ${w},${h + tilt} 0,${h + tilt}" fill="${color}" />
+      <polygon points="${t},0 ${w + t},0 ${w},${t} 0,${t}" fill="${color}" />
+      <polygon points="${t},0 ${w + t},0 ${w},${t} 0,${t}" fill="#fff" fill-opacity="0.3" />
+      <polygon points="${w},${t} ${w + t},0 ${w + t},${h} ${w},${h + t}" fill="${color}" />
+      <polygon points="${w},${t} ${w + t},0 ${w + t},${h} ${w},${h + t}" fill="#000" fill-opacity="0.2" />
+      <polygon points="0,${t} ${w},${t} ${w},${h + t} 0,${h + t}" fill="${color}" />
     </g>
   </svg>`;
 }
 
 function sphereSvg(r = 40, color = 'var(--p)', opacity = 1) {
-  const size = r * 2 + 10;
-  const cx = size / 2;
-  const cy = size / 2;
-  const gid = 'rg_' + Math.random().toString(36).substr(2, 5);
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
+  const f = SVG.f, size = f(r * 2 + 10), c = f(size / 2), gid = SVG.uid('rg');
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="opacity:${opacity};display:inline-block;margin:4px" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <radialGradient id="${gid}" cx="35%" cy="35%" r="65%">
-        <stop offset="0%" stop-color="#fff" stop-opacity="0.6"/>
-        <stop offset="40%" stop-color="${color}" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#000" stop-opacity="0.5"/>
+        <stop offset="0%" stop-color="#fff" stop-opacity="0.6"/><stop offset="40%" stop-color="${color}"/><stop offset="100%" stop-color="#000" stop-opacity="0.5"/>
       </radialGradient>
     </defs>
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${gid})" stroke="var(--cs)" stroke-width="1.5" />
+    <circle cx="${c}" cy="${c}" r="${r}" fill="url(#${gid})" stroke="var(--cs)" stroke-width="1.5" />
   </svg>`;
 }
 
 function cylinderSvg(w = 50, h = 80, color = 'var(--p)', opacity = 1) {
-  const rx = w / 2;
-  const ry = rx * 0.4;
-  const totalW = w + 10;
-  const totalH = h + ry * 2 + 10;
-  const x0 = 5;
-  const y0 = 5 + ry;
-  const gid = 'lg_' + Math.random().toString(36).substr(2, 5);
-  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
+  const f = SVG.f, rx = f(w / 2), ry = f(rx * 0.4), tw = f(w + 10), th = f(h + ry * 2 + 10);
+  const x0 = 5, y0 = f(5 + ry), gid = SVG.uid('lg');
+  return `<svg width="${tw}" height="${th}" viewBox="0 0 ${tw} ${th}" style="opacity:${opacity};display:inline-block;margin:4px" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#000" stop-opacity="0.3"/>
-        <stop offset="30%" stop-color="${color}" stop-opacity="1"/>
-        <stop offset="70%" stop-color="${color}" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#000" stop-opacity="0.5"/>
+        <stop offset="0%" stop-color="#000" stop-opacity="0.3"/><stop offset="30%" stop-color="${color}"/><stop offset="70%" stop-color="${color}"/><stop offset="100%" stop-color="#000" stop-opacity="0.5"/>
       </linearGradient>
     </defs>
     <g stroke="var(--cs)" stroke-width="1.5" stroke-linejoin="round">
-      <path d="M ${x0},${y0} V ${y0 + h} A ${rx} ${ry} 0 0 0 ${x0 + w},${y0 + h} V ${y0} Z" fill="url(#${gid})" />
-      <ellipse cx="${x0 + rx}" cy="${y0}" rx="${rx}" ry="${ry}" fill="${color}" />
-      <ellipse cx="${x0 + rx}" cy="${y0}" rx="${rx}" ry="${ry}" fill="rgba(255,255,255,0.3)" />
+      <path d="M${x0},${y0}V${f(y0 + h)}A${rx},${ry},0,0,0,${f(x0 + w)},${f(y0 + h)}V${y0}Z" fill="url(#${gid})" />
+      <ellipse cx="${f(x0 + rx)}" cy="${y0}" rx="${rx}" ry="${ry}" fill="${color}" />
+      <ellipse cx="${f(x0 + rx)}" cy="${y0}" rx="${rx}" ry="${ry}" fill="#fff" fill-opacity="0.3" />
     </g>
   </svg>`;
 }
@@ -347,45 +314,29 @@ function fractionShapesSvg(fraction) {
 // ─── 2D shapes (curriculum additions) ────────────────────────────────────────
 
 function equilateralTriangleSvg(size = 80, label = '', fillColor = 'var(--sf)') {
-  const h = Math.round(size * Math.sqrt(3) / 2);
-  const padX = 10, padTop = 10, padBot = label ? 28 : 10;
-  const totalW = size + padX * 2;
-  const totalH = h + padTop + padBot;
-  const x0 = padX, y0 = padTop + h;
-  const x1 = padX + size, y1 = padTop + h;
-  const x2 = padX + size / 2, y2 = padTop;
-  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
-    ${label ? `<text x="${totalW / 2}" y="${y0 + 20}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${label}</text>` : ''}
-  </svg>`;
+  const f = SVG.f, h = f(size * Math.sqrt(3) / 2), pX = 10, pT = 10, pB = label ? 28 : 10;
+  const tw = size + pX * 2, th = h + pT + pB, x0 = pX, y0 = pT + h, x1 = pX + size, x2 = pX + size / 2;
+  const res = `<polygon points="${x0},${y0} ${x1},${y0} ${x2},${pT}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
+    ${label ? `<text x="${f(tw / 2)}" y="${f(y0 + 20)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${label}</text>` : ''}`;
+  return SVG.tag(tw, th, res);
 }
 
 function isoscelesTriangleSvg(base = 80, height = 70, labelBase = '', labelSide = '', fillColor = 'var(--sf)') {
-  const padX = labelSide ? 45 : 10, padTop = 10, padBot = labelBase ? 28 : 10;
-  const totalW = base + padX * 2;
-  const totalH = height + padTop + padBot;
-  const x0 = padX, y0 = padTop + height;
-  const x1 = padX + base, y1 = padTop + height;
-  const x2 = padX + base / 2, y2 = padTop;
-  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
-    ${labelBase ? `<text x="${(x0 + x1) / 2}" y="${y0 + 20}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${labelBase}</text>` : ''}
-    ${labelSide ? `<text x="${x0 - 8}" y="${(y0 + y2) / 2}" text-anchor="end" dominant-baseline="middle" font-family="Arial" fill="var(--ct)">${labelSide}</text>` : ''}
-  </svg>`;
+  const f = SVG.f, pX = labelSide ? 45 : 10, pT = 10, pB = labelBase ? 28 : 10;
+  const tw = base + pX * 2, th = height + pT + pB, x0 = pX, y0 = pT + height, x1 = pX + base, x2 = pX + base / 2;
+  const res = `<polygon points="${x0},${y0} ${x1},${y0} ${x2},${pT}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
+    ${labelBase ? `<text x="${f((x0 + x1) / 2)}" y="${f(y0 + 20)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelBase}</text>` : ''}
+    ${labelSide ? `<text x="${f(x0 - 8)}" y="${f((y0 + pT) / 2)}" text-anchor="end" dominant-baseline="middle" font-family="${SVG.font}" fill="var(--ct)">${labelSide}</text>` : ''}`;
+  return SVG.tag(tw, th, res);
 }
 
-// losange — all 4 sides equal, diagonals w (horizontal) and h (vertical)
 function rhombusSvg(w = 80, h = 60, labelW = '', labelH = '', fillColor = 'var(--sf)') {
-  const padX = labelH ? 40 : 10, padY = labelW ? 30 : 10;
-  const totalW = w + padX * 2;
-  const totalH = h + padY * 2;
-  const cx = totalW / 2, cy = totalH / 2;
-  const pts = `${cx},${cy - h / 2} ${cx + w / 2},${cy} ${cx},${cy + h / 2} ${cx - w / 2},${cy}`;
-  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="${pts}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
-    ${labelW ? `<text x="${cx}" y="${cy + h / 2 + 20}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${labelW}</text>` : ''}
-    ${labelH ? `<text x="${cx - w / 2 - 8}" y="${cy}" text-anchor="end" dominant-baseline="middle" font-family="Arial" fill="var(--ct)">${labelH}</text>` : ''}
-  </svg>`;
+  const f = SVG.f, pX = labelH ? 40 : 10, pY = labelW ? 30 : 10, tw = w + pX * 2, th = h + pY * 2, cx = tw / 2, cy = th / 2;
+  const pts = `${f(cx)},${f(cy - h / 2)} ${f(cx + w / 2)},${f(cy)} ${f(cx)},${f(cy + h / 2)} ${f(cx - w / 2)},${f(cy)}`;
+  const res = `<polygon points="${pts}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
+    ${labelW ? `<text x="${f(cx)}" y="${f(cy + h / 2 + 20)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelW}</text>` : ''}
+    ${labelH ? `<text x="${f(cx - w / 2 - 8)}" y="${f(cy)}" text-anchor="end" dominant-baseline="middle" font-family="${SVG.font}" fill="var(--ct)">${labelH}</text>` : ''}`;
+  return SVG.tag(tw, th, res);
 }
 
 // parallélogramme — skew is horizontal offset of the top edge (default w/4)
@@ -405,22 +356,14 @@ function parallelogramSvg(w = 100, h = 60, skew = 25, labelW = '', labelH = '', 
 }
 
 // trapèze — topW < botW for standard trapezoid (wider base)
-function trapezoidSvg(topW = 60, botW = 100, h = 60, labelTop = '', labelBot = '', labelH = '', fillColor = 'var(--sf)') {
-  const padX = labelH ? 40 : 10;
-  const padTop = labelTop ? 28 : 10, padBot = labelBot ? 28 : 10;
-  const offset = (botW - topW) / 2;
-  const totalW = botW + padX * 2;
-  const totalH = h + padTop + padBot;
-  const x0 = padX, y0 = padTop + h;
-  const x1 = padX + botW, y1 = padTop + h;
-  const x2 = padX + offset + topW, y2 = padTop;
-  const x3 = padX + offset, y3 = padTop;
-  return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
-    ${labelBot ? `<text x="${(x0 + x1) / 2}" y="${y0 + 20}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${labelBot}</text>` : ''}
-    ${labelTop ? `<text x="${(x2 + x3) / 2}" y="${y2 - 8}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${labelTop}</text>` : ''}
-    ${labelH ? `<text x="${x0 - 8}" y="${(y0 + y3) / 2}" text-anchor="end" dominant-baseline="middle" font-family="Arial" fill="var(--ct)">${labelH}</text>` : ''}
-  </svg>`;
+function trapezoidSvg(tW = 60, bW = 100, h = 60, labelT = '', labelB = '', labelH = '', fillColor = 'var(--sf)') {
+  const f = SVG.f, pX = labelH ? 40 : 10, pT = labelT ? 28 : 10, pB = labelB ? 28 : 10;
+  const off = (bW - tW) / 2, tw = bW + pX * 2, th = h + pT + pB, x0 = pX, y0 = pT + h;
+  const res = `<polygon points="${x0},${y0} ${f(x0 + bW)},${y0} ${f(x0 + off + tW)},${pT} ${f(x0 + off)},${pT}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
+    ${labelB ? `<text x="${f(x0 + bW / 2)}" y="${f(y0 + 20)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelB}</text>` : ''}
+    ${labelT ? `<text x="${f(x0 + off + tW / 2)}" y="${f(pT - 8)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelT}</text>` : ''}
+    ${labelH ? `<text x="${f(x0 - 8)}" y="${f(y0 - h / 2)}" text-anchor="end" dominant-baseline="middle" font-family="${SVG.font}" fill="var(--ct)">${labelH}</text>` : ''}`;
+  return SVG.tag(tw, th, res);
 }
 
 // polygone régulier — n sides, first vertex at top; covers pentagon, hexagon, octagon, etc.
@@ -809,24 +752,19 @@ function placeValueSvg(number, pos) {
    hour: 1-12, minute: 0-59, size: px (default 72).
    Hand colors follow palette: hour = var(--ct), minute = var(--p). */
 function clockSvg(hour, minute, size = 72) {
-  const cx = size / 2, cy = size / 2, r = size / 2 - 2;
+  const f = SVG.f, c = size / 2, r = size / 2 - 2;
   const toXY = (deg, len) => {
     const rad = (deg - 90) * Math.PI / 180;
-    return [+(cx + Math.cos(rad) * len).toFixed(2), +(cy + Math.sin(rad) * len).toFixed(2)];
+    return [f(c + Math.cos(rad) * len), f(c + Math.sin(rad) * len)];
   };
-  const hAngle = ((hour % 12) + minute / 60) * 30;
-  const mAngle = minute * 6;
-  const [hx, hy] = toXY(hAngle, r * 0.55);
-  const [mx, my] = toXY(mAngle, r * 0.82);
-  const hw = +(size / 14).toFixed(1);
-  const mw = +(size / 22).toFixed(1);
-  const pr = +(size / 18).toFixed(1);
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">` +
-    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--sf)" stroke="var(--ct)" stroke-width="1.5"/>` +
-    `<line x1="${cx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="var(--ct)" stroke-width="${hw}" stroke-linecap="round"/>` +
-    `<line x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}" stroke="var(--p)" stroke-width="${mw}" stroke-linecap="round"/>` +
-    `<circle cx="${cx}" cy="${cy}" r="${pr}" fill="var(--ct)"/>` +
-    `</svg>`;
+  const hAngle = ((hour % 12) + minute / 60) * 30, mAngle = minute * 6;
+  const [hx, hy] = toXY(hAngle, r * 0.55), [mx, my] = toXY(mAngle, r * 0.82);
+  const hw = f(size / 14), mw = f(size / 22), pr = f(size / 18);
+  const res = `<circle cx="${c}" cy="${c}" r="${r}" fill="var(--sf)" stroke="var(--ct)" stroke-width="1.5"/>
+    <line x1="${c}" y1="${c}" x2="${hx}" y2="${hy}" stroke="var(--ct)" stroke-width="${hw}" stroke-linecap="round"/>
+    <line x1="${c}" y1="${c}" x2="${mx}" y2="${my}" stroke="var(--p)" stroke-width="${mw}" stroke-linecap="round"/>
+    <circle cx="${c}" cy="${c}" r="${pr}" fill="var(--ct)"/>`;
+  return SVG.tag(size, size, res);
 }
 
 function objectMeasureSvg(emoji) {
@@ -1109,9 +1047,17 @@ function decompTreeSvg(top, left, right) {
       + `<text x="${x}" y="${y + 6}" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="${tc}">${label}</text>`;
   };
 
+  const edgePts = (x1, y1, x2, y2) => {
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
+    const ux = dx / len, uy = dy / len;
+    return [x1 + ux * R, y1 + uy * R, x2 - ux * R, y2 - uy * R];
+  };
+  const [llx1, lly1, llx2, lly2] = edgePts(cx, ty, lx, ly);
+  const [rlx1, rly1, rlx2, rly2] = edgePts(cx, ty, rx, ry);
+
   let s = '';
-  s += `<line x1="${cx}" y1="${ty + R}" x2="${lx}" y2="${ly - R}" stroke="var(--cs,#cbd5e1)" stroke-width="2"/>`;
-  s += `<line x1="${cx}" y1="${ty + R}" x2="${rx}" y2="${ry - R}" stroke="var(--cs,#cbd5e1)" stroke-width="2"/>`;
+  s += `<line x1="${llx1.toFixed(1)}" y1="${lly1.toFixed(1)}" x2="${llx2.toFixed(1)}" y2="${lly2.toFixed(1)}" stroke="var(--cs,#cbd5e1)" stroke-width="2"/>`;
+  s += `<line x1="${rlx1.toFixed(1)}" y1="${rly1.toFixed(1)}" x2="${rlx2.toFixed(1)}" y2="${rly2.toFixed(1)}" stroke="var(--cs,#cbd5e1)" stroke-width="2"/>`;
   s += mkCircle(cx, ty, top);
   s += mkCircle(lx, ly, left);
   s += mkCircle(rx, ry, right);

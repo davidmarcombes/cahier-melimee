@@ -90,6 +90,7 @@ isSeriesPage: true
   {% if 'coordinate-grid' in usedTypes %}{% include "types/coordinate-grid.njk" %}{% endif %}
   {% if 'bar-chart' in usedTypes %}{% include "types/bar-chart.njk" %}{% endif %}
   {% if 'calc-chain' in usedTypes %}{% include "types/calc-chain.njk" %}{% endif %}
+  {% if 'magic-color' in usedTypes %}{% include "types/magic-color.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -202,6 +203,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'calc-chain' in usedTypes %}
     <span x-show="cur.type === 'calc-chain'">Certains résultats ne sont pas corrects. Essaie encore !</span>
+    {% endif %}
+    {% if 'magic-color' in usedTypes %}
+    <span x-show="cur.type === 'magic-color'">Certaines cases ne sont pas de la bonne couleur. Essaie encore !</span>
     {% endif %}
   </div>
 
