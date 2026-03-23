@@ -1,7 +1,7 @@
 ---
 type: multi-question
 title: "Passage par 10"
-context: "Pour calculer 8 + 5, on peut d'abord compléter à 10, puis ajouter le reste."
+context: "8 + 5 = ?"
 questions:
   - text: "Combien faut-il ajouter à 8 pour arriver à 10 ?"
     answer: "2"
@@ -12,4 +12,4 @@ questions:
 class: "S1.1.3"
 ---
 
-Utilise la stratégie du passage par 10.
+Pour calculer **8 + 5**, on complète d'abord à 10, puis on ajoute le reste.

@@ -1,7 +1,7 @@
 ---
 type: multi-question
 title: "Complément à 100"
-context: "Pour calculer 100 − 37, on cherche combien il faut ajouter à 37 pour arriver à 100."
+context: "100 − 37 = ?"
 questions:
   - text: "Combien faut-il ajouter à 37 pour arriver à 40 ?"
     answer: "3"
@@ -12,4 +12,4 @@ questions:
 class: "S1.1.2"
 ---
 
-Remonte de 37 jusqu'à 100 par étapes.
+Pour calculer **100 − 37**, on remonte de 37 jusqu'à 100 par étapes.

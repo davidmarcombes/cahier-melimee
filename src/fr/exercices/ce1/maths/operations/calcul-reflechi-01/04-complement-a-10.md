@@ -1,7 +1,7 @@
 ---
 type: multi-question
 title: "Complément à 10 pour soustraire"
-context: "Pour calculer 12 - 9, on peut chercher combien il faut ajouter à 9 pour arriver à 12."
+context: "12 - 9 = ?"
 questions:
   - text: "Combien faut-il ajouter à 9 pour arriver à 10 ?"
     answer: "1"
@@ -12,4 +12,4 @@ questions:
 class: "S1.1.2"
 ---
 
-On remonte de 9 jusqu'à 12 pour trouver la différence.
+Pour calculer **12 - 9**, on remonte de 9 jusqu'à 12 pour trouver la différence.

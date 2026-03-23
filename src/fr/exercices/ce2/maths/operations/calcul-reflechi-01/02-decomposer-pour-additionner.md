@@ -1,7 +1,7 @@
 ---
 type: multi-question
 title: "Décomposer pour additionner"
-context: "Pour calculer 36 + 47, on peut décomposer 47 en 40 + 7."
+context: "36 + 47 = ?"
 questions:
   - text: "Combien font 36 + 40 ?"
     answer: "76"
@@ -12,4 +12,4 @@ questions:
 class: "S1.1.3"
 ---
 
-Décompose le deuxième nombre pour calculer par étapes.
+Pour calculer **36 + 47**, on décompose 47 en 40 + 7 et on calcule par étapes.

@@ -1,7 +1,7 @@
 ---
 type: multi-question
 title: "Passage par la centaine"
-context: "Pour calculer 97 + 8, on peut d'abord compléter à 100, puis ajouter le reste."
+context: "97 + 8 = ?"
 questions:
   - text: "Combien faut-il ajouter à 97 pour arriver à 100 ?"
     answer: "3"
@@ -12,4 +12,4 @@ questions:
 class: "S1.1.3"
 ---
 
-Utilise la stratégie du passage par 100.
+Pour calculer **97 + 8**, on complète d'abord à 100, puis on ajoute le reste.

@@ -1,7 +1,7 @@
 ---
 type: multi-question
 title: "Doubles et voisins"
-context: "Pour calculer 6 + 7, on peut utiliser le double de 6 et ajouter 1."
+context: "6 + 7 = ?"
 questions:
   - text: "Combien font 6 + 6 (le double de 6) ?"
     answer: "12"
@@ -10,4 +10,4 @@ questions:
 class: "S1.1.2"
 ---
 
-Utilise les doubles pour calculer plus vite.
+Pour calculer **6 + 7**, on utilise le double de 6, puis on ajoute 1.
