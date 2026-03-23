@@ -6,4 +6,5 @@ rows: 8
 title: "C → (6 ; 0)"
 placeLabel: C
 answer: "6,0"
+class: "S1.1.1"
 ---

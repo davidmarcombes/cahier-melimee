@@ -12,4 +12,5 @@ pairs:
     right: "mois"
   - left: "la vie d'un chat"
     right: "années"
+class: "I1.1.1"
 ---

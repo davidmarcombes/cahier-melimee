@@ -8,4 +8,5 @@ params:
   to: 5
   count: 5
   direction: random
+class: "S3.1.2"
 ---

@@ -9,6 +9,7 @@ svg:
     top: 200
     left: 130
     right: "?"
+class: "S1.1.1"
 ---
 
 Quel nombre manque dans l'arbre ?

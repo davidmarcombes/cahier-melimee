@@ -12,6 +12,7 @@ statements:
     answer: true
   - text: "Le rectangle a 2 angles droits seulement."
     answer: false
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

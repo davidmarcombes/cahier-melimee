@@ -7,6 +7,7 @@ solution:
   Sara: "Danse"
   Julien: "Tennis"
   Mathilde: "Judo"
+class: "S3.2.2"
 ---
 
 - Julien frappe une balle jaune avec une raquette.

@@ -8,4 +8,5 @@ statements:
   - "Tous les angles sont des angles droits."
   - "Il n'y a aucune droite perpendiculaire dans un rectangle."
 checkedAnswers: [0, 1, 3]
+class: "S1.1.1"
 ---

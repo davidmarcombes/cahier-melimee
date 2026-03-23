@@ -3,6 +3,7 @@ type: number-check
 title: "Deux cinquièmes d'un groupe"
 operation: "2/5 de 15 crayons = ?"
 answer: "6"
+class: "S2.1.3"
 ---
 
 ✏️✏️✏️✏️✏️✏️✏️✏️✏️✏️✏️✏️✏️✏️✏️

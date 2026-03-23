@@ -1,5 +1,6 @@
 ---
 type: pyramid
+class: "S1.2.2"
 title: "Pyramide d'additions"
 pyramid:
   - [2, 3, 4]

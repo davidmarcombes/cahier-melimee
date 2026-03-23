@@ -12,6 +12,7 @@ statements:
     answer: false
   - text: "1 kg = 1 000 g."
     answer: true
+class: "S3.1.1"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

@@ -11,6 +11,7 @@ questions:
     answer: "samedi"
   - text: "Combien y a-t-il de dimanches en mars ?"
     answer: "5"
+class: "I1.1.1"
 ---
 
 Observe le calendrier de mars 2025 et réponds aux questions.

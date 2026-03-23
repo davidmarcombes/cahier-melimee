@@ -9,4 +9,5 @@ points:
     y: 3
     label: D
 answer: "0,3"
+class: "S1.1.1"
 ---

@@ -2,12 +2,18 @@
 layout: base
 ---
 
+{% if site.devMode %}
+<script>window.__seriesTypes = {{ collections.seriesMeta | seriesTypesMap | dump | safe }};</script>
+{% endif %}
+
 <div x-data="{
   filters: JSON.parse(sessionStorage.getItem('exf') || '{&quot;level&quot;:&quot;&quot;,&quot;topic&quot;:&quot;&quot;,&quot;difficulty&quot;:&quot;&quot;}'),
   search: '',
   limit: 12,
   {% if site.devMode %}showUnvalidated: false,
   validatedIds: new Set(),
+  onePerType: false,
+  seriesTypes: window.__seriesTypes || {},
   {% endif %}get all() { return $store.exercises.data || [] },
   get options() {
     const u = (k) => [...new Set(this.all.map(s => s[k]).filter(Boolean))].sort();
@@ -15,20 +21,33 @@ layout: base
   },
   get filtered() {
     const q = this.search.toLowerCase();
-    return this.all.filter(s =>
+    let list = this.all.filter(s =>
       (!this.filters.level || s.level === this.filters.level) &&
       (!this.filters.topic || s.topic === this.filters.topic) &&
       (!this.filters.difficulty || s.difficulty === this.filters.difficulty) &&
       (!q || (s.title + ' ' + s.topic).toLowerCase().includes(q)){% if site.devMode %} &&
       (!this.showUnvalidated || !this.validatedIds.has(s.id)){% endif %}
-    )
+    );
+    {% if site.devMode %}if (this.onePerType) {
+      const seen = new Set();
+      list = list.filter(s => {
+        const types = this.seriesTypes[s.id];
+        if (!types || !types.length) return true;
+        const key = types.slice().sort().join(',');
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }{% endif %}
+    return list;
   },
   get visible() { return this.filtered.slice(0, this.limit) },
-  get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') || this.search !== ''{% if site.devMode %} || this.showUnvalidated{% endif %} },
+  get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') || this.search !== ''{% if site.devMode %} || this.showUnvalidated || this.onePerType{% endif %} },
   resetFilters() {
     this.filters = { level: '', topic: '', difficulty: '' };
     this.search = '';
     {% if site.devMode %}this.showUnvalidated = false;
+    this.onePerType = false;
     {% endif %}this.limit = 12
   }{% if site.devMode %},
   async loadValidatedIds() {
@@ -93,6 +112,12 @@ layout: base
                 class="px-3 py-2 text-sm rounded-xl border transition-all"
                 title="Afficher uniquement les séries non validées">
           Non validées
+        </button>
+        <button type="button" @click="onePerType = !onePerType; limit = 12"
+                :class="onePerType ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 border-violet-300 dark:border-violet-700' : 'text-slate-500 border-slate-200 dark:border-slate-700'"
+                class="px-3 py-2 text-sm rounded-xl border transition-all"
+                title="Afficher une seule série par type d'exercice">
+          1 par type
         </button>
         {% endif %}
 

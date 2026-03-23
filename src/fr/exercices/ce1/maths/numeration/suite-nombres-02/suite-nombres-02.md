@@ -7,4 +7,5 @@ params:
   anchorMin: 4
   anchorMax: 40
   cells: 7
+class: "S3.2.1"
 ---

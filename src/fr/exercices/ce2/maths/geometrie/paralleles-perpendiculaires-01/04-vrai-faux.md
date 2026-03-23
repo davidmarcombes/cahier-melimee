@@ -10,6 +10,7 @@ statements:
     answer: false
   - text: "Deux droites perpendiculaires à une même droite sont parallèles entre elles."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

@@ -6,4 +6,5 @@ rows: 8
 title: "B → (1 ; 5)"
 placeLabel: B
 answer: "1,5"
+class: "S1.1.1"
 ---

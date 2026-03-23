@@ -8,6 +8,7 @@ markers:
   - label: "B"
     value: 1.7
 answer: "1,7"
+class: "I1.1.2"
 ---
 
 Quel nombre décimal est indiqué par la flèche B ? (ex : 1,3)

@@ -7,6 +7,7 @@ questions:
     answer: "15"
   - text: "Combien de bonbons a-t-elle à la fin ?"
     answer: "23"
+class: "S1.1.1"
 ---
 
 Lis le problème, puis réponds aux deux questions.

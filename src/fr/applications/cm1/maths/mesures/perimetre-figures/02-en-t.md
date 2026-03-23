@@ -6,6 +6,7 @@ svg:
   par:
     name: t-shape-perimeter.svg
 answer: "32"
+class: "S1.1.1"
 ---
 
 Calcule le périmètre de cette figure en centimètres.

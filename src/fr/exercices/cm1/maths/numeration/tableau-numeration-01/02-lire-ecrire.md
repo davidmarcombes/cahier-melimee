@@ -12,6 +12,7 @@ answers:
   - ["507"]
   - ["1038"]
   - ["4400"]
+class: "S1.1.1"
 ---
 
 Écris le nombre correspondant à chaque décomposition.

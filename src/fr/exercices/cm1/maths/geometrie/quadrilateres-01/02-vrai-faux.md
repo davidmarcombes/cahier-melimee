@@ -12,6 +12,7 @@ statements:
     answer: true
   - text: "Un trapèze a exactement une paire de côtés parallèles."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

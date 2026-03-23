@@ -13,6 +13,7 @@ questions:
     answer: "17"
   - text: "Quel jour de la semaine est le 31 mars ?"
     answer: "lundi"
+class: "I1.1.1"
 ---
 
 Observe le calendrier de mars 2025 et réponds aux questions.

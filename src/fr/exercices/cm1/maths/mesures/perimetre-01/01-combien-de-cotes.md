@@ -11,6 +11,7 @@ choices:
   - "10 côtés"
   - "12 côtés"
 answer: "10 côtés"
+class: "S1.1.1"
 ---
 
 Compte les côtés de cette étoile.

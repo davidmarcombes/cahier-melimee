@@ -18,4 +18,5 @@ pairs:
     right: "quatre-vingt-dix"
   - left: "100"
     right: "cent"
+class: "S2.1.4"
 ---

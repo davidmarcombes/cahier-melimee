@@ -9,4 +9,5 @@ statements:
   - "C'est un triangle."
   - "Il est toujours isocèle."
 checkedAnswers: [0, 1, 4]
+class: "S1.1.1"
 ---

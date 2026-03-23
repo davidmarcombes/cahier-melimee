@@ -8,6 +8,7 @@ subdivisions: 2
 value: 3
 label: "B"
 answer: "3"
+class: "S1.1.1"
 ---
 
 Quel nombre le point B indique-t-il ?

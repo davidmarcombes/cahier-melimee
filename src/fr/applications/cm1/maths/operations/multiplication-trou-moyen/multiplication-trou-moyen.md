@@ -8,6 +8,7 @@ params:
   maxA: 12
   minB: 2
   maxB: 12
+class: "S1.1.1"
 ---
 
 Trouve le nombre manquant dans chaque multiplication !

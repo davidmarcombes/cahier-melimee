@@ -226,24 +226,46 @@ for (const r of rows) {
     byClass[cls] = (byClass[cls] || 0) + 1;
   }
 }
-const ALL_CODES = [
+const VERGNAUD_CODES = [
   'A1.1','A1.2',
   'A2.1','A2.2','A2.3','A2.4',
   'A3.1','A3.2','A3.3',
-  'A4.1','A4.2','A4.3',
-  'M1.1','M1.2','M1.3','M1.4',
-  'M2.1','M2.2','M2.3',
+  'A4.1','A4.2',
+  'M1.1','M1.2','M1.3',
+  'M2.1','M2.2',
   'M3.1','M3.2','M3.3','M3.4',
 ];
+const SKILL_CODES = [
+  'S1.1.1','S1.1.2','S1.1.3',
+  'S1.2.1','S1.2.2',
+  'S2.1.1','S2.1.2','S2.1.3','S2.1.4',
+  'S2.2.1','S2.2.2',
+  'S3.1.1','S3.1.2','S3.1.3',
+  'S3.2.1','S3.2.2','S3.2.3',
+  'I1.1.1','I1.1.2',
+  'I1.2.1',
+  'D1.1.1','D1.1.2',
+];
 console.log(`\n${C.cyan}Vergnaud class coverage (series count):${C.reset}`);
-for (const code of ALL_CODES) {
+for (const code of VERGNAUD_CODES) {
   const cnt = byClass[code] || 0;
   const bar = cnt ? `${'█'.repeat(Math.min(cnt, 20))} ${cnt}` : `${C.dim}—${C.reset}`;
   console.log(`  ${code.padEnd(6)} ${bar}`);
 }
-const uncovered = ALL_CODES.filter((c) => !byClass[c]);
-if (uncovered.length) {
-  console.log(`\n${C.yellow}⚠  Codes with no exercises: ${uncovered.join(', ')}${C.reset}`);
+const uncoveredV = VERGNAUD_CODES.filter((c) => !byClass[c]);
+if (uncoveredV.length) {
+  console.log(`\n${C.yellow}⚠  Vergnaud codes with no exercises: ${uncoveredV.join(', ')}${C.reset}`);
+}
+
+console.log(`\n${C.cyan}Skill class coverage (series count):${C.reset}`);
+for (const code of SKILL_CODES) {
+  const cnt = byClass[code] || 0;
+  const bar = cnt ? `${'█'.repeat(Math.min(cnt, 20))} ${cnt}` : `${C.dim}—${C.reset}`;
+  console.log(`  ${code.padEnd(6)} ${bar}`);
+}
+const uncoveredS = SKILL_CODES.filter((c) => !byClass[c]);
+if (uncoveredS.length) {
+  console.log(`\n${C.yellow}⚠  Skill codes with no exercises: ${uncoveredS.join(', ')}${C.reset}`);
 }
 
 // Missing fields (level/subject/topic are always inferred from path, not checked)

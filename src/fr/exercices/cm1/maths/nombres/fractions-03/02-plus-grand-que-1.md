@@ -7,6 +7,7 @@ choices:
   - "2/3"
   - "3/3"
   - "1/3"
+class: "S2.1.3"
 ---
 
 Parmi ces fractions, laquelle est **plus grande que 1** ?

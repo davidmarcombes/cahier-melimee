@@ -7,6 +7,7 @@ choices:
   - "4 côtés égaux seulement"
   - "3 côtés et 3 sommets"
   - "Aucun côté"
+class: "S1.1.1"
 ---
 
 Quelle description correspond au **rectangle** ?

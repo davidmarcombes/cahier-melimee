@@ -7,4 +7,5 @@ params:
   mode: pairs
   min: 2
   max: 30
+class: "S1.1.1"
 ---

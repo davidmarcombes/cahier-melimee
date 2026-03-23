@@ -7,6 +7,7 @@ choices:
   - "3"
   - "2"
   - "0"
+class: "S2.2.1"
 ---
 
 Combien de **sommets** a un rectangle ?

@@ -7,6 +7,7 @@ choices:
   - "(6 × 1 000) + (5 × 100) + (3 × 10)"
   - "(6 × 100) + (5 × 10) + 3"
   - "(65 × 100) + 30"
+class: "S1.1.1"
 ---
 
 Trouve la décomposition correcte du nombre **6 503**.

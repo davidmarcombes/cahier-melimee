@@ -12,6 +12,7 @@ chain:
       answer: "800"
     - op: "÷ 4"
       answer: "200"
+class: "S1.1.1"
 ---
 
 Suis la chaîne et calcule chaque résultat.

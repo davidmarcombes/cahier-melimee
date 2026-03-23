@@ -10,6 +10,7 @@ pairs:
     right: "Entre 90° et 180°"
   - left: "Angle plat"
     right: "Exactement 180°"
+class: "S1.1.1"
 ---
 
 Relie chaque type d'angle à sa définition.

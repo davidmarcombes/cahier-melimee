@@ -8,6 +8,7 @@ questions:
     answer: "6"
   - text: "Quelle est la température moyenne sur les 5 jours ?"
     answer: "14"
+class: "S1.1.1"
 ---
 
 Voici les températures maximales relevées cette semaine :

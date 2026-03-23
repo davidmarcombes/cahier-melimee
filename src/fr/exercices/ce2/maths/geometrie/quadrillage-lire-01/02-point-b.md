@@ -9,4 +9,5 @@ points:
     y: 5
     label: B
 answer: "1,5"
+class: "S1.1.1"
 ---

@@ -10,6 +10,7 @@ statements:
     answer: true
   - text: "1 L = 10 dL = 100 cL."
     answer: true
+class: "S3.1.1"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

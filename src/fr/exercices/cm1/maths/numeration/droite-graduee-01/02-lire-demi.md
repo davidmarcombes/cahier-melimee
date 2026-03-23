@@ -7,6 +7,7 @@ step: 0.5
 value: 1.5
 label: "B"
 answer: "1.5"
+class: "S1.1.1"
 ---
 
 Quel nombre le point B indique-t-il ?

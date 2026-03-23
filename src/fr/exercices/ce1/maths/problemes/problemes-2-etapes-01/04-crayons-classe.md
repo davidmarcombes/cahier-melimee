@@ -7,6 +7,7 @@ questions:
     answer: "18"
   - text: "Combien de crayons y a-t-il en tout à la fin ?"
     answer: "24"
+class: "S1.1.1"
 ---
 
 Lis le problème, puis réponds aux deux questions.

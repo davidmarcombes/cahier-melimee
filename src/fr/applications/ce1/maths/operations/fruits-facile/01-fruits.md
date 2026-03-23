@@ -9,6 +9,7 @@ params:
   maxA: 4
   minB: 1
   maxB: 4
+class: "S2.1.1"
 ---
 
 Compte les fruits des deux groupes et écris le total.

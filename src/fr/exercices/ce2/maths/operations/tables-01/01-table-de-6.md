@@ -9,6 +9,7 @@ vars:
     max: 10
 answer: "{{ a * 6 }}"
 operation: "6 x {{ a }}"
+class: "S1.1.1"
 ---
 
 Combien font **6 x {{ a }}** ?

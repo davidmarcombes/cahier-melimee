@@ -7,6 +7,7 @@ choices:
   - "4"
   - "2"
   - "1"
+class: "S1.1.1"
 ---
 
 Combien de **côtés** a un triangle ?

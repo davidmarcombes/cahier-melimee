@@ -7,6 +7,7 @@ choices:
   - "300"
   - "500"
   - "350"
+class: "S1.1.1"
 ---
 
 Sans calculer le résultat exact, quelle est la **meilleure estimation** de **21 x 19** ?

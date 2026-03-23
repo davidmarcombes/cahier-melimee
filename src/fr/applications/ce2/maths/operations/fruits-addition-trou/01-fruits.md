@@ -9,6 +9,7 @@ params:
   countMax: 5
   opMin: 1
   opMax: 4
+class: "S2.1.1"
 ---
 
 Trouve combien de fruits manquent pour compléter l'égalité.

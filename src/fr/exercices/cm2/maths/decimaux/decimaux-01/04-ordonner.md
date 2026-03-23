@@ -7,6 +7,7 @@ items:
   - "3,17"
   - "3,7"
   - "3,71"
+class: "S3.1.2"
 ---
 
 Remets ces nombres dans l'**ordre croissant**.

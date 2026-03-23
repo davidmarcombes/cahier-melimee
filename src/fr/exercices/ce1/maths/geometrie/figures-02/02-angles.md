@@ -11,4 +11,5 @@ statements:
     answer: "rectangle"
   - template: "Un ___ a 3 angles."
     answer: "triangle"
+class: "S1.1.1"
 ---

@@ -143,7 +143,26 @@
       "WebFetch(domain:www.cokojeux.com)",
       "Bash(head -30 grep -rn \"tileTap\\\\|tileSelected\\\\|tileErrors\\\\|tileAnswers\" e:/Code/cahier-melimee/src/assets/js/)",
       "Bash(node -e \"require\\(''''./src/assets/js/generators.js''''\\)\")",
-      "Bash(node -e \"require\\(''''pngjs''''\\)\")"
+      "Bash(node -e \"require\\(''''pngjs''''\\)\")",
+      "WebFetch(domain:beckassets.blob.core.windows.net)",
+      "WebFetch(domain:cs-web.bu.edu)",
+      "WebFetch(domain:homeschoolmath.blogspot.com)",
+      "WebFetch(domain:link.springer.com)",
+      "WebFetch(domain:www.lsalliance.org)",
+      "WebFetch(domain:russianmathtutors.com)",
+      "WebFetch(domain:files.eric.ed.gov)",
+      "WebFetch(domain:timssandpirls.bc.edu)",
+      "WebFetch(domain:www.researchgate.net)",
+      "WebFetch(domain:www.teaching.math.rs)",
+      "WebFetch(domain:lessonresearch.net)",
+      "WebFetch(domain:forums.welltrainedmind.com)",
+      "WebFetch(domain:blog.russianschool.com)",
+      "WebFetch(domain:www.russianschool.com)",
+      "WebFetch(domain:www.mathschool.com)",
+      "WebFetch(domain:pikas.dzlm.de)",
+      "WebFetch(domain:www.ncetm.org.uk)",
+      "WebFetch(domain:edudel.nic.in)",
+      "WebFetch(domain:nrich.maths.org)"
     ]
   }
 }

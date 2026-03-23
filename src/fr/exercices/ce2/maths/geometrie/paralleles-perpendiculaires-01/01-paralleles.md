@@ -8,4 +8,5 @@ statements:
   - "La distance entre deux droites parallèles est toujours la même."
   - "On note le parallélisme avec le symbole //."
 checkedAnswers: [0, 2, 3, 4]
+class: "S1.1.1"
 ---

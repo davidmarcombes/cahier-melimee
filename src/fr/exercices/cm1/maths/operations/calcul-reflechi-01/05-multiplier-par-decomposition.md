@@ -9,6 +9,7 @@ questions:
     answer: "12"
   - text: "Combien fait 24 × 3 ?"
     answer: "72"
+class: "S1.1.3"
 ---
 
 Utilise la décomposition pour multiplier.

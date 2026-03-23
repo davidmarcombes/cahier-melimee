@@ -8,6 +8,7 @@ markers:
   - label: "°C"
     value: 20
 answer: "20"
+class: "I1.1.2"
 ---
 
 Quelle température indique le thermomètre ?

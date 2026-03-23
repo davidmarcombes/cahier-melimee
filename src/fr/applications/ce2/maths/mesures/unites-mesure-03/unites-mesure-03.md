@@ -8,4 +8,5 @@ params:
     - cm
     - m
     - km
+class: "S2.1.3"
 ---

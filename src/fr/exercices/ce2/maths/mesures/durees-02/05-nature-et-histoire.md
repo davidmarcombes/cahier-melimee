@@ -12,4 +12,5 @@ pairs:
     right: "années"
   - left: "l'Antiquité"
     right: "siècles"
+class: "I1.1.1"
 ---

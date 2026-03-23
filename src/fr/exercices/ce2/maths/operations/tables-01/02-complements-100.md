@@ -8,6 +8,7 @@ vars:
     formula: "rand(1, 19) * 5"
 answer: "{{ 100 - a }}"
 operation: "{{ a }} + ? = 100"
+class: "S1.1.1"
 ---
 
 Trouve le nombre manquant pour faire **100**.

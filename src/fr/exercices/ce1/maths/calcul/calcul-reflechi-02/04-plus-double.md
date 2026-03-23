@@ -8,6 +8,7 @@ chain:
       answer: "25"
     - op: "× 2"
       answer: "50"
+class: "S1.1.2"
 ---
 
 Suis la chaîne et calcule chaque résultat.

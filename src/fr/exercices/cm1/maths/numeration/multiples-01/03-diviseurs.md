@@ -7,6 +7,7 @@ choices:
   - "1, 2, 4, 8, 12"
   - "2, 3, 4, 6"
   - "1, 3, 6, 9, 12"
+class: "S1.1.1"
 ---
 
 Quels sont **tous les diviseurs** de **12** ?

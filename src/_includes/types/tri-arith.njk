@@ -1,0 +1,105 @@
+{# tri-arith — arithmetic triangle
+   Vertices [A(top), B(bottom-left), C(bottom-right)] at indices 0-2
+   Edges    [f=A+B(left), d=A+C(right), e=B+C(bottom)] at indices 3-5
+   given: givenV[0..2] + givenE[0..2]
+#}
+<div x-show="cur.type === 'tri-arith'" class="space-y-6">
+
+  {# ── triangle visual ────────────────────────────────────────────── #}
+  <div class="relative mx-auto" style="width:300px;height:240px">
+
+    {# SVG lines only — cells are positioned on top #}
+    <svg class="absolute inset-0 pointer-events-none" width="300" height="240" viewBox="0 0 300 240" aria-hidden="true">
+      <line x1="150" y1="35" x2="25"  y2="205" stroke="currentColor" stroke-width="2.5" class="text-slate-400 dark:text-slate-500"/>
+      <line x1="150" y1="35" x2="275" y2="205" stroke="currentColor" stroke-width="2.5" class="text-slate-400 dark:text-slate-500"/>
+      <line x1="25"  y1="205" x2="275" y2="205" stroke="currentColor" stroke-width="2.5" class="text-slate-400 dark:text-slate-500"/>
+    </svg>
+
+    {# ── VERTICES (circles, 52×52) ── #}
+
+    {# A — top (center 150,35) #}
+    <div class="absolute flex items-center justify-center" style="width:52px;height:52px;left:124px;top:9px">
+      <template x-if="cur.triangle?.givenV?.[0]">
+        <div class="w-13 h-13 w-full h-full rounded-full flex items-center justify-center font-extrabold text-lg bg-slate-700 dark:bg-slate-200 text-white dark:text-slate-800 shadow" x-text="cur.triangle.vertices[0]"></div>
+      </template>
+      <template x-if="!cur.triangle?.givenV?.[0]">
+        <input type="text" inputmode="numeric" x-model="triInputs[0]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+          class="w-full h-full rounded-full text-center text-lg font-extrabold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+          :class="triErrors.includes(0)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-primary-300 dark:border-primary-600'"/>
+      </template>
+    </div>
+
+    {# B — bottom-left (center 25,205) #}
+    <div class="absolute flex items-center justify-center" style="width:52px;height:52px;left:-1px;top:179px">
+      <template x-if="cur.triangle?.givenV?.[1]">
+        <div class="w-full h-full rounded-full flex items-center justify-center font-extrabold text-lg bg-slate-700 dark:bg-slate-200 text-white dark:text-slate-800 shadow" x-text="cur.triangle.vertices[1]"></div>
+      </template>
+      <template x-if="!cur.triangle?.givenV?.[1]">
+        <input type="text" inputmode="numeric" x-model="triInputs[1]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+          class="w-full h-full rounded-full text-center text-lg font-extrabold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+          :class="triErrors.includes(1)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-primary-300 dark:border-primary-600'"/>
+      </template>
+    </div>
+
+    {# C — bottom-right (center 275,205) #}
+    <div class="absolute flex items-center justify-center" style="width:52px;height:52px;left:249px;top:179px">
+      <template x-if="cur.triangle?.givenV?.[2]">
+        <div class="w-full h-full rounded-full flex items-center justify-center font-extrabold text-lg bg-slate-700 dark:bg-slate-200 text-white dark:text-slate-800 shadow" x-text="cur.triangle.vertices[2]"></div>
+      </template>
+      <template x-if="!cur.triangle?.givenV?.[2]">
+        <input type="text" inputmode="numeric" x-model="triInputs[2]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+          class="w-full h-full rounded-full text-center text-lg font-extrabold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+          :class="triErrors.includes(2)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-primary-300 dark:border-primary-600'"/>
+      </template>
+    </div>
+
+    {# ── EDGES (rounded squares, 44×44) ── #}
+
+    {# f = A+B — left side (center ~68,120) #}
+    <div class="absolute flex items-center justify-center" style="width:44px;height:44px;left:46px;top:98px">
+      <template x-if="cur.triangle?.givenE?.[0]">
+        <div class="w-full h-full rounded-lg flex items-center justify-center font-bold text-base bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border-2 border-primary-300 dark:border-primary-700 shadow-sm" x-text="cur.triangle.edges[0]"></div>
+      </template>
+      <template x-if="!cur.triangle?.givenE?.[0]">
+        <input type="text" inputmode="numeric" x-model="triInputs[3]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+          class="w-full h-full rounded-lg text-center text-base font-bold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+          :class="triErrors.includes(3)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-slate-300 dark:border-slate-600'"/>
+      </template>
+    </div>
+
+    {# d = A+C — right side (center ~232,120) #}
+    <div class="absolute flex items-center justify-center" style="width:44px;height:44px;left:210px;top:98px">
+      <template x-if="cur.triangle?.givenE?.[1]">
+        <div class="w-full h-full rounded-lg flex items-center justify-center font-bold text-base bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border-2 border-primary-300 dark:border-primary-700 shadow-sm" x-text="cur.triangle.edges[1]"></div>
+      </template>
+      <template x-if="!cur.triangle?.givenE?.[1]">
+        <input type="text" inputmode="numeric" x-model="triInputs[4]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+          class="w-full h-full rounded-lg text-center text-base font-bold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+          :class="triErrors.includes(4)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-slate-300 dark:border-slate-600'"/>
+      </template>
+    </div>
+
+    {# e = B+C — bottom edge (center 150,205, between B and C) #}
+    <div class="absolute flex items-center justify-center" style="width:44px;height:44px;left:128px;top:183px">
+      <template x-if="cur.triangle?.givenE?.[2]">
+        <div class="w-full h-full rounded-lg flex items-center justify-center font-bold text-base bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border-2 border-primary-300 dark:border-primary-700 shadow-sm" x-text="cur.triangle.edges[2]"></div>
+      </template>
+      <template x-if="!cur.triangle?.givenE?.[2]">
+        <input type="text" inputmode="numeric" x-model="triInputs[5]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+          class="w-full h-full rounded-lg text-center text-base font-bold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+          :class="triErrors.includes(5)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-slate-300 dark:border-slate-600'"/>
+      </template>
+    </div>
+
+  </div>
+
+  {# ── verify button ───────────────────────────────────────────────── #}
+  <div x-show="!solved" class="flex justify-center">
+    <button type="button" @click="check()"
+      :disabled="[...Array(6)].some((_,i) => !(cur.triangle?.givenV?.concat(cur.triangle?.givenE??[])[i]) && !triInputs[i]?.trim())"
+      class="px-8 py-2.5 text-base font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
+      Vérifier
+    </button>
+  </div>
+
+</div>

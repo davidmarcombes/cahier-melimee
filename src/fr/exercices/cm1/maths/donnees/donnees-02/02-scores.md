@@ -14,6 +14,7 @@ questions:
     answer: "355"
   - text: "De combien l'équipe B devance-t-elle l'équipe A ?"
     answer: "15"
+class: "D1.1.1"
 ---
 
 Observe le diagramme des scores du tournoi et réponds aux questions.

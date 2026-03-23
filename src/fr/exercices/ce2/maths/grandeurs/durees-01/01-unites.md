@@ -10,6 +10,7 @@ pairs:
     right: "24 heures"
   - left: "1 semaine"
     right: "7 jours"
+class: "S2.1.3"
 ---
 
 Relie chaque durée à son équivalent.

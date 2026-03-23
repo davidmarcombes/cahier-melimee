@@ -39,6 +39,7 @@ const TYPE_SCHEMAS = {
   'count-objects': { required: [] },
   'bar-chart': { required: ['labels', 'values', 'yMax', 'yStep'], arrays: ['labels', 'values'] },
   'calc-chain': { required: ['chain'] },
+  'inverse-problem': { required: ['ipBase', 'ipInverses'], arrays: ['ipInverses'] },
 };
 
 const COLORS = {

@@ -19,4 +19,5 @@ params:
     - label: "1"
       value: 1
       color: "#2563eb"
+class: "S2.1.2"
 ---

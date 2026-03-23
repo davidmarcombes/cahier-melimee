@@ -7,6 +7,7 @@ solution:
   Amir: "Tennis"
   Chloé: "Football"
   Théo: "Natation"
+class: "S3.2.2"
 ---
 
 - Théo ne fait ni football ni tennis.

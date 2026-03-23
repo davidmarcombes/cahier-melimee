@@ -14,6 +14,7 @@ items:
   - prompt: "4 km 500 m"
     answer: "4500"
     unit: "m"
+class: "S1.1.1"
 ---
 
 Convertis chaque mesure dans l'unité demandée.

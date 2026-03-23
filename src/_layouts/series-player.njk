@@ -91,6 +91,8 @@ isSeriesPage: true
   {% if 'bar-chart' in usedTypes %}{% include "types/bar-chart.njk" %}{% endif %}
   {% if 'calc-chain' in usedTypes %}{% include "types/calc-chain.njk" %}{% endif %}
   {% if 'magic-color' in usedTypes %}{% include "types/magic-color.njk" %}{% endif %}
+  {% if 'inverse-problem' in usedTypes %}{% include "types/inverse-problem.njk" %}{% endif %}
+  {% if 'tri-arith' in usedTypes %}{% include "types/tri-arith.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -206,6 +208,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'magic-color' in usedTypes %}
     <span x-show="cur.type === 'magic-color'">Certaines cases ne sont pas de la bonne couleur. Essaie encore !</span>
+    {% endif %}
+    {% if 'inverse-problem' in usedTypes %}
+    <span x-show="cur.type === 'inverse-problem'">Cette réponse n'est pas correcte. Essaie encore !</span>
     {% endif %}
   </div>
 

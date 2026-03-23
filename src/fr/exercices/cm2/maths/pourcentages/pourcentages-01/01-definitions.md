@@ -12,6 +12,7 @@ statements:
     answer: true
   - text: "30 % de 100 = 3"
     answer: false
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

@@ -8,6 +8,7 @@ items:
   - "3 005"
   - "5 003"
   - "5 300"
+class: "S3.1.2"
 ---
 
 Range ces nombres du **plus grand au plus petit**.

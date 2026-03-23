@@ -9,6 +9,7 @@ questions:
     answer: "83"
   - text: "Combien fait 36 + 47 ?"
     answer: "83"
+class: "S1.1.3"
 ---
 
 Utilise la décomposition pour calculer.

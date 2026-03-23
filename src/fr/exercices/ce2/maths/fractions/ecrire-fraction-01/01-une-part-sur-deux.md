@@ -2,6 +2,7 @@
 type: fraction-check
 title: "Écrire une fraction"
 answer: "1/2"
+class: "S2.1.3"
 ---
 
 Une pizza est partagée en **2 parts égales**. Tu manges **1 part**.

@@ -18,4 +18,5 @@ pairs:
     right: "sept"
   - left: "8"
     right: "huit"
+class: "S2.1.4"
 ---

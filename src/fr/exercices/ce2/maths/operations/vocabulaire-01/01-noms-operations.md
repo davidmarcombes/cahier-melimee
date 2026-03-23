@@ -11,4 +11,5 @@ statements:
     answer: "multiplication"
   - template: "12 ÷ 3 = 4 est une ___."
     answer: "division"
+class: "S2.1.4"
 ---

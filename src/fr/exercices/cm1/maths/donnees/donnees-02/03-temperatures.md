@@ -14,6 +14,7 @@ questions:
     answer: "16"
   - text: "En quel mois la température dépasse-t-elle 12 °C pour la première fois ?"
     answer: "avril"
+class: "D1.1.1"
 ---
 
 Observe le diagramme des températures moyennes et réponds aux questions.

@@ -10,6 +10,7 @@ svg:
     perPacket: 5
     emoji: "●"
     color: "var(--p)"
+class: "S1.1.1"
 ---
 
 Il y a **20 points** divisés en **4 groupes** égaux.

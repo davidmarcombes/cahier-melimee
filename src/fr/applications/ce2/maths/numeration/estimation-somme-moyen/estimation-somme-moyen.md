@@ -8,6 +8,7 @@ params:
   min: 10
   max: 99
   precision: 10
+class: "S2.2.1"
 ---
 
 Choisis la meilleure estimation à la dizaine près.

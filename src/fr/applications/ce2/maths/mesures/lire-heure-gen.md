@@ -7,4 +7,5 @@ params:
   step: 5
   minHour: 1
   maxHour: 12
+class: "I1.1.1"
 ---

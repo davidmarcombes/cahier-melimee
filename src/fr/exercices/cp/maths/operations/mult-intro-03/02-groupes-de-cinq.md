@@ -3,6 +3,7 @@ type: number-check
 title: "Écrire en multiplication"
 operation: "4 groupes de 5 = 4 × ?"
 answer: "5"
+class: "S1.1.1"
 ---
 
 Il y a **4 groupes de 5** objets.

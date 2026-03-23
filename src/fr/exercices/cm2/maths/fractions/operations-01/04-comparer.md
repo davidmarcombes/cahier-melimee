@@ -7,6 +7,7 @@ choices:
   - "3/4"
   - "5/6"
   - "2/3"
+class: "S2.1.3"
 ---
 
 Quelle fraction est la **plus proche de 1** ?

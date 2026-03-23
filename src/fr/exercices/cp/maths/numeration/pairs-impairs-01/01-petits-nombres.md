@@ -12,6 +12,7 @@ statements:
     answer: true
   - text: "4 est un nombre pair."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

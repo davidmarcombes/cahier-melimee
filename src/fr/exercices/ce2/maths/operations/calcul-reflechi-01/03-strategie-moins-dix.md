@@ -9,6 +9,7 @@ questions:
     answer: "45"
   - text: "Combien font 54 − 9 ?"
     answer: "45"
+class: "S1.1.3"
 ---
 
 Utilise la stratégie −10 + 1 pour soustraire 9.

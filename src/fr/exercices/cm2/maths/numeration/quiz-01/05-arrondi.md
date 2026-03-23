@@ -7,6 +7,7 @@ choices:
   - "4 600"
   - "4 670"
   - "5 000"
+class: "S1.1.1"
 ---
 
 Arrondis le nombre **4 673** à la centaine la plus proche.

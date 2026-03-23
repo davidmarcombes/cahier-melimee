@@ -8,6 +8,7 @@ params:
   maxA: 17
   minB: 7
   maxB: 7
+class: "S1.1.1"
 ---
 
 Calcule le résultat de chaque soustraction.

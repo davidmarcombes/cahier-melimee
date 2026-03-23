@@ -9,4 +9,5 @@ svg:
     left: [3]
     right: [3]
     tilt: balanced
+class: "I1.1.2"
 ---

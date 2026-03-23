@@ -11,6 +11,7 @@ statements:
     answer: "soustraction (-)"
   - template: "Tom a 24 images. Il en trouve 15 de plus. Il faut utiliser l'___."
     answer: "addition (+)"
+class: "S1.1.1"
 ---
 
 Pour chaque situation, choisis la bonne opération.

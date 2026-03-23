@@ -7,6 +7,7 @@ choices:
   - "1 500"
   - "1 800"
   - "2 000"
+class: "S1.1.1"
 ---
 
 Sans calculer le résultat exact, quelle est la **meilleure estimation** de **1 203 + 497** ?

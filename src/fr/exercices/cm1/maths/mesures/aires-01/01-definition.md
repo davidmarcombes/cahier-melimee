@@ -12,6 +12,7 @@ statements:
     answer: true
   - text: "Le périmètre et l'aire d'une figure sont toujours égaux."
     answer: false
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

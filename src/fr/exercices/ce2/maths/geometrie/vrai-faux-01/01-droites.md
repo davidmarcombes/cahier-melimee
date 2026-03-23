@@ -12,6 +12,7 @@ statements:
     answer: false
   - text: "On peut tracer des droites perpendiculaires avec une équerre."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

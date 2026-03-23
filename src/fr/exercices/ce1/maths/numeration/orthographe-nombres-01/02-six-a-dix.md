@@ -12,4 +12,5 @@ pairs:
     right: "neuf"
   - left: "10"
     right: "dix"
+class: "S2.1.4"
 ---

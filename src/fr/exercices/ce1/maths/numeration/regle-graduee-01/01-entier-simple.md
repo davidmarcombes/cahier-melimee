@@ -8,6 +8,7 @@ markers:
   - label: "A"
     value: 7
 answer: "7"
+class: "I1.1.2"
 ---
 
 Quel nombre entier est indiqué par la flèche A ?

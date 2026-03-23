@@ -12,4 +12,5 @@ params:
       value: 0.1
     - label: "centièmes"
       value: 0.01
+class: "S2.1.2"
 ---

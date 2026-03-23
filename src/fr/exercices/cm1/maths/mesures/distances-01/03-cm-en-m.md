@@ -14,6 +14,7 @@ items:
   - prompt: "500 cm"
     answer: "5"
     unit: "m"
+class: "S1.1.1"
 ---
 
 Convertis les centimètres en mètres.

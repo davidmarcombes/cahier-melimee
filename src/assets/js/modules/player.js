@@ -21,6 +21,8 @@ export function seriesPlayer(exercises, seriesId) {
     gridErrors: [],
     pyramidInputs: [],
     pyramidErrors: [],
+    triInputs: [],
+    triErrors: [],
     tfInputs: [],
     tfErrors: [],
     cmpInputs: [],
@@ -69,6 +71,9 @@ export function seriesPlayer(exercises, seriesId) {
     mcColors: [],       // palette index per cell (null = unpainted)
     mcActiveColor: 0,   // currently selected paint color
     mcErrors: [],       // indices of wrong cells after failed verify
+    ipInputs: [],       // inputs for base + inverses
+    ipSolved: [],       // solved flags for base + inverses
+    ipErrors: [],       // error flags for base + inverses
 
     /* Helpers */
     get cur() {
@@ -227,6 +232,9 @@ export function seriesPlayer(exercises, seriesId) {
       if (_e.pyramid) this._initPyramid(_e.pyramid);
       else { this.pyramidInputs = []; this.pyramidErrors = []; }
 
+      this.triInputs = _e.triangle ? new Array(6).fill('') : [];
+      this.triErrors = [];
+
       this.tfInputs = _e.statements ? _e.statements.map(() => null) : [];
       this.tfErrors = [];
 
@@ -324,6 +332,15 @@ export function seriesPlayer(exercises, seriesId) {
       this.mcActiveColor = 0;
       this.mcErrors = [];
 
+      if (_e.ipBase) {
+        this.ipInputs = new Array(1 + (_e.ipInverses || []).length).fill('');
+        this.ipSolved = new Array(1 + (_e.ipInverses || []).length).fill(false);
+      } else {
+        this.ipInputs = [];
+        this.ipSolved = [];
+      }
+      this.ipErrors = [];
+
       if (this._dragErrTimer) {
         clearTimeout(this._dragErrTimer);
         this._dragErrTimer = null;
@@ -413,6 +430,33 @@ export function seriesPlayer(exercises, seriesId) {
       const snapStep = subdivisions > 0 ? step / subdivisions : step;
       const snapped = Math.round(clamped / snapStep) * snapStep;
       this.nlVal = Math.round(snapped * 1e9) / 1e9;
+    },
+
+    ipCheck(idx) {
+      if (this.solved || this.ipSolved[idx]) return;
+      const _e = this.cur;
+      const answer = idx === 0 ? _e.ipBase.answer : _e.ipInverses[idx - 1].answer;
+      if (normalizeAnswer(this.ipInputs[idx]) === normalizeAnswer(String(answer))) {
+        this.ipSolved[idx] = true;
+        this.ipErrors = this.ipErrors.filter(i => i !== idx);
+        this.showError = false;
+        
+        // If all sub-problems are solved, mark exercise as solved
+        if (this.ipSolved.every(Boolean)) {
+          this._markSolvedAndAdvance();
+        } else {
+          // Focus next input
+          this.$nextTick(() => {
+            const nextInput = this.$el.querySelector(`[x-ref="ipInput${idx + 1}"]`);
+            if (nextInput) nextInput.focus();
+          });
+        }
+      } else {
+        this.ipErrors = Array.from(new Set([...this.ipErrors, idx]));
+        this._flashError(() => {
+          this.ipErrors = this.ipErrors.filter(i => i !== idx);
+        });
+      }
     },
 
     nlCheck() {
@@ -729,6 +773,26 @@ export function seriesPlayer(exercises, seriesId) {
           this.gridErrors = errs.map((e) => e.idx);
           this._flashError();
         }
+        return;
+      }
+
+      if (_e.type === 'tri-arith') {
+        const t = _e.triangle;
+        if (!t) return;
+        // vals[0..2] = vertices [A,B,C], vals[3..5] = edges [f,d,e]
+        const vals  = [...t.vertices, ...t.edges];
+        const given = [...t.givenV,   ...t.givenE];
+        const wrong = [];
+        let allFilled = true;
+        vals.forEach((v, i) => {
+          if (!given[i]) {
+            if (!this.triInputs[i]?.trim()) allFilled = false;
+            else if (normalizeAnswer(this.triInputs[i]) !== normalizeAnswer(String(v))) wrong.push(i);
+          }
+        });
+        if (!allFilled) { this._flashError(); return; }
+        if (wrong.length === 0) { this.triErrors = []; this._markSolvedAndAdvance(); }
+        else { this.triErrors = wrong; this._flashError(() => { this.triErrors = []; }); }
         return;
       }
 

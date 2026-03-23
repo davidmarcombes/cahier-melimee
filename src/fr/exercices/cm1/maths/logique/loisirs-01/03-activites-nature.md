@@ -8,6 +8,7 @@ solution:
   Baptiste: "Pêche"
   Célia: "Équitation"
   Tristan: "Pâtisserie"
+class: "S3.2.2"
 ---
 
 - Célia brosse et monte son cheval préféré chaque dimanche matin.

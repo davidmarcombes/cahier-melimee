@@ -9,6 +9,7 @@ params:
   max: 9
   direction: asc
   confusable: true
+class: "S3.1.2"
 ---
 
 Range ces nombres décimaux du **plus petit au plus grand**.

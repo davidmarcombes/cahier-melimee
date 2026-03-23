@@ -14,6 +14,7 @@ items:
   - prompt: "3 kg"
     answer: "3000"
     unit: "g"
+class: "S1.1.1"
 ---
 
 Convertis les kilogrammes en grammes.

@@ -8,6 +8,7 @@ solution:
   Oscar: "Jeux vidéo"
   Pauline: "Dessin"
   Ethan: "Bricolage"
+class: "S3.2.2"
 ---
 
 - Ethan utilise un marteau, des clous et une scie le samedi après-midi.

@@ -14,6 +14,7 @@ items:
   - prompt: "80 mm"
     answer: "8"
     unit: "cm"
+class: "S1.1.1"
 ---
 
 Convertis les millimètres en centimètres.

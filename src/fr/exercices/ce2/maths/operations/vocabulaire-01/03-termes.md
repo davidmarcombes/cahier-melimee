@@ -11,4 +11,5 @@ statements:
     answer: "dividende"
   - template: "Dans 15 ÷ 3 = 5, le 3 est le ___."
     answer: "diviseur"
+class: "S2.1.4"
 ---

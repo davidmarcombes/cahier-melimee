@@ -9,6 +9,7 @@ questions:
     answer: "5"
   - text: "Combien font 97 + 8 ?"
     answer: "105"
+class: "S1.1.3"
 ---
 
 Utilise la stratégie du passage par 100.

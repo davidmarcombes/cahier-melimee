@@ -9,4 +9,5 @@ statements:
   - "Les diagonales sont perpendiculaires entre elles."
   - "Il y a exactement deux paires de côtés parallèles."
 checkedAnswers: [0, 1, 2, 5]
+class: "S1.1.1"
 ---

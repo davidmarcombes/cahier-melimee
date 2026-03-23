@@ -10,6 +10,7 @@ statements:
     answer: false
   - text: "Une tonne vaut 1 000 kg."
     answer: true
+class: "S3.1.1"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

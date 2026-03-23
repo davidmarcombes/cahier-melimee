@@ -12,6 +12,7 @@ statements:
     answer: true
   - text: "Dans 7,03 — le chiffre 0 est au rang des dixièmes."
     answer: true
+class: "S2.1.2"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

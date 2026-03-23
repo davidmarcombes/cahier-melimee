@@ -7,6 +7,7 @@ choices:
   - "Tom (il a mangé le tiers)"
   - "Ils ont mangé la même quantité"
   - "Zia (elle a mangé le quart)"
+class: "S2.1.3"
 ---
 
 Léa, Tom et Zia partagent **la même pizza** en parts égales.

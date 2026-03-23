@@ -14,6 +14,7 @@ questions:
     answer: "8"
   - text: "Combien d'élèves au total dans la classe ?"
     answer: "28"
+class: "D1.1.1"
 ---
 
 Observe le diagramme des moyens de transport des élèves et réponds aux questions.

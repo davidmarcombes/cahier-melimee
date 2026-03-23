@@ -14,5 +14,6 @@ params:
     - mult_input
     - div_result
     - div_power
+class: "S1.1.1"
 ---
 

@@ -9,6 +9,7 @@ questions:
     answer: "60"
   - text: "Combien font 100 − 37 ?"
     answer: "63"
+class: "S1.1.2"
 ---
 
 Remonte de 37 jusqu'à 100 par étapes.

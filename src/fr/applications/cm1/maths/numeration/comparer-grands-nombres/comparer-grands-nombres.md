@@ -7,6 +7,7 @@ params:
   min: 1000
   max: 999999
   count: 4
+class: "S3.1.1"
 ---
 
 Compare chaque paire de grands nombres avec < ou >.

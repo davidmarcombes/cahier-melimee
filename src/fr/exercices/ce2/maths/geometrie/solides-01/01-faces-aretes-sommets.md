@@ -10,6 +10,7 @@ pairs:
     right: "5 faces, 8 arêtes, 5 sommets"
   - left: "Prisme droit"
     right: "5 faces, 9 arêtes, 6 sommets"
+class: "S2.2.1"
 ---
 
 Relie chaque solide à ses propriétés.

@@ -14,6 +14,7 @@ items:
   - prompt: "75 cL"
     answer: "0,75"
     unit: "L"
+class: "S1.1.1"
 ---
 
 Convertis les centilitres en litres.

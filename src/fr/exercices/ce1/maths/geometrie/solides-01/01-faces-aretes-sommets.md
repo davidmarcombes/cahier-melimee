@@ -10,6 +10,7 @@ pairs:
     right: "3 faces, 0 arête, 0 sommet"
   - left: "Cône"
     right: "2 faces, 0 arête, 1 sommet"
+class: "S2.2.1"
 ---
 
 Relie chaque solide à ses propriétés.

@@ -1,6 +1,6 @@
 ---
 type: multi-question
-class: "M1.4"
+class: "S1.1.1"
 title: "La consommation de la voiture"
 context: "Une voiture parcourt 240 km avec 8 litres d'essence."
 questions:

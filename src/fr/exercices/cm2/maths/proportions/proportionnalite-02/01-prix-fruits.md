@@ -6,6 +6,7 @@ rows:
   - ["Prix (€)", "2,40", "?", "12,00", "?"]
 answers:
   - ["7,20", "19,20"]
+class: "S2.1.1"
 ---
 
 Complète le tableau. Le prix est proportionnel à la masse.

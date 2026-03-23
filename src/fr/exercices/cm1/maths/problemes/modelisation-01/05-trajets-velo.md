@@ -8,6 +8,7 @@ questions:
     answer: "7"
   - text: "Combien de kilomètres Lucie a-t-elle pédalé en tout sur les 4 jours ?"
     answer: "38"
+class: "S1.1.1"
 ---
 
 Lucie note ses trajets à vélo dans un tableau :

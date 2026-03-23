@@ -7,4 +7,5 @@ params:
   mode: impairs
   min: 31
   max: 199
+class: "S1.1.1"
 ---

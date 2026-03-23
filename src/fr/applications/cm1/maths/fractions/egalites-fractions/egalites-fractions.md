@@ -8,4 +8,5 @@ params:
   maxInt: 8
   minTenth: 1
   maxTenth: 8
+class: "S2.1.3"
 ---

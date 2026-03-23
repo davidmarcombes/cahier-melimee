@@ -11,6 +11,7 @@ items:
   - prompt: "3 h"
     answer: "180"
     unit: "min"
+class: "I1.1.1"
 ---
 
 Convertis les heures en minutes. **1 h = 60 min**

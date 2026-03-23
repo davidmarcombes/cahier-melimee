@@ -14,6 +14,7 @@ statements:
     answer: true
   - text: "Il n'existe pas de pièce de 20 centimes."
     answer: false
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

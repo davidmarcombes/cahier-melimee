@@ -9,6 +9,7 @@ questions:
     answer: "83"
   - text: "Combien font 36 + 47 ?"
     answer: "83"
+class: "S1.1.3"
 ---
 
 Décompose le deuxième nombre pour calculer par étapes.

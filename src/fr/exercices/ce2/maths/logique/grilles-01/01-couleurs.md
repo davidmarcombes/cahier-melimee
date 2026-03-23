@@ -7,6 +7,7 @@ solution:
   Lola: "Vert"
   Rayan: "Orange"
   Zoé: "Jaune"
+class: "S3.2.2"
 ---
 
 - Rayan ne préfère ni le jaune ni le vert.

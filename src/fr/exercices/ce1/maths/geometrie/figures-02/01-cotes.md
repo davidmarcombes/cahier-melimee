@@ -11,4 +11,5 @@ statements:
     answer: "cercle"
   - template: "Un rectangle a ___ côtés."
     answer: "4"
+class: "S1.1.1"
 ---

@@ -12,6 +12,7 @@ statements:
     answer: false
   - text: "Un triangle a toujours 3 sommets."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

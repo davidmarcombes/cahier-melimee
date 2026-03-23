@@ -12,6 +12,7 @@ statements:
     answer: true
   - text: "Un nombre décimal a toujours une partie entière et une partie décimale."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

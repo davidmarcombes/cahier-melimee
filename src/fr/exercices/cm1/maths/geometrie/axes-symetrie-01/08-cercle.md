@@ -12,6 +12,7 @@ tiles:
   - "∞"
 tileAnswers:
   - 3
+class: "S1.1.1"
 ---
 
 Compte les axes de symétrie de cette figure.

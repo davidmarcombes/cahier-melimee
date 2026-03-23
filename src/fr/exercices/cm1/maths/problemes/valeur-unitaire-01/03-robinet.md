@@ -1,6 +1,6 @@
 ---
 type: multi-question
-class: "M1.4"
+class: "S1.1.1"
 title: "Le robinet et les seaux"
 context: "Un robinet remplit 4 seaux en 20 minutes."
 questions:

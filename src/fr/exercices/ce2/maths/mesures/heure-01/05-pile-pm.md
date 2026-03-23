@@ -4,4 +4,5 @@ title: "Quelle heure est-il ?"
 hour: 9
 minute: 0
 answer: ["9:00", "09:00"]
+class: "I1.1.1"
 ---

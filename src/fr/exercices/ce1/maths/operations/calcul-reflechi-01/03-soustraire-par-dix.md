@@ -9,6 +9,7 @@ questions:
     answer: "2"
   - text: "Combien font 14 - 6 ?"
     answer: "8"
+class: "S1.1.3"
 ---
 
 Utilise la stratégie du passage par 10.

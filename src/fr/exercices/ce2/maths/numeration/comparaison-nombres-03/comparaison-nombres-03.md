@@ -7,4 +7,5 @@ params:
   max: 999
   pairs: 5
   style: cdu
+class: "S1.1.1"
 ---

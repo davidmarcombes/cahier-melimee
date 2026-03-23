@@ -7,6 +7,7 @@ choices:
   - "8"
   - "784"
   - "42"
+class: "S1.1.1"
 ---
 
 Attention : on demande le **nombre** de centaines, pas le chiffre !

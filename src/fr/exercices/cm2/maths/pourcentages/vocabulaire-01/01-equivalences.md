@@ -11,4 +11,5 @@ statements:
     answer: "75 %"
   - template: "Un entier = ___."
     answer: "100 %"
+class: "S2.1.4"
 ---

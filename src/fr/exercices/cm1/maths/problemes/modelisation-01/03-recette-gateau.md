@@ -8,6 +8,7 @@ questions:
     answer: "9"
   - text: "Combien de grammes de sucre faut-il pour 4 gâteaux ?"
     answer: "600"
+class: "S1.1.1"
 ---
 
 Voici la recette pour **1 gâteau** :

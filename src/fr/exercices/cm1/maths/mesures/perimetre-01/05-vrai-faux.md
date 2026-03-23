@@ -14,6 +14,7 @@ statements:
     answer: true
   - text: "On peut calculer le périmètre de cette étoile en multipliant 10 × la longueur d'un côté."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et indique si elle est **vraie** ou **fausse**.

@@ -7,6 +7,7 @@ questions:
     answer: "21"
   - text: "Combien de points a-t-elle à la fin des deux tours ?"
     answer: "28"
+class: "S2.1.1"
 ---
 
 Lis le problème, puis réponds aux deux questions.

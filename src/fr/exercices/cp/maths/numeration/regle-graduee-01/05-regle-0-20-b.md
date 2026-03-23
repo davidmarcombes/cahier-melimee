@@ -8,6 +8,7 @@ markers:
   - label: "A"
     value: 8
 answer: "8"
+class: "I1.1.2"
 ---
 
 Quel nombre est indiqué par la flèche A ?

@@ -8,6 +8,7 @@ params:
   maxResult: 50
   minSub: 1
   maxSub: 50
+class: "S1.1.1"
 ---
 
 Trouve le nombre manquant pour compléter l'égalité.

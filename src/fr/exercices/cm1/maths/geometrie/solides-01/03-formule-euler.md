@@ -7,6 +7,7 @@ choices:
   - "5 faces"
   - "6 faces"
   - "10 faces"
+class: "S1.1.1"
 ---
 
 Un prisme à base **pentagonale** (5 côtés) a combien de faces ?

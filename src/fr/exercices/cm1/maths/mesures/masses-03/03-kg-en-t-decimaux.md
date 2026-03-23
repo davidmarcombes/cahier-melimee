@@ -14,6 +14,7 @@ items:
   - prompt: "750 kg"
     answer: "0,75"
     unit: "t"
+class: "S1.1.1"
 ---
 
 Convertis les kilogrammes en tonnes.

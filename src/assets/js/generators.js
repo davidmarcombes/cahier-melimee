@@ -564,6 +564,152 @@ const generators = {
     },
   },
 
+  // Arithmetic triangle (Rechendreieck)
+  // Vertices: [A(top), B(bottom-left), C(bottom-right)]
+  // Edges:    [f=A+B(left), d=A+C(right), e=B+C(bottom)]
+  // mode: 'easy'   — vertices given, fill 3 edges
+  //       'medium' — 2 vertices + 1 edge given, fill rest (1 unknown vertex + 2 edges)
+  //       'hard'   — 3 edges given, find all 3 vertices (A=(f+d-e)/2 etc., always integer)
+  triArith: {
+    generate(params = {}) {
+      const mode      = params.mode      ?? 'easy';
+      const min       = params.min       ?? 1;
+      const max       = params.max       ?? 20;
+      const isMult    = params.op        === 'mult';
+
+      let A, B, C, f, d, e;
+      if (isMult) {
+        // edge = product of two vertices
+        A = rand(min, max); B = rand(min, max); C = rand(min, max);
+        f = A * B; d = A * C; e = B * C;
+      } else {
+        A = rand(min, max); B = rand(min, max); C = rand(min, max);
+        f = A + B; d = A + C; e = B + C;
+      }
+
+      let givenV, givenE;
+      if (mode === 'easy') {
+        // all vertices shown, fill edges
+        givenV = [true, true, true];
+        givenE = [false, false, false];
+      } else if (mode === 'hard') {
+        // all edges shown, find vertices (always integer: A=(f+d-e)/2)
+        givenV = [false, false, false];
+        givenE = [true, true, true];
+      } else {
+        // medium: 2 vertices + 1 edge given → find 1 vertex + 2 edges
+        // Always give B and C + edge f(=A+B) → student finds A=f−B, then d=A+C, e=B+C
+        givenV = [false, true, true];
+        givenE = [true, false, false];
+      }
+
+      return {
+        type: 'tri-arith',
+        triangle: { vertices: [A, B, C], edges: [f, d, e], givenV, givenE },
+      };
+    },
+  },
+
+  // Compare expressions — place <, =, > without computing
+  // params: level ('add'|'mult'|'mix'), count (4), min (10), max (99), maxFactor (9)
+  // Strategies:
+  //   sameLeftAdd  : a+b vs a+c  (same base, different addend)
+  //   sameLeftSub  : a−b vs a−c  (same base, subtract more → less)
+  //   compensAdd   : a+b vs (a+k)+(b−k)  = always equal
+  //   sameFactMult : a×b vs a×c
+  //   sameDivDiv   : a÷b vs a÷c  (same dividend, smaller divisor → bigger)
+  //   distribMult  : a×b vs a×(b−1)+a  = always equal
+  //   compensMult  : a×b vs (a×2)×(b÷2)  = always equal (b even only)
+  compareExpressions: {
+    generate(params = {}) {
+      const level     = params.level     ?? 'add';
+      const count     = params.count     ?? 4;
+      const min       = params.min       ?? 10;
+      const max       = params.max       ?? 99;
+      const maxFactor = params.maxFactor ?? 9;
+
+      const byLevel = {
+        add:  ['sameLeftAdd', 'sameLeftSub', 'compensAdd'],
+        mult: ['sameFactMult', 'sameDivDiv', 'distribMult', 'compensMult'],
+        mix:  ['sameLeftAdd', 'sameLeftSub', 'compensAdd', 'sameFactMult', 'sameDivDiv', 'distribMult'],
+      };
+      const pool = byLevel[level] ?? byLevel.add;
+
+      const comparisons = [];
+      let attempts = 0;
+      while (comparisons.length < count && attempts < count * 10) {
+        attempts++;
+        const strategy = pool[Math.floor(Math.random() * pool.length)];
+        let left, right, answer;
+
+        if (strategy === 'sameLeftAdd') {
+          const a = rand(min, max - 10);
+          const b = rand(5, 30);
+          const delta = rand(1, 5) * (Math.random() < 0.5 ? 1 : -1);
+          const c = b + delta;
+          if (c <= 0 || a + c > max + 50) continue;
+          left = `${a} + ${b}`;  right = `${a} + ${c}`;
+          answer = delta > 0 ? '>' : '<';
+
+        } else if (strategy === 'sameLeftSub') {
+          const a = rand(min + 20, max);
+          const b = rand(5, 20);
+          const delta = rand(1, 5) * (Math.random() < 0.5 ? 1 : -1);
+          const c = b + delta;
+          if (c <= 0 || c >= a) continue;
+          left = `${a} − ${b}`;  right = `${a} − ${c}`;
+          answer = delta > 0 ? '<' : '>'; // subtracting more → smaller result
+
+        } else if (strategy === 'compensAdd') {
+          const a = rand(min, max - 20);
+          const b = rand(10, 30);
+          const k = rand(1, 5);
+          if (b - k <= 0) continue;
+          left = `${a} + ${b}`;  right = `${a + k} + ${b - k}`;
+          answer = '=';
+
+        } else if (strategy === 'sameFactMult') {
+          const a = rand(2, maxFactor);
+          const b = rand(2, maxFactor);
+          const delta = rand(1, 2) * (Math.random() < 0.5 ? 1 : -1);
+          const c = b + delta;
+          if (c < 2 || c > maxFactor + 2) continue;
+          left = `${a} × ${b}`;  right = `${a} × ${c}`;
+          answer = delta > 0 ? '>' : '<';
+
+        } else if (strategy === 'sameDivDiv') {
+          const a = rand(2, maxFactor);
+          const b = rand(2, maxFactor);
+          if (a === b) continue;
+          const dividend = a * b * rand(1, 2);
+          left = `${dividend} ÷ ${a}`;  right = `${dividend} ÷ ${b}`;
+          answer = a < b ? '>' : '<'; // smaller divisor → bigger quotient
+
+        } else if (strategy === 'distribMult') {
+          const a = rand(2, maxFactor);
+          const b = rand(3, maxFactor);
+          if (Math.random() < 0.5) {
+            left = `${a} × ${b}`;  right = `${a} × ${b - 1} + ${a}`;
+          } else {
+            left = `${a} × ${b}`;  right = `${a} × ${b + 1} − ${a}`;
+          }
+          answer = '=';
+
+        } else if (strategy === 'compensMult') {
+          const a = rand(2, Math.floor(maxFactor / 2));
+          const b = rand(2, maxFactor);
+          if (b % 2 !== 0) continue;
+          left = `${a} × ${b}`;  right = `${a * 2} × ${b / 2}`;
+          answer = '=';
+        }
+
+        comparisons.push({ left, right, answer });
+      }
+
+      return { type: 'compare', comparisons };
+    },
+  },
+
   comparerNombresPaires: {
     generate: (params = {}) => {
       const min = params.min ?? 1;
@@ -1152,14 +1298,148 @@ const generators = {
     },
   },
 
+  // Familles de faits — coche les 4 équations qui appartiennent à la famille
+  // params: mode ('add'|'mult'|'alterne'), min (1), max (20), maxFactor (9)
+  famillesFaits: {
+    generate(params = {}) {
+      const mode      = params.mode      ?? 'add';
+      const min       = params.min       ?? 1;
+      const max       = params.max       ?? 20;
+      const maxFactor = params.maxFactor ?? 9;
+      const isMult    = mode === 'mult' || (mode === 'alterne' && Math.random() < 0.5);
+
+      const eq = (left, op, right, res) =>
+        `<span class="font-mono">${left} ${op} ${right} = ${res}</span>`;
+
+      let correct, traps, title;
+
+      if (isMult) {
+        const a = rand(2, maxFactor);
+        const b = rand(2, maxFactor);
+        const c = a * b;
+        title = `Coche les 4 égalités qui appartiennent à la même famille (${a}, ${b}, ${c}).`;
+        correct = [
+          eq(a, '×', b, c),
+          eq(b, '×', a, c),
+          eq(c, '÷', a, b),
+          eq(c, '÷', b, a),
+        ];
+        // Traps: wrong result in one mult and one div
+        const d1 = rand(1, 2) * (Math.random() < 0.5 ? 1 : -1);
+        const d2 = rand(1, 2) * (Math.random() < 0.5 ? 1 : -1);
+        traps = [
+          eq(a, '×', b, c + d1),
+          eq(c, '÷', b, a + d2),
+        ];
+      } else {
+        const a = rand(min, max - min);
+        const b = rand(min, max - a);
+        const c = a + b;
+        title = `Coche les 4 égalités qui appartiennent à la même famille (${a}, ${b}, ${c}).`;
+        correct = [
+          eq(a, '+', b, c),
+          eq(b, '+', a, c),
+          eq(c, '−', a, b),
+          eq(c, '−', b, a),
+        ];
+        // Traps: wrong result in one addition and one subtraction
+        const d1 = rand(1, 2) * (Math.random() < 0.5 ? 1 : -1);
+        const d2 = rand(1, 2) * (Math.random() < 0.5 ? 1 : -1);
+        traps = [
+          eq(a, '+', b, c + d1),
+          eq(c, '−', a, b + d2),
+        ];
+      }
+
+      // Shuffle all 6 together, track correct indices
+      const all = [...correct, ...traps];
+      const shuffled = all.map((v, i) => ({ v, i })).sort(() => Math.random() - 0.5);
+      const statements = shuffled.map(x => x.v);
+      const checkedAnswers = shuffled
+        .map((x, pos) => (x.i < 4 ? pos : -1))
+        .filter(p => p !== -1);
+
+      return { type: 'checkbox', title, statements, checkedAnswers };
+    },
+  },
+
+  // Vrai/Faux — opérations
+  // params: ops (['+','-','×','÷']), min, max, maxFactor, count, trueRatio, style ('standard'|'relational')
+  vraiFauxOps: {
+    generate(params = {}) {
+      const ops        = params.ops        ?? ['+', '-'];
+      const min        = params.min        ?? 1;
+      const max        = params.max        ?? 20;
+      const maxFactor  = params.maxFactor  ?? 9;
+      const count      = params.count      ?? 5;
+      const trueRatio  = params.trueRatio  ?? 0.5;
+      const style      = params.style      ?? 'standard';
+
+      // Decide which slots are true (guaranteed trueRatio mix)
+      const trueCount = Math.round(count * trueRatio);
+      const answers = [...Array(trueCount).fill(true), ...Array(count - trueCount).fill(false)];
+      for (let i = answers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [answers[i], answers[j]] = [answers[j], answers[i]];
+      }
+
+      const SYM = { '+': '+', '-': '−', '×': '×', '÷': '÷' };
+
+      const statements = answers.map(isTrue => {
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        let a, b, correct;
+
+        if (op === '+') {
+          a = rand(min, max - min);
+          b = rand(min, max - a);
+          correct = a + b;
+        } else if (op === '-') {
+          correct = rand(min, max - min);
+          b = rand(min, max - correct);
+          a = correct + b;
+        } else if (op === '×') {
+          a = rand(2, maxFactor);
+          b = rand(2, maxFactor);
+          correct = a * b;
+        } else { // ÷
+          b = rand(2, maxFactor);
+          correct = rand(2, maxFactor);
+          a = b * correct;
+        }
+
+        // For false statements: offset result by ±1 or ±2
+        let displayed = correct;
+        if (!isTrue) {
+          const delta = (Math.random() < 0.5 ? 1 : -1) * rand(1, 2);
+          displayed = correct + delta;
+          if (displayed <= 0) displayed = correct + Math.abs(delta);
+        }
+
+        // Occasionally reverse the equation (c = a op b) to train relational = understanding
+        const reversed = style === 'relational' && Math.random() < 0.25;
+        const eq = reversed
+          ? `${displayed} = ${a} ${SYM[op]} ${b}`
+          : `${a} ${SYM[op]} ${b} = ${displayed}`;
+
+        return { text: `<span class="font-mono text-base">${eq}</span>`, answer: isTrue };
+      });
+
+      return { type: 'true-false', statements };
+    },
+  },
+
   // Pyramid: addition pyramid
-  // params: size (4|5), minBase (1), maxBase (20), showApex (false), hiddenCount (null=auto)
+  // params: size (4|5), minBase (1), maxBase (20), showApex (false), mode ('normal'|'inverse')
+  // mode 'normal'  : base given, fill up to apex (showApex controls whether apex is shown)
+  // mode 'compl'   : base + apex given (showApex:true), fill middle rows
+  // mode 'inverse' : apex + full row-1 + one anchor base cell given; student deduces base then fills up
   pyramideAdditions: {
     generate(params = {}) {
       const size = params.size ?? 4;
       const minBase = params.minBase ?? 1;
       const maxBase = params.maxBase ?? 20;
       const showApex = params.showApex ?? false;
+      const mode = params.mode ?? 'normal';
 
       // Build base row
       const base = [];
@@ -1175,13 +1455,26 @@ const generators = {
       }
 
       // Decide which cells are "given" (true = shown, false = pupil fills in)
-      // Base: all given; middle: hide ~half; apex: depends on showApex
-      const givenRows = allRows.map((row, r) => {
-        if (r === 0) return row.map(() => true);
-        if (r === allRows.length - 1) return [showApex];
-        // Alternate hidden cells in middle rows
-        return row.map((_, c) => c % 2 !== 0);
-      });
+      let givenRows;
+      if (mode === 'inverse') {
+        // Show: apex + row-1 (just above base) + one random base cell (anchor)
+        // Student works outward from anchor using row-1 values, then fills up
+        const anchor = rand(0, size - 1);
+        givenRows = allRows.map((row, r) => {
+          if (r === 0) return row.map((_, c) => c === anchor);
+          if (r === 1) return row.map(() => true);           // full row-1 shown
+          if (r === allRows.length - 1) return [true];       // apex shown
+          return row.map(() => false);                        // other middle rows hidden
+        });
+      } else {
+        // normal / compl modes
+        givenRows = allRows.map((row, r) => {
+          if (r === 0) return row.map(() => true);
+          if (r === allRows.length - 1) return [showApex];
+          // Alternate hidden cells in middle rows
+          return row.map((_, c) => c % 2 !== 0);
+        });
+      }
 
       // Payload is apex-first (reversed)
       const rows = [...allRows].reverse();

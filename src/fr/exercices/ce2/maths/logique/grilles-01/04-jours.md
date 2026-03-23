@@ -7,6 +7,7 @@ solution:
   Jade: "Mercredi"
   Lucas: "Vendredi"
   Mia: "Lundi"
+class: "S3.2.2"
 ---
 
 - Lucas ne va pas le lundi ni le mercredi.

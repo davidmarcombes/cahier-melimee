@@ -3,6 +3,7 @@ type: number-check
 title: "Calculer 25 %"
 operation: "25 % de 120 = ?"
 answer: "30"
+class: "S1.1.1"
 ---
 
 Calcule **25 %** de 120.

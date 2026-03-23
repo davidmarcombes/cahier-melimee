@@ -9,4 +9,5 @@ statements:
   - "Il a seulement 3 côtés."
   - "Ses côtés opposés sont inégaux."
 checkedAnswers: [0, 1, 2, 3]
+class: "S1.1.1"
 ---

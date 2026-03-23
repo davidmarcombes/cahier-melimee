@@ -10,6 +10,7 @@ pairs:
     right: "2 euros"
   - left: "10 pièces de 20 c"
     right: "2 euros"
+class: "S1.1.1"
 ---
 
 Relie chaque montant à son équivalent.

@@ -12,6 +12,7 @@ statements:
     answer: false
   - text: "9 est un multiple de 3."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

@@ -7,6 +7,7 @@ pyramid:
   - [16, null, 21]
   - [33, null]
   - [71]
+class: "S1.2.2"
 ---
 
 Complète la pyramide. Chaque case est la somme des deux cases en dessous.

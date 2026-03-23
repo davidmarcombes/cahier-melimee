@@ -7,6 +7,7 @@ choices:
   - "Le rectangle"
   - "Le triangle"
   - "Le cercle"
+class: "S1.1.1"
 ---
 
 Quelle figure a **4 côtés tous égaux** ?

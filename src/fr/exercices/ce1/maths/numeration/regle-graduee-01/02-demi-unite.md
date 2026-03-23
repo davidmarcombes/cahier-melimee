@@ -8,6 +8,7 @@ markers:
   - label: "A"
     value: 3.5
 answer: "3,5"
+class: "S2.1.3"
 ---
 
 Quel nombre décimal est indiqué par la flèche A ? (ex : 2,5)

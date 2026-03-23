@@ -11,4 +11,5 @@ statements:
     answer: "3"
   - template: "Un ___ n'a pas de côtés."
     answer: "cercle"
+class: "S1.1.1"
 ---

@@ -12,6 +12,7 @@ statements:
     answer: false
   - text: "Les côtés opposés d'un rectangle sont parallèles."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

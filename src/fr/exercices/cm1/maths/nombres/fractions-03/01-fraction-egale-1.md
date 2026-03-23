@@ -7,6 +7,7 @@ choices:
   - "3/4"
   - "4/3"
   - "1/4"
+class: "S2.1.3"
 ---
 
 Parmi ces fractions, laquelle est **égale à 1** (un entier complet) ?

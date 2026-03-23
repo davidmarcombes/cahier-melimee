@@ -14,6 +14,7 @@ items:
   - prompt: "5 L"
     answer: "50"
     unit: "dL"
+class: "S1.1.1"
 ---
 
 Convertis les litres en décilitres. **1 L = 10 dL**

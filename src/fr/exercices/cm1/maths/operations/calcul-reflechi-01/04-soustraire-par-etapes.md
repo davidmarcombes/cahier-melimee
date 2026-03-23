@@ -9,6 +9,7 @@ questions:
     answer: "24"
   - text: "Combien fait 83 − 27 ?"
     answer: "56"
+class: "S1.1.3"
 ---
 
 Utilise la stratégie de soustraction par étapes.

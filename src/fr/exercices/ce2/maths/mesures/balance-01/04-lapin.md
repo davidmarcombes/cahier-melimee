@@ -7,4 +7,5 @@ svg:
   par:
     left: [5, 3]
     right: ["🐰"]
+class: "I1.1.2"
 ---

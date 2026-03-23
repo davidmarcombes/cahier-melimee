@@ -9,4 +9,5 @@ statements:
   - "Il a des côtés droits."
   - "Il n'a aucun coin."
 checkedAnswers: [0, 1, 2, 5]
+class: "S1.1.1"
 ---

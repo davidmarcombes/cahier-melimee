@@ -7,6 +7,7 @@ questions:
     answer: "12"
   - text: "Combien font 6 + 7 ?"
     answer: "13"
+class: "S1.1.2"
 ---
 
 Utilise les doubles pour calculer plus vite.

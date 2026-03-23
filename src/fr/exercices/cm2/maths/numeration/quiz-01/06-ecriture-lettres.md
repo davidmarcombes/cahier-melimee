@@ -7,6 +7,7 @@ choices:
   - "deux-mille-quatre-vingt"
   - "deux-mille-huit-cents"
   - "deux-mille-quatre-vingts-zéro"
+class: "S2.1.4"
 ---
 
 Trouve la bonne écriture en lettres du nombre **2 080**.

@@ -10,6 +10,7 @@ statements:
     answer: true
   - text: "La lettre A a un axe de symétrie vertical."
     answer: true
+class: "S3.2.3"
 ---
 
 Coche **Vrai** ou **Faux**.

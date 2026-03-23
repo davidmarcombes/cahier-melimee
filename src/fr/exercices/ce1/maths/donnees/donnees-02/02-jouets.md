@@ -12,6 +12,7 @@ questions:
     answer: "7"
   - text: "Quel jouet est le moins nombreux ?"
     answer: "poupées"
+class: "D1.1.1"
 ---
 
 Observe le diagramme des jouets dans la boîte et réponds aux questions.

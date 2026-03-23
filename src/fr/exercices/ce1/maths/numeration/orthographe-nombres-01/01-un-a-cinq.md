@@ -12,4 +12,5 @@ pairs:
     right: "quatre"
   - left: "5"
     right: "cinq"
+class: "S2.1.4"
 ---

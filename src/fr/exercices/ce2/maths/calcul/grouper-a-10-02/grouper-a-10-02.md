@@ -4,4 +4,5 @@ generator: groupeA10
 repeat: 10
 params:
   level: moyen
+class: "S1.1.1"
 ---

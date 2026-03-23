@@ -8,6 +8,7 @@ solution:
   Raphaël: "Rugby"
   Iris: "Vélo"
   Kévin: "Boxe"
+class: "S3.2.2"
 ---
 
 - Raphaël marque des essais sur un terrain ovale avec ses coéquipiers.

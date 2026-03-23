@@ -7,6 +7,7 @@ choices:
   - "4,19"
   - "4,09"
   - "4,01"
+class: "S3.1.1"
 ---
 
 Quel est le plus grand de ces nombres ?

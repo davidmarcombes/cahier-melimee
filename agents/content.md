@@ -97,7 +97,8 @@ Each `.md` file is one exercise. Front-matter defines the type and data; the Mar
 ```markdown
 ---
 type: problem
-class: "A2.1"
+class: "A2.1"     # Vergnaud code (Word problem)
+# class: "S1.1.1" # OR Skill code (if not a word problem)
 title: "Le titre affiché"
 answer: "42"
 ---
@@ -110,7 +111,7 @@ Texte du problème en **markdown**.
 | Field | Effect |
 |-------|--------|
 | `title` | Shown as the exercise question/instruction |
-| `class` | Vergnaud class (A1.1–M3.4) — for `problem` type |
+| `class` | Pedagogical code (Vergnaud for problems, Skill for others) — see [docs/classification.md](docs/classification.md) |
 | `svg` | Inline SVG via helper: `gen: clockSvg`, `par: {hour:10, minute:0}` |
 | `svg: {gen: file, src: "svg/grid.svg"}` | Embed a static SVG file from `_includes/` |
 | `operation` | LaTeX or text shown left of the input (number-check) |

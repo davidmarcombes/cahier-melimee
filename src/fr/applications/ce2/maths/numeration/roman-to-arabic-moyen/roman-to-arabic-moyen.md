@@ -6,6 +6,7 @@ repeat: 10
 params:
   min: 1
   max: 50
+class: "S1.1.1"
 ---
 
 Écris ce nombre romain en chiffres arabes.

@@ -12,6 +12,7 @@ statements:
     answer: true
   - text: "1 semaine = 8 jours."
     answer: false
+class: "I1.1.1"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

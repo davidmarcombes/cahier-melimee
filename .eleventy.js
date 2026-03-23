@@ -203,6 +203,18 @@ module.exports = async function (eleventyConfig) {
           continue; // No page generated without an ID
         }
 
+        // Scan MD files in this series folder to collect exercise types
+        const mdFiles = fs.readdirSync(seriesDir).filter((f) => f.endsWith('.md'));
+        const usedTypes = [
+          ...new Set(
+            mdFiles.flatMap((f) => {
+              const content = fs.readFileSync(path.join(seriesDir, f), 'utf8');
+              const m = content.match(/^type:\s*(.+)$/m);
+              return m ? [m[1].trim()] : [];
+            })
+          ),
+        ];
+
         result.push({
           series: relPath,
           id: meta.id,
@@ -213,6 +225,7 @@ module.exports = async function (eleventyConfig) {
           skill: meta.skill || '',
           difficulty: meta.difficulty || '',
           folder: folder,
+          usedTypes,
         });
       }
     });
@@ -234,6 +247,15 @@ module.exports = async function (eleventyConfig) {
   // Extract unique exercise types from a series (for conditional template includes)
   eleventyConfig.addFilter('extractTypes', function (exercises) {
     return [...new Set(exercises.map((ex) => ex.data.type || 'number-check'))];
+  });
+
+  // Convert seriesMeta collection to {id: [types]} map (devMode use)
+  eleventyConfig.addFilter('seriesTypesMap', function (seriesMeta) {
+    const map = {};
+    for (const s of seriesMeta) {
+      if (s.id && s.usedTypes && s.usedTypes.length) map[s.id] = s.usedTypes;
+    }
+    return map;
   });
 
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
@@ -747,6 +769,17 @@ module.exports = async function (eleventyConfig) {
               answer: interpolate(String(s.answer)).trim().toLowerCase(),
             })),
           };
+        }
+
+        if (ex.data.type === 'inverse-problem' && ex.data.ipBase) {
+          item.ipBase = {
+            text: md.renderInline(interpolate(String(ex.data.ipBase.text))),
+            answer: interpolate(String(ex.data.ipBase.answer)).trim().toLowerCase(),
+          };
+          item.ipInverses = (ex.data.ipInverses || []).map((inv) => ({
+            text: md.renderInline(interpolate(String(inv.text))),
+            answer: interpolate(String(inv.answer)).trim().toLowerCase(),
+          }));
         }
 
         payload.push(item);

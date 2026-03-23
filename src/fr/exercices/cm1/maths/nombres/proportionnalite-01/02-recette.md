@@ -8,6 +8,7 @@ rows:
 answers:
   - ["200", "500"]
   - ["75"]
+class: "S1.1.1"
 ---
 
 Complète le tableau de la recette.

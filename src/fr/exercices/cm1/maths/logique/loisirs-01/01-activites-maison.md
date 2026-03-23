@@ -8,6 +8,7 @@ solution:
   Ambre: "Cuisine"
   Rayan: "Jardinage"
   Lucie: "Lecture"
+class: "S3.2.2"
 ---
 
 - Rayan plante des fleurs et arrose ses légumes chaque samedi matin.

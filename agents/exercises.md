@@ -239,6 +239,8 @@ Note: `.eleventy.js` has a build-time duplicate of `slicedPieSvg` for pre-render
 ```yaml
 ---
 type: "number-check"      # Exercise type (see table above)
+class: "S1.1.1"            # Skill code (see docs/classification.md)
+# class: "A1.1"            # OR Vergnaud class (ONLY for 'problem' type)
 title: "Calcule"           # Display title
 answer: 42                 # Expected answer (number or string)
 # Type-specific fields:

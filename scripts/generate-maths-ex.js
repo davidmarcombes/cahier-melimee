@@ -71,6 +71,7 @@ const TYPE_CHOICES = [
   { name: 'fraction-check  — Saisir une fraction (numérateur/dénominateur)', value: 'fraction-check' },
   { name: 'ruler           — Lire une valeur sur une règle graduée', value: 'ruler' },
   { name: 'click-blocks    — Colorier des blocs pour représenter la valeur', value: 'click-blocks' },
+  { name: 'inverse-problem — Problème de base + problèmes inverses (Russie)', value: 'inverse-problem' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -106,6 +107,8 @@ const TEMPLATES = {
   ruler: 'min: 0\nmax: 10\ndivisions: 10\nmarkers:\n  - label: "A"\n    value: ',
   'click-blocks':
     'columns:\n  - label: "100"\n    value: 100\n    color: "#dc2626"\n    answer: 0\n    max: 9\n  - label: "10"\n    value: 10\n    color: "#7c3aed"\n    answer: 0\n    max: 9\n  - label: "1"\n    value: 1\n    color: "#2563eb"\n    answer: 0\n    max: 9',
+  'inverse-problem':
+    'ipBase:\n  text: "Lucie a 15 billes. Elle en donne 4 à son frère. Combien lui en reste-t-il ?"\n  answer: 11\nipInverses:\n  - text: "Lucie a des billes. Elle en donne 4 à son frère. Il lui en reste 11. Combien en avait-elle au début ?"\n    answer: 15\n  - text: "Lucie a 15 billes. Elle en donne quelques-unes à son frère. Il lui en reste 11. Combien en a-t-elle données ?"\n    answer: 4',
 };
 
 const TYPES = Object.keys(TEMPLATES);

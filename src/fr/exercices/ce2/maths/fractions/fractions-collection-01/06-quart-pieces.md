@@ -3,6 +3,7 @@ type: number-check
 title: "Le quart d'une collection"
 operation: "quart de 20 pièces = ?"
 answer: "5"
+class: "S2.1.3"
 ---
 
 🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙🪙

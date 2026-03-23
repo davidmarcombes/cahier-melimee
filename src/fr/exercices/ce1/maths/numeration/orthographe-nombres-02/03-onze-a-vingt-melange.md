@@ -14,4 +14,5 @@ pairs:
     right: "quinze"
   - left: "16"
     right: "seize"
+class: "S2.1.4"
 ---

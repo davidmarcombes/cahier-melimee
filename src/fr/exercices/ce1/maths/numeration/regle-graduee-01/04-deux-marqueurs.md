@@ -10,6 +10,7 @@ markers:
   - label: "B"
     value: 4.2
 answer: "2,4"
+class: "I1.1.2"
 ---
 
 Deux points sont placés sur la règle. Quel nombre décimal est indiqué par la flèche A ? (ex : 3,2)

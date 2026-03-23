@@ -7,6 +7,7 @@ solution:
   Emma: "Chien"
   Nathan: "Lapin"
   Sara: "Chat"
+class: "S3.2.2"
 ---
 
 - Nathan n'a ni chat ni chien.

@@ -10,6 +10,7 @@ pairs:
     right: "Boîte de conserve"
   - left: "Cône"
     right: "Cornet de glace"
+class: "S2.1.1"
 ---
 
 Relie chaque solide à l'objet qui lui ressemble.

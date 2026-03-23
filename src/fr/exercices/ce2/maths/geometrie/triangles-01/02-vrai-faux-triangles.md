@@ -12,6 +12,7 @@ statements:
     answer: false
   - text: "Un triangle équilatéral est aussi un triangle isocèle."
     answer: true
+class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

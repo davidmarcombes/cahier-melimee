@@ -11,6 +11,7 @@ svg:
     sstep: 0.1
     label:
       0.8: "?"
+class: "S2.1.3"
 ---
 
 Quelle fraction décimale est repérée par le point ?

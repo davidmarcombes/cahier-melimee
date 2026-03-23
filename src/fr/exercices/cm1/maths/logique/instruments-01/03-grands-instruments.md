@@ -7,6 +7,7 @@ solution:
   Camille: "Accordéon"
   Théo: "Harpe"
   Lina: "Saxophone"
+class: "S3.2.2"
 ---
 
 - Théo pince les cordes d'un très grand instrument triangulaire.

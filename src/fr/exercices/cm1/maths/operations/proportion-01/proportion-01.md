@@ -7,5 +7,6 @@ params:
   numMin: 2
   numMax: 9
   xMax: 15
+class: "S1.1.1"
 ---
 

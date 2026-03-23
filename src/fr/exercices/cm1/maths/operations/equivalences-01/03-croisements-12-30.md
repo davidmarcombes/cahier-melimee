@@ -14,6 +14,7 @@ pairs:
     right: "6 × 4"
   - left: "6 × 5"
     right: "10 × 3"
+class: "S1.1.1"
 ---
 
 Relie chaque multiplication de gauche à celle qui lui est égale à droite.

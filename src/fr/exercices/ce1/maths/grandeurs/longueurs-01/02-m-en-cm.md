@@ -14,6 +14,7 @@ items:
   - prompt: "5 m"
     answer: "500"
     unit: "cm"
+class: "S1.1.1"
 ---
 
 Convertis les mètres en centimètres. **1 m = 100 cm**

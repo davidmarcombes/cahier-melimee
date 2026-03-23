@@ -8,6 +8,7 @@ params:
   totalMin: 3
   totalMax: 9
   remainMin: 1
+class: "S2.1.1"
 ---
 
 Trouve combien de fruits ont été retirés.

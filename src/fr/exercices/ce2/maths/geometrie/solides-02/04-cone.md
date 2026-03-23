@@ -12,6 +12,7 @@ choices:
   - "une pyramide"
   - "un triangle"
 answer: "un cône"
+class: "S1.1.1"
 ---
 
 Mélimee a dessiné un solide. Quel est son nom ?

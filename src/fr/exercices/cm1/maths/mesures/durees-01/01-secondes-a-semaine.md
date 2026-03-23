@@ -10,6 +10,7 @@ pairs:
     right: "24 heures"
   - left: "1 semaine"
     right: "7 jours"
+class: "I1.1.1"
 ---
 
 Relie chaque durée à son équivalence.

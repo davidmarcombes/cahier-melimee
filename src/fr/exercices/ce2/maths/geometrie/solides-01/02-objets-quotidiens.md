@@ -10,6 +10,7 @@ pairs:
     right: "Prisme triangulaire"
   - left: "Une tente de camping"
     right: "Pyramide"
+class: "S2.1.1"
 ---
 
 Relie chaque objet à sa forme géométrique.

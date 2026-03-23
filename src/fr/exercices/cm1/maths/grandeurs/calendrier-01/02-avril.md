@@ -13,6 +13,7 @@ questions:
     answer: "14"
   - text: "Quelle date tombe exactement 3 semaines après le 8 avril ?"
     answer: "29"
+class: "I1.1.1"
 ---
 
 Observe le calendrier d'avril 2025 et réponds aux questions.

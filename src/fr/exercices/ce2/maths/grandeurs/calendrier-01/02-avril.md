@@ -13,6 +13,7 @@ questions:
     answer: "17"
   - text: "Combien de jours séparent le 4 avril et le 18 avril ?"
     answer: "14"
+class: "I1.1.1"
 ---
 
 Observe le calendrier d'avril 2025 et réponds aux questions.
