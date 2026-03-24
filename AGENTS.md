@@ -35,7 +35,7 @@ npm run clean              # Remove _site/
 npm run help               # List all available npm scripts
 npm test                   # Unit tests (vitest)
 npm run build:e2e          # Build _site/ for E2E (fast, no validation)
-npm run test:e2e           # E2E tests (Playwright, 40 tests, 27 exercise types)
+npm run test:e2e           # E2E tests (Playwright, ~555 tests: player, types smoke, layout-health all pages)
 npm run validate:exercises # Validate exercise YAML front-matter
 npm run human:sync         # Dry-run: show new/changed/removed exercise files vs human-validate.csv
 npm run human:sync:write   # Apply: update human-validate.csv (add / invalidate / remove)

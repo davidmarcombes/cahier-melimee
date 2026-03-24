@@ -263,7 +263,7 @@ const generators = {
   pairOuImpair: {
     generate: (params = {}) => {
       const num = rand(params.min ?? 1, params.max ?? 100);
-      return { type: 'number-check', operation: num, answers: [num % 2 === 0 ? 'pair' : 'impair'] };
+      return { type: 'number-check', operation: String(num), answers: [num % 2 === 0 ? 'pair' : 'impair'] };
     },
   },
 
@@ -304,7 +304,7 @@ const generators = {
       const max = params.max ?? 39;
       const num = rand(min, max);
       const roman = toRoman(num);
-      return { type: 'number-check', operation: num, answers: [roman] };
+      return { type: 'number-check', operation: String(num), answers: [roman] };
     },
   },
 
@@ -337,7 +337,7 @@ const generators = {
       }
       const num = digits.reduce((acc, digit) => acc * 10 + digit, 0);
       const rounded = Math.round(num / Math.pow(10, order)) * Math.pow(10, order);
-      return { type: 'number-check', operation: num, answers: [String(rounded)] };
+      return { type: 'number-check', operation: String(num), answers: [String(rounded)] };
     },
   },
 

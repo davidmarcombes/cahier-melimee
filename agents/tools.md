@@ -169,16 +169,17 @@ npm run test:e2e    # run all Playwright tests
 
 ### Test files
 
-| File | Coverage |
-|------|----------|
-| `tests/e2e/exercise-player.spec.js` | MCQ, number-check (trou), calc-chain, series progress/navigation |
-| `tests/e2e/exercise-types.spec.js` | One smoke test per exercise type template (24 types covered) |
+| File | Tests | Coverage |
+|------|-------|----------|
+| `tests/e2e/exercise-player.spec.js` | 15 | MCQ, number-check (trou), calc-chain, series progress/navigation |
+| `tests/e2e/exercise-types.spec.js` | 25 | Smoke test per exercise type template (interaction + verify) |
+| `tests/e2e/layout-health.spec.js` | ~514 | DOM health check for every built page — auto-discovered from `_site/` at run time (height bounds, overflow, interactive elements, Alpine init, JS errors) |
 
 ### Coverage by type
 
-All 27 exercise types that have exercises are covered. 8 types with no exercises yet (`base-10`, `fraction-paint`, `seq-verify`, `click-blocks`, `svg-tiles`, `compare-groups`, `number-hunt`, `count-objects`) and `column-op` (template not wired into `series-player.njk`) are excluded.
+`layout-health.spec.js` auto-discovers every page from `_site/fr/exercices/`, `_site/fr/applications/`, and `_site/fr/defis/` at test-collection time. No code change needed when adding new series or new types — they are picked up automatically on the next `build:e2e` + `test:e2e` run.
 
-Types are tested via ID-based URLs: `/fr/exercices/{id}/`. Use `#N` to navigate to exercise N in a series (e.g. `#2` → second exercise).
+Types in `exercise-types.spec.js` are tested via ID-based URLs: `/fr/exercices/{id}/`. Use `#N` to navigate to exercise N in a series (e.g. `#2` → second exercise).
 
 ### waitForAlpine helper
 

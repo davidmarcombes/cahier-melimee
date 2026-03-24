@@ -218,7 +218,7 @@ export function seriesPlayer(exercises, seriesId) {
 
     _setupCurrentExercise() {
       const _e = this.cur;
-      const _blanks = (_e.operation || '').split('?').length - 1;
+      const _blanks = String(_e.operation ?? '').split('?').length - 1;
       const _colOpBlanks = _e.colOp ? (_e.colOp.result || []).filter(d => d === '?').length : 0;
       this.trouInputs = (_blanks + _colOpBlanks) > 0 ? Array(_blanks + _colOpBlanks).fill('') : [];
       
@@ -226,7 +226,7 @@ export function seriesPlayer(exercises, seriesId) {
       this.seqInputs = _ia ? _ia.answers.map(() => '') : [];
       this.seqErrors = [];
 
-      this.gridCells = _e.grid ? new Array(_e.grid.rows.length * _e.grid.columns.length).fill(0) : [];
+      this.gridCells = (_e.grid && _e.grid.rows) ? new Array(_e.grid.rows.length * _e.grid.columns.length).fill(0) : [];
       this.gridErrors = [];
 
       if (_e.pyramid) this._initPyramid(_e.pyramid);

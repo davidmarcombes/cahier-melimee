@@ -162,7 +162,12 @@
       "WebFetch(domain:pikas.dzlm.de)",
       "WebFetch(domain:www.ncetm.org.uk)",
       "WebFetch(domain:edudel.nic.in)",
-      "WebFetch(domain:nrich.maths.org)"
+      "WebFetch(domain:nrich.maths.org)",
+      "Bash(cat \"/e/Code/cahier-melimee/src/fr/exercices/ce1/maths/numeration/base10-01/\"*.md)",
+      "Bash(if grep:*)",
+      "Bash(then)",
+      "Bash(fi)",
+      "Bash(head -20 grep -rn \"<button @\" e:/Code/cahier-melimee/src/_includes/ --include=\"*.njk\")"
     ]
   }
 }

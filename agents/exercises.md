@@ -47,7 +47,7 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `drag-sort` | `types/drag-sort.njk` | Sort tiles by clicking pairs to swap them. Direction indicator. Tiles support HTML via `x-html`. Fields: `tiles[]` (strings), `direction` (`asc`/`desc`). |
 | `fill-table` | `types/fill-table.njk` | Table with blank cells — student fills each digit/value. Supports `cur.svg` above the table. Uses `blankCount`, `headers`, `rows` (cells: `{blank, idx, answer}`). |
 | `checkbox` | `types/checkbox.njk` | Tick all valid statements — multi-select with a verify button. Fields: `statements[]` (HTML strings), `checkedAnswers[]` (integer indices). Supports `cur.svg`. |
-| `select` | `types/select.njk` | Complete sentences by choosing a word from a dropdown. Fields: `choices[]` (option list), `statements[]` (each with `template` using `___` placeholder, and `answer`). |
+| `select` | `types/select.njk` | Complete sentences by choosing a word from a dropdown. Fields: `statements[]` (each with `template` using `___` placeholder, `answer`, and optional per-statement `choices[]`), global `choices[]` (optional fallback). Dropdowns start empty. |
 | `svg-tiles` | `types/svg-tiles.njk` | Display grids of SVGs. User clicks on correct ones. Fields: `tiles[]` (Array of objects with `gen` and `par`), `answers[]` (integer indices). |
 | `tile-select` | `types/tile-select.njk` | Click to select all correct tiles (multi-select). Fields: `tiles[]` (HTML strings), `tileAnswers[]` (0-indexed correct indices). Supports `svg:` field for SVG rendering. |
 | `fraction` | `types/fraction.njk` | Visual fraction representation — shade a shape. Fields: `shape` (`circle`/`rect`), `numerator`, `denominator`, `answer`. |
@@ -55,8 +55,20 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `base-10` | `types/base-10.njk` | Base-10 blocks visual — decompose a number into hundreds/tens/ones. Fields: `answer`, plus either `number` or `hundreds`+`tens`+`ones`. |
 | `clock` | `types/clock.njk` | Analog clock — read or set the time. Fields: `hour`, `minute`, `answer`. |
 | `click-blocks` | `types/click-blocks.njk` | Click cells to fill columns from the bottom up (place-value blocks). Fields: `columns[]` (each with `label`, `value`, `color`, `answer`, `max`). Supports generators. |
+| `number-line` | `types/number-line.njk` | Number line — read a labeled point or click to place one. SVG via `nlSvg` getter. Supports generators. |
+| `coordinate-grid` | `types/coordinate-grid.njk` | Coordinate grid — read (x ; y) for a labeled point, or click to place one. SVG via `coordinateGridSvg` getter. Supports generators. |
+| `bar-chart` | `types/bar-chart.njk` | Bar chart — build mode (click cells to set bar heights) or read mode (static bars + answer inputs). Fields: `bc` object with chart config. Supports generators. |
+| `calc-chain` | `types/calc-chain.njk` | Calculation chain — series of linked operations, fill in the blanks. Supports `cur.svg` and generators. |
+| `column-op` | `types/column-op.njk` | Column operation (addition/subtraction). Multi-digit numbers aligned by place value; student fills in result digits. |
+| `inverse-problem` | `types/inverse-problem.njk` | Inverse problems (Russie method) — base problem + derived variations. Fields: base operation + inverse operations array. |
+| `number-hunt` | `types/number-hunt.njk` | Click numbers 1..N in order; emoji sits in center cell. Fields: `grid[]`, `cols`, `count`, `emoji`. Supports generators. |
+| `count-objects` | `types/count-objects.njk` | Scattered emoji SVG — type the total count. Fields: `count`, `emoji`. Supports generators. |
+| `compare-groups` | `types/compare-groups.njk` | Two scattered emoji groups — click Autant / Plus / Moins. Fields: `groupA`, `groupB`, `answer`. Supports generators. |
+| `magic-color` | `types/magic-color.njk` | Pixel-art coloriage magique — paint cells matching a rule (e.g. multiples). Fields: `grid`, `palette`. Supports generators. |
+| `tri-arith` | `types/tri-arith.njk` | Arithmetic triangle — vertices and edges are linked by addition; fill in the missing values. Fields: `givenV[]`, `givenE[]`, `answers[]`. Supports generators. |
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
+Templates without exercise files yet (not covered by layout-health): `fraction-paint`, `svg-tiles`.
 
 ## Timed Challenges (Défis)
 

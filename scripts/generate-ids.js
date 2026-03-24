@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const DIRS_TO_SCAN = [
   path.resolve(__dirname, '../src/fr/exercices'),
   path.resolve(__dirname, '../src/fr/applications'),
+  path.resolve(__dirname, '../src/fr/defis'),
 ];
 // id → [paths that use it]
 const idMap = new Map();
@@ -60,7 +61,7 @@ function run() {
     const content = fs.readFileSync(yamlPath, 'utf8');
     const raw = content.match(/^id:\s*(.+)/m);
     if (!raw) continue;
-    const value = raw[1].trim();
+    const value = raw[1].replace(/\r$/, '').trim();
     const isQuoted = /^["']/.test(value);
     const id = value.replace(/^["']|["']$/g, '').trim();
     if (!idMap.has(id)) idMap.set(id, []);
@@ -73,6 +74,17 @@ function run() {
     console.error(`\n⚠️  Quoted IDs (should be bare scalars) (${quoted.length}):`);
     for (const p of quoted) console.error(`  • ${p}`);
     console.error('');
+  }
+
+  // --- Flag non-hex IDs (agent-invented slugs, not generated hashes) ---
+  const HEX8 = /^[0-9a-f]{8}$/;
+  const nonHex = [...idMap.entries()]
+    .filter(([id]) => !HEX8.test(id))
+    .flatMap(([id, paths]) => paths.map((p) => ({ id, path: p })));
+  if (nonHex.length) {
+    console.error(`\n⚠️  Non-hex IDs (must be 8 lowercase hex chars) (${nonHex.length}):`);
+    for (const { id, path: p } of nonHex) console.error(`  • ${p}  →  id: ${id}`);
+    console.error('  Run npm run generate:ids to replace them.\n');
   }
 
   // --- Flag duplicates ---
@@ -105,9 +117,12 @@ function run() {
   console.log(`\nScan complete.`);
   console.log(`- Pre-existing IDs found:    ${preExistingCount}`);
   console.log(`- Quoted IDs detected:       ${quoted.length}`);
+  console.log(`- Non-hex IDs detected:      ${nonHex.length}`);
   console.log(`- Duplicates detected:       ${duplicates.length}`);
   console.log(`- New IDs assigned this run: ${assignedCount}`);
   console.log(`- Total unique IDs in system: ${idMap.size}`);
+
+  if (quoted.length || nonHex.length || duplicates.length) process.exit(1);
 }
 
 run();

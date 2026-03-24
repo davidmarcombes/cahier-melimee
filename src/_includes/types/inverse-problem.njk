@@ -19,7 +19,7 @@
         :class="{ 'border-red-400': ipErrors.includes(0) }"
         x-ref="ipInput0"
       />
-      <button @click="ipCheck(0)" class="px-4 py-2 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-colors">OK</button>
+      <button type="button" @click="ipCheck(0)" class="px-4 py-2 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-colors">OK</button>
     </div>
   </div>
 
@@ -48,7 +48,7 @@
                   :class="{ 'border-red-400': ipErrors.includes(idx + 1) }"
                   :x-ref="'ipInput' + (idx + 1)"
                 />
-                <button @click="ipCheck(idx + 1)" class="p-2 text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
+                <button type="button" @click="ipCheck(idx + 1)" class="p-2 text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </button>
               </div>
