@@ -143,7 +143,7 @@ async function init() {
   console.log('Next steps:');
   console.log('  1. Review and complete SITE.md with additional details');
   console.log('  2. Add your logo and favicon to src/assets/');
-  console.log('  3. Run: npm run tokens (generate Tailwind config)');
+  console.log('  3. Run: npm run generate:tokens (generate Tailwind config)');
   console.log('  4. Run: npm run dev (start development server)');
   console.log('\n📚 See README.md for the complete customization checklist.\n');
 

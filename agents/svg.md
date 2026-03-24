@@ -44,6 +44,6 @@ Functions in `src/assets/js/svg.js` generate SVG markup at runtime. They are cal
 
 `.eleventy.js` contains a build-time copy of `slicedPieSvg` for pre-rendering. When modifying `slicedPieSvg` in `svg.js`, update the copy in `.eleventy.js` as well.
 
-## `svg:stats` Script
+## `stats:svg` Script
 
-Run `npm run svg:stats` to analyze all SVG files in `_includes/svg/`. Reports file count, total size, and CSS variable usage.
+Run `npm run stats:svg` to analyze all SVG files in `_includes/svg/`. Reports file count, total size, and CSS variable usage.

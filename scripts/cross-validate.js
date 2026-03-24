@@ -74,7 +74,7 @@ const human = parseHuman();
 const { map: llm, modelCols } = parseLlm();
 
 if (!fs.existsSync(HUMAN_CSV)) {
-  console.log(`\n${C.yellow}No human-validate.csv found. Run: npm run human:sync:write${C.reset}\n`);
+  console.log(`\n${C.yellow}No human-validate.csv found. Run: npm run sync:human-validations:write${C.reset}\n`);
   process.exit(0);
 }
 if (!fs.existsSync(LLM_CSV)) {
@@ -155,6 +155,6 @@ if (cats['llm-fail'].files.length > 0) {
 }
 if (cats.stale.files.length > 0) {
   console.log(`\n${C.magenta}${C.bold}Stale data:${C.reset} ${cats.stale.files.length} file(s) with hash mismatch between human and LLM caches.`);
-  console.log(`${C.dim}Run: npm run human:sync  and  npm run validate:llm  to refresh.${C.reset}`);
+  console.log(`${C.dim}Run: npm run sync:human-validations  and  npm run validate:llm  to refresh.${C.reset}`);
 }
 console.log('');

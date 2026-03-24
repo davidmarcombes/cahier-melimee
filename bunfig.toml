@@ -9,5 +9,9 @@
 # npm remains the primary package manager; package-lock.json is the canonical lockfile.
 # Commit bun.lockb if your whole team uses Bun.
 
+[run]
+# Use Bun's runtime instead of Node when running scripts via `bun run`
+bun = true
+
 [install]
 # Bun will save a bun.lockb in addition to respecting package-lock.json

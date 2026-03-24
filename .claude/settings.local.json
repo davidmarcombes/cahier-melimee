@@ -167,7 +167,10 @@
       "Bash(if grep:*)",
       "Bash(then)",
       "Bash(fi)",
-      "Bash(head -20 grep -rn \"<button @\" e:/Code/cahier-melimee/src/_includes/ --include=\"*.njk\")"
+      "Bash(head -20 grep -rn \"<button @\" e:/Code/cahier-melimee/src/_includes/ --include=\"*.njk\")",
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce1/maths/operations/pyramides-03/*.md)",
+      "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce2/maths/calcul/somme-100-01/01-*.md)",
+      "Bash(git show \"$hash\" -- src/assets/js/generators.js)"
     ]
   }
 }

@@ -1,5 +1,6 @@
 ---
 type: tile-select
+title: "Décomposer un décimal (centièmes)"
 generator: decomposerDecimal
 repeat: 8
 params:

@@ -135,7 +135,7 @@ describe('romanNumerals', () => {
 describe('romanNumeralsReverse', () => {
   it('operation is arabic, answer is roman', () => {
     const result = generators.romanNumeralsReverse.generate({ min: 9, max: 9 });
-    expect(result.operation).toBe(9);
+    expect(result.operation).toBe('9');
     expect(result.answers[0]).toBe('IX');
   });
 });

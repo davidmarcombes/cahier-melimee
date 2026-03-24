@@ -99,14 +99,14 @@ npm install
 npm run dev        # Serveur local avec live reload (http://localhost:8080)
 npm run build      # Build de production
 npm run clean      # Supprimer _site/
-npm run tokens     # Regénérer tailwind.config.js depuis design-tokens.json
+npm run generate:tokens  # Regénérer tailwind.config.js depuis design-tokens.json
 npm run db:start   # Lancer PocketBase (http://localhost:8090)
 npm run gennames   # Générer les identités 3 mots (CSV vers stdout)
 ```
 
 ### Design tokens
 
-Les couleurs, typographies et espacements sont définis dans `design-tokens.json`. Ne pas éditer `tailwind.config.js` directement — il est généré par `npm run tokens`.
+Les couleurs, typographies et espacements sont définis dans `design-tokens.json`. Ne pas éditer `tailwind.config.js` directement — il est généré par `npm run generate:tokens`.
 
 ## Contribuer
 

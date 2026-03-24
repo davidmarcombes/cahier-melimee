@@ -37,9 +37,9 @@ npm test                   # Unit tests (vitest)
 npm run build:e2e          # Build _site/ for E2E (fast, no validation)
 npm run test:e2e           # E2E tests (Playwright, ~555 tests: player, types smoke, layout-health all pages)
 npm run validate:exercises # Validate exercise YAML front-matter
-npm run human:sync         # Dry-run: show new/changed/removed exercise files vs human-validate.csv
-npm run human:sync:write   # Apply: update human-validate.csv (add / invalidate / remove)
-npm run human:validations  # Display human-validate.csv as a table
-npm run list-series        # List all series (--level --type --cat --missing)
-npm run show-type          # Show schema + template for any exercise type
+npm run sync:human-validations         # Dry-run: show new/changed/removed exercise files vs human-validate.csv
+npm run sync:human-validations:write   # Apply: update human-validate.csv (add / invalidate / remove)
+npm run list:human-validations         # Display human-validate.csv as a table
+npm run list:series                    # List all series (--level --type --cat --missing)
+npm run list:type                      # Show schema + template for any exercise type
 ```

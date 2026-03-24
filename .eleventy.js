@@ -537,6 +537,21 @@ module.exports = async function (eleventyConfig) {
                 }
               }
             }
+            // Extra pass: resolve non-edge unknowns using grandparent (binomial identity).
+            // For [L, x, R] → [L+x, x+R] → [grandparent]:
+            //   grandparent = L + 2x + R  →  x = (grandparent - L - R) / 2
+            for (let r = 0; r < rawRows.length - 2; r++) {
+              const row = rawRows[r];
+              for (let c = 1; c < row.length - 1; c++) {
+                if (row[c] !== null) continue;
+                const L = row[c - 1], R = row[c + 1];
+                if (L === null || R === null) continue;
+                const gp = rawRows[r + 2][c - 1];
+                if (gp === null) continue;
+                const x = (gp - L - R) / 2;
+                if (Number.isInteger(x)) { row[c] = x; changed = true; }
+              }
+            }
           }
           item.pyramid = { rows: [...rawRows].reverse(), given: [...given].reverse() };
         }
@@ -880,7 +895,7 @@ module.exports = async function (eleventyConfig) {
     }
     for (const r of ALL_EXERCISE_ROOTS) checkDir(r);
     if (stale) {
-      console.warn('\x1b[33m⚠  Exercise files changed since last sync. Run: npm run human:sync\x1b[0m');
+      console.warn('\x1b[33m⚠  Exercise files changed since last sync. Run: npm run sync:human-validations\x1b[0m');
     }
   });
 

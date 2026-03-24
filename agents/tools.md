@@ -10,7 +10,7 @@ All available commands (run `npm run help` for a live list):
 |---------|-------------|
 | `npm start` / `npm run dev` | Start dev server (Eleventy + Tailwind watch mode) |
 | `bun run dev:bun` | Same, using Bun runtime (faster if Bun is installed) |
-| `npm run build` | Full production build: test → validate → tokens → eleventy → css → html-validate |
+| `npm run build` | Full production build: test → validate → generate:tokens → eleventy → css → html-validate |
 | `npm run clean` | Remove `_site/` build output |
 | `npm run serve:local` | Serve the built `_site/` locally (useful for testing subpath deployments) |
 
@@ -28,10 +28,10 @@ All available commands (run `npm run help` for a live list):
 | `npm run validate:exercises` | Validate exercise YAML front-matter against type schemas |
 | `npm run validate:llm` | LLM-powered answer checker (requires Ollama — see `agents/ollama.md`) |
 | `npm run validate:html` | Run html-validate on all `_site/**/*.html` files |
-| `npm run validate` | Validate project configuration files |
+| `npm run validate:config` | Validate project configuration files |
 | `npm run lint` | Run ESLint + Prettier checks |
 | `npm run format` | Auto-format with Prettier |
-| `npm run spellcheck` | Spellcheck markdown files with cspell |
+| `npm run check:spell` | Spellcheck markdown files with cspell |
 | `npm run check:duplicates` | Check for duplicate exercise entries |
 | `npm run test:a11y` | Accessibility audit (WCAG2AA) on built `_site/` — requires `npm run build` first |
 
@@ -39,7 +39,7 @@ All available commands (run `npm run help` for a live list):
 
 | Command | Description |
 |---------|-------------|
-| `npm run tokens` | Regenerate `tailwind.config.js` + CSS vars from `design-tokens.json` |
+| `npm run generate:tokens` | Regenerate `tailwind.config.js` + CSS vars from `design-tokens.json` |
 | `npm run generate:ids` | Assign 8-char hex IDs to series missing an `id` in `index.yaml` |
 | `npm run generate:maths` | Interactive CLI to scaffold new math exercises |
 | `npm run generate:names` | Generate student identity names |
@@ -48,14 +48,14 @@ All available commands (run `npm run help` for a live list):
 
 | Command | Description |
 |---------|-------------|
-| `npm run report` | Generate `exercises-report.csv` — one row per exercise with id, path, type, title, etc. |
-| `npm run svg:stats` | Analyze SVG files: count, size, CSS variable usage |
+| `npm run generate:report` | Generate `exercises-report.csv` — one row per exercise with id, path, type, title, etc. |
+| `npm run stats:svg` | Analyze SVG files: count, size, CSS variable usage |
 | `npm run validate:llm` | LLM answer checker — caches results in `reports/validate-llm-cache.csv` by file hash |
 | `npm run review:failures` | Interactive review of LLM-flagged failures — opens browser, prompts y/n/s per file |
-| `npm run human:sync` | Dry-run: show which exercise files are new/changed vs `reports/human-validate.csv` |
-| `npm run human:sync:write` | Apply: update `human-validate.csv` (add new files, clear stale validations) |
-| `npm run human:validations` | Display the human-validate.csv as a table with progress summary |
-| `npm run cross-validate` | Join human + LLM validation CSVs — shows conflicts, gaps, stale hashes (`--verbose`, `--cat=`) |
+| `npm run sync:human-validations` | Dry-run: show which exercise files are new/changed vs `reports/human-validate.csv` |
+| `npm run sync:human-validations:write` | Apply: update `human-validate.csv` (add new files, clear stale validations) |
+| `npm run list:human-validations` | Display the human-validate.csv as a table with progress summary |
+| `npm run validate:cross` | Join human + LLM validation CSVs — shows conflicts, gaps, stale hashes (`--verbose`, `--cat=`) |
 
 ### Data & environment
 
@@ -68,15 +68,15 @@ All available commands (run `npm run help` for a live list):
 | `npm run db:admin` | Open PocketBase admin UI |
 | `npm run import:identities` | Import identities into PocketBase |
 | `npm run test:auth` | Test PocketBase auth flow |
-| `npm run sim:server` | Start simulation server |
+| `npm run serve:sim` | Start simulation server |
 
 ### Maintenance
 
 | Command | Description |
 |---------|-------------|
 | `npm run clean:yaml` | Clean/normalize YAML files |
-| `npm run compress` | Compress build output |
-| `npm run slides` | Build presentation slides PDF with Marp |
+| `npm run build:compress` | Compress build output |
+| `npm run build:slides` | Build presentation slides PDF with Marp |
 
 ## Scripts Directory
 
@@ -122,8 +122,8 @@ A lightweight QA loop for manually validating exercise series during development
 
 ```bash
 # 1. Sync the CSV with current files after adding/editing exercises
-npm run human:sync           # dry-run — shows what would change
-npm run human:sync:write     # apply (adds new files, clears stale validations)
+npm run sync:human-validations           # dry-run — shows what would change
+npm run sync:human-validations:write     # apply (adds new files, clears stale validations)
 
 # 2. Start the dev server
 npm run dev
@@ -134,8 +134,8 @@ npm run dev
 #    This writes one row per .md file with the current hash + timestamp
 
 # 4. Review what has been validated
-npm run human:validations
-npm run human:validations -- --last 20
+npm run list:human-validations
+npm run list:human-validations -- --last 20
 ```
 
 ### Key rules
@@ -211,7 +211,7 @@ bun install       # install packages (~10× faster than npm install)
 bun run dev:bun   # dev server using Bun runtime
 ```
 
-`dev:bun` runs `bun run tokens` then starts `dev:bun:site` + `dev:css` concurrently.
+`dev:bun` runs `bun run generate:tokens` then starts `dev:bun:site` + `dev:css` concurrently.
 `npm run dev` is unchanged and works without Bun installed.
 
 `bunfig.toml` documents Bun settings. `bun.lockb` is git-ignored by default — remove the ignore line to commit it if your team standardises on Bun.

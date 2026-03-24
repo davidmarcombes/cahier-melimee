@@ -6,6 +6,10 @@
     <div class="flex justify-center mb-6" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
 
+  {# Body instructions — shown above tiles so the target is visible before clicking #}
+  <div class="prose dark:prose-invert text-center text-sm max-w-none text-content-subtle mb-4"
+       x-show="cur.body" x-html="cur.body"></div>
+
   {# Tile grid #}
   <div class="flex flex-wrap justify-center gap-4 mb-8">
     <template x-for="(tile, i) in (cur.tiles || [])" :key="i">
@@ -32,10 +36,6 @@
       ></button>
     </template>
   </div>
-
-  {# Body instructions #}
-  <div class="prose dark:prose-invert text-center text-sm max-w-none text-content-subtle mb-6"
-       x-show="cur.body" x-html="cur.body"></div>
 
   {# Verify button #}
   <button
