@@ -17,7 +17,8 @@
                :value="trouInputs[p.idx] || ''"
                @input="trouInputs[p.idx] = $event.target.value"
                @keydown.enter="check()" :disabled="solved"
-               class="w-16 sm:w-20 h-14 sm:h-16 text-center text-3xl sm:text-4xl font-extrabold rounded-xl border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+               :style="{ width: 'calc(' + Math.max(2, String((cur.answers||[])[p.idx] ?? '').length) + 'ch + 1.5rem)' }"
+               class="h-14 sm:h-16 text-center text-3xl sm:text-4xl font-extrabold rounded-xl border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
                :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':showError,'border-primary-300 dark:border-primary-600':!solved&&!showError}"
                placeholder="?"/>
         <span x-show="p.t==='fi'" class="frac text-4xl sm:text-5xl font-extrabold text-content-default">

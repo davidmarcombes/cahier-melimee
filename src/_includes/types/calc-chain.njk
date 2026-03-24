@@ -4,20 +4,20 @@
   </template>
   <div class="prose dark:prose-invert text-center text-lg max-w-none mb-6" x-show="cur.body" x-html="cur.body"></div>
   <div class="flex flex-wrap items-center justify-center gap-2">
-    <span class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 font-extrabold text-xl text-content-default" x-text="cur.chain ? cur.chain.start : ''"></span>
+    <span class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 font-extrabold text-2xl text-content-default" x-text="cur.chain ? cur.chain.start : ''"></span>
     <template x-for="(step, i) in (cur.chain ? cur.chain.steps : [])" :key="i">
       <span class="contents">
-        <span class="flex items-center gap-1 text-primary-600 dark:text-primary-400 font-bold text-base whitespace-nowrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span class="flex items-center gap-1 text-primary-600 dark:text-primary-400 font-bold text-lg whitespace-nowrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           <span x-text="step.op"></span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </span>
         <input type="text" inputmode="numeric"
                :value="ccInputs[i] || ''"
                @input="ccInputs[i] = $event.target.value; ccErrors = ccErrors.filter(e => e !== i)"
                @keydown.enter="check()"
                :disabled="solved"
-               class="w-16 h-12 text-center text-xl font-extrabold rounded-xl border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+               class="w-16 h-12 text-center text-2xl font-extrabold rounded-xl border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
                :class="{
                  'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
                  'border-red-400 bg-red-50 dark:bg-red-900/20': ccErrors.includes(i),

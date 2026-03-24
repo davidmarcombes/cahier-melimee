@@ -42,11 +42,11 @@
           :class="{
             'cursor-pointer hover:brightness-90 active:scale-95': !solved,
             'cursor-default': solved,
-            'ring-2 ring-inset ring-red-500': mcErrors.includes(i)
+            'ring-2 ring-inset ring-red-500': mcErrors.includes(i),
+            'bg-white text-slate-700': mcColors[i] == null,
+            'text-slate-800': mcColors[i] != null
           }"
-          :style="mcColors[i] != null
-            ? `background: ${cur.magicColor.palette[mcColors[i]]}`
-            : 'background: white'"
+          :style="mcColors[i] != null ? `background: ${cur.magicColor.palette[mcColors[i]]}` : ''"
           :title="solved ? '' : (cur.magicColor?.labels || [])[mcActiveColor] || ''"
           @click="!solved && mcPaint(i)"
           x-text="cell.value"

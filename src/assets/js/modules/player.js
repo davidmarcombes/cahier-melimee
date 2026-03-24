@@ -7,6 +7,7 @@ export function seriesPlayer(exercises, seriesId) {
     exercises,
     seriesId: seriesId || '',
     currentIndex: 0,
+    _ready: false,
     userInput: '',
     trouInputs: [],
     showError: false,
@@ -206,6 +207,7 @@ export function seriesPlayer(exercises, seriesId) {
         if (ref && !ref.disabled) ref.focus();
       };
       
+      this._ready = true;
       requestAnimationFrame(_focusFirst);
       this.$watch('currentIndex', () => {
         this._setupCurrentExercise();
