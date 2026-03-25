@@ -32,8 +32,21 @@ const C = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+// Normalized hash: LF line endings, so CRLF↔LF changes on Windows don't appear as content changes.
 function fileHash(filePath) {
+  const content = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  return crypto.createHash('sha256').update(content).digest('hex').slice(0, 16);
+}
+
+// Raw hash: used to detect whether stored hash is a legacy CRLF hash for the same file.
+function fileHashRaw(filePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex').slice(0, 16);
+}
+
+// Detects stored-CRLF → checkout-LF migration: hash of file forced to CRLF.
+function fileHashForceCRLF(filePath) {
+  const crlf = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '\r\n');
+  return crypto.createHash('sha256').update(crlf).digest('hex').slice(0, 16);
 }
 
 function getSeriesId(dir) {
@@ -90,6 +103,7 @@ const seen = new Set();
 let added = 0;
 let invalidated = 0;
 let removed = 0;
+let rehashed = 0;
 
 console.log(`\n${C.bold}Sync human validations${C.reset}  (${doWrite ? 'write mode' : 'dry-run — use --write to apply'})\n`);
 
@@ -104,13 +118,20 @@ for (const { absPath, seriesId } of files) {
     console.log(`  ${C.green}+${C.reset} NEW       ${relPath}`);
     added++;
   } else if (entry.hash !== hash) {
-    const wasValidated = !!entry.validatedAt;
-    updated.set(relPath, { path: relPath, seriesId, hash, validatedAt: '' });
-    console.log(
-      `  ${C.yellow}~${C.reset} CHANGED   ${relPath}` +
-      (wasValidated ? `  ${C.dim}(validation cleared)${C.reset}` : '')
-    );
-    invalidated++;
+    // Check if only line endings changed (CRLF↔LF migration) — keep validation, update hash silently.
+    const isLineEndingChange = entry.hash === fileHashRaw(absPath) || entry.hash === fileHashForceCRLF(absPath);
+    if (isLineEndingChange) {
+      updated.set(relPath, { path: relPath, seriesId, hash, validatedAt: entry.validatedAt });
+      rehashed++;
+    } else {
+      const wasValidated = !!entry.validatedAt;
+      updated.set(relPath, { path: relPath, seriesId, hash, validatedAt: '' });
+      console.log(
+        `  ${C.yellow}~${C.reset} CHANGED   ${relPath}` +
+        (wasValidated ? `  ${C.dim}(validation cleared)${C.reset}` : '')
+      );
+      invalidated++;
+    }
   }
 }
 
@@ -122,18 +143,18 @@ for (const relPath of existing.keys()) {
   }
 }
 
-const unchanged = files.length - added - invalidated;
+const unchanged = files.length - added - invalidated - rehashed;
 
-if (added + invalidated + removed === 0) {
+if (added + invalidated + removed + rehashed === 0) {
   console.log(`  ${C.dim}All ${files.length} exercise files are up to date.${C.reset}`);
 } else {
-  console.log(
-    `\n${C.bold}Summary:${C.reset} ` +
-    `${C.green}${added} added${C.reset}, ` +
-    `${C.yellow}${invalidated} changed${C.reset} (validation cleared), ` +
-    `${C.red}${removed} removed${C.reset}, ` +
-    `${C.dim}${unchanged} unchanged${C.reset}`
-  );
+  const parts = [];
+  if (added)      parts.push(`${C.green}${added} added${C.reset}`);
+  if (invalidated) parts.push(`${C.yellow}${invalidated} changed${C.reset} (validation cleared)`);
+  if (removed)    parts.push(`${C.red}${removed} removed${C.reset}`);
+  if (rehashed)   parts.push(`${C.dim}${rehashed} rehashed (CRLF→LF)${C.reset}`);
+  if (unchanged)  parts.push(`${C.dim}${unchanged} unchanged${C.reset}`);
+  console.log(`\n${C.bold}Summary:${C.reset} ${parts.join(', ')}`);
   if (doWrite) {
     writeCsv(updated);
     console.log(`\n${C.green}Written:${C.reset} ${CSV_PATH}`);

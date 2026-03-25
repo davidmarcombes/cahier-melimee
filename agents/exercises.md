@@ -66,6 +66,7 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `compare-groups` | `types/compare-groups.njk` | Two scattered emoji groups — click Autant / Plus / Moins. Fields: `groupA`, `groupB`, `answer`. Supports generators. |
 | `magic-color` | `types/magic-color.njk` | Pixel-art coloriage magique — paint cells matching a rule (e.g. multiples). Fields: `grid`, `palette`. Supports generators. |
 | `tri-arith` | `types/tri-arith.njk` | Arithmetic triangle — vertices and edges are linked by addition; fill in the missing values. Fields: `givenV[]`, `givenE[]`, `answers[]`. Supports generators. |
+| `decimal-triple` | `types/decimal-triple.njk` | Three-way decimal representation — fraction décimale, tableau de chiffres (place values), nombre décimal. One representation is shown as given; student fills in the other two. Fields: `dtGiven` (`fraction`/`decimal`/`places`), `dtFrac` (`{num, den}`), `dtDecimal` (string, comma notation), `dtPlaces` (5-element array `[dizaines, unites, dixiemes, centiemes, milliemes]`, null = column hidden). Supports generators. |
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
 Templates without exercise files yet (not covered by layout-health): `fraction-paint`, `svg-tiles`.

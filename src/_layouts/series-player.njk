@@ -97,6 +97,7 @@ isSeriesPage: true
   {% if 'magic-color' in usedTypes %}{% include "types/magic-color.njk" %}{% endif %}
   {% if 'inverse-problem' in usedTypes %}{% include "types/inverse-problem.njk" %}{% endif %}
   {% if 'tri-arith' in usedTypes %}{% include "types/tri-arith.njk" %}{% endif %}
+  {% if 'decimal-triple' in usedTypes %}{% include "types/decimal-triple.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -215,6 +216,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'inverse-problem' in usedTypes %}
     <span x-show="cur.type === 'inverse-problem'">Cette réponse n'est pas correcte. Essaie encore !</span>
+    {% endif %}
+    {% if 'decimal-triple' in usedTypes %}
+    <span x-show="cur.type === 'decimal-triple'">Certaines valeurs ne sont pas correctes. Essaie encore !</span>
     {% endif %}
   </div>
 

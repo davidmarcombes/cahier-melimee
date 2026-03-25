@@ -151,7 +151,17 @@ function saveCache(map) {
 }
 
 function fileHash(filePath) {
+  const content = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  return crypto.createHash('sha256').update(content).digest('hex').slice(0, 16);
+}
+
+function fileHashRaw(filePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex').slice(0, 16);
+}
+
+function fileHashForceCRLF(filePath) {
+  const crlf = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '\r\n');
+  return crypto.createHash('sha256').update(crlf).digest('hex').slice(0, 16);
 }
 
 // ─── File discovery ──────────────────────────────────────────────────────────
@@ -701,7 +711,10 @@ async function main() {
 
     // Ensure every file appears in the cache as a manifest entry (no verdict yet = unvalidated)
     if (!entry || entry.hash !== hash) {
-      cache.set(relPath, { seriesId, hash, models: entry?.hash === hash ? entry.models : new Map() });
+      // Preserve verdicts if only line endings changed (CRLF→LF normalization, not real edit)
+      const isLineEndingChange = entry && (entry.hash === fileHashRaw(absPath) || entry.hash === fileHashForceCRLF(absPath));
+      const keepModels = isLineEndingChange ? entry.models : new Map();
+      cache.set(relPath, { seriesId, hash, manual: entry?.manual || '', models: keepModels });
     } else if (!entry.seriesId) {
       entry.seriesId = seriesId;
     }

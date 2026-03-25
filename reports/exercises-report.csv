@@ -1,7 +1,7 @@
 kind,path,id,seriesTitle,level,subject,topic,difficulty,exerciseCount,repeatTotal,lengthFlag,types,generators,classes
-application,fr/applications/cp/maths/calcul/grouper-10-01,36928433,Grouper pour faire 10 (petits ajouts),CP,maths,calcul,facile,1,10,,number-check,grouper10,S1.1.1
+application,fr/applications/cp/maths/calcul/grouper-10-01,36928433,Grouper pour faire 10,CP,maths,calcul,facile,1,10,,number-check,grouper10,S1.1.1
 exercice,fr/exercices/cp/maths/calcul/liens-numeriques-01,9a7b0e5d,Décomposer un nombre (arbre),CP,maths,calcul,facile,5,5,,number-check,,S1.1.1
-application,fr/applications/cp/maths/calcul/grouper-10-02,4cbe1cb1,Grouper pour faire 10 (grands ajouts),CP,maths,calcul,moyen,1,12,,number-check,grouper10,S1.1.1
+application,fr/applications/cp/maths/calcul/grouper-10-02,4cbe1cb1,Grouper pour faire 10,CP,maths,calcul,moyen,1,12,,number-check,grouper10,S1.1.1
 exercice,fr/exercices/cp/maths/geometrie/figures-01,bb4ea68d,Les figures planes,CP,maths,geometrie,facile,5,5,,mcq,,S1.1.1 | S2.2.1
 exercice,fr/exercices/cp/maths/geometrie/quadrillage-lire-01,11934872,Lire les coordonnées d'un point,CP,maths,geometrie,facile,5,5,,coordinate-grid,,S1.1.1
 exercice,fr/exercices/cp/maths/geometrie/solides-01,51ab7ca3,Les solides,CP,maths,geometrie,facile,3,3,,matching | true-false,,S2.1.1 | S2.1.4 | S3.2.3
@@ -11,7 +11,7 @@ exercice,fr/exercices/cp/maths/grandeurs/longueurs-01,786a2748,Mesurer avec une 
 exercice,fr/exercices/cp/maths/grandeurs/temperature-01,5c2d5e04,Chaud ou froid ? Lire la température,CP,maths,grandeurs,facile,5,5,,ruler | matching | mcq | true-false,,I1.1.2 | S1.1.1 | S3.1.1 | S3.2.3
 exercice,fr/exercices/cp/maths/logique/suites-figurales-01,3b314e9c,Suites de figures,CP,maths,logique,facile,5,5,,mcq,,S3.2.1
 application,fr/applications/cp/maths/numeration/chasse-aux-nombres-01,f5b2d847,Chasse aux nombres (1 → 15),CP,maths,numeration,facile,1,6,,number-hunt,huntNombres,S1.1.1
-application,fr/applications/cp/maths/numeration/comparer-groupes-01,d2d61ad6,Autant plus ou moins ? (petits nbr.),CP,maths,numeration,facile,1,8,,compare-groups,comparerGroupes,S3.1.1
+application,fr/applications/cp/maths/numeration/comparer-groupes-01,d2d61ad6,Autant plus ou moins ?,CP,maths,numeration,facile,1,8,,compare-groups,comparerGroupes,S3.1.1
 application,fr/applications/cp/maths/numeration/comparer-nombres,9e2f72e9,Comparer des nombres,CP,maths,numeration,facile,1,8,,compare,comparerNombres,S3.1.1
 application,fr/applications/cp/maths/numeration/complement-10-01,2063551c,Compléter jusqu'à 10 (avec dessin),CP,maths,numeration,facile,1,10,,count-objects,complementA10Emoji,S1.1.2
 application,fr/applications/cp/maths/numeration/compter-de-n,57232e9f,Compter de N en N,CP,maths,numeration,facile,1,10,,sequence,compterDeN,S2.1.1
@@ -396,6 +396,7 @@ exercice,fr/exercices/cm1/maths/numeration/calcul-mental-grands-01,4.81e+29,Calc
 exercice,fr/exercices/cm1/maths/numeration/tableau-numeration-01,ead5bb7c,Tableau de numération,CM1,maths,numeration,facile,3,3,,fill-table,,S1.1.1
 application,fr/applications/cm1/maths/numeration/arrondir-millier,83e8ee29,Arrondir au millier,CM1,maths,numeration,moyen,1,10,,number-check,arrondirNombre,S1.1.1
 application,fr/applications/cm1/maths/numeration/comparer-grands-nombres,8e69df7a,Comparer de grands nombres,CM1,maths,numeration,moyen,1,10,,compare,comparerNombres,S3.1.1
+application,fr/applications/cm1/maths/numeration/decimal-triple-01,bc37e1f0,Les trois représentations des nombres décimaux,CM1,maths,numeration,moyen,1,10,,decimal-triple,decimalTriple,N4.2
 application,fr/applications/cm1/maths/numeration/lire-boulier,4700f520,Lire un boulier — jusqu'au million,CM1,maths,numeration,moyen,3,18,too-long,number-check,lireAbacus,S2.1.2
 application,fr/applications/cm1/maths/numeration/multiples-moyen,57aead3c,"Multiples de 2 à 9, 10 et 100",CM1,maths,numeration,moyen,4,40,too-long,checkbox,multiplesOf,S1.1.1
 application,fr/applications/cm1/maths/numeration/place-valeur-01,ea8d26cf,Valeur des chiffres jusqu'au million,CM1,maths,numeration,moyen,1,15,too-long,number-check,chiffrePlaceValeur,S1.1.1

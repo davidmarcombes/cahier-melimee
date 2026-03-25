@@ -3018,6 +3018,38 @@ const generators = {
       };
     },
   },
+
+  decimalTriple: {
+    generate(params = {}) {
+      const dp = params.decPlaces ?? rand(1, params.maxDec ?? 3);
+      const scale = Math.pow(10, dp);
+      const minInt = params.minInt ?? 0;
+      const maxInt = params.maxInt ?? 9;
+      const intPart = rand(minInt, maxInt);
+
+      // Ensure last decimal digit is non-zero (no trailing zeros in decimal part)
+      let decDigits;
+      do { decDigits = rand(1, scale - 1); } while (decDigits % 10 === 0);
+
+      const decStr = String(decDigits).padStart(dp, '0');
+      const dtDecimal = `${intPart},${decStr}`;
+      const dtFrac = { num: intPart * scale + decDigits, den: scale };
+
+      // [dizaines, unites, dixiemes, centiemes, milliemes] — null = column not shown
+      const dtPlaces = [
+        intPart >= 10 ? Math.floor(intPart / 10) : null,
+        intPart % 10,
+        dp >= 1 ? Number(decStr[0]) : null,
+        dp >= 2 ? Number(decStr[1]) : null,
+        dp >= 3 ? Number(decStr[2]) : null,
+      ];
+
+      const choices = params.given ?? ['fraction', 'decimal', 'places'];
+      const dtGiven = randItem(Array.isArray(choices) ? choices : [choices]);
+
+      return { type: 'decimal-triple', dtGiven, dtFrac, dtDecimal, dtPlaces };
+    },
+  },
 };
 
 // Returns the palette color index that the number n belongs to for a given rule.

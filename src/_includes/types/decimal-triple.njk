@@ -1,0 +1,116 @@
+{# Decimal Triple — fraction décimale / chiffres des... / nombre décimal #}
+<div x-show="cur.type === 'decimal-triple'" class="space-y-4">
+
+  {# ── 1. Fraction décimale ─────────────────────────────────────────────── #}
+  <div class="rounded-2xl border-2 p-5"
+       :class="cur.dtGiven === 'fraction' ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-700' : 'bg-surface-subtle border-slate-200 dark:border-slate-700'">
+    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center">Fraction décimale</p>
+
+    <template x-if="cur.dtGiven === 'fraction'">
+      <div class="flex justify-center text-4xl font-extrabold text-primary-700 dark:text-primary-300">
+        <span class="frac"><span class="fn" x-text="cur.dtFrac.num"></span><span class="fd" x-text="cur.dtFrac.den"></span></span>
+      </div>
+    </template>
+
+    <template x-if="cur.dtGiven !== 'fraction'">
+      <div class="flex justify-center">
+        <div class="inline-flex flex-col items-center gap-0">
+          <input type="text" inputmode="numeric" x-model="dtInputs.fracNum"
+                 @keydown.enter="check()" :disabled="solved" placeholder="?" aria-label="Numérateur"
+                 class="w-20 h-11 text-center text-2xl font-extrabold border-2 border-b-0 rounded-t-xl focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+                 :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('fracNum')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('fracNum')}"/>
+          <div class="w-20 h-0.5" :class="solved?'bg-green-500':dtErrors.includes('fracNum')||dtErrors.includes('fracDen')?'bg-red-400':'bg-slate-400 dark:bg-slate-500'"></div>
+          <input type="text" inputmode="numeric" x-model="dtInputs.fracDen"
+                 @keydown.enter="check()" :disabled="solved" placeholder="?" aria-label="Dénominateur"
+                 class="w-20 h-11 text-center text-2xl font-extrabold border-2 border-t-0 rounded-b-xl focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+                 :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('fracDen')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('fracDen')}"/>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  {# ── 2. Chiffres des... ───────────────────────────────────────────────── #}
+  <div class="rounded-2xl border-2 p-5"
+       :class="cur.dtGiven === 'places' ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-700' : 'bg-surface-subtle border-slate-200 dark:border-slate-700'">
+    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center">Chiffres des…</p>
+    <div class="overflow-x-auto">
+      <table class="mx-auto border-collapse">
+        <thead>
+          <tr>
+            <template x-if="cur.dtPlaces[0] !== null"><th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dizaines</th></template>
+            <th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">unités</th>
+            <th class="px-1 border-none bg-transparent"></th>
+            <template x-if="cur.dtPlaces[2] !== null"><th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dixièmes</th></template>
+            <template x-if="cur.dtPlaces[3] !== null"><th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">centièmes</th></template>
+            <template x-if="cur.dtPlaces[4] !== null"><th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">millièmes</th></template>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {# dizaines #}
+            <template x-if="cur.dtPlaces[0] !== null">
+              <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
+                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[0]"></span></template>
+                <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.dizaines" @keydown.enter="check()" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('dizaines')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('dizaines')}"/></template>
+              </td>
+            </template>
+            {# unites — always shown #}
+            <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
+              <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[1]"></span></template>
+              <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.unites" @keydown.enter="check()" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('unites')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('unites')}"/></template>
+            </td>
+            {# decimal comma separator #}
+            <td class="px-0.5 py-2 text-center text-2xl font-extrabold text-content-default border-none">,</td>
+            {# dixiemes #}
+            <template x-if="cur.dtPlaces[2] !== null">
+              <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
+                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[2]"></span></template>
+                <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.dixiemes" @keydown.enter="check()" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('dixiemes')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('dixiemes')}"/></template>
+              </td>
+            </template>
+            {# centiemes #}
+            <template x-if="cur.dtPlaces[3] !== null">
+              <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
+                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[3]"></span></template>
+                <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.centiemes" @keydown.enter="check()" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('centiemes')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('centiemes')}"/></template>
+              </td>
+            </template>
+            {# milliemes #}
+            <template x-if="cur.dtPlaces[4] !== null">
+              <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
+                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[4]"></span></template>
+                <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.milliemes" @keydown.enter="check()" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('milliemes')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('milliemes')}"/></template>
+              </td>
+            </template>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {# ── 3. Nombre décimal ────────────────────────────────────────────────── #}
+  <div class="rounded-2xl border-2 p-5"
+       :class="cur.dtGiven === 'decimal' ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-700' : 'bg-surface-subtle border-slate-200 dark:border-slate-700'">
+    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center">Nombre décimal</p>
+    <template x-if="cur.dtGiven === 'decimal'">
+      <div class="flex justify-center text-4xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtDecimal"></div>
+    </template>
+    <template x-if="cur.dtGiven !== 'decimal'">
+      <div class="flex justify-center">
+        <input type="text" inputmode="decimal" x-model="dtInputs.decimal"
+               @keydown.enter="check()" :disabled="solved" placeholder="0,0" aria-label="Nombre décimal"
+               class="w-36 h-12 text-center text-2xl font-extrabold border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+               :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('decimal')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('decimal')}"/>
+      </div>
+    </template>
+  </div>
+
+  {# ── Vérifier ─────────────────────────────────────────────────────────── #}
+  <div x-show="!solved" class="flex justify-center pt-1">
+    <button type="button" @click="check()" :disabled="solved"
+      class="px-8 py-2.5 text-base font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
+      Vérifier
+    </button>
+  </div>
+
+</div>

@@ -40,6 +40,7 @@ const TYPE_SCHEMAS = {
   'bar-chart': { required: ['labels', 'values', 'yMax', 'yStep'], arrays: ['labels', 'values'] },
   'calc-chain': { required: ['chain'] },
   'inverse-problem': { required: ['ipBase', 'ipInverses'], arrays: ['ipInverses'] },
+  'decimal-triple': { required: [], requireOneOf: [['dtFrac', 'dtDecimal', 'dtPlaces', 'dtGiven'], ['generator']] },
 };
 
 const COLORS = {

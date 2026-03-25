@@ -75,6 +75,8 @@ export function seriesPlayer(exercises, seriesId) {
     ipInputs: [],       // inputs for base + inverses
     ipSolved: [],       // solved flags for base + inverses
     ipErrors: [],       // error flags for base + inverses
+    dtInputs: {},       // inputs for decimal-triple: fracNum, fracDen, decimal, dizaines, unites, dixiemes, centiemes, milliemes
+    dtErrors: [],       // field keys with wrong answers
 
     /* Helpers */
     get cur() {
@@ -342,6 +344,11 @@ export function seriesPlayer(exercises, seriesId) {
         this.ipSolved = [];
       }
       this.ipErrors = [];
+
+      this.dtInputs = _e.type === 'decimal-triple'
+        ? { fracNum: '', fracDen: '', decimal: '', dizaines: '', unites: '', dixiemes: '', centiemes: '', milliemes: '' }
+        : {};
+      this.dtErrors = [];
 
       if (this._dragErrTimer) {
         clearTimeout(this._dragErrTimer);
@@ -874,6 +881,29 @@ export function seriesPlayer(exercises, seriesId) {
           this.ccErrors = errors;
           this._flashError(() => { this.ccErrors = []; });
         }
+        return;
+      }
+
+      if (_e.type === 'decimal-triple') {
+        const KEYS = ['dizaines', 'unites', 'dixiemes', 'centiemes', 'milliemes'];
+        const dtp = _e.dtPlaces || [null, null, null, null, null];
+        const errors = [];
+        if (_e.dtGiven !== 'fraction') {
+          if (!this.dtInputs.fracNum?.trim() || !this.dtInputs.fracDen?.trim()) { this._flashError(); return; }
+          if (normalizeAnswer(this.dtInputs.fracNum) !== normalizeAnswer(String(_e.dtFrac.num))) errors.push('fracNum');
+          if (normalizeAnswer(this.dtInputs.fracDen) !== normalizeAnswer(String(_e.dtFrac.den))) errors.push('fracDen');
+        }
+        if (_e.dtGiven !== 'decimal') {
+          if (!this.dtInputs.decimal?.trim()) { this._flashError(); return; }
+          if (normalizeAnswer(this.dtInputs.decimal) !== normalizeAnswer(_e.dtDecimal)) errors.push('decimal');
+        }
+        if (_e.dtGiven !== 'places') {
+          const active = KEYS.filter((_, i) => dtp[i] !== null);
+          if (active.some(k => !this.dtInputs[k]?.trim())) { this._flashError(); return; }
+          KEYS.forEach((key, i) => { if (dtp[i] !== null && normalizeAnswer(this.dtInputs[key]) !== normalizeAnswer(String(dtp[i]))) errors.push(key); });
+        }
+        if (errors.length === 0) { this.dtErrors = []; this._markSolvedAndAdvance(); }
+        else { this.dtErrors = errors; this._flashError(() => { this.dtErrors = []; }); }
         return;
       }
 

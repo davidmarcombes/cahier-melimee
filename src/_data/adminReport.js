@@ -63,20 +63,42 @@ module.exports = function () {
     }
   }
 
-  // Aggregate LLM results by seriesId (detect model column dynamically)
+  // Aggregate LLM results by seriesId (detect model columns dynamically)
   const llm = {};
   const llmMeta = llmRows[0] ? Object.keys(llmRows[0]).filter((k) => !['path','seriesId','hash','manual'].includes(k)) : [];
   for (const row of llmRows) {
     if (!row.seriesId) continue;
-    if (!llm[row.seriesId]) llm[row.seriesId] = { ok: 0, fail: 0, skip: 0, total: 0 };
+    if (!llm[row.seriesId]) {
+      llm[row.seriesId] = { ok: 0, fail: 0, skip: 0, total: 0, byModel: {} };
+      for (const col of llmMeta) llm[row.seriesId].byModel[col] = { ok: 0, fail: 0, skip: 0, total: 0 };
+    }
     for (const col of llmMeta) {
       const v = row[col];
       if (!v) continue;
       llm[row.seriesId].total++;
-      if (v === 'ok') llm[row.seriesId].ok++;
-      else if (v === 'fail') llm[row.seriesId].fail++;
-      else if (v === 'skip') llm[row.seriesId].skip++;
+      llm[row.seriesId].byModel[col].total++;
+      if (v === 'ok')   { llm[row.seriesId].ok++;   llm[row.seriesId].byModel[col].ok++; }
+      else if (v === 'fail') { llm[row.seriesId].fail++; llm[row.seriesId].byModel[col].fail++; }
+      else if (v === 'skip') { llm[row.seriesId].skip++; llm[row.seriesId].byModel[col].skip++; }
     }
+  }
+
+  // Assign disambiguation emoji to series that share a title (same logic as csvPayload)
+  const DISAMBIG_EMOJIS = [
+    '🐶','🐱','🐭','🐰','🦊','🐻','🐼','🐨','🐯','🦁',
+    '🐮','🐷','🐸','🐵','🐧','🦆','🦉','🦋','🐢','🐬',
+  ];
+  const byTitle = new Map();
+  for (const row of report) {
+    const key = (row.seriesTitle || '').trim();
+    if (!byTitle.has(key)) byTitle.set(key, []);
+    byTitle.get(key).push(row);
+  }
+  const emojiMap = new Map(); // id → emoji
+  for (const group of byTitle.values()) {
+    if (group.length < 2) continue;
+    group.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+    group.forEach((row, i) => emojiMap.set(row.id, DISAMBIG_EMOJIS[i % DISAMBIG_EMOJIS.length]));
   }
 
   return report.map((row) => {
@@ -109,7 +131,7 @@ module.exports = function () {
       path:         relPath,
       absPath,
       id:           row.id         || '',
-      seriesTitle:  row.seriesTitle || '',
+      seriesTitle:  (row.seriesTitle || '') + (emojiMap.has(row.id) ? ` ${emojiMap.get(row.id)}` : ''),
       level:        row.level      || '',
       topic:        row.topic      || '',
       subtopic:     row.subtopic   || '',
@@ -123,7 +145,13 @@ module.exports = function () {
       humanCoverage: h ? `${h.validated}/${h.total}` : '—',
       humanDate:     h && h.latestDate ? h.latestDate.slice(0, 10) : '',
       llmStatus,
-      llmCoverage:   l && l.total ? `${l.ok}/${l.total}` : '—',
+      llmCoverage: l && l.total
+        ? llmMeta.length > 1
+          ? llmMeta.filter(m => l.byModel[m].total > 0)
+                   .map(m => `${m.split(':')[0]}: ${l.byModel[m].ok}/${l.byModel[m].total}`)
+                   .join(' | ')
+          : `${l.ok}/${l.total}`
+        : '—',
       llmModels:     llmMeta.join(', '),
     };
   });

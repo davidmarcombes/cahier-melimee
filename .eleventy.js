@@ -813,11 +813,31 @@ module.exports = async function (eleventyConfig) {
   // Convert seriesMeta to compact CSV for the listing page
   const LEVEL_CODES = { CP: '1', CE1: '2', CE2: '3', CM1: '4', CM2: '5' };
   const DIFF_CODES = { facile: '1', moyen: '2', difficile: '3' };
+  const DISAMBIG_EMOJIS = [
+    '🐶','🐱','🐭','🐰','🦊','🐻','🐼','🐨','🐯','🦁',
+    '🐮','🐷','🐸','🐵','🐧','🦆','🦉','🦋','🐢','🐬',
+  ];
   const csvWarnings = [];
 
   eleventyConfig.addFilter('csvPayload', function (seriesMeta, defisMeta) {
     csvWarnings.length = 0;
     const allMeta = [...seriesMeta, ...(defisMeta || [])];
+
+    // Assign a disambiguation emoji to series that share a title.
+    // Groups sorted by id so assignment is stable across builds.
+    const byTitle = new Map();
+    for (const s of allMeta) {
+      const key = (s.seriesTitle || '').trim();
+      if (!byTitle.has(key)) byTitle.set(key, []);
+      byTitle.get(key).push(s);
+    }
+    const emojiMap = new Map(); // series id → emoji
+    for (const group of byTitle.values()) {
+      if (group.length < 2) continue;
+      group.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+      group.forEach((s, i) => emojiMap.set(s.id, DISAMBIG_EMOJIS[i % DISAMBIG_EMOJIS.length]));
+    }
+
     const lines = ['id,l,s,t,title,d,f'];
     for (const s of allMeta) {
       const l = LEVEL_CODES[s.level] || '?';
@@ -825,7 +845,8 @@ module.exports = async function (eleventyConfig) {
       const t = s.subtopic || '';
       const d = DIFF_CODES[s.difficulty] || '?';
       const f = s.folder === 'applications' ? 'a' : s.folder === 'defis' ? 'd' : 'e';
-      const title = (s.seriesTitle || '').replace(/,/g, ' ');
+      const emoji = emojiMap.get(s.id) ? ` ${emojiMap.get(s.id)}` : '';
+      const title = (s.seriesTitle || '').replace(/,/g, ' ') + emoji;
       if (t.length > 12) csvWarnings.push(`topic > 12 chars: "${t}" in ${s.series}`);
       if (title.includes(',')) csvWarnings.push(`title had comma (replaced): "${s.seriesTitle}" in ${s.series}`);
       const line = `${s.id},${l},${subj},${t},${title},${d},${f}`;

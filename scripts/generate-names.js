@@ -84,6 +84,8 @@ const data = {
       'méticuleux',
       'malin',
       'discret',
+      'temeraire',
+      'rusé',
     ],
   },
   feminine: {
