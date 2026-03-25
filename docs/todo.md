@@ -39,5 +39,8 @@
 
 - [_] Schema validation per exercise type — define required fields (answer for number-check, columns/rows/solution for logic-grid, etc.) and validate at build time with clear error messages pointing to the offending file.
 
+## Exercises rendering
+- [_] Add a shorthand (e.g. `&unit(€)` or `&u(c)`) to render a thin-space between a number and its unit in operations, so we can write `50&u(c)` and get a nice non-breaking thin space. Currently units are glued to numbers (`50c`) to avoid bad line breaks.
+
 ## LLM.txt
 - [_] Render is not good, problem with special chars and carraige returns

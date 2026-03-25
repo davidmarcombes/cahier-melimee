@@ -991,7 +991,6 @@ module.exports = async function (eleventyConfig) {
 
   // Dev-only: POST /api/human-validate → appends to reports/human-validate.csv
   const HUMAN_CSV = path.join(__dirname, 'reports/human-validate.csv');
-  const EXERCISES_ROOT = path.join(__dirname, 'src/fr/exercices');
   const ALL_EXERCISE_ROOTS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis']
     .map((r) => path.join(__dirname, r));
   const crypto = require('crypto');
@@ -1027,7 +1026,13 @@ module.exports = async function (eleventyConfig) {
       }
       return null;
     }
-    try { return scan(EXERCISES_ROOT); } catch (_) { return null; }
+    for (const root of ALL_EXERCISE_ROOTS) {
+      try {
+        const result = scan(root);
+        if (result) return result;
+      } catch (_) {}
+    }
+    return null;
   }
 
   function fileHash(filePath) {
