@@ -834,7 +834,7 @@ module.exports = async function (eleventyConfig) {
     const emojiMap = new Map(); // series id → emoji
     for (const group of byTitle.values()) {
       if (group.length < 2) continue;
-      group.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+      group.sort((a, b) => String(a.id ?? '').localeCompare(String(b.id ?? '')));
       group.forEach((s, i) => emojiMap.set(s.id, DISAMBIG_EMOJIS[i % DISAMBIG_EMOJIS.length]));
     }
 

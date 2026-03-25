@@ -130,7 +130,7 @@ export function seriesPlayer(exercises, seriesId) {
     get cgMarkerSvg() {
       if (!this.cur.cg || this.cgPoint === null) return '';
       const { cols = 6, rows = 6 } = this.cur.cg;
-      const PL = 40, PT = 20;
+      const PL = 40, PT = 38;
       const cw = 360 / cols, ch = 360 / rows;
       const px = PL + this.cgPoint.x * cw;
       const py = PT + (rows - this.cgPoint.y) * ch;
@@ -361,9 +361,16 @@ export function seriesPlayer(exercises, seriesId) {
     get trouParts() {
       const op = this.cur.operation;
       if (!op || !op.includes('?')) return null;
-      // Stash &box / &highlight spans
+      // Stash __-joined non-breaking segments (__ = non-breaking space glue).
+      // Any run of text between ? markers that contains __ becomes one atomic text part.
       const stash = [];
-      const safe = op.replace(/&(?:box|highlight)\([^)]*\)/g, (match) => {
+      let safe = op.replace(/[^?]+/g, (seg) => {
+        if (!seg.includes('__')) return seg;
+        stash.push(seg.replace(/__/g, '\u00A0'));
+        return `\x00${stash.length - 1}\x00`;
+      });
+      // Stash &box / &highlight spans
+      safe = safe.replace(/&(?:box|highlight)\([^)]*\)/g, (match) => {
         stash.push(renderOpShorthands(match));
         return `\x00${stash.length - 1}\x00`;
       });

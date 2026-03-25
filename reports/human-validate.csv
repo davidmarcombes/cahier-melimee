@@ -85,7 +85,7 @@ src/fr/applications/ce2/maths/numeration/nombres-pairs-impairs-02/03-melange.md,
 src/fr/applications/ce2/maths/numeration/nombres-pairs-impairs/01-pairs.md,a790dc59,7ea12efcf5f4fb38,
 src/fr/applications/ce2/maths/numeration/nombres-pairs-impairs/02-impairs.md,a790dc59,3488dfcfc549dc03,
 src/fr/applications/ce2/maths/numeration/nombres-pairs-impairs/03-melange.md,a790dc59,69b06078161e0ce6,
-src/fr/applications/ce2/maths/numeration/ordre-nombres-01/ordre-nombres-01.md,d3f7a192,c4272a968c78c1e8,
+src/fr/applications/ce2/maths/numeration/ordre-nombres-01/ordre-nombres-01.md,d3f7a192,c4272a968c78c1e8,2026-03-25T15:02:05.399Z
 src/fr/applications/ce2/maths/numeration/ordre-nombres-02/ordre-nombres-02.md,e4c8b203,ed3ce5ba20ccccc8,
 src/fr/applications/ce2/maths/numeration/place-valeur-01/place-valeur-01.md,e2413106,e6a5355ae0d14934,
 src/fr/applications/ce2/maths/numeration/recomposer-difficile/recomposer-difficile.md,ead3b372,7b4f0cdcb1ff0cb7,
@@ -212,7 +212,7 @@ src/fr/applications/cp/maths/numeration/chasse-aux-nombres-01/chasse-aux-nombres
 src/fr/applications/cp/maths/numeration/chasse-aux-nombres-02/chasse-aux-nombres-02.md,5d680d4b,d28d76bf8992870b,
 src/fr/applications/cp/maths/numeration/comparer-groupes-01/comparer-groupes-01.md,d2d61ad6,6f79134bfe4750c8,
 src/fr/applications/cp/maths/numeration/comparer-groupes-02/comparer-groupes-02.md,0f1a611a,f7d20015a31eccf8,
-src/fr/applications/cp/maths/numeration/comparer-nombres/comparer-nombres.md,9e2f72e9,7511b08962799dab,
+src/fr/applications/cp/maths/numeration/comparer-nombres/comparer-nombres.md,9e2f72e9,0c5f3623407a0027,2026-03-25T15:00:41.933Z
 src/fr/applications/cp/maths/numeration/complement-10-01/complement-10-01.md,2063551c,c268d52768fee709,
 src/fr/applications/cp/maths/numeration/complement-10-02/complement-10-02.md,4c3d3000,0e5b444b0e50564c,
 src/fr/applications/cp/maths/numeration/compter-de-n/compter-de-n.md,57232e9f,69d98f70d18c97b9,2026-03-25T10:46:28.184Z
@@ -635,7 +635,7 @@ src/fr/exercices/ce2/maths/mesures/perimetre-01/02-rectangle.md,e3cdb95d,d1454df
 src/fr/exercices/ce2/maths/mesures/perimetre-01/03-triangle.md,e3cdb95d,ee09dacb0b2f40bf,
 src/fr/exercices/ce2/maths/mesures/perimetre-01/04-carre-inconnu.md,e3cdb95d,285f0e2151c03e80,
 src/fr/exercices/ce2/maths/mesures/perimetre-01/05-rectangle-2.md,e3cdb95d,02f4c548f1dcaf78,
-src/fr/exercices/ce2/maths/numeration/comparaison-nombres-01/comparaison-nombres-01.md,4d5dc60c,96b161f032212c25,
+src/fr/exercices/ce2/maths/numeration/comparaison-nombres-01/comparaison-nombres-01.md,4d5dc60c,96b161f032212c25,2026-03-25T16:11:59.142Z
 src/fr/exercices/ce2/maths/numeration/comparaison-nombres-02/comparaison-nombres-02.md,3f083de4,e875f45666891476,
 src/fr/exercices/ce2/maths/numeration/comparaison-nombres-03/comparaison-nombres-03.md,5c85dc5d,f796ce404b47a57a,
 src/fr/exercices/ce2/maths/numeration/droite-graduee-01/01-lire-dizaine.md,e85fea16,dfd30beb721c9fb5,
@@ -1369,9 +1369,9 @@ src/fr/exercices/cp/maths/geometrie/quadrillage-lire-01/02-point-b.md,11934872,6
 src/fr/exercices/cp/maths/geometrie/quadrillage-lire-01/03-point-c.md,11934872,30068b5d64b54429,2026-03-25T13:08:26.144Z
 src/fr/exercices/cp/maths/geometrie/quadrillage-lire-01/04-point-d.md,11934872,07dbf3274906b26f,2026-03-25T13:08:26.144Z
 src/fr/exercices/cp/maths/geometrie/quadrillage-lire-01/05-point-e.md,11934872,432df7322f1a47c0,2026-03-25T13:08:26.144Z
-src/fr/exercices/cp/maths/geometrie/solides-01/01-noms-et-descriptions.md,51ab7ca3,2f6de61940dfb92b,
-src/fr/exercices/cp/maths/geometrie/solides-01/02-solide-et-objet.md,51ab7ca3,ce2307164994b8dd,
-src/fr/exercices/cp/maths/geometrie/solides-01/03-vrai-faux-solides.md,51ab7ca3,bfa641fb92c523c6,
+src/fr/exercices/cp/maths/geometrie/solides-01/01-noms-et-descriptions.md,51ab7ca3,2f6de61940dfb92b,2026-03-25T16:13:01.133Z
+src/fr/exercices/cp/maths/geometrie/solides-01/02-solide-et-objet.md,51ab7ca3,ce2307164994b8dd,2026-03-25T16:13:01.133Z
+src/fr/exercices/cp/maths/geometrie/solides-01/03-vrai-faux-solides.md,51ab7ca3,bfa641fb92c523c6,2026-03-25T16:13:01.133Z
 src/fr/exercices/cp/maths/geometrie/symetrie-01/01-reconnaitre.md,960eb586,026310cfebba2070,
 src/fr/exercices/cp/maths/geometrie/symetrie-01/02-axes.md,960eb586,becea605f1e1cd2b,
 src/fr/exercices/cp/maths/geometrie/symetrie-01/03-lettres.md,960eb586,70ab541fce6b84d6,

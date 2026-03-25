@@ -216,6 +216,20 @@ Create at least one series under `src/fr/exercices/`, then run `npm run generate
 - Add a row to the **Exercise Types** table above.
 - Add new YAML fields to the **Front-Matter Schema** section below.
 
+### `operation` string conventions (`number-check` / generators)
+
+The `operation` field is parsed into visual parts by the `trouParts` getter. Numbers and text alternate as separate flex items. To keep words and numbers together (no line-break between them), use `__` as a **non-breaking space glue**:
+
+```javascript
+// Bad: "6 dizaines et 5 unités = ?" — "6" wraps to its own line
+operation: `6 dizaines et 5 unités = ?`
+
+// Good: the whole phrase becomes one non-breaking flex item
+operation: `6__dizaines__et__5__unités__=__?`
+```
+
+`__` is replaced with `&nbsp;` and the whole segment is kept atomic. Use it whenever a number appears mid-phrase (e.g. unit phrases, equality statements).
+
 ## Adding a New Generator
 
 1. Add the generator function in `src/assets/js/generators.js` (single source for both build and runtime)

@@ -627,8 +627,8 @@ function coordinateGridSvg(cg) {
   const cols = cg.cols ?? 6;
   const rows = cg.rows ?? 6;
 
-  const VW = 420, VH = 410;
-  const PL = 40, PR = 20, PT = 20, PB = 30;
+  const VW = 435, VH = 428;
+  const PL = 40, PR = 35, PT = 38, PB = 30;
   const GW = VW - PL - PR; // 360
   const GH = VH - PT - PB; // 360
   const cw = GW / cols;

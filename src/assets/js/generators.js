@@ -107,10 +107,10 @@ const generators = {
 
   sommesCibles: {
     generate: (params = {}) => {
-      const target       = params.target       ?? 1000;
-      const step         = params.step         ?? 100;
+      const target = params.target ?? 1000;
+      const step = params.step ?? 100;
       const correctCount = params.correctCount ?? 3;
-      const count        = params.count        ?? 8;
+      const count = params.count ?? 8;
 
       const mkKey = (a, b) => `${Math.min(a, b)}+${Math.max(a, b)}`;
       const used = new Set();
@@ -252,10 +252,11 @@ const generators = {
     generate: (params = {}) => {
       const t = rand(params.minTens ?? 1, params.maxTens ?? 9);
       const u = rand(params.minOnes ?? 0, params.maxOnes ?? 9);
-      const op =
-        u === 0
-          ? `${t} dizaine${t > 1 ? 's' : ''} et 0 unité = ?`
-          : `${t} dizaine${t > 1 ? 's' : ''} et ${u} unité${u > 1 ? 's' : ''} = ?`;
+
+      const op = u === 0
+        ? `${t}__dizaine${t > 1 ? 's' : ''} 0__unité__=__?`
+        : `${t}__dizaine${t > 1 ? 's' : ''} ${u}__unité${u > 1 ? 's' : ''}__=__?`;
+
       return { type: 'number-check', operation: op, answers: [String(t * 10 + u)] };
     },
   },
@@ -344,11 +345,11 @@ const generators = {
   complementNombre: {
     generate: (params = {}) => {
       const target = params.target ?? 10 ** rand(1, 4);
-      const step   = params.step ?? 1;
-      const min    = params.min ?? step;
-      const max    = params.max ?? target - step;
-      const slots  = Math.floor((max - min) / step) + 1;
-      const num    = min + rand(0, slots - 1) * step;
+      const step = params.step ?? 1;
+      const min = params.min ?? step;
+      const max = params.max ?? target - step;
+      const slots = Math.floor((max - min) / step) + 1;
+      const num = min + rand(0, slots - 1) * step;
       const complement = target - num;
       const fmt = n => n.toLocaleString('fr-FR');
       const side = params.side === 'random'
@@ -494,8 +495,8 @@ const generators = {
       // Distractors — different values that look plausible
       const dPool = [];
       if (b !== a) dPool.push(frac(b * 10 + a, 10));           // swap digits: ba/10
-      if (a > 1)   dPool.push(frac((a - 1) * 10 + b, 10));    // (a-1).b
-      if (a < 9)   dPool.push(frac((a + 1) * 10 + b, 10));    // (a+1).b
+      if (a > 1) dPool.push(frac((a - 1) * 10 + b, 10));    // (a-1).b
+      if (a < 9) dPool.push(frac((a + 1) * 10 + b, 10));    // (a+1).b
       if (b !== a) dPool.push(`${b}&nbsp;+&nbsp;${frac(a, 10)}`); // b + a/10
       dPool.push(frac(N * 10 + 1, 100));                       // N*10+1 /100 (≠ N*10/100)
       dPool.push(frac(a * 10, 10));                            // a.0
@@ -572,10 +573,10 @@ const generators = {
   //       'hard'   — 3 edges given, find all 3 vertices (A=(f+d-e)/2 etc., always integer)
   triArith: {
     generate(params = {}) {
-      const mode      = params.mode      ?? 'easy';
-      const min       = params.min       ?? 1;
-      const max       = params.max       ?? 20;
-      const isMult    = params.op        === 'mult';
+      const mode = params.mode ?? 'easy';
+      const min = params.min ?? 1;
+      const max = params.max ?? 20;
+      const isMult = params.op === 'mult';
 
       let A, B, C, f, d, e;
       if (isMult) {
@@ -622,16 +623,16 @@ const generators = {
   //   compensMult  : a×b vs (a×2)×(b÷2)  = always equal (b even only)
   compareExpressions: {
     generate(params = {}) {
-      const level     = params.level     ?? 'add';
-      const count     = params.count     ?? 4;
-      const min       = params.min       ?? 10;
-      const max       = params.max       ?? 99;
+      const level = params.level ?? 'add';
+      const count = params.count ?? 4;
+      const min = params.min ?? 10;
+      const max = params.max ?? 99;
       const maxFactor = params.maxFactor ?? 9;
 
       const byLevel = {
-        add:  ['sameLeftAdd', 'sameLeftSub', 'compensAdd'],
+        add: ['sameLeftAdd', 'sameLeftSub', 'compensAdd'],
         mult: ['sameFactMult', 'sameDivDiv', 'distribMult', 'compensMult'],
-        mix:  ['sameLeftAdd', 'sameLeftSub', 'compensAdd', 'sameFactMult', 'sameDivDiv', 'distribMult'],
+        mix: ['sameLeftAdd', 'sameLeftSub', 'compensAdd', 'sameFactMult', 'sameDivDiv', 'distribMult'],
       };
       const pool = byLevel[level] ?? byLevel.add;
 
@@ -648,7 +649,7 @@ const generators = {
           const delta = rand(1, 5) * (Math.random() < 0.5 ? 1 : -1);
           const c = b + delta;
           if (c <= 0 || a + c > max + 50) continue;
-          left = `${a} + ${b}`;  right = `${a} + ${c}`;
+          left = `${a} + ${b}`; right = `${a} + ${c}`;
           answer = delta > 0 ? '>' : '<';
 
         } else if (strategy === 'sameLeftSub') {
@@ -657,7 +658,7 @@ const generators = {
           const delta = rand(1, 5) * (Math.random() < 0.5 ? 1 : -1);
           const c = b + delta;
           if (c <= 0 || c >= a) continue;
-          left = `${a} − ${b}`;  right = `${a} − ${c}`;
+          left = `${a} − ${b}`; right = `${a} − ${c}`;
           answer = delta > 0 ? '<' : '>'; // subtracting more → smaller result
 
         } else if (strategy === 'compensAdd') {
@@ -665,7 +666,7 @@ const generators = {
           const b = rand(10, 30);
           const k = rand(1, 5);
           if (b - k <= 0) continue;
-          left = `${a} + ${b}`;  right = `${a + k} + ${b - k}`;
+          left = `${a} + ${b}`; right = `${a + k} + ${b - k}`;
           answer = '=';
 
         } else if (strategy === 'sameFactMult') {
@@ -674,7 +675,7 @@ const generators = {
           const delta = rand(1, 2) * (Math.random() < 0.5 ? 1 : -1);
           const c = b + delta;
           if (c < 2 || c > maxFactor + 2) continue;
-          left = `${a} × ${b}`;  right = `${a} × ${c}`;
+          left = `${a} × ${b}`; right = `${a} × ${c}`;
           answer = delta > 0 ? '>' : '<';
 
         } else if (strategy === 'sameDivDiv') {
@@ -682,16 +683,16 @@ const generators = {
           const b = rand(2, maxFactor);
           if (a === b) continue;
           const dividend = a * b * rand(1, 2);
-          left = `${dividend} ÷ ${a}`;  right = `${dividend} ÷ ${b}`;
+          left = `${dividend} ÷ ${a}`; right = `${dividend} ÷ ${b}`;
           answer = a < b ? '>' : '<'; // smaller divisor → bigger quotient
 
         } else if (strategy === 'distribMult') {
           const a = rand(2, maxFactor);
           const b = rand(3, maxFactor);
           if (Math.random() < 0.5) {
-            left = `${a} × ${b}`;  right = `${a} × ${b - 1} + ${a}`;
+            left = `${a} × ${b}`; right = `${a} × ${b - 1} + ${a}`;
           } else {
-            left = `${a} × ${b}`;  right = `${a} × ${b + 1} − ${a}`;
+            left = `${a} × ${b}`; right = `${a} × ${b + 1} − ${a}`;
           }
           answer = '=';
 
@@ -699,7 +700,7 @@ const generators = {
           const a = rand(2, Math.floor(maxFactor / 2));
           const b = rand(2, maxFactor);
           if (b % 2 !== 0) continue;
-          left = `${a} × ${b}`;  right = `${a * 2} × ${b / 2}`;
+          left = `${a} × ${b}`; right = `${a * 2} × ${b / 2}`;
           answer = '=';
         }
 
@@ -1302,11 +1303,11 @@ const generators = {
   // params: mode ('add'|'mult'|'alterne'), min (1), max (20), maxFactor (9)
   famillesFaits: {
     generate(params = {}) {
-      const mode      = params.mode      ?? 'add';
-      const min       = params.min       ?? 1;
-      const max       = params.max       ?? 20;
+      const mode = params.mode ?? 'add';
+      const min = params.min ?? 1;
+      const max = params.max ?? 20;
       const maxFactor = params.maxFactor ?? 9;
-      const isMult    = mode === 'mult' || (mode === 'alterne' && Math.random() < 0.5);
+      const isMult = mode === 'mult' || (mode === 'alterne' && Math.random() < 0.5);
 
       const eq = (left, op, right, res) =>
         `<span class="font-mono">${left} ${op} ${right} = ${res}</span>`;
@@ -1367,13 +1368,13 @@ const generators = {
   // params: ops (['+','-','×','÷']), min, max, maxFactor, count, trueRatio, style ('standard'|'relational')
   vraiFauxOps: {
     generate(params = {}) {
-      const ops        = params.ops        ?? ['+', '-'];
-      const min        = params.min        ?? 1;
-      const max        = params.max        ?? 20;
-      const maxFactor  = params.maxFactor  ?? 9;
-      const count      = params.count      ?? 5;
-      const trueRatio  = params.trueRatio  ?? 0.5;
-      const style      = params.style      ?? 'standard';
+      const ops = params.ops ?? ['+', '-'];
+      const min = params.min ?? 1;
+      const max = params.max ?? 20;
+      const maxFactor = params.maxFactor ?? 9;
+      const count = params.count ?? 5;
+      const trueRatio = params.trueRatio ?? 0.5;
+      const style = params.style ?? 'standard';
 
       // Decide which slots are true (guaranteed trueRatio mix)
       const trueCount = Math.round(count * trueRatio);
@@ -1512,17 +1513,17 @@ const generators = {
   // params: step (5/15/30), pairs (default 4), clockSize (default 72)
   lireHeureMatching: {
     generate(params = {}) {
-      const step      = params.step      ?? 5;
-      const pairCount = params.pairs     ?? 4;
-      const size      = params.clockSize ?? 72;
+      const step = params.step ?? 5;
+      const pairCount = params.pairs ?? 4;
+      const size = params.clockSize ?? 72;
 
       const toFrench = (h, m) => {
-        const h12   = h % 12 || 12;
+        const h12 = h % 12 || 12;
         const hNext = (h12 % 12) + 1;
-        const after = { 5:'cinq', 10:'dix', 15:'et quart', 20:'vingt', 25:'vingt-cinq', 30:'et demie' };
-        const before = { 35:'vingt-cinq', 40:'vingt', 45:'le quart', 50:'dix', 55:'cinq' };
-        if (m === 0)  return `${h12}h pile`;
-        if (m <= 30)  return `${h12}h ${after[m]}`;
+        const after = { 5: 'cinq', 10: 'dix', 15: 'et quart', 20: 'vingt', 25: 'vingt-cinq', 30: 'et demie' };
+        const before = { 35: 'vingt-cinq', 40: 'vingt', 45: 'le quart', 50: 'dix', 55: 'cinq' };
+        if (m === 0) return `${h12}h pile`;
+        if (m <= 30) return `${h12}h ${after[m]}`;
         return `${hNext}h moins ${before[m]}`;
       };
 
@@ -1545,8 +1546,8 @@ const generators = {
       return {
         type: 'matching',
         pairs: {
-          left:    chosen.map(({ h, m }) => clockSvg(h, m, size)),
-          right:   rightOrder.map(ri => labels[ri]),
+          left: chosen.map(({ h, m }) => clockSvg(h, m, size)),
+          right: rightOrder.map(ri => labels[ri]),
           answers,
         },
       };
@@ -2127,7 +2128,7 @@ const generators = {
       const minVal = params.min ?? d * 2;
       const maxVal = params.max ?? d * 10;
       const first = Math.ceil(minVal / d) * d;
-      const last  = Math.floor(maxVal / d) * d;
+      const last = Math.floor(maxVal / d) * d;
       const n = first + Math.floor(Math.random() * ((last - first) / d + 1)) * d;
       return {
         type: 'number-check',
@@ -2370,8 +2371,8 @@ const generators = {
   // params: min (100), max (999), pairs (5), style ('standard'|'cdu'|'mixed')
   comparaisonNombres: {
     generate(params = {}) {
-      const min   = params.min   ?? 100;
-      const max   = params.max   ?? 999;
+      const min = params.min ?? 100;
+      const max = params.max ?? 999;
       const pairs = params.pairs ?? 5;
       const style = params.style ?? 'mixed';
 
@@ -2381,7 +2382,7 @@ const generators = {
         const d = Math.floor((n % 100) / 10);
         const u = n % 10;
         if (max >= 100) return `${c}c${d}d${u}u`;
-        if (max >= 10)  return `${d}d${u}u`;
+        if (max >= 10) return `${d}d${u}u`;
         return `${u}u`;
       };
 
@@ -2424,7 +2425,7 @@ const generators = {
             left = fmt(a, false); right = fmt(b, true); // always standard = CDU
           } else {
             const r = Math.random();
-            left  = fmt(a, r < 0.4);
+            left = fmt(a, r < 0.4);
             right = fmt(b, r >= 0.4 && r < 0.8);
           }
         }
@@ -2435,7 +2436,7 @@ const generators = {
 
       return {
         type: 'compare',
-        title: 'Compare les nombres en écrivant &gt;, &lt; ou =.',
+        title: 'Compare les nombres.',
         comparisons,
       };
     },
@@ -2446,7 +2447,7 @@ const generators = {
   chiffrePlaceValeur: {
     generate(params = {}) {
       const NAMES = ['unités', 'dizaines', 'centaines', 'milliers',
-                     'dizaines de milliers', 'centaines de milliers'];
+        'dizaines de milliers', 'centaines de milliers'];
       const places = params.places ?? [0, 1, 2];
       const maxNum = params.maxNum ?? 999;
 
@@ -2477,15 +2478,15 @@ const generators = {
   multiplicationsDirectes: {
     generate(params = {}) {
       const powers = params.powers ?? [10, 100, 1000];
-      const aMin   = params.aMin   ?? 2;
-      const aMax   = params.aMax   ?? 9;
-      const bMin   = params.bMin   ?? 2;
-      const bMax   = params.bMax   ?? 9;
+      const aMin = params.aMin ?? 2;
+      const aMax = params.aMax ?? 9;
+      const bMin = params.bMin ?? 2;
+      const bMax = params.bMax ?? 9;
       const r = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
 
-      const power  = powers[Math.floor(Math.random() * powers.length)];
-      const a      = r(aMin, aMax);
-      const b      = r(bMin, bMax);
+      const power = powers[Math.floor(Math.random() * powers.length)];
+      const a = r(aMin, aMax);
+      const b = r(bMin, bMax);
       const zeroes = '0'.repeat(Math.log10(power));
 
       return {
@@ -2501,18 +2502,18 @@ const generators = {
   // params: power (10|100|1000), aMin (2), aMax (9), bMin (2), bMax (9)
   multiplicationsEtapes: {
     generate(params = {}) {
-      const power  = params.power  ?? 10;
-      const aMin   = params.aMin   ?? 2;
-      const aMax   = params.aMax   ?? 9;
-      const bMin   = params.bMin   ?? 2;
-      const bMax   = params.bMax   ?? 9;
+      const power = params.power ?? 10;
+      const aMin = params.aMin ?? 2;
+      const aMax = params.aMax ?? 9;
+      const bMin = params.bMin ?? 2;
+      const bMax = params.bMax ?? 9;
       const r = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
 
       const a = r(aMin, aMax);
       const b = r(bMin, bMax);
-      const zeroes  = '0'.repeat(Math.log10(power));
+      const zeroes = '0'.repeat(Math.log10(power));
       const product = a * b;
-      const result  = product * power;
+      const result = product * power;
 
       return {
         type: 'number-check',
@@ -2528,13 +2529,13 @@ const generators = {
   // Uses integer arithmetic to avoid floating-point drift.
   multDecimales: {
     generate(params = {}) {
-      const powers  = params.powers  ?? [10, 100, 1000];
-      const maxDec  = params.maxDec  ?? 2;
+      const powers = params.powers ?? [10, 100, 1000];
+      const maxDec = params.maxDec ?? 2;
       const wholeMax = params.wholeMax ?? 99;
 
       const power = powers[rand(0, powers.length - 1)];
-      const pExp  = Math.round(Math.log10(power)); // 1-4
-      const d     = rand(0, maxDec);               // decimal places in input
+      const pExp = Math.round(Math.log10(power)); // 1-4
+      const d = rand(0, maxDec);               // decimal places in input
 
       // Whole part
       const whole = rand(1, wholeMax);
@@ -2547,7 +2548,7 @@ const generators = {
       }
 
       // Mantissa = whole * 10^d + parseInt(decStr)
-      const decNum   = d > 0 ? parseInt(decStr, 10) : 0;
+      const decNum = d > 0 ? parseInt(decStr, 10) : 0;
       const mantissa = whole * Math.pow(10, d) + decNum;
 
       // result = mantissa × 10^(pExp-d)  [pure integer arithmetic]
@@ -2579,14 +2580,14 @@ const generators = {
   // params: powers, maxDec (decimal places in result), wholeMin (0), wholeMax (99)
   divDecimales: {
     generate(params = {}) {
-      const powers   = params.powers   ?? [10, 100, 1000];
-      const maxDec   = params.maxDec   ?? 1;
+      const powers = params.powers ?? [10, 100, 1000];
+      const maxDec = params.maxDec ?? 1;
       const wholeMin = params.wholeMin ?? 1;
       const wholeMax = params.wholeMax ?? 99;
 
       const power = powers[rand(0, powers.length - 1)];
-      const pExp  = Math.round(Math.log10(power)); // 1-4
-      const d     = rand(0, maxDec); // decimal places in RESULT
+      const pExp = Math.round(Math.log10(power)); // 1-4
+      const d = rand(0, maxDec); // decimal places in RESULT
 
       const whole = rand(wholeMin, wholeMax);
       let decStr = '';
@@ -2595,7 +2596,7 @@ const generators = {
         decStr += rand(1, 9); // no trailing zero
       }
 
-      const decNum   = d > 0 ? parseInt(decStr, 10) : 0;
+      const decNum = d > 0 ? parseInt(decStr, 10) : 0;
       const mantissa = whole * Math.pow(10, d) + decNum; // result as integer × 10^d
 
       // dividend = result × power = mantissa × 10^(pExp-d)
@@ -2636,15 +2637,15 @@ const generators = {
   // params: powers, maxDec, wholeMin, wholeMax, variants (array of hole types)
   multDivTrou: {
     generate(params = {}) {
-      const powers   = params.powers   ?? [10, 100, 1000];
-      const maxDec   = params.maxDec   ?? 2;
+      const powers = params.powers ?? [10, 100, 1000];
+      const maxDec = params.maxDec ?? 2;
       const wholeMin = params.wholeMin ?? 1;
       const wholeMax = params.wholeMax ?? 99;
       const variants = params.variants ?? ['mult_input', 'div_result', 'div_power'];
 
       const power = powers[rand(0, powers.length - 1)];
-      const pExp  = Math.round(Math.log10(power));
-      const d     = rand(0, maxDec);
+      const pExp = Math.round(Math.log10(power));
+      const d = rand(0, maxDec);
       const whole = rand(wholeMin, wholeMax);
 
       let decStr = '';
@@ -2653,10 +2654,10 @@ const generators = {
         decStr += rand(1, 9);
       }
 
-      const decNum   = d > 0 ? parseInt(decStr, 10) : 0;
+      const decNum = d > 0 ? parseInt(decStr, 10) : 0;
       const mantissa = whole * Math.pow(10, d) + decNum;
-      const shift    = pExp - d;
-      const fmtFr    = n => n.toLocaleString('fr-FR');
+      const shift = pExp - d;
+      const fmtFr = n => n.toLocaleString('fr-FR');
 
       const inputStr = d === 0 ? String(whole) : `${whole},${decStr}`;
 
@@ -2679,13 +2680,13 @@ const generators = {
       let operation, answers;
       if (v === 'mult_result') {
         operation = `${inputStr} × ${powerStr} = ?`;
-        answers   = [resultStr];
+        answers = [resultStr];
       } else if (v === 'mult_input') {
         operation = `? × ${powerStr} = ${resultStr}`;
-        answers   = [inputStr];
+        answers = [inputStr];
       } else if (v === 'div_result') {
         operation = `${resultStr} \u00f7 ${powerStr} = ?`;
-        answers   = [inputStr];
+        answers = [inputStr];
       } else {
         // div_power: randomly show as × or ÷ form
         const asMult = rand(0, 1);
@@ -2705,23 +2706,23 @@ const generators = {
   tableauProportion: {
     generate(params = {}) {
       const CONTEXTS = [
-        { row1: 'Crêpes',     row2: 'Œufs' },
-        { row1: 'Huile (L)',  row2: 'Prix (€)' },
-        { row1: 'Cahiers',   row2: 'Prix (€)' },
+        { row1: 'Crêpes', row2: 'Œufs' },
+        { row1: 'Huile (L)', row2: 'Prix (€)' },
+        { row1: 'Cahiers', row2: 'Prix (€)' },
         { row1: 'Baguettes', row2: 'Prix (€)' },
         { row1: 'Farine (kg)', row2: 'Prix (€)' },
-        { row1: 'Livres',    row2: 'Prix (€)' },
-        { row1: 'Boîtes',    row2: 'Stylos' },
-        { row1: 'Mètres',    row2: 'Prix (€)' },
-        { row1: 'Litres',    row2: 'Prix (€)' },
-        { row1: 'km',        row2: 'Essence (L)' },
+        { row1: 'Livres', row2: 'Prix (€)' },
+        { row1: 'Boîtes', row2: 'Stylos' },
+        { row1: 'Mètres', row2: 'Prix (€)' },
+        { row1: 'Litres', row2: 'Prix (€)' },
+        { row1: 'km', row2: 'Essence (L)' },
       ];
       const ctx = CONTEXTS[rand(0, CONTEXTS.length - 1)];
 
-      const den    = params.den    ?? 1;
+      const den = params.den ?? 1;
       const numMin = params.numMin ?? 2 * den + 1; // ensure coeff > 1 and fractional
       const numMax = params.numMax ?? 9 * den;
-      const xMax   = params.xMax   ?? 12;
+      const xMax = params.xMax ?? 12;
 
       // Pick num not divisible by den so the fraction doesn't reduce to integer
       let num;
@@ -2778,40 +2779,40 @@ const generators = {
 
       const pool = {
         mm: [
-          { emoji: '🐜', value: 5,  label: "La fourmi mesure" },
-          { emoji: '🐞', value: 8,  label: "La coccinelle mesure" },
+          { emoji: '🐜', value: 5, label: "La fourmi mesure" },
+          { emoji: '🐞', value: 8, label: "La coccinelle mesure" },
           { emoji: '🐝', value: 15, label: "L'abeille mesure" },
           { emoji: '🪲', value: 18, label: "Le scarabée mesure" },
           { emoji: '🪙', value: 24, label: "La pièce de monnaie mesure" },
-          { emoji: '🦟', value: 6,  label: "Le moustique mesure" },
+          { emoji: '🦟', value: 6, label: "Le moustique mesure" },
         ],
         cm: [
           { emoji: '✏️', value: 19, label: "Le crayon mesure" },
           { emoji: '🥕', value: 20, label: "La carotte mesure" },
-          { emoji: '🐟', value: 8,  label: "Le petit poisson mesure" },
-          { emoji: '🦷', value: 3,  label: "La dent mesure" },
+          { emoji: '🐟', value: 8, label: "Le petit poisson mesure" },
+          { emoji: '🦷', value: 3, label: "La dent mesure" },
           { emoji: '📱', value: 15, label: "Le téléphone mesure" },
           { emoji: '🍌', value: 20, label: "La banane mesure" },
           { emoji: '🥾', value: 25, label: "La chaussure mesure" },
           { emoji: '🖊️', value: 15, label: "Le stylo mesure" },
           { emoji: '🥄', value: 18, label: "La cuillère mesure" },
-          { emoji: '🍎', value: 8,  label: "La pomme mesure" },
+          { emoji: '🍎', value: 8, label: "La pomme mesure" },
         ],
         m: [
-          { emoji: '🚗', value: 4,  label: "La voiture mesure" },
-          { emoji: '🚪', value: 2,  label: "La porte mesure" },
-          { emoji: '🛏️', value: 2,  label: "Le lit mesure" },
-          { emoji: '🐘', value: 3,  label: "L'éléphant mesure" },
-          { emoji: '🦒', value: 6,  label: "La girafe mesure" },
+          { emoji: '🚗', value: 4, label: "La voiture mesure" },
+          { emoji: '🚪', value: 2, label: "La porte mesure" },
+          { emoji: '🛏️', value: 2, label: "Le lit mesure" },
+          { emoji: '🐘', value: 3, label: "L'éléphant mesure" },
+          { emoji: '🦒', value: 6, label: "La girafe mesure" },
           { emoji: '🌲', value: 10, label: "Le sapin mesure" },
           { emoji: '🚌', value: 12, label: "Le bus mesure" },
           { emoji: '🏊', value: 25, label: "La piscine mesure" },
         ],
         km: [
-          { emoji: '🏔️', value: 5,    label: "La montagne mesure" },
-          { emoji: '🌋', value: 3,    label: "Le volcan mesure" },
-          { emoji: '✈️', value: 900,  label: "Le trajet Paris-Marseille mesure" },
-          { emoji: '🚂', value: 500,  label: "Le trajet en train mesure" },
+          { emoji: '🏔️', value: 5, label: "La montagne mesure" },
+          { emoji: '🌋', value: 3, label: "Le volcan mesure" },
+          { emoji: '✈️', value: 900, label: "Le trajet Paris-Marseille mesure" },
+          { emoji: '🚂', value: 500, label: "Le trajet en train mesure" },
         ],
       };
 
@@ -2872,14 +2873,14 @@ const generators = {
   // params: step (5), anchorMin (10), anchorMax (50), cells (7), anchorPos ('random'|0-based index)
   suiteNombres: {
     generate(params = {}) {
-      const step     = params.step      ?? 5;
-      const cells    = params.cells     ?? 7;
-      const amin     = params.anchorMin ?? 10;
-      const amax     = params.anchorMax ?? 50;
+      const step = params.step ?? 5;
+      const cells = params.cells ?? 7;
+      const amin = params.anchorMin ?? 10;
+      const amax = params.anchorMax ?? 50;
       // Anchor must be a multiple of step within [amin, amax]
       const lo = Math.ceil(amin / step);
       const hi = Math.floor(amax / step);
-      const anchor   = (lo + Math.floor(Math.random() * (hi - lo + 1))) * step;
+      const anchor = (lo + Math.floor(Math.random() * (hi - lo + 1))) * step;
       // Anchor position: between index 1 and cells-2 (not first, not last)
       // Cap so the sequence never starts below 0 (anchor - anchorPos*step >= 0)
       const maxSafePos = Math.min(cells - 2, Math.floor(anchor / step));
@@ -3055,12 +3056,12 @@ const generators = {
 // Returns the palette color index that the number n belongs to for a given rule.
 function magicColorIdx(rule, n, params) {
   switch (rule) {
-    case 'direct':       return n - 1;   // cell shows 1, 2, 3… → palette index 0, 1, 2…
-    case 'pairs':        return n % 2 === 0 ? 1 : 0;
-    case 'impairs':      return n % 2 !== 0 ? 1 : 0;
+    case 'direct': return n - 1;   // cell shows 1, 2, 3… → palette index 0, 1, 2…
+    case 'pairs': return n % 2 === 0 ? 1 : 0;
+    case 'impairs': return n % 2 !== 0 ? 1 : 0;
     case 'multiples-of': return n % (params.value || 2) === 0 ? 1 : 0;
-    case 'lt':           return n <  (params.value ?? 10) ? 1 : 0;
-    case 'gt':           return n >  (params.value ?? 10) ? 1 : 0;
+    case 'lt': return n < (params.value ?? 10) ? 1 : 0;
+    case 'gt': return n > (params.value ?? 10) ? 1 : 0;
     case 'ranges': {
       const ranges = params.ranges || [];
       for (let i = 0; i < ranges.length; i++) {
@@ -3069,7 +3070,7 @@ function magicColorIdx(rule, n, params) {
       }
       return 0;
     }
-    default:             return 0;
+    default: return 0;
   }
 }
 

@@ -57,7 +57,7 @@ isSeriesPage: true
   <div x-show="_ready">
 
   {# Exercise title #}
-  <h1 class="text-2xl font-bold text-content-default mb-4 text-center" x-html="cur.title || ''"></h1>
+  <h1 class="exercise-title text-2xl font-bold text-content-default mb-4 text-center" x-html="cur.title || ''"></h1>
 
   {# Type-specific visual blocks (only included when the series uses that type) #}
   {% if 'number-check' in usedTypes %}{% include "types/number-check.njk" %}{% endif %}
