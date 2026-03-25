@@ -415,7 +415,7 @@ function buildPrompt({ data, body }) {
       if (!Array.isArray(data.statements)) return null;
       const choices = (data.choices || []).map(c => `- ${strip(String(c))}`).join('\n');
       const lines = data.statements.map(s =>
-        `${strip(s.text || '')} → ${fmt(s.answer)}`
+        `${strip(s.template || s.text || '')} → ${fmt(s.answer)}`
       );
       return `Type: sélection\nChoix disponibles:\n${choices}\n${lines.join('\n')}`;
     }
@@ -565,7 +565,8 @@ async function askLLM(userPrompt) {
       { role: 'user',   content: userPrompt },
     ],
     stream: false,
-    options: { temperature: 0, num_predict: 256 },
+    think: false,          // disable thinking mode for deepseek-r1/qwen3; ignored by other models
+    options: { temperature: 0, num_predict: 512 },
   });
 
   const r = await fetch(`${OLLAMA_URL}/api/chat`, {
@@ -577,7 +578,23 @@ async function askLLM(userPrompt) {
 
   if (!r.ok) throw new Error(`Ollama ${r.status}`);
   const data = await r.json();
-  const response = (data.message?.content || '').trim();
+
+  // deepseek-r1 and similar reasoning models emit <think>…</think> blocks.
+  // Older Ollama versions inline them in message.content; newer ones separate
+  // them into message.thinking.  Strip the think block first, then fall back
+  // to scanning the thinking field if the content is empty.
+  let response = (data.message?.content || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+  if (!response && data.message?.thinking) {
+    // Extract the last verdict-like line from the thinking block as a fallback.
+    const thinkLines = data.message.thinking.trim().split(/\r?\n/).filter(l => l.trim());
+    for (let i = thinkLines.length - 1; i >= 0; i--) {
+      const upper = thinkLines[i].trim().toUpperCase();
+      if (upper.startsWith('CORRECT') || upper.startsWith('INCORRECT') || upper.startsWith('SKIP')) {
+        response = thinkLines[i].trim();
+        break;
+      }
+    }
+  }
 
   if (VERBOSE) {
     console.log(`\n${C.bold}RAW RESPONSE:${C.reset}`);
@@ -623,6 +640,16 @@ function parseVerdict(response) {
     return hasFail
       ? { verdict: 'fail', reason: lines.filter(l => /^(INCORRECT|FAUX)/i.test(l.trimStart())).map(l => l.trim()).join('; ') }
       : { verdict: 'ok', reason: '' };
+  }
+
+  // Third pass: verdict keyword appears mid-line (e.g. "ANSWER : CORRECT", "Verdict: INCORRECT")
+  // Check INCORRECT before CORRECT to avoid false positive (\bCORRECT\b won't match inside
+  // INCORRECT but checking order is safer for any future variant).
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const upper = lines[i].trim().toUpperCase();
+    if (/\bINCORRECT\b/.test(upper)) return { verdict: 'fail', reason: '' };
+    if (/\bCORRECT\b/.test(upper))   return { verdict: 'ok',   reason: '' };
+    if (/\bSKIP\b/.test(upper))      return { verdict: 'skip', reason: '' };
   }
 
   return { verdict: 'skip', reason: `Format inconnu dans la réponse (tronqué ?)` };
