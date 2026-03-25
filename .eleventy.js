@@ -62,6 +62,9 @@ module.exports = async function (eleventyConfig) {
     { layout: null, permalink: '/sitemap.xml', eleventyExcludeFromCollections: true }
   );
 
+  // Watch reports CSVs so validation changes trigger a live rebuild of the admin dashboard
+  eleventyConfig.addWatchTarget('./reports/');
+
   // Passthrough static assets
   eleventyConfig.addPassthroughCopy({ 'src/.htaccess': '.htaccess' });
   // Copy everything under src/assets so we can reference it at /assets/…

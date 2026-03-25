@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ title or 'Admin' }} — Cahier de Mélimée</title>
+  <link rel="stylesheet" href="{{ '/css/styles.css' | url }}"/>
+  <script>
+    // Sync dark-mode class before paint
+    try {
+      if (localStorage.getItem('theme') === 'dark' ||
+          (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches))
+        document.documentElement.classList.add('dark');
+    } catch(_) {}
+  </script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .sort-icon { opacity: 0.3; }
+    th:hover .sort-icon { opacity: 0.7; }
+    th.active .sort-icon { opacity: 1; }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen">
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 py-3 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+    <div class="flex items-center gap-3">
+      <a href="{{ '/' | url }}" class="text-slate-400 hover:text-primary-500 transition-colors" title="Retour au site">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </a>
+      <span class="font-bold text-slate-700 dark:text-slate-200 text-lg">🛠 Admin Dashboard</span>
+      <span class="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium">dev only</span>
+    </div>
+    <a href="{{ '/fr/exercices/' | url }}" class="text-sm text-slate-400 hover:text-primary-500 transition-colors">Exercices →</a>
+  </header>
+  <main class="px-4 py-6 max-w-screen-2xl mx-auto">
+    {{ content | safe }}
+  </main>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+</html>

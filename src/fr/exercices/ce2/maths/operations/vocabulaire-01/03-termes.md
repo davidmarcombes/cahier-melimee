@@ -1,7 +1,7 @@
 ---
 type: select
 title: "Complète avec le bon terme."
-choices: ["termes", "facteurs", "dividende", "diviseur", "additionne", "multiplie"]
+choices: ["termes", "facteurs", "dividende", "diviseur", "quotient", "résultat"]
 statements:
   - template: "Dans 7 + 3 = 10, les nombres 7 et 3 sont les ___ de l'addition."
     answer: "termes"
