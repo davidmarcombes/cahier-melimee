@@ -3,7 +3,7 @@
   <template x-if="cur.svg">
     <div class="flex justify-center mb-4" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
-  <div class="prose dark:prose-invert text-sm max-w-none mb-4 text-slate-600 "
+  <div class="prose dark:prose-invert text-sm text-center mb-4 max-w-none text-content-subtle"
        x-show="cur.body" x-html="cur.body"></div>
   <div class="overflow-x-auto">
     <table class="mx-auto border-collapse">

@@ -338,7 +338,7 @@ const generators = {
       }
       const num = digits.reduce((acc, digit) => acc * 10 + digit, 0);
       const rounded = Math.round(num / Math.pow(10, order)) * Math.pow(10, order);
-      return { type: 'number-check', operation: String(num), answers: [String(rounded)] };
+      return { type: 'number-check', operation: `${num}&ensp;≈&ensp;?`, answers: [String(rounded)] };
     },
   },
 
@@ -391,6 +391,7 @@ const generators = {
         mcqChoices: choices,
         mcqAnswer: choices.indexOf(String(correct)),
         answers: [String(correct)],
+        mcqCompact: true,
       };
     },
   },

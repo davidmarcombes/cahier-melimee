@@ -14,7 +14,7 @@
             stroke="currentColor" stroke-width="0.5" stroke-linecap="round" class="text-slate-300 dark:text-slate-700" />
 
       <!-- Hour Numbers -->
-      <g class="text-[8px] font-bold fill-slate-600 dark:fill-slate-400" style="text-anchor: middle;">
+      <g font-size="8" font-weight="bold" text-anchor="middle" class="fill-slate-600 dark:fill-slate-400">
         <text x="50" y="22">12</text>
         <text x="78" y="53">3</text>
         <text x="50" y="84">6</text>
@@ -38,5 +38,5 @@
   </div>
 
   {# Instructions from body #}
-  <div class="mt-4 prose dark:prose-invert text-center px-4" x-html="cur.body"></div>
+  <div class="mt-4 prose dark:prose-invert text-base text-center mb-4 max-w-none text-content-subtle" x-html="cur.body"></div>
 </div>

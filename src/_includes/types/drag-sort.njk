@@ -2,7 +2,7 @@
 <div x-show="cur.type === 'drag-sort'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
 
   {# Optional body #}
-  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4"></div>
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4 max-w-none text-content-subtle"></div>
 
   {# Direction indicator #}
   <template x-if="cur.direction">

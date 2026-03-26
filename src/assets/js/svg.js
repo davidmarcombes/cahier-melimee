@@ -986,7 +986,7 @@ function calendarSvg(month, year, highlight = []) {
   let s = '';
 
   // Outer background
-  s += `<rect width="${W}" height="${H}" rx="6" fill="var(--b1,#fff)" stroke="var(--cs,#cbd5e1)" stroke-width="1"/>`;
+  s += `<rect width="${W}" height="${H}" rx="6" fill="var(--sf,#fff)" stroke="var(--cs,#cbd5e1)" stroke-width="1"/>`;
 
   // Month/year header bar
   s += `<rect width="${W}" height="${HDR}" rx="6" fill="var(--p,#3b82f6)"/>`;
@@ -996,8 +996,8 @@ function calendarSvg(month, year, highlight = []) {
   // Day-name header row
   for (let c = 0; c < 7; c++) {
     const x = 1 + c * CW;
-    const bg = c >= 5 ? 'var(--sf,#f0f4f8)' : 'var(--sf,#f1f5f9)';
-    const tc = c >= 5 ? 'var(--er,#dc2626)' : 'var(--bc,#374151)';
+    const bg = 'var(--sc,#f1f5f9)';
+    const tc = c >= 5 ? 'var(--red,#dc2626)' : 'var(--ct,#374151)';
     s += `<rect x="${x}" y="${HDR}" width="${CW}" height="${DNH}" fill="${bg}" stroke="var(--cs,#e2e8f0)" stroke-width="0.5"/>`;
     s += `<text x="${x + CW / 2}" y="${HDR + 15}" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="bold" fill="${tc}">${DAYS_SHORT[c]}</text>`;
   }
@@ -1012,10 +1012,10 @@ function calendarSvg(month, year, highlight = []) {
     const isWE  = col >= 5;
     const isHL  = day && hl.includes(day);
     const fill  = isHL  ? 'var(--p,#3b82f6)'
-                : isWE && day ? 'var(--sf,#fef2f2)'
-                : day ? 'var(--b1,#fff)'
-                :       'var(--b2,#f9fafb)';
-    const tFill = isHL ? '#fff' : isWE && day ? 'var(--er,#dc2626)' : 'var(--bc,#374151)';
+                : isWE && day ? 'var(--ss,#fef2f2)'
+                : day ? 'var(--sf,#fff)'
+                :       'var(--sc,#f9fafb)';
+    const tFill = isHL ? '#fff' : isWE && day ? 'var(--red,#dc2626)' : 'var(--ct,#374151)';
 
     s += `<rect x="${x}" y="${y}" width="${CW}" height="${CH}" fill="${fill}" stroke="var(--cs,#e5e7eb)" stroke-width="0.5"/>`;
     if (day) {

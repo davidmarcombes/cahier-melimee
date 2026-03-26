@@ -4,7 +4,7 @@
     <div class="flex justify-center mb-4" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
   <p class="text-center text-sm text-content-subtle mb-1">Clique sur <strong>?</strong> pour choisir &lt; &gt; ou =</p>
-  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm mb-2"></div>
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4 max-w-none text-content-subtle"></div>
 
   <template x-for="(c, i) in cur.comparisons" :key="i">
     <div
