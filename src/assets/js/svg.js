@@ -156,8 +156,19 @@ function coneSvg(w = 60, h = 90, color = 'var(--p)', opacity = 1) {
 // chips: [{ label, value }, ...] — value 0-9
 function decompoChipsHtml(chips) {
   const COLORS = ['var(--orange, #e0743c)', 'var(--p)', 'var(--green, #4daa60)'];
-  const parts = chips.map(({ label, value }, i) => {
-    const c = COLORS[i % COLORS.length];
+  let ci = 0;
+  const parts = chips.map((chip) => {
+    // Comma separator chip — visual only, no dots
+    if (chip.comma) {
+      return (
+        `<div style="display:inline-flex;flex-direction:column;border-radius:8px;border:1.5px solid var(--cs,#cbd5e1);overflow:hidden;min-width:24px">` +
+        `<div style="background:var(--sc,#f1f5f9);color:var(--cs,#94a3b8);padding:3px 6px;font-size:13px;font-weight:900;font-family:system-ui,sans-serif;text-align:center">,</div>` +
+        `<div style="background:var(--sf,#fff);border-top:1.5px solid var(--cs,#cbd5e1);padding:5px 4px;min-height:28px"></div>` +
+        `</div>`
+      );
+    }
+    const { label, value } = chip;
+    const c = COLORS[ci++ % COLORS.length];
     let dots;
     if (value === 0) {
       dots = `<span style="color:var(--cs);font-size:11px;line-height:1">—</span>`;
@@ -173,7 +184,7 @@ function decompoChipsHtml(chips) {
       `</div>`
     );
   });
-  return `<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">${parts.join('')}</div>`;
+  return `<div style="display:flex;gap:4px;width:100%">${parts.map(p => `<div style="flex:1;display:flex;justify-content:center">${p}</div>`).join('')}</div>`;
 }
 
 // abacusSvg — boulier/abacus SVG

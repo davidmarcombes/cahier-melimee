@@ -7,9 +7,6 @@
          x-html="cur.svgHtml"></div>
   </div>
 
-  {# Question #}
-  <p class="text-center text-base font-medium text-content-default" x-html="cur.title"></p>
-
   {# Autant / Plus / Moins tiles #}
   <div class="flex flex-wrap justify-center gap-4">
     <template x-for="(label, i) in ['Autant', 'Plus', 'Moins']" :key="i">

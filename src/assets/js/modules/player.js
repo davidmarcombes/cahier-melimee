@@ -77,6 +77,8 @@ export function seriesPlayer(exercises, seriesId) {
     ipErrors: [],       // error flags for base + inverses
     dtInputs: {},       // inputs for decimal-triple: fracNum, fracDen, decimal, dizaines, unites, dixiemes, centiemes, milliemes
     dtErrors: [],       // field keys with wrong answers
+    decompInputs: [],   // inputs for decomp type (one per non-comma part)
+    decompErrors: [],   // indices of wrong decomp inputs
 
     /* Helpers */
     get cur() {
@@ -227,7 +229,9 @@ export function seriesPlayer(exercises, seriesId) {
       this.trouInputs = (_blanks + _colOpBlanks) > 0 ? Array(_blanks + _colOpBlanks).fill('') : [];
       
       const _ia = _e.sequence || _e.bounding || _e.convert;
-      this.seqInputs = _ia ? _ia.answers.map(() => '') : [];
+      if (_ia) {
+        this.seqInputs = _ia.items ? _ia.items.filter(it => it.blank).map(() => '') : _ia.answers.map(() => '');
+      } else { this.seqInputs = []; }
       this.seqErrors = [];
 
       this.gridCells = (_e.grid && _e.grid.rows) ? new Array(_e.grid.rows.length * _e.grid.columns.length).fill(0) : [];
@@ -344,6 +348,13 @@ export function seriesPlayer(exercises, seriesId) {
         this.ipSolved = [];
       }
       this.ipErrors = [];
+
+      if (_e.decomp) {
+        this.decompInputs = (_e.decomp.parts || []).filter(p => !p.comma).map(() => '');
+      } else {
+        this.decompInputs = [];
+      }
+      this.decompErrors = [];
 
       this.dtInputs = _e.type === 'decimal-triple'
         ? { fracNum: '', fracDen: '', decimal: '', dizaines: '', unites: '', dixiemes: '', centiemes: '', milliemes: '' }
@@ -597,8 +608,14 @@ export function seriesPlayer(exercises, seriesId) {
 
       if (_e.type === 'drag-sort') {
         if (this._dragErrTimer) { clearTimeout(this._dragErrTimer); this._dragErrTimer = null; }
+        // Derive correct permutation from tile values + direction
+        const tiles = _e.tiles || [];
+        const correctOrder = tiles
+          .map((v, i) => ({ v: parseFloat(String(v).replace(',', '.')), i }))
+          .sort((a, b) => _e.direction === 'desc' ? b.v - a.v : a.v - b.v)
+          .map(x => x.i);
         const errors = this.dragTilesOrder
-          .map((origIdx, pos) => (Number(origIdx) !== pos ? pos : -1))
+          .map((origIdx, pos) => (Number(origIdx) !== correctOrder[pos] ? pos : -1))
           .filter((p) => p >= 0);
         if (errors.length === 0) {
           this.dragSelected = null;
@@ -866,7 +883,8 @@ export function seriesPlayer(exercises, seriesId) {
         const s = _e.sequence || _e.bounding || _e.convert;
         if (!s) return;
         if (this.seqInputs.some((v) => !v.trim())) { this._flashError(); return; }
-        const wrong = s.answers.map((a, i) => normalizeAnswer(this.seqInputs[i]) !== normalizeAnswer(a) ? i : -1).filter(i => i !== -1);
+        const _answers = s.items ? s.items.filter(it => it.blank).map(it => it.answer) : s.answers;
+        const wrong = _answers.map((a, i) => normalizeAnswer(this.seqInputs[i]) !== normalizeAnswer(a) ? i : -1).filter(i => i !== -1);
         if (wrong.length === 0) {
           this.seqErrors = [];
           this._markSolvedAndAdvance();
@@ -911,6 +929,22 @@ export function seriesPlayer(exercises, seriesId) {
         }
         if (errors.length === 0) { this.dtErrors = []; this._markSolvedAndAdvance(); }
         else { this.dtErrors = errors; this._flashError(() => { this.dtErrors = []; }); }
+        return;
+      }
+
+      if (_e.type === 'decomp') {
+        if (this.decompInputs.some(v => !v.trim())) { this._flashError(); return; }
+        const parts = (_e.decomp?.parts || []).filter(p => !p.comma);
+        const errors = parts
+          .map((p, i) => normalizeAnswer(this.decompInputs[i]) !== normalizeAnswer(String(p.answer)) ? i : -1)
+          .filter(i => i !== -1);
+        if (errors.length === 0) {
+          this.decompErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.decompErrors = errors;
+          this._flashError(() => { this.decompErrors = []; });
+        }
         return;
       }
 

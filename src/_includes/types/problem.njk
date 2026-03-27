@@ -1,7 +1,7 @@
 {# Problem visual #}
-<div x-show="cur.type === 'problem'" class="bg-amber-50 dark:bg-amber-900/10 rounded-2xl shadow-lg border border-amber-200 dark:border-amber-800 p-8 mb-8">
+<div x-show="cur.type === 'problem'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 mb-8">
   <template x-if="cur.svg">
     <div class="flex justify-center mb-6" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
-  <div class="prose dark:prose-invert text-center text-lg max-w-none" x-html="cur.body"></div>
+  <div class="prose dark:prose-invert text-center text-lg max-w-none text-pretty" x-html="cur.body"></div>
 </div>

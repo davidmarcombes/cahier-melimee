@@ -5,29 +5,68 @@
   </template>
   <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
        x-show="cur.body" x-html="cur.body"></div>
-  <div class="flex flex-wrap justify-center items-center gap-2">
-    <template x-for="(n, i) in (cur.sequence ? cur.sequence.given : [])" :key="'sg'+i">
-      <div class="w-16 sm:w-20 h-12 sm:h-14 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 font-bold text-lg sm:text-xl text-content-default">
-        <span x-html="n"></span>
-      </div>
-    </template>
-    <template x-for="(ans, i) in (cur.sequence ? cur.sequence.answers : [])" :key="'sa'+i">
-      <input
-        type="text" inputmode="numeric"
-        x-model="seqInputs[i]"
-        @keydown.enter="check()"
-        @input="seqErrors = []"
-        :disabled="solved"
-        class="w-16 sm:w-20 h-12 sm:h-14 text-center rounded-xl border-2 font-bold text-lg sm:text-xl transition-colors
-          focus:outline-none focus:ring-2 focus:ring-primary-500
-          bg-surface-subtle text-content-default"
-        :class="{
-          'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-          'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(i),
-          'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(i)
-        }"
-        placeholder="?"
-      />
-    </template>
-  </div>
+
+  {# New interleaved items format (e.g. time sequences) #}
+  <template x-if="cur.sequence && cur.sequence.items">
+    <div class="flex flex-wrap justify-center items-center gap-2">
+      <template x-for="(item, i) in cur.sequence.items" :key="'si'+i">
+        <div class="inline-flex">
+          <template x-if="!item.blank">
+            <div :class="cur.sequence.timeMode ? 'w-20 sm:w-24' : 'w-16 sm:w-20'"
+                 class="h-12 sm:h-14 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 font-bold text-lg sm:text-xl text-content-default">
+              <span x-html="item.value"></span>
+            </div>
+          </template>
+          <template x-if="item.blank">
+            <input
+              :type="cur.sequence.timeMode ? 'text' : 'text'"
+              :inputmode="cur.sequence.timeMode ? 'text' : 'numeric'"
+              x-model="seqInputs[item.inputIdx]"
+              @keydown.enter="check()"
+              @input="seqErrors = []"
+              :disabled="solved"
+              :class="{
+                'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+                'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(item.inputIdx),
+                'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(item.inputIdx),
+                'w-20 sm:w-24': cur.sequence.timeMode,
+                'w-16 sm:w-20': !cur.sequence.timeMode
+              }"
+              class="h-12 sm:h-14 text-center rounded-xl border-2 font-bold text-lg sm:text-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-subtle text-content-default"
+              :placeholder="cur.sequence.timeMode ? '?h??' : '?'"
+            />
+          </template>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  {# Legacy format: given[] + answers[] #}
+  <template x-if="cur.sequence && !cur.sequence.items">
+    <div class="flex flex-wrap justify-center items-center gap-2">
+      <template x-for="(n, i) in (cur.sequence ? cur.sequence.given : [])" :key="'sg'+i">
+        <div class="w-16 sm:w-20 h-12 sm:h-14 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 font-bold text-lg sm:text-xl text-content-default">
+          <span x-html="n"></span>
+        </div>
+      </template>
+      <template x-for="(ans, i) in (cur.sequence ? cur.sequence.answers : [])" :key="'sa'+i">
+        <input
+          type="text" inputmode="numeric"
+          x-model="seqInputs[i]"
+          @keydown.enter="check()"
+          @input="seqErrors = []"
+          :disabled="solved"
+          class="w-16 sm:w-20 h-12 sm:h-14 text-center rounded-xl border-2 font-bold text-lg sm:text-xl transition-colors
+            focus:outline-none focus:ring-2 focus:ring-primary-500
+            bg-surface-subtle text-content-default"
+          :class="{
+            'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+            'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(i),
+            'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(i)
+          }"
+          placeholder="?"
+        />
+      </template>
+    </div>
+  </template>
 </div>

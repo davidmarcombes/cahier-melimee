@@ -174,7 +174,10 @@
       "Bash(/dev/null grep:*)",
       "Bash(head -10 grep -n \"mcqCompact\\\\|compact\" \"e:/Code/cahier-melimee/.eleventy.js\")",
       "Bash(wait)",
-      "Bash(__NEW_LINE_556492e8a5c79e94__ grep:*)"
+      "Bash(__NEW_LINE_556492e8a5c79e94__ grep:*)",
+      "Bash(node -e \"const tw = require\\(''''./tailwind.config.js''''\\); console.log\\(tw.theme?.extend?.textWrap || ''''not set''''\\)\")",
+      "Bash(__NEW_LINE_83d87243aeb78481__ for:*)",
+      "Bash(sed -i 's/color: \"\"#7c3aed\"\"/color: \"\"var\\(--purple\\)\"\"/g; s/color: \"\"#2563eb\"\"/color: \"\"var\\(--p\\)\"\"/g; s/color: \"\"#dc2626\"\"/color: \"\"var\\(--red\\)\"\"/g; s/color: \"\"#059669\"\"/color: \"\"var\\(--green\\)\"\"/g' \"$f\")"
     ]
   }
 }

@@ -98,6 +98,7 @@ isSeriesPage: true
   {% if 'inverse-problem' in usedTypes %}{% include "types/inverse-problem.njk" %}{% endif %}
   {% if 'tri-arith' in usedTypes %}{% include "types/tri-arith.njk" %}{% endif %}
   {% if 'decimal-triple' in usedTypes %}{% include "types/decimal-triple.njk" %}{% endif %}
+  {% if 'decomp' in usedTypes %}{% include "types/decomp.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -106,21 +107,21 @@ isSeriesPage: true
 
   {# Answer input + check button (for number-check, problem, clock, fraction and base-10) #}
   {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes or 'number-line' in usedTypes %}
-  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || (cur.type === 'number-line' && cur.nl && cur.nl.mode !== 'place')) && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6" :class="cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' ? 'justify-center' : ''"  >
+  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || (cur.type === 'number-line' && cur.nl && cur.nl.mode !== 'place')) && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6" :class="cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'number-line' ? 'justify-center' : ''"  >
     <input
       type="text"
       x-model="userInput"
       @keydown.enter="check()"
       :disabled="solved"
-      :placeholder="cur.type === 'clock' ? 'hh:mm' : cur.type === 'fraction' ? 'a / b' : cur.type === 'base-10' ? 'Réponse' : 'Ta réponse…'"
+      :placeholder="cur.type === 'clock' ? 'hh:mm' : cur.type === 'fraction' ? 'a / b' : cur.type === 'base-10' ? 'Réponse' : cur.type === 'ruler' || cur.type === 'number-line' ? '0,0' : 'Ta réponse…'"
       aria-label="Ta réponse"
       x-ref="input"
       class="px-4 py-3 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
         bg-surface-subtle text-content-default
         border-slate-200 dark:border-slate-700"
       :class="{
-        'w-32': cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10',
-        'w-full': cur.type !== 'clock' && cur.type !== 'fraction' && cur.type !== 'base-10',
+        'w-32': cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'number-line',
+        'w-full': cur.type !== 'clock' && cur.type !== 'fraction' && cur.type !== 'base-10' && cur.type !== 'ruler' && cur.type !== 'number-line',
         'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
         'border-red-400 bg-red-50 dark:bg-red-900/20': showError
       }"
@@ -221,6 +222,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'decimal-triple' in usedTypes %}
     <span x-show="cur.type === 'decimal-triple'">Certaines valeurs ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
+    {% if 'decomp' in usedTypes %}
+    <span x-show="cur.type === 'decomp'">Certaines valeurs ne sont pas correctes. Essaie encore !</span>
     {% endif %}
   </div>
 
