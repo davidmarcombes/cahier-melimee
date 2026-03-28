@@ -1019,6 +1019,35 @@ const generators = {
     },
   },
 
+  ajouterPositionnel: {
+    generate: (params = {}) => {
+      const PV = {
+        unités:               { factor: 1,     singular: 'unité',               plural: 'unités' },
+        dizaines:             { factor: 10,    singular: 'dizaine',             plural: 'dizaines' },
+        centaines:            { factor: 100,   singular: 'centaine',            plural: 'centaines' },
+        milliers:             { factor: 1000,  singular: 'millier',             plural: 'milliers' },
+        'dizaines de milliers': { factor: 10000, singular: 'dizaine de milliers', plural: 'dizaines de milliers' },
+      };
+      const fmtNum = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+      const pvChoices = params.pvChoices ?? ['unités', 'dizaines'];
+      const minCoef   = params.minCoef ?? 1;
+      const maxCoef   = params.maxCoef ?? 9;
+      const minBase   = params.minBase ?? 10;
+      const maxBase   = params.maxBase ?? 999;
+      const pv = pvChoices[rand(0, pvChoices.length - 1)];
+      const { factor, singular, plural } = PV[pv];
+      const coef = rand(minCoef, maxCoef);
+      const base = rand(minBase, maxBase);
+      const result = base + coef * factor;
+      const pvLabel = coef === 1 ? singular : plural;
+      return {
+        type: 'number-check',
+        operation: fmtNum(base) + ' + ' + coef + '\u00a0' + pvLabel,
+        answers: [String(result)],
+      };
+    },
+  },
+
   perimetreFormes: {
     generate: (params = {}) => {
       const shapes = ['square', 'rectangle', 'triangle'];
