@@ -1,0 +1,7 @@
+<svg viewBox="0 0 280 180" width="280" height="180" xmlns="http://www.w3.org/2000/svg">
+  <rect x="40" y="30" width="200" height="100"
+    fill="color-mix(in srgb, var(--p, #2a85bf) 10%, transparent)"
+    stroke="var(--p, #2a85bf)" stroke-width="2"/>
+  <text x="140" y="20" font-family="monospace" font-size="18" text-anchor="middle" fill="var(--ct, #334155)">8 cm</text>
+  <text x="250" y="85" font-family="monospace" font-size="18" text-anchor="start" alignment-baseline="middle" fill="var(--ct, #334155)">3 cm</text>
+</svg>

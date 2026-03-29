@@ -16,7 +16,7 @@ isSeriesPage: true
 {% for ex in exercises %}
   {% if ex.data.generator %}{% set hasGenerators = true %}{% set needsSvgJs = true %}{% endif %}
   {% if ex.data.svg %}{% set needsSvgJs = true %}{% endif %}
-  {% if ex.data.type === 'ruler' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' %}{% set needsSvgJs = true %}{% endif %}
+  {% if ex.data.type === 'ruler' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' or ex.data.type === 'svg-tiles' %}{% set needsSvgJs = true %}{% endif %}
   {% if '$' in (ex.data.title or '') %}{% set needsKatex = true %}{% endif %}
 {% endfor %}
 

@@ -49,6 +49,10 @@ project-root/
     │   ├── types/       # Per-exercise-type partials (matching.njk, pyramid.njk, etc.)
     │   ├── svg/         # SVG snippets for exercises (shapes, grids, symmetry)
     │   └── sections/    # Page sections
+    ├── _pages/          # Infrastructure templates (pagination, CSV export)
+    │   ├── series-pages.njk # Pagination template for exercices + applications
+    │   ├── defi-pages.njk   # Pagination template for défis → layout: timed-player
+    │   └── data-csv.njk     # Generates /fr/exercices/data.csv for the listing page
     ├── css/input.css    # Tailwind entry point + custom prose styles + design-token CSS vars
     ├── assets/          # Images, fonts, JS
     │   └── js/
@@ -56,20 +60,15 @@ project-root/
     │       ├── svg.js           # SVG generation helpers (embedSvg, slicedPieSvg, clockSvg, partagerSvg, etc.)
     │       ├── generators.js    # Exercise generators (single source: Node.js + browser)
     │       └── timed-player.js  # Alpine component for timed challenges (timedPlayer)
-    └── fr/              # French content (only language currently)
-        ├── exercices/   # Exercise series (nested: {level}/maths/{topic}/{leaf}/)
+    └── fr/              # French content — ONLY .md/.yaml files (no templates)
+        ├── exercices/   # Static exercises: many hand-written .md per series
         │   ├── exercices.json   # Data cascade (tags, permalink: false)
-        │   ├── series-pages.njk # Pagination template
-        │   ├── data.csv.njk     # Generates /fr/exercices/data.csv for the listing page
-        │   ├── ce1/maths/       # CE1 exercises
-        │   ├── ce2/maths/       # CE2 exercises
-        │   ├── cm1/maths/       # CM1 exercises
-        │   ├── cm2/maths/       # CM2 exercises
-        │   └── cp/maths/        # CP exercises
-        ├── applications/ # Generated exercise series (same nested structure)
-        └── defis/        # Timed challenges (nested: {level}/maths/{topic}/{leaf}/)
-            ├── defi-pages.njk   # Pagination template → layout: timed-player
-            └── ce2/maths/       # CE2 defis (e.g. additions-rapides, tables-multiplication)
+        │   └── {level}/maths/   # CP, CE1, CE2, CM1, CM2
+        ├── applications/ # Generated exercises: .md with generator + repeat
+        │   ├── applications.json # Data cascade
+        │   └── {level}/maths/   # Same nested structure
+        └── defis/        # Timed challenges: generated, uses timed-player layout
+            └── {level}/maths/   # Same nested structure
 ```
 
 ## Configuration Files

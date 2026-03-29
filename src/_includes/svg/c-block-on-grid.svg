@@ -1,0 +1,13 @@
+<svg viewBox="0 0 200 240" width="200" height="240" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid3" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--cs, #94a3b8)" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="var(--sf, white)"/>
+  <rect width="100%" height="100%" fill="url(#grid3)"/>
+  <polygon
+    points="40,40 160,40 160,80 80,80 80,160 160,160 160,200 40,200"
+    fill="color-mix(in srgb, var(--p, #2a85bf) 10%, transparent)"
+    stroke="var(--p, #2a85bf)" stroke-width="2"/>
+</svg>

@@ -1,4 +1,13 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, chromium } from '@playwright/test';
+import { existsSync } from 'node:fs';
+
+// Bail out early if browser binaries are missing
+const browserPath = chromium.executablePath();
+if (!existsSync(browserPath)) {
+  console.error('\n\x1b[31m✘ Chromium not found at: %s\x1b[0m', browserPath);
+  console.error('  Run: npx playwright install\n');
+  process.exit(1);
+}
 
 export default defineConfig({
   testDir: './tests/e2e',

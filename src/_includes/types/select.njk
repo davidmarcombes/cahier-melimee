@@ -28,7 +28,7 @@
           }"
         >
           <option value="">— choisir —</option>
-          <template x-for="choice in (cur.selectChoices || [])" :key="choice">
+          <template x-for="choice in (stmt.choices || cur.selectChoices || [])" :key="choice">
             <option :value="choice" x-text="choice"></option>
           </template>
         </select>

@@ -1,0 +1,11 @@
+<svg viewBox="0 0 360 240" width="360" height="240" xmlns="http://www.w3.org/2000/svg">
+  <!-- 3-step staircase: 15km wide × 9km tall, each step 5km×3km -->
+  <polygon points="30,210 330,210 330,150 230,150 230,90 130,90 130,30 30,30"
+    fill="color-mix(in srgb, var(--p, #2a85bf) 10%, transparent)"
+    stroke="var(--p, #2a85bf)" stroke-width="2"/>
+  <!-- Labels -->
+  <text x="180" y="230" font-family="monospace" font-size="16" text-anchor="middle" fill="var(--ct, #334155)">15 km</text>
+  <text x="340" y="185" font-family="monospace" font-size="14" text-anchor="start" fill="var(--ct, #334155)">3 km</text>
+  <text x="240" y="125" font-family="monospace" font-size="14" text-anchor="start" fill="var(--ct, #334155)">3 km</text>
+  <text x="140" y="65" font-family="monospace" font-size="14" text-anchor="start" fill="var(--ct, #334155)">3 km</text>
+</svg>

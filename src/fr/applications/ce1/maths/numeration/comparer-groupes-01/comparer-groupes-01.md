@@ -1,0 +1,10 @@
+---
+type: compare-groups
+title: "Autant, plus ou moins ?"
+generator: comparerGroupes
+repeat: 8
+params:
+  min: 5
+  max: 12
+class: "S3.1.1"
+---

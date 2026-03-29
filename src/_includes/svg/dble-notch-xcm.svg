@@ -1,0 +1,14 @@
+<svg viewBox="0 0 280 360" width="280" height="360" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rectangle 10m×12m with 2 notches on right side. Scale: 1m = 24px -->
+  <!-- Right segments: 3m(72px), notch1 1m(24px), middle 3m(72px), notch2 1m(24px), 4m(96px) = 12m -->
+  <!-- Notch depth: 6m(144px), remaining inner: 4m(96px) -->
+  <polygon points="30,22 270,22 270,94 126,94 126,118 270,118 270,190 126,190 126,214 270,214 270,310 30,310"
+    fill="color-mix(in srgb, var(--p, #2a85bf) 10%, transparent)"
+    stroke="var(--p, #2a85bf)" stroke-width="2"/>
+  <!-- Labels -->
+  <text x="150" y="14" font-family="monospace" font-size="16" text-anchor="middle" fill="var(--ct, #334155)">10 m</text>
+  <text x="20" y="170" font-family="monospace" font-size="16" text-anchor="end" fill="var(--ct, #334155)">12 m</text>
+  <text x="280" y="62" font-family="monospace" font-size="14" text-anchor="start" fill="var(--ct, #334155)">3 m</text>
+  <text x="280" y="268" font-family="monospace" font-size="14" text-anchor="start" fill="var(--ct, #334155)">4 m</text>
+  <text x="198" y="88" font-family="monospace" font-size="14" text-anchor="middle" fill="var(--ct, #334155)">6 m</text>
+</svg>

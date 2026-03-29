@@ -2,6 +2,7 @@
 type: problem
 title: "La durée du match"
 answer: "45 minutes"
+class: "A2.3"
 ---
 
 Le match de football commence à **15 h 00** et se termine à **15 h 45**.

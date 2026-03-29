@@ -3050,6 +3050,289 @@ const generators = {
       return { type: 'decimal-triple', dtGiven, dtFrac, dtDecimal, dtPlaces };
     },
   },
+
+  decodageEmojis: {
+    generate(params = {}) {
+      const themes = {
+        animals: ['🐶', '🐱', '🐸', '🐵', '🐷', '🐰', '🦊', '🐻', '🐼', '🐨'],
+        fruits: ['🍎', '🍊', '🍋', '🍌', '🍇', '🍓', '🍑', '🍒', '🫐', '🥝'],
+        monsters: ['👾', '👻', '👹', '👺', '🤖', '👿', '💀', '🎃', '👽', '🧟'],
+      };
+      const configs = {
+        cp:  { n: 1, min: 1, max: 5, ops: ['+'],           withConst: true },
+        ce1: { n: 1, min: 1, max: 9, ops: ['+', '−'],      withConst: true },
+        ce2: { n: 2, min: 1, max: 9, ops: ['+', '−'],      withConst: false },
+        cm1: { n: 2, min: 2, max: 9, ops: ['+', '−', '×'], withConst: false },
+        cm2: { n: 3, min: 2, max: 9, ops: ['+', '−', '×'], withConst: false },
+      };
+      const level = params.level || 'cp';
+      const cfg = configs[level] || configs.cp;
+      const theme = params.theme || randItem(Object.keys(themes));
+      const pool = themes[theme] || themes.animals;
+
+      // --- Monster digit mode: emojis represent digits 0-9, form multi-digit numbers ---
+      if (params.mode === 'digits') {
+        const digitCount = params.digitCount || 4;
+        const digits = params.digits || 2;   // digits per number
+        const ops = params.ops || ['+'];
+
+        // Assign unique digit values to emojis
+        const digitPool = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        const selectedEmojis = shuffle([...pool]).slice(0, digitCount);
+        const emojiDigit = {};
+        selectedEmojis.forEach((e, i) => { emojiDigit[e] = digitPool[i]; });
+
+        // Build code table
+        const badges = selectedEmojis.map(e =>
+          `<span class="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg">${e} = ${emojiDigit[e]}</span>`
+        ).join(' ');
+        const codeTable = `<div class="flex flex-wrap justify-center gap-3 mt-3 text-xl font-normal">${badges}</div>`;
+        const title = `Décode et calcule${codeTable}`;
+
+        // Build a multi-digit number from random emojis (first digit non-zero)
+        const makeNum = () => {
+          const parts = [];
+          for (let d = 0; d < digits; d++) {
+            let e;
+            if (d === 0) {
+              // First digit must be non-zero
+              const nonZero = selectedEmojis.filter(em => emojiDigit[em] !== 0);
+              e = randItem(nonZero.length ? nonZero : selectedEmojis);
+            } else {
+              e = randItem(selectedEmojis);
+            }
+            parts.push(e);
+          }
+          const val = Number(parts.map(e => emojiDigit[e]).join(''));
+          const display = parts.join('');
+          return { val, display };
+        };
+
+        const op = randItem(ops);
+        let a = makeNum(), b = makeNum();
+        let answer;
+
+        if (op === '×') {
+          // For multiplication, keep second operand single-digit to stay reasonable
+          const e2 = randItem(selectedEmojis.filter(em => emojiDigit[em] >= 2) || selectedEmojis);
+          b = { val: emojiDigit[e2], display: e2 };
+          answer = a.val * b.val;
+        } else if (op === '−') {
+          if (a.val < b.val) [a, b] = [b, a];
+          answer = a.val - b.val;
+        } else {
+          answer = a.val + b.val;
+        }
+
+        const operation = `${a.display} ${op} ${b.display} = ?`;
+        return { type: 'number-check', title, operation, answers: [String(answer)] };
+      }
+
+      // --- Standard mode: each emoji = a single-digit value used in operations ---
+      const emojis = shuffle([...pool]).slice(0, cfg.n);
+      const vals = {};
+      emojis.forEach(e => { vals[e] = rand(cfg.min, cfg.max); });
+
+      // Build code table (shown in title)
+      const badges = emojis.map(e =>
+        `<span class="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg">${e} = ${vals[e]}</span>`
+      ).join(' ');
+      const codeTable = `<div class="flex flex-wrap justify-center gap-3 mt-3 text-xl font-normal">${badges}</div>`;
+      const title = `Décode et calcule${codeTable}`;
+
+      let operation, answer;
+
+      if (cfg.n === 1) {
+        // CP/CE1: one emoji + a constant
+        const e1 = emojis[0], v1 = vals[e1];
+        const c = rand(1, cfg.max);
+        const op = randItem(cfg.ops);
+        if (op === '+') {
+          operation = `${e1} + ${c} = ?`;
+          answer = v1 + c;
+        } else if (v1 >= c) {
+          operation = `${e1} − ${c} = ?`;
+          answer = v1 - c;
+        } else {
+          operation = `${c} + ${e1} = ?`;
+          answer = c + v1;
+        }
+      } else if (cfg.n === 2) {
+        // CE2/CM1: two emojis
+        const [e1, e2] = emojis;
+        const v1 = vals[e1], v2 = vals[e2];
+        const op = randItem(cfg.ops);
+        if (op === '×') {
+          operation = `${e1} × ${e2} = ?`;
+          answer = v1 * v2;
+        } else if (op === '−') {
+          if (v1 >= v2) { operation = `${e1} − ${e2} = ?`; answer = v1 - v2; }
+          else          { operation = `${e2} − ${e1} = ?`; answer = v2 - v1; }
+        } else {
+          operation = `${e1} + ${e2} = ?`;
+          answer = v1 + v2;
+        }
+      } else {
+        // CM2: three emojis, two operators
+        const [e1, e2, e3] = emojis;
+        const v1 = vals[e1], v2 = vals[e2], v3 = vals[e3];
+        const op1 = randItem(cfg.ops), op2 = randItem(cfg.ops);
+
+        const calc = (a, op, b) => op === '×' ? a * b : op === '−' ? a - b : a + b;
+
+        // Apply standard operator precedence
+        if (op1 === '×' && op2 !== '×') {
+          answer = calc(v1 * v2, op2, v3);
+        } else if (op1 !== '×' && op2 === '×') {
+          answer = calc(v1, op1, v2 * v3);
+        } else {
+          // Same precedence: left-to-right
+          answer = calc(calc(v1, op1, v2), op2, v3);
+        }
+
+        if (answer < 0) {
+          operation = `${e1} + ${e2} + ${e3} = ?`;
+          answer = v1 + v2 + v3;
+        } else {
+          operation = `${e1} ${op1} ${e2} ${op2} ${e3} = ?`;
+        }
+      }
+
+      return { type: 'number-check', title, operation, answers: [String(answer)] };
+    },
+  },
+
+  /* ── Fluency mix — daily mixed-operation drill ─────────── */
+  fluencyMix: {
+    generate: (params = {}) => {
+      const level = params.level || 'ce2';
+      const diff  = params.difficulty || 'moyen';
+      const t = 'number-check';
+
+      // Difficulty multiplier: scales number ranges
+      const sc = diff === 'facile' ? 0 : diff === 'difficile' ? 2 : 1;
+
+      const mk = (operation, answers) => ({
+        type: t, operation, answers: answers.map(String),
+      });
+
+      // ── CP ──────────────────────────────────────────────
+      const cpPool = [
+        // addition ≤ 10/20
+        () => { const m = [10, 15, 20][sc], a = rand(1, m - 1), b = rand(1, m - a); return mk(`${a} + ${b}`, [a + b]); },
+        // subtraction
+        () => { const m = [10, 15, 20][sc], a = rand(2, m), b = rand(1, a); return mk(`${a} − ${b}`, [a - b]); },
+        // complement to 10
+        () => { const a = rand(1, 9); return mk(`${a} + ? = 10`, [10 - a]); },
+        // doubles
+        () => { const m = [5, 8, 10][sc], a = rand(1, m); return mk(`${a} + ${a}`, [a * a === a + a ? a + a : a + a]); },
+        // +10 / −10
+        () => { const a = rand(10, [30, 50, 80][sc]); const sub = Math.random() < 0.5; return sub ? mk(`${a} − 10`, [a - 10]) : mk(`${a} + 10`, [a + 10]); },
+        // count by 2 (next)
+        () => { const a = rand(0, [10, 16, 20][sc]) * 2; return mk(`${a} , ${a + 2} , ?`, [a + 4]); },
+        // count by 5 (next)
+        () => { const a = rand(0, [6, 10, 15][sc]) * 5; return mk(`${a} , ${a + 5} , ?`, [a + 10]); },
+        // compare (which is bigger — returns the bigger one)
+        () => { const a = rand(1, [15, 20, 30][sc]); let b; do { b = rand(1, [15, 20, 30][sc]); } while (b === a); return mk(`Le plus grand : ${a} ou ${b} ?`, [Math.max(a, b)]); },
+      ];
+
+      // ── CE1 ─────────────────────────────────────────────
+      const ce1Pool = [
+        // 2-digit addition
+        () => { const m = [40, 60, 90][sc]; const a = rand(10, m), b = rand(5, m); return mk(`${a} + ${b}`, [a + b]); },
+        // 2-digit subtraction
+        () => { const m = [40, 60, 90][sc]; const a = rand(15, m + 10), b = rand(5, a - 1); return mk(`${a} − ${b}`, [a - b]); },
+        // multiplication tables ×2,3,5,10
+        () => { const tbl = randItem([2, 3, 5, 10]); const b = rand(1, [6, 8, 10][sc]); return mk(`${tbl} × ${b}`, [tbl * b]); },
+        // complement to 100
+        () => { const step = [10, 5, 1][sc]; const a = rand(1, Math.floor(99 / step)) * step; return mk(`${a} + ? = 100`, [100 - a]); },
+        // doubles & halves
+        () => { const half = Math.random() < 0.5; const m = [20, 35, 50][sc]; if (half) { const a = rand(2, m) * 2; return mk(`La moitié de ${a}`, [a / 2]); } const a = rand(2, m); return mk(`Le double de ${a}`, [a * 2]); },
+        // +10/+100/−10/−100
+        () => { const ops = [[10], [10, 100], [10, 100]][sc]; const d = randItem(ops); const add = Math.random() < 0.5; const a = rand(d + 1, 500); return add ? mk(`${a} + ${d}`, [a + d]) : mk(`${a} − ${d}`, [a - d]); },
+        // addition trou ≤ 20/50
+        () => { const m = [20, 35, 50][sc]; const total = rand(5, m); const a = rand(1, total - 1); return mk(`${a} + ? = ${total}`, [total - a]); },
+        // skip counting by 2,3,5
+        () => { const step = randItem([2, 3, 5]); const start = rand(0, 10) * step; return mk(`${start} , ${start + step} , ${start + 2 * step} , ?`, [start + 3 * step]); },
+      ];
+
+      // ── CE2 ─────────────────────────────────────────────
+      const ce2Pool = [
+        // multiplication tables 2–9
+        () => { const a = rand(2, 9), b = rand(2, [7, 9, 12][sc]); return mk(`${a} × ${b}`, [a * b]); },
+        // division facts
+        () => { const d = rand(2, [5, 7, 9][sc]); const q = rand(1, [5, 8, 10][sc]); return mk(`${d * q} ÷ ${d}`, [q]); },
+        // 2-digit × 1-digit
+        () => { const a = rand([11, 12, 15][sc], [25, 40, 60][sc]); const b = rand(2, [4, 6, 9][sc]); return mk(`${a} × ${b}`, [a * b]); },
+        // 3-digit add
+        () => { const a = rand(100, [300, 500, 900][sc]); const b = rand(10, [100, 200, 300][sc]); return mk(`${a} + ${b}`, [a + b]); },
+        // 3-digit sub
+        () => { const a = rand(100, [300, 500, 900][sc]); const b = rand(10, a - 1); return mk(`${a} − ${b}`, [a - b]); },
+        // doubles/halves
+        () => { const half = Math.random() < 0.5; const m = [50, 100, 200][sc]; if (half) { const a = rand(5, m) * 2; return mk(`La moitié de ${a}`, [a / 2]); } const a = rand(5, m); return mk(`Le double de ${a}`, [a * 2]); },
+        // complement to 1000
+        () => { const step = [100, 50, 10][sc]; const a = rand(1, Math.floor(990 / step)) * step; return mk(`${a} + ? = 1 000`, [1000 - a]); },
+        // fraction of number
+        () => { const fracs = [[2, 1], [4, 1], [3, 1], [4, 3], [5, 1]][sc === 0 ? 0 : rand(0, sc + 1)]; const [d, n] = fracs || [2, 1]; const base = rand(2, [5, 8, 12][sc]) * d; return mk(`&frac(${n},${d}) de ${base}`, [n * base / d]); },
+      ];
+
+      // ── CM1 ─────────────────────────────────────────────
+      const cm1Pool = [
+        // tables to 12
+        () => { const a = rand(2, [9, 11, 12][sc]); const b = rand(2, 12); return mk(`${a} × ${b}`, [a * b]); },
+        // ×10/100/1000
+        () => { const p = randItem([10, 100, 1000]); const a = rand(1, [20, 50, 99][sc]); return mk(`${a} × ${p}`, [a * p]); },
+        // ÷10/100/1000
+        () => { const p = randItem([10, 100, 1000]); const q = rand(1, [20, 50, 99][sc]); return mk(`${q * p} ÷ ${p}`, [q]); },
+        // decimal add (1dp)
+        () => { const a = (rand(10, [50, 80, 150][sc]) / 10); const b = (rand(1, [30, 50, 80][sc]) / 10); const sum = Math.round((a + b) * 10) / 10; return mk(`${a.toFixed(1)} + ${b.toFixed(1)}`.replace(/\./g, ','), [String(sum).replace('.', ',')]); },
+        // decimal sub (1dp)
+        () => { const a = (rand(30, [60, 100, 200][sc]) / 10); const b = (rand(1, Math.floor(a * 10) - 1) / 10); const diff2 = Math.round((a - b) * 10) / 10; return mk(`${a.toFixed(1)} − ${b.toFixed(1)}`.replace(/\./g, ','), [String(diff2).replace('.', ',')]); },
+        // fraction of N
+        () => { const pairs = [[2, 1], [4, 1], [3, 1], [5, 2], [4, 3], [8, 3], [10, 3]]; const [d, n] = randItem(pairs.slice(0, [3, 5, 7][sc])); const base = rand(2, [6, 10, 15][sc]) * d; return mk(`&frac(${n},${d}) de ${base}`, [n * base / d]); },
+        // complement to 1000
+        () => { const a = rand(1, 99) * 10; return mk(`${a} + ? = 1 000`, [1000 - a]); },
+        // rounding
+        () => { const pow = randItem([10, 100]); const a = rand(pow + 1, pow * [10, 50, 100][sc]); const rounded = Math.round(a / pow) * pow; return mk(`Arrondir ${a} à la ${pow === 10 ? 'dizaine' : 'centaine'}`, [rounded]); },
+        // 2d × 2d
+        () => { const a = rand(11, [19, 25, 35][sc]); const b = rand(11, [15, 20, 25][sc]); return mk(`${a} × ${b}`, [a * b]); },
+      ];
+
+      // ── CM2 ─────────────────────────────────────────────
+      const cm2Pool = [
+        // decimal × whole
+        () => { const a = (rand(11, [30, 60, 99][sc]) / 10); const b = rand(2, [5, 7, 9][sc]); const prod = Math.round(a * b * 10) / 10; return mk(`${a.toFixed(1).replace('.', ',')} × ${b}`, [String(prod).replace('.', ',')]); },
+        // decimal ÷ whole
+        () => { const d = rand(2, [4, 5, 8][sc]); const q = (rand(1, [20, 40, 60][sc]) / 10); const dividend = Math.round(q * d * 10) / 10; return mk(`${dividend.toFixed(1).replace('.', ',')} ÷ ${d}`, [String(q).replace('.', ',')]); },
+        // fraction of N (complex)
+        () => { const pairs = [[3, 2], [5, 3], [4, 3], [8, 5], [10, 7], [6, 5]]; const [d, n] = randItem(pairs.slice(0, [3, 5, 6][sc])); const base = rand(2, [5, 8, 12][sc]) * d; return mk(`&frac(${n},${d}) de ${base}`, [n * base / d]); },
+        // percentage of N
+        () => { const pcts = [10, 25, 50, 20, 75]; const p = randItem(pcts.slice(0, [2, 4, 5][sc])); const base = rand(2, [10, 20, 40][sc]) * (100 / p >= 4 ? 4 : 1); const nice = Math.round(base / (100 / p)) * (100 / p); return mk(`${p} % de ${nice}`, [nice * p / 100]); },
+        // conversions
+        () => {
+          const units = [
+            ['km', 'm', 1000], ['m', 'cm', 100], ['kg', 'g', 1000],
+            ['L', 'mL', 1000], ['m', 'mm', 1000], ['cm', 'mm', 10],
+          ];
+          const [from, to, factor] = randItem(units.slice(0, [3, 5, 6][sc]));
+          const a = rand(1, [5, 10, 20][sc]);
+          return mk(`${a} ${from} = ? ${to}`, [a * factor]);
+        },
+        // complement to 10 with decimals
+        () => { const a = (rand(1, 99) / 10); const comp = Math.round((10 - a) * 10) / 10; return mk(`${a.toFixed(1).replace('.', ',')} + ? = 10`, [String(comp).replace('.', ',')]); },
+        // order of operations (simple)
+        () => { const a = rand(2, [8, 12, 20][sc]); const b = rand(2, [5, 8, 10][sc]); const c = rand(1, [5, 8, 10][sc]); if (Math.random() < 0.5) { return mk(`${a} + ${b} × ${c}`, [a + b * c]); } return mk(`${b} × ${c} − ${a}`, [b * c - a]); },
+        // decimal add/sub (2dp)
+        () => { const a = (rand(100, [300, 500, 900][sc]) / 100); const b = (rand(10, [200, 300, 500][sc]) / 100); const sub = Math.random() < 0.5 && a > b; const res = sub ? Math.round((a - b) * 100) / 100 : Math.round((a + b) * 100) / 100; const op = sub ? '−' : '+'; return mk(`${a.toFixed(2).replace('.', ',')} ${op} ${b.toFixed(2).replace('.', ',')}`, [String(res).replace('.', ',')]); },
+        // tables extended
+        () => { const a = rand(2, 12); const b = rand(2, [9, 12, 15][sc]); return mk(`${a} × ${b}`, [a * b]); },
+      ];
+
+      const pools = { cp: cpPool, ce1: ce1Pool, ce2: ce2Pool, cm1: cm1Pool, cm2: cm2Pool };
+      const pool = pools[level] || pools.ce2;
+      return pool[rand(0, pool.length - 1)]();
+    },
+  },
 };
 
 // Returns the palette color index that the number n belongs to for a given rule.

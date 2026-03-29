@@ -2,6 +2,7 @@
 type: problem
 title: "Rendre la monnaie"
 answer: "2"
+class: "A1.2"
 ---
 
 J'achète quelque chose qui coûte **3 €**.

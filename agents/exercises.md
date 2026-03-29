@@ -1,16 +1,30 @@
 # Exercises
 
+## Where Does Content Go?
+
+Content contributors should only work in `src/fr/` — no templates, no `.njk` files.
+
+| Folder | Purpose | Content pattern |
+|--------|---------|-----------------|
+| `src/fr/exercices/` | Static exercises | Many hand-written `.md` files per series |
+| `src/fr/applications/` | Generated exercises | `.md` files with `generator:` + `repeat:` |
+| `src/fr/defis/` | Timed challenges | Generated, uses `timed-player` layout |
+
+**Rule**: if an exercise uses `generator:`, it belongs in `applications/`. If it's hand-written, it belongs in `exercices/`.
+
+Infrastructure templates (pagination, CSV export) live in `src/_pages/`, not alongside content.
+
 ## Unified Player System
 
 All exercises (static and generated) use a single engine: `seriesPlayer` in `app.js`.
 
-Each series lives in a nested folder under `src/fr/exercices/{level}/maths/{topic}/{leaf}/` or `src/fr/applications/{level}/maths/{topic}/`:
+Each series lives in a nested folder under `src/fr/exercices/{level}/maths/{topic}/{leaf}/` or `src/fr/applications/{level}/maths/{topic}/{leaf}/`:
 - `index.yaml` — series metadata (`id`, `seriesTitle`, `difficulty`). Level/topic/subtopic are derived from the directory path.
 - `01-name.md`, `02-name.md`, ... — individual exercises with `type` in front-matter
 
-The `id` field in `index.yaml` is used as the URL slug: `/fr/exercices/{id}/`. Series missing an `id` will not generate a page — the build warns at the end. Run `npm run generate:ids` to assign IDs.
+The `id` field in `index.yaml` is used as the URL slug: `/fr/exercices/{id}/` or `/fr/applications/{id}/`. Series missing an `id` will not generate a page — the build warns at the end. Run `npm run generate:ids` to assign IDs.
 
-Layout: `series-player.njk` with per-type partials in `src/_includes/types/`.
+Layout: `series-player.njk` (in `src/_layouts/`) with per-type partials in `src/_includes/types/`. Pagination template: `src/_pages/series-pages.njk`.
 
 ### Static exercises
 Defined entirely in front-matter (answer, operation, type-specific fields).
@@ -100,7 +114,7 @@ The exercise `.md` files are identical to exercises — most defis use `generato
 
 - `collections.defis` — Eleventy collection of all `*.md` under `src/fr/defis/`
 - `collections.defisMeta` — structured metadata like `seriesMeta` but adds `duration`; folder code `'d'`
-- `defi-pages.njk` — pagination template generating pages at `/fr/defis/{id}/`
+- `src/_pages/defi-pages.njk` — pagination template generating pages at `/fr/defis/{id}/`
 - Defis are included in `data.csv` with folder code `d`; `FOLDERS` map in `app.js` resolves `d` → `defis`
 - Cards in the exercise listing show a ⏱ badge when `s.isDefi === true`
 
@@ -365,11 +379,11 @@ difficulty: facile         # facile, moyen, difficile
 ## Example Series
 
 ### Perimeter on grid (`perimetre-quadrillage`)
-Location: `src/fr/applications/cm1/maths/mesures/perimetre-quadrillage/`
+Location: `src/fr/exercices/cm1/maths/mesures/perimetre-quadrillage/`
 Uses `shape-on-grid-*.svg` files via `gen: file` pattern. Students count grid units around a shape.
 
 ### Perimeter of composite figures (`perimetre-figures`)
-Location: `src/fr/applications/cm1/maths/mesures/perimetre-figures/`
+Location: `src/fr/exercices/cm1/maths/mesures/perimetre-figures/`
 Uses `l-shape-perimeter.svg`, `t-shape-perimeter.svg`, etc. Students calculate perimeter from labeled dimensions.
 
 ### Axes of symmetry (`axes-symetrie-01`)

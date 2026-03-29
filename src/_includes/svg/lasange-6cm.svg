@@ -1,0 +1,6 @@
+<svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="110,20 200,110 110,200 20,110"
+    fill="color-mix(in srgb, var(--p, #2a85bf) 10%, transparent)"
+    stroke="var(--p, #2a85bf)" stroke-width="2"/>
+  <text x="170" y="180" font-family="monospace" font-size="18" text-anchor="middle" fill="var(--ct, #334155)">6 cm</text>
+</svg>

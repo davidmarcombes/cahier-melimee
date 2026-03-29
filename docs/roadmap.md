@@ -1,6 +1,6 @@
 # Roadmap — Couverture du programme CP→CM2
 
-> Généré le 2026-03-19. Mis à jour le 2026-03-22. Sources : `docs/maths_*.md` (programme officiel) × `exercises-report.csv` (ce qui existe).
+> Généré le 2026-03-19. Mis à jour le 2026-03-28. Sources : `docs/maths_*.md` (programme officiel) × `exercises-report.csv` (ce qui existe).
 > Légende : ✅ couvert · ⚠️ partiel · ❌ absent · 🔥 priorité haute
 
 ---
@@ -9,11 +9,11 @@
 
 | Niveau | Séries actuelles | Santé globale | Priorité |
 |--------|-----------------|---------------|----------|
-| CP     | 58              | ✅ bon socle | Soustractions posées (non prioritaire) |
-| CE1    | 104             | ✅ complet | — |
-| CE2    | 142             | ✅ le plus complet | — |
-| CM1    | 140             | ✅ très complet | — |
-| CM2    | 28              | ❌ très lacunaire | ⏳ traité ultérieurement |
+| CP     | 61              | ✅ bon socle | Soustractions posées (non prioritaire) |
+| CE1    | 110             | ✅ complet | — |
+| CE2    | 151             | ✅ le plus complet | — |
+| CM1    | 141             | ✅ très complet | — |
+| CM2    | 40              | ⚠️ lacunaire | ⏳ traité ultérieurement |
 
 ---
 
@@ -232,7 +232,7 @@
 
 > **Note : le CM2 sera traité ultérieurement.** Cette section est conservée pour référence mais n'est pas dans le périmètre actuel.
 
-Le niveau CM2 est **le plus sous-représenté** (26 séries vs 79–120 pour les autres niveaux).
+Le niveau CM2 est **le plus sous-représenté** (40 séries vs 110–151 pour les autres niveaux).
 
 ### Nombres et calculs
 
@@ -319,9 +319,9 @@ Le niveau CM2 est **le plus sous-représenté** (26 séries vs 79–120 pour les
 | `ruler` | CP→CE1 | ★ | — |
 | `click-blocks` | CE1→CM2 | ★★ | Valeur de position |
 | `multi-question` | CE2→CM2 | ★ | Sous-exploité |
-| `number-hunt` | CP | ★ | Spécifique CP |
+| `number-hunt` | CP→CE1 | ★★ | CP + CE1 app |
 | `count-objects` | CP | ★ | Spécifique CP |
-| `compare-groups` | CP | ★ | Spécifique CP |
+| `compare-groups` | CP→CE1 | ★★ | CP + CE1 app |
 | `number-line` | CE1 | ★ | Droite graduée — 2 séries CE1 (`droite-graduee-01/02`) |
 | `coordinate-grid` | CE2 | ★ | Repérage quadrillage — 2 séries CE2 (`quadrillage-lire/placer-01`) |
 | `bar-chart` | CE1→CM1 | ★★ | Données — `donnees-01` (build) + `donnees-02` (read) à chaque niveau |
@@ -356,7 +356,7 @@ Le niveau CM2 est **le plus sous-représenté** (26 séries vs 79–120 pour les
 
 | Type potentiel | Description | Niveaux | Notes |
 |---------------|-------------|---------|-------|
-| **`magic-color`** | **Coloriage magique numérique** : l'élève calcule, le résultat détermine la couleur à appliquer à une ou plusieurs cases d'une grille. L'image se révèle progressivement. Format omniprésent dans le primaire français (LogicielÉducatif, Bout de Gomme, fiches papier numérisées). Excellent pour tables, compléments, doubles — mémorisation déguisée en jeu. | CP→CM1 | Implémentation : grille SVG + palette couleurs + générateur de couleur par résultat. Différent de `tile-select` (pas de sélection — calcul → couleur). |
+| ~~**`magic-color`**~~ | ~~Coloriage magique numérique~~ | CP→CM1 | ✅ Implémenté. Séries CP, CE2 (apps). Générateur `magicColor` + `magicColorGrid`. |
 | **`category-sort`** | **Tri par catégories** : glisser des items (nombres, formes, expressions) vers des zones nommées (ex. "pairs / impairs", "triangles / quadrilatères", "< 100 / ≥ 100"). Présent sur IXL, Skolengo glisser-déposer, LearningApps classement. Différent de `drag-sort` (qui ordonne) — ici on classe par nature. | CP→CM1 | Couvre : classification géométrique, pairs/impairs, multiples, type d'opération. `checkbox` approxime mais le drag visuel est plus pédagogique. |
 | **`memory`** | **Jeu de mémoire (Memory)** : retourner des paires de cartes équivalentes (entier ↔ écriture littérale, fraction ↔ dessin, heure analogique ↔ heure numérique). Format universellement connu, très présent sur LearningApps, Lumni, Sésamath. | CP→CM2 | Gamification forte. Couvre équivalences à tous niveaux. Implémentation : deck de cartes SVG, flip animation, correspondance par paire. |
 | **`broken-calc`** | **Calculatrice cassée** : atteindre un nombre cible en utilisant uniquement les touches autorisées (certaines touches sont "cassées"). Classique pédagogique français (Sésamath, MathALÉA). Force la décomposition et les équivalences numériques. | CE1→CM2 | Ex : atteindre 48 sans la touche `×`. Implémentation : clavier numérique avec touches désactivables + validation. |
@@ -397,7 +397,7 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 | **Suites logiques figurales** | Cycle 2 | CP→CE2 | ⚠️ partiel | `suites-figurales-01` à CP, CE1, CE2 ; CM1 et CM2 non couverts |
 | **Calcul réfléchi — stratégies explicites** | Cycle 2–3 | CE1→CM2 | ⚠️ partiel | CE1 + CE2 + CM1 couverts (`calc-chain`) ; CM2 non couvert |
 | **Données CM2** — diagrammes circulaires, graphiques à double entrée | Cycle 3 | CM2 | ❌ absent | Fortement au programme CM2 ; `bar-chart` existe mais aucune série CM2 |
-| **CM2 global** | Cycle 3 | CM2 | ❌ très lacunaire | 28 séries totales vs 140 en CM1 — écart critique |
+| **CM2 global** | Cycle 3 | CM2 | ⚠️ lacunaire | 40 séries totales vs 141 en CM1 — écart significatif |
 
 ---
 
@@ -432,8 +432,8 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 
 ## Couverture E2E — Tests Playwright
 
-> Mise à jour : 2026-03-21. Fichiers : `tests/e2e/exercise-player.spec.js` + `tests/e2e/exercise-types.spec.js`.
-> **26 types couverts sur 35 templates.** 40 tests au total.
+> Mise à jour : 2026-03-28. Fichiers : `tests/e2e/exercise-player.spec.js` + `tests/e2e/exercise-types.spec.js` + `tests/e2e/layout-health.spec.js`.
+> **26 types couverts sur 35 templates.** 40 tests exercices + 610 layout-health.
 
 ### Types couverts ✅
 
@@ -472,10 +472,15 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 
 | Type | Raison | Action requise |
 |------|--------|----------------|
-| `base-10` | Aucune série créée | Créer des exercices CP/CE1 avec ce type |
-| `seq-verify` | Aucune série créée (partial partagé) | Créer des exercices ou confirmer si supplanté par `sequence` |
-| `svg-tiles` | Aucune série créée | Créer des exercices |
-| `fraction-paint` | Aucune série créée | Créer des exercices (fractions CE2) |
+| `base-10` | Aucune série créée (display-only, pas de check()) | Ajouter la logique check() puis créer des exercices |
+| `seq-verify` | Bouton partagé pour sequence/bounding/convert | Pas un type d'exercice autonome |
+
+#### Récemment couverts ✅ (2026-03-28)
+
+| Type | Séries créées |
+|------|--------------|
+| `svg-tiles` | CE1 `reconnaitre-formes` (4 ex), CE2 `proprietes-formes` (4 ex) |
+| `fraction-paint` | CE2 `fractions-colorier` (6 ex), CM1 `fractions-colorier` (6 ex) |
 
 #### Problème d'infrastructure
 
@@ -488,7 +493,7 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 ## Couverture Vergnaud (classification des problèmes)
 
 > Source : champ `class:` dans les frontmatters + `exercises-report.csv`. Voir `docs/maths_classification_vergnaud.md`.
-> Dernière mise à jour : 2026-03-22 — 472 séries totales (CP 58, CE1 104, CE2 142, CM1 140, CM2 28).
+> Dernière mise à jour : 2026-03-28 — 563 séries totales (CP 61, CE1 110, CE2 151, CM1 141, CM2 40, défis 17).
 
 ### État actuel
 
@@ -548,13 +553,23 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 
 ---
 
-### Opportunités de défis chronométrés
+### Défis chronométrés
 
-| Défi | Niveau | Générateur suggéré |
-|------|--------|-------------------|
-| Compléments à 10 | CP/CE1 | `complementNombre` (target=10) |
-| Tables d'addition | CE1 | `additionFacile` |
-| Tables de soustraction | CE1/CE2 | nouveau `soustractionFacile` |
-| Tables de multiplication | CE2/CM1 | `multiplicationSimple` ✅ |
-| Divisions rapides | CM1/CM2 | nouveau `divisionSimple` |
-| ×÷ puissances de 10 | CM1/CM2 | `multDecimales` / `divDecimales` |
+> Mise à jour 2026-03-28. 17 séries de défis au total.
+
+| Défi | Niveau | Générateur | État |
+|------|--------|-----------|------|
+| Additions rapides (< 20) | CE2 | `additionFacile` | ✅ |
+| Tables de multiplication | CE2 | `multiplicationSimple` | ✅ |
+| **Calcul rapide (mix)** | CP | `fluencyMix` (facile/moyen/difficile) | ✅ 2026-03-28 |
+| **Calcul rapide (mix)** | CE1 | `fluencyMix` (facile/moyen/difficile) | ✅ 2026-03-28 |
+| **Calcul rapide (mix)** | CE2 | `fluencyMix` (facile/moyen/difficile) | ✅ 2026-03-28 |
+| **Calcul rapide (mix)** | CM1 | `fluencyMix` (facile/moyen/difficile) | ✅ 2026-03-28 |
+| **Calcul rapide (mix)** | CM2 | `fluencyMix` (facile/moyen/difficile) | ✅ 2026-03-28 |
+
+Le générateur `fluencyMix` produit un mélange aléatoire d'opérations adaptées au niveau :
+- **CP** : +/− ≤20, compléments à 10, doubles, ±10, compter par 2/5
+- **CE1** : +/− 2 chiffres, ×2/3/5/10, compléments à 100, doubles/moitiés, ±10/100
+- **CE2** : tables 2–9, divisions, 2d×1d, +/− 3 chiffres, fractions simples
+- **CM1** : tables à 12, ×÷ puissances de 10, décimaux 1dp, fractions, arrondis
+- **CM2** : décimaux ×÷, fractions, pourcentages, conversions, priorités opératoires

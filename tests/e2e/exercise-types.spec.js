@@ -68,10 +68,10 @@ test.describe('problem — quotidien-01 CP', () => {
 });
 
 // ─── number-line (read mode) ──────────────────────────────────────────────────
-// Series: droite-graduee-01 CE1 (q2r3s4t5) — ex1: read point A = 7
+// Series: droite-graduee-01 CE1 (b76399b4) — ex1: read point A = 7
 test.describe('number-line — droite-graduee-01 CE1', () => {
   test('correct value for labeled point marks exercise solved', async ({ page }) => {
-    await page.goto('/fr/exercices/q2r3s4t5/');
+    await page.goto('/fr/exercices/b76399b4/');
     await waitForAlpine(page);
     // Number line SVG is visible
     await expect(page.locator('svg[viewBox="0 0 500 90"]').first()).toBeVisible();
@@ -169,12 +169,12 @@ test.describe('matching — solides-01 CE1', () => {
 });
 
 // ─── multi-question ───────────────────────────────────────────────────────────
-// Series: calendrier-01 CE1 (cal001ce1) — ex1: march 2025 calendar
+// Series: calendrier-01 CE1 (8c066810) — ex1: march 2025 calendar
 // Q0: "Quel jour le 1er mars ?" → "samedi"
 // Q1: "Combien de dimanches ?" → "5"
 test.describe('multi-question — calendrier-01 CE1', () => {
   test('answering all sub-questions marks exercise solved', async ({ page }) => {
-    await page.goto('/fr/exercices/cal001ce1/');
+    await page.goto('/fr/exercices/8c066810/');
     await waitForAlpine(page);
     const inputs = page.locator('input');
     await inputs.nth(0).fill('samedi');
@@ -186,11 +186,11 @@ test.describe('multi-question — calendrier-01 CE1', () => {
 });
 
 // ─── checkbox ─────────────────────────────────────────────────────────────────
-// Series: paralleles-perpendiculaires-01 CE2 (ce2pp001)
+// Series: paralleles-perpendiculaires-01 CE2 (0e912db0)
 // ex1: checkedAnswers [0,2,3,4] out of 5 statements
 test.describe('checkbox — paralleles-perpendiculaires-01 CE2', () => {
   test('checking correct statements marks exercise solved', async ({ page }) => {
-    await page.goto('/fr/exercices/ce2pp001/');
+    await page.goto('/fr/exercices/0e912db0/');
     await waitForAlpine(page);
     // Statement buttons are inside .space-y-2
     const stmts = page.locator('.space-y-2 button');
@@ -288,7 +288,7 @@ test.describe('drag-sort — fractions-comparer-01 CE2', () => {
 // Series: somme-100-01 CE2 (b3e1f0a2) — generated tiles summing to 100
 test.describe('tile-select — somme-100-01 CE2', () => {
   test('tile grid renders', async ({ page }) => {
-    await page.goto('/fr/exercices/b3e1f0a2/');
+    await page.goto('/fr/applications/b3e1f0a2/');
     await waitForAlpine(page);
     // At least one tile button rendered
     await expect(page.locator('button').first()).toBeVisible();
@@ -300,7 +300,7 @@ test.describe('tile-select — somme-100-01 CE2', () => {
 // Series: suite-nombres-01 CE1 (06fa1711) — generated number sequence table
 test.describe('fill-table — suite-nombres-01 CE1', () => {
   test('table with blank cells renders', async ({ page }) => {
-    await page.goto('/fr/exercices/06fa1711/');
+    await page.goto('/fr/applications/06fa1711/');
     await waitForAlpine(page);
     // Table is rendered and verify button is present
     await expect(page.locator('table').first()).toBeVisible();
@@ -353,10 +353,10 @@ test.describe('compare — fractions-comparer-01 CE2', () => {
 });
 
 // ─── coordinate-grid ──────────────────────────────────────────────────────────
-// Series: quadrillage-lire-01 CE1 (ce1ql001) — ex1: point A at (2,3)
+// Series: quadrillage-lire-01 CE1 (6de7f04b) — ex1: point A at (2,3)
 test.describe('coordinate-grid — quadrillage-lire-01 CE1', () => {
   test('correct (x,y) coordinates mark exercise solved', async ({ page }) => {
-    await page.goto('/fr/exercices/ce1ql001/');
+    await page.goto('/fr/exercices/6de7f04b/');
     await waitForAlpine(page);
     await page.getByRole('textbox', { name: 'Abscisse x' }).fill('2');
     await page.getByRole('textbox', { name: 'Ordonnée y' }).fill('3');
@@ -366,14 +366,115 @@ test.describe('coordinate-grid — quadrillage-lire-01 CE1', () => {
 });
 
 // ─── bar-chart ────────────────────────────────────────────────────────────────
-// Series: donnees-01 CE1 (ce1do001) — ex1: build chart for 4 categories
+// Series: donnees-01 CE1 (11138055) — ex1: build chart for 4 categories
 test.describe('bar-chart — donnees-01 CE1', () => {
   test('bar chart columns with labels are rendered', async ({ page }) => {
-    await page.goto('/fr/exercices/ce1do001/');
+    await page.goto('/fr/exercices/11138055/');
     await waitForAlpine(page);
     // Category labels visible
     await expect(page.getByText('Chat', { exact: true })).toBeVisible();
     await expect(page.getByText('Chien', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Vérifier' })).toBeVisible();
+  });
+});
+
+// ─── decodage-emojis ─────────────────────────────────────────────────────────
+// Generated: each exercise has a code table + emoji equation
+test.describe('decodage-emojis — CP', () => {
+  test('code table and operation render with input', async ({ page }) => {
+    await page.goto('/fr/applications/829cd74a/');
+    await waitForAlpine(page);
+    // Title contains "Décode et calcule" and code table badges
+    await expect(page.locator('h1')).toContainText('Décode et calcule');
+    // Code table badges visible (emoji = digit)
+    await expect(page.locator('h1 .inline-block').first()).toBeVisible();
+    // Operation with input field visible (trouParts input)
+    await expect(page.locator('input[placeholder="?"]:visible')).toBeVisible();
+    // Vérifier button present
+    await expect(page.getByRole('button', { name: 'Vérifier' })).toBeVisible();
+  });
+
+  test('correct answer marks exercise solved', async ({ page }) => {
+    await page.goto('/fr/applications/829cd74a/');
+    await waitForAlpine(page);
+    // Read the code table and operation from the DOM, compute the answer
+    const answer = await page.evaluate(() => {
+      // Parse code table: "emoji = N" badges
+      const badges = document.querySelectorAll('h1 .inline-block');
+      const code = {};
+      badges.forEach(b => {
+        const m = b.textContent.match(/(.+)\s*=\s*(\d+)/);
+        if (m) code[m[1].trim()] = Number(m[2]);
+      });
+      // Get operation text from innerText (respects visibility, no duplicates)
+      let opText = document.querySelector('.js-trou').innerText;
+      // Replace emojis with their values
+      for (const [emoji, val] of Object.entries(code)) {
+        opText = opText.split(emoji).join(String(val));
+      }
+      // Clean up and evaluate: "5 + 3 = ?" → eval("5 + 3")
+      opText = opText.replace(/[=?]/g, '').replace(/×/g, '*').replace(/−/g, '-').trim();
+      try { return String(eval(opText)); } catch { return null; }
+    });
+    await page.locator('input[placeholder="?"]:visible').fill(answer);
+    await page.keyboard.press('Enter');
+    await expect(page.locator('text=Bonne réponse !')).toBeVisible();
+  });
+});
+
+test.describe('decodage-emojis — CM2 (3 emojis)', () => {
+  test('code table shows 3 emoji badges', async ({ page }) => {
+    await page.goto('/fr/applications/5da5b813/');
+    await waitForAlpine(page);
+    const badges = page.locator('h1 .inline-block');
+    await expect(badges).toHaveCount(3);
+  });
+});
+
+// ─── decodage-monstres ───────────────────────────────────────────────────────
+// Generated: monster emojis as digits forming multi-digit numbers
+test.describe('decodage-monstres — CE2 (2-digit)', () => {
+  test('code table and multi-digit operation render', async ({ page }) => {
+    await page.goto('/fr/applications/54ce2f51/');
+    await waitForAlpine(page);
+    await expect(page.locator('h1')).toContainText('Décode et calcule');
+    // At least 4 monster emoji badges in code table
+    const badges = page.locator('h1 .inline-block');
+    await expect(badges).toHaveCount(4);
+    await expect(page.locator('input[placeholder="?"]:visible')).toBeVisible();
+  });
+
+  test('correct answer marks exercise solved', async ({ page }) => {
+    await page.goto('/fr/applications/54ce2f51/');
+    await waitForAlpine(page);
+    // Parse code table and operation from DOM to compute answer
+    const answer = await page.evaluate(() => {
+      const badges = document.querySelectorAll('h1 .inline-block');
+      const code = {};
+      badges.forEach(b => {
+        const m = b.textContent.match(/(.+)\s*=\s*(\d+)/);
+        if (m) code[m[1].trim()] = m[2];
+      });
+      // In digit mode, emojis form multi-digit numbers (concatenated digits)
+      let opText = document.querySelector('.js-trou').innerText;
+      // Replace each emoji with its digit
+      for (const [emoji, digit] of Object.entries(code)) {
+        opText = opText.split(emoji).join(digit);
+      }
+      opText = opText.replace(/[=?]/g, '').replace(/×/g, '*').replace(/−/g, '-').trim();
+      try { return String(eval(opText)); } catch { return null; }
+    });
+    await page.locator('input[placeholder="?"]:visible').fill(answer);
+    await page.keyboard.press('Enter');
+    await expect(page.locator('text=Bonne réponse !')).toBeVisible();
+  });
+});
+
+test.describe('decodage-monstres — CM2 (3-digit)', () => {
+  test('code table shows 6 monster badges', async ({ page }) => {
+    await page.goto('/fr/applications/04c4b03e/');
+    await waitForAlpine(page);
+    const badges = page.locator('h1 .inline-block');
+    await expect(badges).toHaveCount(6);
   });
 });

@@ -25,7 +25,7 @@ async function waitForAlpine(page) {
 // ─── MCQ ─────────────────────────────────────────────────────────────────────
 
 test.describe('MCQ — suites figurales CP', () => {
-  const URL = '/fr/exercices/fig001cp/';
+  const URL = '/fr/exercices/3b314e9c/';
   // Exercise 01: 🔴 🔵 🔴 🔵 🔴 ___  answer: 🔵  wrong: 🔴
 
   test.beforeEach(async ({ page }) => {
@@ -69,7 +69,7 @@ test.describe('MCQ — suites figurales CP', () => {
 // ─── number-check ────────────────────────────────────────────────────────────
 
 test.describe('number-check — liens numériques CP', () => {
-  const URL = '/fr/exercices/lnum01cp/';
+  const URL = '/fr/exercices/9a7b0e5d/';
   // Exercise 01: "10 = 6 + ?"  answer: "4"
 
   test.beforeEach(async ({ page }) => {
@@ -121,7 +121,7 @@ test.describe('number-check — liens numériques CP', () => {
 // ─── calc-chain ───────────────────────────────────────────────────────────────
 
 test.describe('calc-chain — calcul réfléchi CE1', () => {
-  const URL = '/fr/exercices/cc01ce1x/';
+  const URL = '/fr/exercices/b138801a/';
   // Exercise 01: 15 → +8 → [23] → -6 → [17]
 
   test.beforeEach(async ({ page }) => {
@@ -173,7 +173,7 @@ test.describe('calc-chain — calcul réfléchi CE1', () => {
 // ─── Progress / navigation ────────────────────────────────────────────────────
 
 test.describe('Series progress', () => {
-  const URL = '/fr/exercices/fig001cp/';
+  const URL = '/fr/exercices/3b314e9c/';
 
   test('progress bar advances after solving exercise 1', async ({ page }) => {
     await page.goto(URL);

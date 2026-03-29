@@ -721,11 +721,14 @@ module.exports = async function (eleventyConfig) {
           item.items = ex.data.items.map((v) => interpolate(String(v)));
           if (ex.data.direction) item.direction = ex.data.direction;
         }
-        if (ex.data.type === 'select' && ex.data.statements && ex.data.choices) {
-          item.selectChoices = ex.data.choices.map(String);
+        if (ex.data.type === 'select' && ex.data.statements) {
+          const globalChoices = ex.data.choices ? ex.data.choices.map(String) : null;
+          item.selectChoices = globalChoices;
           item.selectStatements = ex.data.statements.map((s) => {
             const parts = String(s.template).split('___');
-            return { before: parts[0] || '', after: parts[1] || '', answer: String(s.answer) };
+            const stmt = { before: parts[0] || '', after: parts[1] || '', answer: String(s.answer) };
+            if (s.choices) stmt.choices = s.choices.map(String);
+            return stmt;
           });
         }
         if (ex.data.type === 'fill-table' && ex.data.rows && ex.data.headers) {

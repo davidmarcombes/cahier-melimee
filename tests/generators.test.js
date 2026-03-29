@@ -216,3 +216,44 @@ describe('perimetreFormes', () => {
     expect(result).toHaveProperty('title');
   });
 });
+
+describe('fluencyMix', () => {
+  const levels = ['cp', 'ce1', 'ce2', 'cm1', 'cm2'];
+  const diffs = ['facile', 'moyen', 'difficile'];
+
+  for (const level of levels) {
+    for (const difficulty of diffs) {
+      it(`${level}/${difficulty} returns valid number-check`, () => {
+        for (let i = 0; i < 30; i++) {
+          const result = generators.fluencyMix.generate({ level, difficulty });
+          expect(result.type).toBe('number-check');
+          expect(Array.isArray(result.answers)).toBe(true);
+          expect(result.answers.length).toBeGreaterThan(0);
+          expect(result.answers.every((a) => typeof a === 'string')).toBe(true);
+          expect(typeof result.operation).toBe('string');
+          expect(result.operation.length).toBeGreaterThan(0);
+          // Answer should parse to a finite number (possibly with comma decimal)
+          const numAnswer = Number(result.answers[0].replace(',', '.'));
+          expect(Number.isFinite(numAnswer)).toBe(true);
+        }
+      });
+    }
+  }
+
+  it('defaults to ce2/moyen without params', () => {
+    const result = generators.fluencyMix.generate();
+    expectNumberCheck(result);
+  });
+
+  it('produces varied operations across 50 calls', () => {
+    const ops = new Set();
+    for (let i = 0; i < 50; i++) {
+      const result = generators.fluencyMix.generate({ level: 'ce2', difficulty: 'moyen' });
+      // Extract the operator or keyword
+      const op = result.operation.match(/[+−×÷]|moitié|double|frac/)?.[0] || 'other';
+      ops.add(op);
+    }
+    // Should produce at least 3 different operation types
+    expect(ops.size).toBeGreaterThanOrEqual(3);
+  });
+});

@@ -32,6 +32,7 @@
     "generate:maths": "node scripts/generate-maths-ex.js",
     "generate:report": "node scripts/generate-report.js",
     "generate:commit": "npm run normalize:eol:write && npm run generate:ids && npm run generate:report && npm run sync:human-validations:write && npm run sync:llm-cache:write",
+    "generate:clone-prompt": "node scripts/prompt-to-clone.js",
     "validate:config": "node scripts/validate-config.js",
     "validate:exercises": "node scripts/validate-exercises.js",
     "validate:html": "html-validate \"_site/**/*.html\"",

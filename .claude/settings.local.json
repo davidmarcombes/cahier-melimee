@@ -170,7 +170,23 @@
       "Bash(head -20 grep -rn \"<button @\" e:/Code/cahier-melimee/src/_includes/ --include=\"*.njk\")",
       "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce1/maths/operations/pyramides-03/*.md)",
       "Bash(cat /home/david/Code/web/cahier-melimee/src/fr/exercices/ce2/maths/calcul/somme-100-01/01-*.md)",
-      "Bash(git show \"$hash\" -- src/assets/js/generators.js)"
+      "Bash(git show \"$hash\" -- src/assets/js/generators.js)",
+      "Bash(do if ! grep -q \"^generator:\" \"$f\")",
+      "Bash(then echo \"$f\")",
+      "Bash(then echo \"STATIC: $f\")",
+      "Bash(# Final verification checks echo \"\"=== NJK files in src/fr/ ===\"\" find src/fr -name \"\"*.njk\"\")",
+      "Bash(__NEW_LINE_2e0770240fc4b0a5__ echo \"=== Static files in applications/ ===\")",
+      "Bash(do grep -q \"^generator:\" \"$f\")",
+      "Bash(__NEW_LINE_d76ecfc9d4615039__ echo \"=== NJK files in _pages/ ===\")",
+      "Bash(# Check if these IDs existed in the previous commit git show HEAD:src/fr/exercices/exercices.json 2>&1 git log --all --oneline -- ''**/index.yaml'')",
+      "Bash(# Check if these were recently removed - search all committed content git log --all --source --remotes --oneline -S \"\"fig001cp\"\")",
+      "Bash(# Check if they exist on origin/main \\(user said branch is behind 6 commits\\) git show origin/main:src/fr/exercices/cp/maths/logique/suites-figurales-01/index.yaml)",
+      "Bash(# Search for these IDs on origin/main git grep \"\"fig001cp\\\\|lnum01cp\\\\|cc01ce1x\"\" origin/main -- ''*.yaml'')",
+      "Bash(# These IDs don''t exist anywhere. Check if they existed in the commit that added the test git show 160720f -- tests/e2e/exercise-player.spec.js)",
+      "Bash(# Check if these IDs existed in the yaml files at that commit git grep \"\"fig001cp\\\\|lnum01cp\\\\|cc01ce1x\"\" 4eee2f5 -- ''*.yaml'')",
+      "Bash(# Let me directly check if the pages are being generated from _pages # Build clean and look at the output npm run clean 2>&1 && npx @11ty/eleventy 2>&1)",
+      "Bash(# Check a built exercise page — does it contain Alpine x-data? head -50 _site/fr/exercices/3b314e9c/index.html)",
+      "Bash(# Check the CSS file exists ls -la _site/css/styles.css)"
     ]
   }
 }

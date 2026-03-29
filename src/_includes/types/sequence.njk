@@ -13,7 +13,7 @@
     </template>
     <template x-for="(ans, i) in (cur.sequence ? cur.sequence.answers : [])" :key="'sa'+i">
       <input
-        type="text" inputmode="numeric"
+        type="text" :inputmode="cur.sequence && cur.sequence.answers.some(a => a.includes('/')) ? 'text' : 'numeric'"
         x-model="seqInputs[i]"
         @keydown.enter="check()"
         @input="seqErrors = []"
