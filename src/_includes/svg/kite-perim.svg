@@ -1,0 +1,11 @@
+<svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="150,20 240,120 150,260 60,120" 
+    fill="color-mix(in srgb, #2a85bf 10%, transparent)" 
+    stroke="#2a85bf" stroke-width="2"/>
+
+  <text x="210" y="60" font-family="monospace" font-size="16" transform="rotate(48, 210, 60)">5,5 cm</text>
+  <text x="90" y="60" font-family="monospace" font-size="16" transform="rotate(-48, 90, 60)" text-anchor="end">5,5 cm</text>
+  
+  <text x="215" y="200" font-family="monospace" font-size="16" transform="rotate(-58, 215, 200)">90 mm</text>
+  <text x="85" y="200" font-family="monospace" font-size="16" transform="rotate(58, 85, 200)" text-anchor="end">90 mm</text>
+</svg>

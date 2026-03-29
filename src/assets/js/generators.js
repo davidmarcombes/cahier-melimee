@@ -4062,6 +4062,209 @@ const generators = {
       };
     },
   },
+
+  /* ── Function Machine ─────────────────────────────────────────────── */
+  functionMachineCompute: {
+    generate(params = {}) {
+      const ops = [
+        { label: '× 2', fn: n => n * 2 },
+        { label: '× 3', fn: n => n * 3 },
+        { label: '× 4', fn: n => n * 4 },
+        { label: '× 5', fn: n => n * 5 },
+        { label: '+ 10', fn: n => n + 10 },
+        { label: '+ 25', fn: n => n + 25 },
+        { label: '× 2 + 1', fn: n => n * 2 + 1 },
+        { label: '× 3 - 1', fn: n => n * 3 - 1 },
+        { label: '× 10', fn: n => n * 10 },
+      ];
+      const op = randItem(ops);
+      const input = rand(params.min || 2, params.max || 12);
+      const answer = op.fn(input);
+      return {
+        type: 'function-machine',
+        title: 'Que sort la machine ?',
+        machine: {
+          mode: 'compute',
+          rule: op.label,
+          ruleLabel: op.label,
+          input,
+          answer,
+        },
+      };
+    },
+  },
+
+  functionMachineDiscover: {
+    generate(params = {}) {
+      const ops = [
+        { label: '× 2', fn: n => n * 2 },
+        { label: '× 3', fn: n => n * 3 },
+        { label: '× 4', fn: n => n * 4 },
+        { label: '× 5', fn: n => n * 5 },
+        { label: '+ 5', fn: n => n + 5 },
+        { label: '+ 10', fn: n => n + 10 },
+        { label: '× 2 + 1', fn: n => n * 2 + 1 },
+        { label: '- 3', fn: n => n - 3 },
+      ];
+      const correctIdx = rand(0, ops.length - 1);
+      const correct = ops[correctIdx];
+      const inputs = randUnique(params.min || 2, params.max || 10, 3);
+      const pairs = inputs.map(n => ({ in: n, out: correct.fn(n) }));
+      const distractors = shuffle(ops.filter((_, i) => i !== correctIdx))
+        .filter(op => inputs.some(n => op.fn(n) !== correct.fn(n)))
+        .slice(0, 3);
+      const choices = shuffle([correct, ...distractors]).map(o => o.label);
+      const answerIdx = choices.indexOf(correct.label);
+      return {
+        type: 'function-machine',
+        title: 'Quelle est la règle ?',
+        machine: {
+          mode: 'discover',
+          pairs,
+          choices,
+          answer: answerIdx,
+        },
+      };
+    },
+  },
+
+  /* ── Labyrinthe (Constraint Maze) ───────────────────────────────── */
+  labyrinthe: {
+    generate(params = {}) {
+      const size = params.size || 4;
+      const rulesDefs = {
+        mult3: { label: 'Passe uniquement par les multiples de 3', rule: 'mult', param: 3, check: n => n % 3 === 0, pool: () => rand(1, 15) * 3, bad: () => { let n; do { n = rand(1, 50); } while (n % 3 === 0); return n; } },
+        mult5: { label: 'Passe uniquement par les multiples de 5', rule: 'mult', param: 5, check: n => n % 5 === 0, pool: () => rand(1, 10) * 5, bad: () => { let n; do { n = rand(1, 50); } while (n % 5 === 0); return n; } },
+        even: { label: 'Passe uniquement par les nombres pairs', rule: 'even', param: 2, check: n => n % 2 === 0, pool: () => rand(1, 25) * 2, bad: () => rand(0, 24) * 2 + 1 },
+        odd: { label: 'Passe uniquement par les nombres impairs', rule: 'odd', param: undefined, check: n => n % 2 !== 0, pool: () => rand(0, 24) * 2 + 1, bad: () => rand(1, 25) * 2 },
+      };
+      const ruleKey = params.rule || randItem(Object.keys(rulesDefs));
+      const r = rulesDefs[ruleKey];
+
+      // Generate a random path from start to end
+      const pathArr = [[0, 0]];
+      let cr = 0, cc = 0;
+      while (cr !== size - 1 || cc !== size - 1) {
+        const moves = [];
+        if (cr < size - 1) moves.push([cr + 1, cc]);
+        if (cc < size - 1) moves.push([cr, cc + 1]);
+        if (cr > 0 && Math.random() < 0.15 && !pathArr.some(p => p[0] === cr - 1 && p[1] === cc)) moves.push([cr - 1, cc]);
+        if (cc > 0 && Math.random() < 0.15 && !pathArr.some(p => p[0] === cr && p[1] === cc - 1)) moves.push([cr, cc - 1]);
+        const [nr, nc] = randItem(moves);
+        if (!pathArr.some(p => p[0] === nr && p[1] === nc)) {
+          pathArr.push([nr, nc]);
+          cr = nr; cc = nc;
+        } else {
+          if (cr < size - 1) { cr++; pathArr.push([cr, cc]); }
+          else if (cc < size - 1) { cc++; pathArr.push([cr, cc]); }
+        }
+      }
+
+      // Fill grid
+      const grid = Array.from({ length: size }, () => Array(size).fill(0));
+      const pathSet = new Set(pathArr.map(([pr, pc]) => `${pr},${pc}`));
+      for (const [pr, pc] of pathArr) grid[pr][pc] = r.pool();
+      for (let ri = 0; ri < size; ri++) {
+        for (let ci = 0; ci < size; ci++) {
+          if (pathSet.has(`${ri},${ci}`)) continue;
+          const adjToPath = [[ri-1,ci],[ri+1,ci],[ri,ci-1],[ri,ci+1]]
+            .some(([ar, ac]) => ar >= 0 && ar < size && ac >= 0 && ac < size && pathSet.has(`${ar},${ac}`));
+          grid[ri][ci] = adjToPath ? r.bad() : (Math.random() < 0.3 ? r.pool() : r.bad());
+        }
+      }
+
+      return {
+        type: 'maze',
+        title: 'Trouve le chemin',
+        maze: {
+          grid,
+          start: [0, 0],
+          end: [size - 1, size - 1],
+          rule: r.rule,
+          ruleParam: r.param,
+          ruleLabel: r.label,
+        },
+      };
+    },
+  },
+
+  /* ── Venn Diagram (Emoji Classification) ────────────────────────── */
+  vennEmojis: {
+    generate(params = {}) {
+      const themes = [
+        {
+          labelA: 'Est un animal',
+          labelB: 'Vit dans l\'eau',
+          items: [
+            { char: '🐟', zone: 'ab' }, { char: '🐬', zone: 'ab' }, { char: '🐙', zone: 'ab' },
+            { char: '🐶', zone: 'a' }, { char: '🐱', zone: 'a' }, { char: '🐻', zone: 'a' },
+            { char: '🚢', zone: 'b' }, { char: '🏊', zone: 'b' },
+            { char: '🌳', zone: 'out' }, { char: '🏠', zone: 'out' },
+          ],
+        },
+        {
+          labelA: 'A des roues',
+          labelB: 'Est un véhicule',
+          items: [
+            { char: '🚗', zone: 'ab' }, { char: '🚌', zone: 'ab' }, { char: '🏍️', zone: 'ab' },
+            { char: '🛒', zone: 'a' }, { char: '🚲', zone: 'a' },
+            { char: '🚢', zone: 'b' }, { char: '✈️', zone: 'b' },
+            { char: '🏠', zone: 'out' }, { char: '🌲', zone: 'out' },
+          ],
+        },
+        {
+          labelA: 'Est un fruit',
+          labelB: 'Est jaune',
+          items: [
+            { char: '🍌', zone: 'ab' }, { char: '🍋', zone: 'ab' },
+            { char: '🍎', zone: 'a' }, { char: '🍇', zone: 'a' }, { char: '🍓', zone: 'a' },
+            { char: '⭐', zone: 'b' }, { char: '🌻', zone: 'b' },
+            { char: '🚗', zone: 'out' }, { char: '📘', zone: 'out' },
+          ],
+        },
+        {
+          labelA: 'Est un aliment',
+          labelB: 'Est sucré',
+          items: [
+            { char: '🍰', zone: 'ab' }, { char: '🍫', zone: 'ab' }, { char: '🍪', zone: 'ab' },
+            { char: '🥕', zone: 'a' }, { char: '🥦', zone: 'a' },
+            { char: '🍭', zone: 'b' }, { char: '🧁', zone: 'b' },
+            { char: '📚', zone: 'out' }, { char: '⚽', zone: 'out' },
+          ],
+        },
+        {
+          labelA: 'Peut voler',
+          labelB: 'Est un animal',
+          items: [
+            { char: '🦅', zone: 'ab' }, { char: '🦋', zone: 'ab' }, { char: '🐝', zone: 'ab' },
+            { char: '✈️', zone: 'a' }, { char: '🚁', zone: 'a' },
+            { char: '🐕', zone: 'b' }, { char: '🐈', zone: 'b' },
+            { char: '🏠', zone: 'out' }, { char: '📱', zone: 'out' },
+          ],
+        },
+      ];
+      const theme = randItem(themes);
+      const byZone = { a: [], b: [], ab: [], out: [] };
+      theme.items.forEach(it => byZone[it.zone].push(it));
+      const picked = [];
+      for (const z of ['a', 'b', 'ab', 'out']) {
+        if (byZone[z].length > 0) picked.push(randItem(byZone[z]));
+      }
+      const remaining = theme.items.filter(it => !picked.includes(it));
+      const extra = shuffle(remaining).slice(0, rand(2, 4));
+      const items = shuffle([...picked, ...extra]);
+
+      return {
+        type: 'venn',
+        title: 'Classe les emojis',
+        venn: {
+          labelA: theme.labelA,
+          labelB: theme.labelB,
+          items,
+        },
+      };
+    },
+  },
 };
 
 // Returns the palette color index that the number n belongs to for a given rule.

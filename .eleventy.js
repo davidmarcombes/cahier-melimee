@@ -791,6 +791,56 @@ module.exports = async function (eleventyConfig) {
           };
         }
 
+        if (ex.data.type === 'function-machine' && ex.data.machine) {
+          const m = ex.data.machine;
+          item.machine = {
+            mode: m.mode || 'compute',
+          };
+          if (m.mode === 'compute' || !m.mode) {
+            item.machine.rule = interpolate(String(m.rule || ''));
+            item.machine.ruleLabel = interpolate(String(m.ruleLabel || m.rule || ''));
+            item.machine.input = Number(interpolate(String(m.input)));
+            item.machine.answer = Number(interpolate(String(m.answer)));
+          } else if (m.mode === 'discover') {
+            item.machine.pairs = (m.pairs || []).map(p => ({
+              in: Number(interpolate(String(p.in))),
+              out: Number(interpolate(String(p.out))),
+            }));
+            item.machine.choices = (m.choices || []).map(c => interpolate(String(c)));
+            item.machine.answer = Number(m.answer);
+          }
+        }
+
+        if (ex.data.type === 'maze' && ex.data.maze) {
+          const m = ex.data.maze;
+          item.maze = {
+            grid: m.grid,
+            start: m.start || [0, 0],
+            end: m.end || [m.grid.length - 1, (m.grid[0] || []).length - 1],
+            rule: m.rule,
+            ruleParam: m.ruleParam != null ? Number(m.ruleParam) : undefined,
+            ruleLabel: interpolate(String(m.ruleLabel || '')),
+          };
+        }
+
+        if (ex.data.type === 'venn' && ex.data.venn) {
+          const v = ex.data.venn;
+          const items = (v.items || []).map(it => ({
+            char: it.char,
+            zone: it.zone,
+          }));
+          // Shuffle items for display
+          for (let i = items.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [items[i], items[j]] = [items[j], items[i]];
+          }
+          item.venn = {
+            labelA: interpolate(String(v.labelA || '')),
+            labelB: interpolate(String(v.labelB || '')),
+            items,
+          };
+        }
+
         if (ex.data.type === 'inverse-problem' && ex.data.ipBase) {
           item.ipBase = {
             text: md.renderInline(interpolate(String(ex.data.ipBase.text))),

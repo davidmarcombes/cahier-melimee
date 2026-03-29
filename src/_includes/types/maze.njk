@@ -1,0 +1,60 @@
+{# Maze — constraint-based pathfinding on a number grid #}
+<div x-show="cur.type === 'maze'" class="space-y-4">
+  {# Rule label #}
+  <div x-show="cur.maze" class="text-center">
+    <span class="inline-block px-4 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-bold"
+      x-text="cur.maze.ruleLabel"></span>
+  </div>
+
+  {# Body text #}
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle"></div>
+
+  {# Grid #}
+  <template x-if="cur.maze">
+    <div>
+      <div class="flex justify-center">
+        <div class="inline-grid gap-1.5" :style="'grid-template-columns: repeat(' + cur.maze.grid[0].length + ', minmax(0, 1fr))'">
+          <template x-for="(row, r) in cur.maze.grid" :key="r">
+            <template x-for="(cell, c) in row" :key="r + '-' + c">
+              <button type="button"
+                @click="mazeTap(r, c)"
+                :disabled="solved"
+                class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl text-lg font-bold transition-all border-2"
+                :class="{
+                  'border-green-500 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200':
+                    solved && mazePath.some(p => p[0] === r && p[1] === c),
+                  'border-primary-500 bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 ring-2 ring-primary-300':
+                    !solved && mazePath.some(p => p[0] === r && p[1] === c),
+                  'border-red-400 bg-red-50 dark:bg-red-900/20': mazeErrors.some(p => p[0] === r && p[1] === c),
+                  'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 ring-2 ring-emerald-300':
+                    !solved && r === cur.maze.start[0] && c === cur.maze.start[1] && !mazePath.some(p => p[0] === r && p[1] === c),
+                  'border-amber-400 bg-amber-50 dark:bg-amber-900/20 ring-2 ring-amber-300':
+                    !solved && r === cur.maze.end[0] && c === cur.maze.end[1] && !mazePath.some(p => p[0] === r && p[1] === c),
+                  'border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default hover:border-slate-300 dark:hover:border-slate-600':
+                    !solved && !mazePath.some(p => p[0] === r && p[1] === c) && !mazeErrors.some(p => p[0] === r && p[1] === c) && !(r === cur.maze.start[0] && c === cur.maze.start[1]) && !(r === cur.maze.end[0] && c === cur.maze.end[1])
+                }"
+                x-text="cell">
+              </button>
+            </template>
+          </template>
+        </div>
+      </div>
+
+      {# Legend #}
+      <div class="flex justify-center gap-4 text-xs text-content-subtle mt-2">
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded border-2 border-emerald-400 bg-emerald-50"></span> Départ</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded border-2 border-amber-400 bg-amber-50"></span> Arrivée</span>
+      </div>
+
+      {# Verify button #}
+      <div class="flex justify-center mt-4">
+        <button type="button" @click="check()" :disabled="solved || mazePath.length < 2"
+          class="px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+          <span x-show="!solved">Vérifier</span>
+          <span x-show="solved">Bravo !</span>
+        </button>
+      </div>
+    </div>
+  </template>
+</div>

@@ -1,0 +1,9 @@
+<svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="110,30 190,30 190,110 270,110 270,190 190,190 190,270 110,270 110,190 30,190 30,110 110,110" 
+    fill="color-mix(in srgb, #2a85bf 10%, transparent)" stroke="#2a85bf" stroke-width="2"/>
+  <text x="150" y="295" font-family="monospace" font-size="18" text-anchor="middle">3 cm</text>
+  <text x="100" y="70" font-family="monospace" font-size="18" text-anchor="end">3 cm</text>
+  <text x="230" y="100" font-family="monospace" font-size="18" text-anchor="middle">3 cm</text>
+  <text x="70" y="150" font-family="monospace" font-size="18" text-anchor="middle">3 cm</text>
+  <text x="280" y="150" font-family="monospace" font-size="18" transform="rotate(90, 280, 150)" text-anchor="middle">3 cm</text>
+</svg>

@@ -1,0 +1,111 @@
+{# Function Machine — compute output or discover the rule #}
+<div x-show="cur.type === 'function-machine'" class="space-y-6">
+  {# Body text #}
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle"></div>
+
+  {# Compute mode: input → [rule] → ? #}
+  <template x-if="cur.machine && cur.machine.mode === 'compute'">
+    <div>
+      <div class="flex items-end justify-center gap-3">
+        {# Input #}
+        <div class="flex flex-col items-center">
+          <span class="text-xs font-bold uppercase text-content-subtle mb-1">Entrée</span>
+          <div class="w-16 h-16 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-surface-subtle flex items-center justify-center text-2xl font-black text-content-default"
+            x-text="cur.machine.input"></div>
+        </div>
+
+        {# Arrow #}
+        <svg class="w-6 h-6 text-slate-400 shrink-0 mb-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4 4 4-4 4"/></svg>
+
+        {# Machine box #}
+        <div class="flex flex-col items-center">
+          <span class="text-xs font-bold uppercase text-content-subtle mb-1">Règle</span>
+          <div class="relative px-5 h-16 bg-slate-700 dark:bg-primary-900 rounded-2xl border-4 border-slate-600 dark:border-primary-700 shadow-lg flex items-center justify-center">
+            <span class="text-white font-mono text-xl font-bold" x-text="cur.machine.ruleLabel"></span>
+          </div>
+        </div>
+
+        {# Arrow #}
+        <svg class="w-6 h-6 text-slate-400 shrink-0 mb-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-4-4 4 4-4 4"/></svg>
+
+        {# Output input #}
+        <div class="flex flex-col items-center">
+          <span class="text-xs font-bold uppercase text-content-subtle mb-1">Sortie</span>
+          <input type="text" inputmode="numeric"
+            x-model="fmInput"
+            @keydown.enter="check()"
+            :disabled="solved"
+            placeholder="?"
+            class="w-16 h-16 text-center text-2xl font-black rounded-2xl border-2 transition-colors
+              focus:outline-none focus:ring-2 focus:ring-primary-500
+              bg-white dark:bg-slate-800 text-content-default"
+            :class="{
+              'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+              'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
+              'border-slate-200 dark:border-slate-700': !solved && !showError
+            }"/>
+        </div>
+      </div>
+
+      {# Verify button #}
+      <div class="flex justify-center mt-6">
+        <button type="button" @click="check()" :disabled="solved || !fmInput.trim()"
+          class="px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+          <span x-show="!solved">Vérifier</span>
+          <span x-show="solved">Bravo !</span>
+        </button>
+      </div>
+    </div>
+  </template>
+
+  {# Discover mode: pairs table + MCQ rule choices #}
+  <template x-if="cur.machine && cur.machine.mode === 'discover'">
+    <div>
+      {# Pairs table #}
+      <div class="flex justify-center mb-6">
+        <table class="border-collapse text-center">
+          <thead>
+            <tr>
+              <th class="px-4 py-2 text-xs font-bold uppercase text-content-subtle border-b border-slate-200 dark:border-slate-700">Entrée</th>
+              <th class="px-4 py-2 text-xs font-bold uppercase text-content-subtle border-b border-slate-200 dark:border-slate-700"></th>
+              <th class="px-4 py-2 text-xs font-bold uppercase text-content-subtle border-b border-slate-200 dark:border-slate-700">Sortie</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(pair, pi) in cur.machine.pairs" :key="pi">
+              <tr>
+                <td class="px-4 py-2 text-xl font-bold text-content-default" x-text="pair.in"></td>
+                <td class="px-2 py-2">
+                  <div class="w-10 h-8 bg-slate-700 dark:bg-primary-900 rounded-lg border-2 border-slate-600 dark:border-primary-700 flex items-center justify-center">
+                    <span class="text-white font-mono text-sm">?</span>
+                  </div>
+                </td>
+                <td class="px-4 py-2 text-xl font-bold text-content-default" x-text="pair.out"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      {# Rule choices (MCQ-style) #}
+      <div class="grid grid-cols-2 gap-2">
+        <template x-for="(choice, ci) in cur.machine.choices" :key="ci">
+          <button type="button" @click="fmTap(ci)" :disabled="solved"
+            class="px-4 py-3 rounded-xl border-2 text-center text-lg font-mono font-bold transition-all"
+            :class="{
+              'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300':
+                solved && ci === cur.machine.answer,
+              'border-red-400 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 animate-shake':
+                fmChoice === ci && ci !== cur.machine.answer,
+              'border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10':
+                !solved && fmChoice !== ci,
+              'opacity-50': solved && ci !== cur.machine.answer
+            }">
+            <span x-text="choice"></span>
+          </button>
+        </template>
+      </div>
+    </div>
+  </template>
+</div>

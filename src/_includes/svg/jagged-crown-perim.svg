@@ -1,0 +1,14 @@
+<svg viewBox="0 0 400 300" width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="50,250 150,280 180,180 280,220 350,150 250,50 150,120 40,80" 
+    fill="color-mix(in srgb, #2a85bf 10%, transparent)" 
+    stroke="#2a85bf" stroke-width="2"/>
+
+  <text x="100" y="285" font-family="monospace" font-size="14" transform="rotate(15, 100, 285)">55 mm</text>
+  <text x="175" y="240" font-family="monospace" font-size="14" transform="rotate(-70, 175, 240)">4,2 cm</text>
+  <text x="230" y="220" font-family="monospace" font-size="14" transform="rotate(22, 230, 220)">60 mm</text>
+  <text x="330" y="195" font-family="monospace" font-size="14" transform="rotate(-45, 330, 195)">3,8 cm</text>
+  <text x="310" y="90" font-family="monospace" font-size="14" transform="rotate(45, 310, 90)">52 mm</text>
+  <text x="200" y="70" font-family="monospace" font-size="14" transform="rotate(-35, 200, 70)">4,5 cm</text>
+  <text x="80" y="90" font-family="monospace" font-size="14" transform="rotate(20, 80, 90)">6,1 cm</text>
+  <text x="30" y="180" font-family="monospace" font-size="14" transform="rotate(75, 30, 180)">75 mm</text>
+</svg>

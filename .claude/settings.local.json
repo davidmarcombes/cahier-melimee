@@ -186,7 +186,8 @@
       "Bash(# Check if these IDs existed in the yaml files at that commit git grep \"\"fig001cp\\\\|lnum01cp\\\\|cc01ce1x\"\" 4eee2f5 -- ''*.yaml'')",
       "Bash(# Let me directly check if the pages are being generated from _pages # Build clean and look at the output npm run clean 2>&1 && npx @11ty/eleventy 2>&1)",
       "Bash(# Check a built exercise page — does it contain Alpine x-data? head -50 _site/fr/exercices/3b314e9c/index.html)",
-      "Bash(# Check the CSS file exists ls -la _site/css/styles.css)"
+      "Bash(# Check the CSS file exists ls -la _site/css/styles.css)",
+      "Bash(awk:*)"
     ]
   }
 }

@@ -79,6 +79,13 @@ export function seriesPlayer(exercises, seriesId) {
     dtErrors: [],       // field keys with wrong answers
     decompInputs: [],   // inputs for decomp type (one per non-comma part)
     decompErrors: [],   // indices of wrong decomp inputs
+    fmInput: '',        // function-machine compute mode output
+    fmChoice: null,     // function-machine discover mode selected choice
+    mazePath: [],       // maze path as [[r,c], ...]
+    mazeErrors: [],     // maze cells that failed validation
+    vennPlacements: {}, // venn: itemIdx → zone ('a','b','ab','out')
+    vennSelected: null, // venn: currently selected item index
+    vennErrors: [],     // venn: item indices with wrong placement
 
     /* Helpers */
     get cur() {
@@ -356,6 +363,16 @@ export function seriesPlayer(exercises, seriesId) {
       }
       this.decompErrors = [];
 
+      this.fmInput = '';
+      this.fmChoice = null;
+
+      this.mazePath = [];
+      this.mazeErrors = [];
+
+      this.vennPlacements = {};
+      this.vennSelected = null;
+      this.vennErrors = [];
+
       this.dtInputs = _e.type === 'decimal-triple'
         ? { fracNum: '', fracDen: '', decimal: '', dizaines: '', unites: '', dixiemes: '', centiemes: '', milliemes: '' }
         : {};
@@ -589,9 +606,132 @@ export function seriesPlayer(exercises, seriesId) {
       this.svgErrors = [];
     },
 
+    /* Function Machine — discover mode tap */
+    fmTap(i) {
+      if (this.solved) return;
+      if (i === this.cur.machine.answer) {
+        this.fmChoice = i;
+        this._markSolvedAndAdvance();
+      } else {
+        this.fmChoice = i;
+        setTimeout(() => { this.fmChoice = null; }, 1200);
+      }
+    },
+
+    /* Maze — tap a cell to extend or retract the path */
+    mazeTap(r, c) {
+      if (this.solved) return;
+      const m = this.cur.maze;
+      if (!m) return;
+      this.mazeErrors = [];
+      const path = this.mazePath;
+
+      // If tapping the last cell in path, undo it (unless it's the start)
+      if (path.length > 0) {
+        const last = path[path.length - 1];
+        if (last[0] === r && last[1] === c) {
+          if (path.length > 1) this.mazePath = path.slice(0, -1);
+          return;
+        }
+      }
+
+      // If path is empty, must start at start cell
+      if (path.length === 0) {
+        if (r === m.start[0] && c === m.start[1]) {
+          this.mazePath = [[r, c]];
+        }
+        return;
+      }
+
+      // Must be adjacent to last cell (no diagonals)
+      const last = path[path.length - 1];
+      const dr = Math.abs(r - last[0]), dc = Math.abs(c - last[1]);
+      if ((dr + dc) !== 1) return;
+
+      // Must not already be in path
+      if (path.some(p => p[0] === r && p[1] === c)) return;
+
+      this.mazePath = [...path, [r, c]];
+    },
+
+    /* Venn — select an item from the bank */
+    vennSelect(i) {
+      if (this.solved) return;
+      this.vennSelected = this.vennSelected === i ? null : i;
+      this.vennErrors = [];
+    },
+
+    /* Venn — place selected item into a zone */
+    vennPlaceZone(zone) {
+      if (this.solved || this.vennSelected === null) return;
+      const updated = { ...this.vennPlacements };
+      updated[this.vennSelected] = zone;
+      this.vennPlacements = updated;
+      this.vennSelected = null;
+      this.vennErrors = [];
+    },
+
     check() {
       const _e = this.cur;
       if (this.solved) return;
+
+      if (_e.type === 'function-machine' && _e.machine) {
+        if (_e.machine.mode === 'compute') {
+          if (!this.fmInput.trim()) { this._flashError(); return; }
+          if (normalizeAnswer(this.fmInput) === normalizeAnswer(String(_e.machine.answer))) {
+            this._markSolvedAndAdvance();
+          } else {
+            this._flashError();
+          }
+        }
+        // Discover mode is handled by fmTap() directly
+        return;
+      }
+
+      if (_e.type === 'maze' && _e.maze) {
+        const m = _e.maze;
+        const path = this.mazePath;
+        // Must reach the end cell
+        const last = path.length > 0 ? path[path.length - 1] : null;
+        if (!last || last[0] !== m.end[0] || last[1] !== m.end[1]) {
+          this._flashError();
+          return;
+        }
+        // All cells in path must satisfy the rule
+        const ruleCheck = this._mazeRuleCheck(m.rule, m.ruleParam);
+        const errors = path.filter(([r, c]) => !ruleCheck(m.grid[r][c]));
+        if (errors.length === 0) {
+          this.mazeErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.mazeErrors = errors;
+          this._flashError(() => { this.mazeErrors = []; });
+        }
+        return;
+      }
+
+      if (_e.type === 'venn' && _e.venn) {
+        const items = _e.venn.items;
+        if (Object.keys(this.vennPlacements).length < items.length) {
+          this._flashError();
+          return;
+        }
+        const errors = items
+          .map((it, i) => this.vennPlacements[i] !== it.zone ? i : -1)
+          .filter(i => i !== -1);
+        if (errors.length === 0) {
+          this.vennErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.vennErrors = errors;
+          // Move wrong items back to bank
+          const updated = { ...this.vennPlacements };
+          errors.forEach(i => { delete updated[i]; });
+          this.vennPlacements = updated;
+          this._flashError(() => { this.vennErrors = []; });
+        }
+        return;
+      }
 
       if (_e.type === 'bar-chart' && _e.bc && _e.bc.mode === 'build') {
         const errors = _e.bc.values
@@ -966,6 +1106,19 @@ export function seriesPlayer(exercises, seriesId) {
       const u = normalizeAnswer(this.userInput);
       if ((_e.answers || []).some((a) => normalizeAnswer(a) === u)) this._markSolvedAndAdvance();
       else this._flashError();
+    },
+
+    _mazeRuleCheck(rule, param) {
+      switch (rule) {
+        case 'mult': return n => n % (param || 3) === 0;
+        case 'even': return n => n % 2 === 0;
+        case 'odd': return n => n % 2 !== 0;
+        case 'digitSum': return n => String(n).split('').reduce((s, d) => s + Number(d), 0) === (param || 10);
+        case 'divisor': return n => (param || 24) % n === 0;
+        case 'lt': return n => n < (param || 50);
+        case 'gt': return n => n > (param || 50);
+        default: return () => true;
+      }
     },
 
     _markSolvedAndAdvance() {

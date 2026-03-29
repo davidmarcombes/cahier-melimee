@@ -392,41 +392,177 @@ Hors programme NCERT officiel mais enseigné dans les écoles privées et centre
 
 ---
 
+C'est un excellent début de base de données. Ton document actuel couvre déjà les piliers majeurs (Singapour, Japon, Russie, Chine), mais pour un outil pédagogique web vraiment différenciant, il nous manque l'approche **phénoménologique** de la Scandinavie, la **rigueur logique** de l'Europe centrale et la **modélisation holistique** du Québec.
+
+Voici de quoi compléter ton panorama avec des types d'exercices qui bousculent les habitudes françaises.
+
+---
+
+## Finlande (L'ancrage fonctionnel et "Arki-Matematiikka")
+
+Le modèle finlandais ne cherche pas la performance abstraite immédiate, mais l'utilité sociale et la "littératie" numérique.
+
+### 70. Arki-Matematiikka (Maths du quotidien "brutes")
+Plutôt que des problèmes simplifiés, l'élève reçoit des documents réels : une facture d'électricité avec des tarifs HP/HC, un horaire de bus complexe, ou un prospectus de supermarché avec des offres "2+1 gratuit".
+- **Différence vs France** : En France, les données sont souvent "pré-mâchées" pour le calcul. En Finlande, l'exercice consiste d'abord à **extraire les données pertinentes** d'un document saturé d'informations inutiles.
+- **Interactivité** : 🟢 Document interactif où l'élève doit surligner les nombres utiles avant de calculer.
+
+### 71. Estimation de la "Vraisemblance" (Reasonableness)
+Un calcul complexe est donné avec un résultat manifestement faux (erreur de virgule ou d'unité). L'élève ne doit pas recalculer, mais expliquer pourquoi le résultat est "impossible" dans le monde réel.
+- **Différence vs France** : Proche de l'estimation chinoise ou américaine, mais focalisé sur le bon sens citoyen plutôt que sur l'approximation numérique.
+- **Interactivité** : 🟢 Curseur de "crédibilité" à déplacer + zone de texte pour la preuve.
+
+---
+
+## Canada / Québec (La Situation-Problème)
+
+Le Québec a institutionnalisé une approche par compétences où l'élève est un "chercheur".
+
+### 72. La Mission Mathématique (Situation-Problème)
+Un scénario long (ex: "Organiser le voyage de fin d'année") avec un budget, des contraintes de temps, de géométrie (plan du bus) et de proportionnalité. Il n'y a pas une seule question, mais un **produit final** à livrer.
+- **Différence vs France** : La France utilise des "problèmes complexes", mais le Québec en fait une épreuve de 2h où l'élève doit gérer ses propres étapes sans guidage intermédiaire.
+- **Interactivité** : 🟡 Tableau de bord de projet avec des "étapes de mission" à valider.
+
+### 73. Tâches Parallèles (Parallel Tasks)
+L'enseignant propose deux problèmes de niveaux de difficulté différents mais portant sur le même concept (ex: la moyenne). Tous les élèves participent ensuite à la même discussion sur les propriétés communes.
+- **Différence vs France** : Gère l'hétérogénéité sans stigmatisation ; tout le monde parle de la même "idée mathématique".
+- **Interactivité** : 🟢 Choix du niveau de difficulté au départ, puis forum ou "galerie de solutions" commune.
+
+---
+
+## Hongrie (Tradition Varga-Kalmár)
+
+La Hongrie, terre de grands mathématiciens, mise sur la combinatoire et la logique pure dès le CP.
+
+### 74. Ensembles à contraintes négatives (Logique)
+Placer des objets dans un diagramme de Venn selon des attributs. La difficulté est dans la **négation** : "Place les formes qui ne sont **ni** bleues, **ni** rondes".
+- **Différence vs France** : Travail sur les opérateurs logiques $\neg A \cap \neg B$ très précoce, là où la France reste sur des critères positifs.
+- **Interactivité** : 🟢 Glisser-déposer dans des cercles d'ensembles avec retour d'erreur immédiat.
+
+### 75. Arbres de dénombrement (Combinatoire)
+Trouver toutes les façons d'habiller une poupée avec 3 chapeaux et 2 vestes. L'élève doit construire l'arbre systématique.
+- **Différence vs France** : La combinatoire est quasiment absente du programme français primaire, alors qu'elle est un pilier en Europe centrale pour structurer la pensée.
+- **Interactivité** : 🟢 Constructeur de diagramme en arbre par "nœuds" cliquables.
+
+---
+
+## Australie & Nouvelle-Zélande (The Think Board)
+
+Ces pays utilisent des outils de "traduction" pour s'assurer que le concept est compris sous toutes ses formes.
+
+### 76. The Think Board (Le tableau des 4 modes)
+Une grille divisée en 4 zones pour un seul fait mathématique (ex: $12 \div 3 = 4$). L'élève doit fournir : (1) Une histoire, (2) Un dessin, (3) Une manipulation (cubes virtuels), (4) Le symbole. C'est une extension de la fluidité variée britannique.
+- **Différence vs France** : Force la **multimodalité**. Un élève bon en calcul mais faible en langage est obligé de travailler sa sémantique.
+- **Interactivité** : 🟢 Interface à 4 quadrants : saisie texte, canevas de dessin, manipulateur de blocs, clavier numérique.
+
+---
+---
+
+C'est une base de travail impressionnante ! Ta taxonomie est déjà très riche. Pour compléter ce panorama international et nourrir ton outil pédagogique, je te propose d'explorer trois zones géographiques supplémentaires reconnues pour leur approche singulière : **les Pays-Bas** (pionniers du "Realistic Mathematics Education"), la **Hongrie** (tradition d'excellence en logique et combinatoire) et la **Corée du Sud** (maîtrise de la visualisation spatiale et du récit).
+
+Voici de nouveaux types d'exercices qui sortent des sentiers battus français :
+
+---
+
+## Pays-Bas (Realistic Mathematics Education - RME)
+
+L'approche néerlandaise, portée par l'institut Freudenthal, mise sur la "réinvention guidée" et l'utilisation de modèles mathématiques qui émergent de contextes réels.
+
+### 77. The Empty Number Line (ligne numérique vide)
+Contrairement à la file numérique graduée française, l'élève reçoit une ligne **vierge**. Il y place ses propres "sauts" pour résoudre une opération. Exemple pour $38 + 25$ : un saut de $+20$ pour arriver à $58$, puis $+2$ pour arriver à $60$, puis $+3$ pour $63$.
+- **Différence vs France** : En France, la ligne est souvent un support de lecture. Ici, c'est un **outil de calcul dynamique** qui rend visible la stratégie de l'élève.
+- **Interactivité** : 🟢 Tracer des arcs de cercle personnalisés au-dessus de la ligne avec saisie de la valeur du saut.
+
+### 78. Ratio Tables (tableaux de proportionnalité informels)
+Un tableau à deux lignes sans "produit en croix" obligatoire. L'élève remplit des étapes intermédiaires par itération (doubler, diviser par 2, ajouter deux colonnes) pour arriver au résultat.
+- **Différence vs France** : On privilégie la **navigation libre** dans les rapports plutôt que l'application d'une règle formelle de calcul de quatrième proportionnelle.
+- **Interactivité** : 🟢 Ajouter des colonnes à la demande et choisir l'opération entre deux colonnes (ex: "colonne 1 + colonne 2").
+
+### 79. Percentage Bar (barre de pourcentages visuelle)
+Un rectangle représentant $100\%$. L'élève doit "hachurer" ou segmenter la barre pour estimer ou calculer des proportions ($25\%, 50\%, 10\%$) avant de passer au calcul numérique.
+- **Différence vs France** : Utilisation de la géométrie des aires pour comprendre les pourcentages au lieu de les traiter uniquement comme des fractions.
+- **Interactivité** : 🟢 Curseur coulissant sur une barre colorée avec mise à jour des valeurs en temps réel.
+
+---
+
+## Hongrie (Méthode Varga-Kalmár)
+
+La Hongrie possède une culture mathématique d'élite dès le primaire, mettant l'accent sur la combinatoire, la logique pure et les ensembles.
+
+### 80. Combinatorial Tree Diagrams (arbres de dénombrement précoces)
+Dès 7-8 ans, les élèves doivent trouver toutes les combinaisons possibles (ex: "Combien de tours de 3 couleurs différentes peut-on construire ?"). L'exercice force l'utilisation d'un **arbre de choix** systématique.
+- **Différence vs France** : La combinatoire est quasiment absente du primaire français ou reléguée aux "problèmes ouverts" rares.
+- **Interactivité** : 🟢 Constructeur de diagramme en arbre par glisser-déposer de nœuds.
+
+### 81. Logic Sets with Attributes (ensembles de blocs logiques)
+Utilisation de blocs (couleur, forme, taille, épaisseur). L'exercice consiste à placer les blocs dans un diagramme de Venn selon des contraintes négatives : "Place ici les blocs qui ne sont **ni** rouges, **ni** carrés".
+- **Différence vs France** : Travail sur la **négation logique** ($\neg A \cap \neg B$) très tôt, là où la France reste sur des critères positifs simples.
+- **Interactivité** : 🟢 Diagramme de Venn interactif avec détection d'erreurs de placement.
+
+### 82. Number Paths with Constraints (chemins à contraintes)
+Une grille de nombres où l'on doit aller d'un point A à un point B, mais avec des règles de déplacement complexes (ex: "Seulement sur des multiples de 3" ou "Interdit de passer par deux nombres pairs consécutifs").
+- **Différence vs France** : Mélange la numération et la recherche de chemin (théorie des graphes simplifiée).
+- **Interactivité** : 🟢 Labyrinthe cliquable avec retour visuel immédiat si la règle est enfreinte.
+
+---
+
+## Corée du Sud (Storytelling & Visualization)
+
+Le programme coréen est réputé pour sa rigueur dans la visualisation spatiale et sa capacité à transformer l'abstraction en récits.
+
+### 83. Unit Cube Construction (visualisation de cubes unitaires)
+L'élève voit une structure complexe de cubes en 3D (vue de face) et doit dessiner ou saisir les vues de dessus, de côté et de derrière, ou compter les cubes **cachés**.
+- **Différence vs France** : La géométrie dans l'espace est beaucoup plus poussée et systématique.
+- **Interactivité** : 🟢 Manipulateur 3D qu'on peut faire pivoter, avec un mode "rayons X" pour voir les cubes invisibles.
+
+### 84. Digital Narrative Scenarios (Storytelling Mathematics)
+Le problème n'est pas un énoncé court, mais une suite de scènes (type BD) où les données mathématiques sont parsemées dans les dialogues ou les décors. L'élève doit "collecter" les indices dans son inventaire pour résoudre le problème final.
+- **Différence vs France** : Travail massif sur la **lecture d'informations multiples** et hétérogènes.
+- **Interactivité** : 🟡 Type "Point and Click" pédagogique.
+
+---
+
 ## Synthèse — Priorités pour le projet
 
 ### Types les plus adaptés à un exercice interactif numérique (non présents en France)
 
 | Priorité | Type | Pays | Format numérique naturel |
 |----------|------|------|--------------------------|
-| 🔥 ✅ | Comparaison d'expressions (`<`, `=`, `>`) sans calculer | Russie | insérer le signe, vérifier |
-| 🔥 ✅ | Familles de faits (4 équations) | USA / UK | construire / compléter les 4 |
-| 🔥 | Problèmes inverses ✅ | Russie | bouton "inverser connu/inconnu" |
-| 🔥 | Chaînes arithmétiques | Russie | remplissage en flux gauche→droite |
-| 🔥 ✅ | Vrai/Faux équations | USA / UK | bouton binaire + explication |
-| 🔥 | Always / Sometimes / Never | UK | tri en 3 colonnes + contre-exemple |
-| 🔥 | Variation Bianshi (même structure, un paramètre change) | Chine | génération paramétrique automatique |
-| 🔥 | Estimation → puis calcul exact | Chine / USA | saisie en deux temps |
-| 🔥 | Calcul → puis vérification inverse | Chine / Russie | exercice en deux phases |
-| 🔥 ✅ | Zahlenmauer (pyramide de nombres) | Allemagne | cases cliquables, reconstruction inverse |
-| 🔥 | Päckchen (colonne de calculs structurés + trouver le pattern) | Allemagne | animer la variation, décrire la règle |
-| ⭐ | Erreur à trouver | USA | cliquer sur l'étape fausse |
-| ⭐ | Machine à fonctions / Frames & Arrows | USA | chaîne avec règle cachée |
-| ⭐ | Краткая запись / format Donné–Cherché | Russie / Allemagne | tableau pré-calcul |
-| ⭐ | Bar model interactif comme étape obligatoire | Singapour / UK | barres redimensionnables |
-| ⭐ | Shiki (écrire l'équation puis expliquer chaque terme) | Japon | saisie d'expression + labels |
-| ⭐ | Decompose-to-make-10 (passage par 10 en étapes visibles) | USA / Japon | étapes intermédiaires |
-| ⭐ | Per-unit quantity (densité/taux avant ratio) | Japon | scénarios comparatifs |
-| ⭐ ✅ | Rechendreieck (triangle arithmétique) | Allemagne | cohérence multi-directionnelle |
-| ⭐ | Rechengeschichten (scène illustrée comme texte du problème) | Allemagne | hotspots, mode inverse |
-| ⭐ | Carrés et triangles magiques | Inde / divers | drag-and-drop, auto-vérification |
-| ⭐ | Varied Fluency (même fait, représentations différentes) | UK | bascule entre modes |
-| ⭐ | Kapitänsaufgabe (problème sans solution valide) | Allemagne | révélation de piège |
-| 💡 | Entdeckerpäckchen (l'élève invente son propre exercice) | Allemagne | interface authoring + peer review |
-| 💡 | Open-ended (réponses multiples) | Japon | difficile à auto-corriger |
-| 💡 | Composition de problème (donner l'expression, inventer le texte) | Russie / Chine | saisie libre + validation partielle |
-| 💡 | Odd One Out / What's the Same, What's Different? | UK | sélection + justification ouverte |
-| 💡 | Find Out (collecte de données réelles hors classe) | Inde (NCERT) | formulaire de saisie de données |
-| 💡 | Grille des 100 / Hunderterpunktefeld | Allemagne | modèle de l'aire, patterns de multiples |
+🔥 ✅|The Think Board (4 modes)|Australie / NZ|Interface à 4 quadrants (histoire, dessin, manipulation, symbole)|
+🔥 ✅|Ligne numérique vide|Pays-Bas|Tracé d'arcs de sauts personnalisés avec saisie de valeur|
+🔥 ✅|Diagrammes de Venn (Logique)|Hongrie|Glisser-déposer avec opérateurs logiques (ET/OU/NON/NI)|
+🔥 ✅|Ratio Tables (informelles)|Pays-Bas|Tableau extensible (ajouter colonnes/opérations entre colonnes)|
+🔥 ✅|Comparaison d'expressions (< = >) sans calculer|Russie|Insérer le signe  vérifier le raisonnement |
+🔥 ✅|Familles de faits (4 équations)|USA / UK|Construire / compléter les 4 relations associées|
+🔥 ✅|Visualisation de cubes (3D)|Corée du Sud|Manipulateur 3D, vue rayons X, saisie des vues 2D|
+🔥 ✅|Zahlenmauer (pyramide de nombres)|Allemagne|Cases cliquables, reconstruction montante/descendante
+🔥 ✅|Vrai/Faux équations|USA / UK|Bouton binaire + explication du signe =|
+🔥|Labyrinthe à contraintes|Hongrie|Chemin cliquable avec règles logiques (ex: uniquement multiples de 3)|
+🔥|Problèmes inverses ✅|Russie|Bouton inverser connu/inconnu (génération dynamique)|
+🔥|Always / Sometimes / Never|UK|Tri en 3 colonnes + saisie de contre-exemple|
+🔥|Variation Bianshi|Chine|Enchaînement de questions à paramètres glissants|
+🔥|Chaînes arithmétiques|Russie|Remplissage en flux gauche→droite avec flux animé|
+🔥|Estimation → puis calcul exact|Chine / USA|Saisie en deux temps avec comparaison de cohérence|
+🔥|Päckchen (Calculs structurés)|Allemagne|Animer la variation, décrire la règle du pattern|
+⭐|Arki-Matematiikka (Docs réels)|Finlande|Surlignage interactif de données utiles sur factures/horaires|
+⭐|Percentage Bar (modèle d'aire)|Pays-Bas|Curseur coulissant sur barre colorée pour estimer des ratios|
+⭐|Arbres de dénombrement|Hongrie|Constructeur de graphes par nœuds cliquables|
+⭐|Erreur à trouver / Reasonableness|USA / Finlande|Cliquer sur l'étape fausse ou le résultat absurde|
+⭐|Bar model interactif|Singapour / UK|Barres redimensionnables et étiquetables|
+⭐|Rechendreieck (Triangle)|Allemagne|Équilibre cohérent sur les trois côtés|
+⭐|Rechengeschichten (Storytelling)|All. / Corée|Scène illustrée cliquable (Hotspots) pour extraire l'énoncé|
+⭐|Machine à fonctions|USA|Entrée/Sortie avec règle de transformation à deviner|
+⭐|Shiki (Équation + Labels)|Japon|Saisie d'expression où chaque nombre est étiqueté|
+⭐|Decompose-to-make-10|USA / Japon|Étapes intermédiaires visibles de passage par 10|
+⭐|Carrés et triangles magiques|Inde / divers| Drag-and-drop, auto-vérification multi-directionnelle|
+💡|Mission Mathématique|Québec|Tableau de bord de projet avec étapes interdépendantes|
+💡|Tâches Parallèles|Canada|Choix du niveau de difficulté → discussion commune|
+💡|Composition de problème|Russie / Chine|Saisie libre de texte validée par mots-clés ou structure|
+💡|Open-ended (réponses multiples)|Japon|Champ de saisie multiple avec validation de la diversité|
+💡|Odd One Out|UK|Sélection d'un intrus + boîte de justification|
+💡|Grille des 100 / Hunderterpunkte|Allemagne|Visualisation de patterns de multiples par coloriage|
+---
+
 
 ### Notes pédagogiques
 - **La vérification par inverse** (Chine + Russie) est peut-être le gain pédagogique le plus immédiat : elle renforce simultanément la compréhension de la relation entre opérations et l'auto-contrôle.

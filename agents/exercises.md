@@ -94,7 +94,7 @@ Timed challenges live under `src/fr/defis/` (same nested structure as `exercices
 Each défi series has the same `index.yaml` as a regular series **plus** a required `duration` field (seconds):
 
 ```yaml
-id: "a2b3c4d5"
+id: a2b3c4d5
 seriesTitle: "Tables de multiplication"
 difficulty: moyen
 duration: 90

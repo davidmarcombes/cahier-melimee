@@ -99,6 +99,9 @@ isSeriesPage: true
   {% if 'tri-arith' in usedTypes %}{% include "types/tri-arith.njk" %}{% endif %}
   {% if 'decimal-triple' in usedTypes %}{% include "types/decimal-triple.njk" %}{% endif %}
   {% if 'decomp' in usedTypes %}{% include "types/decomp.njk" %}{% endif %}
+  {% if 'function-machine' in usedTypes %}{% include "types/function-machine.njk" %}{% endif %}
+  {% if 'maze' in usedTypes %}{% include "types/maze.njk" %}{% endif %}
+  {% if 'venn' in usedTypes %}{% include "types/venn.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -225,6 +228,15 @@ isSeriesPage: true
     {% endif %}
     {% if 'decomp' in usedTypes %}
     <span x-show="cur.type === 'decomp'">Certaines valeurs ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
+    {% if 'function-machine' in usedTypes %}
+    <span x-show="cur.type === 'function-machine'">Ce n'est pas la bonne réponse. Essaie encore !</span>
+    {% endif %}
+    {% if 'maze' in usedTypes %}
+    <span x-show="cur.type === 'maze'">Le chemin n'est pas correct. Essaie encore !</span>
+    {% endif %}
+    {% if 'venn' in usedTypes %}
+    <span x-show="cur.type === 'venn'">Certains emojis ne sont pas bien placés. Essaie encore !</span>
     {% endif %}
   </div>
 
