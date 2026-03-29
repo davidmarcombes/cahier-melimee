@@ -238,6 +238,9 @@ exercice,fr/exercices/ce2/maths/grandeurs/calendrier-01,f01d913e,Lire un calendr
 exercice,fr/exercices/ce2/maths/grandeurs/contenances-01,139269f7,Les contenances,CE2,maths,grandeurs,moyen,3,3,,convert | true-false,,S1.1.1 | S3.1.1
 exercice,fr/exercices/ce2/maths/grandeurs/durees-01,827f5809,Les durées,CE2,maths,grandeurs,moyen,3,3,,matching | number-check | true-false,,I1.1.1 | S2.1.3 | S3.2.3
 exercice,fr/exercices/ce2/maths/grandeurs/masses-01,9d145297,Les masses,CE2,maths,grandeurs,moyen,2,2,,convert | true-false,,S1.1.1 | S3.1.1
+application,fr/applications/ce2/maths/logique/labyrinthe-pairs,7477702d,Labyrinthe nombres pairs,CE2,maths,logique,facile,1,5,,maze,labyrinthe,
+application,fr/applications/ce2/maths/logique/venn-emojis,585d15f8,Diagramme de Venn,CE2,maths,logique,facile,1,5,,venn,vennEmojis,
+application,fr/applications/ce2/maths/logique/labyrinthe-mult3,bbb1a25b,Labyrinthe multiples de 3,CE2,maths,logique,moyen,1,5,,maze,labyrinthe,
 exercice,fr/exercices/ce2/maths/logique/enigmes-fruits-01,ae577336,Énigmes de fruits,CE2,maths,logique,moyen,3,3,,problem,,S3.2.2
 exercice,fr/exercices/ce2/maths/logique/grilles-01,da73b97f,Grilles logiques,CE2,maths,logique,moyen,5,5,,logic-grid,,S2.1.1 | S3.2.2
 exercice,fr/exercices/ce2/maths/logique/suites-figurales-01,d0a06044,Suites de figures,CE2,maths,logique,moyen,5,5,,mcq,,S3.2.1
@@ -299,6 +302,8 @@ application,fr/applications/ce2/maths/operations/addition-trou-facile,36298962,A
 application,fr/applications/ce2/maths/operations/doubles-moities,f3648f2c,Doubles et moitiés,CE2,maths,operations,facile,1,10,,number-check,doublesMoities,S1.1.2
 application,fr/applications/ce2/maths/operations/fruits-addition-trou,cf7fac37,Additions à trou — Fruits,CE2,maths,operations,facile,1,12,,number-check,comptageFruits,S2.1.1
 application,fr/applications/ce2/maths/operations/fruits-soustraction-trou,6f502b32,Soustractions à trou — Fruits,CE2,maths,operations,facile,1,12,,number-check,comptageFruits,S2.1.1
+application,fr/applications/ce2/maths/operations/machine-decouverte,0ca8524c,Découvre la règle,CE2,maths,operations,facile,1,5,,function-machine,functionMachineDiscover,
+application,fr/applications/ce2/maths/operations/machine-fonctions,438aaff0,Machine à fonctions,CE2,maths,operations,facile,1,6,,function-machine,functionMachineCompute,
 application,fr/applications/ce2/maths/operations/mult-etapes-01,f04a6286,Multiplier par 10 — étape par étape,CE2,maths,operations,facile,1,8,,number-check,multiplicationsEtapes,S1.1.1
 application,fr/applications/ce2/maths/operations/partager-equitable-01,a1f2c3d4,Partager équitablement,CE2,maths,operations,facile,1,6,,number-check,partagerEquitable,S1.1.1
 application,fr/applications/ce2/maths/operations/soustraction-trou-facile,a3d25ced,Soustractions à trou (Facile),CE2,maths,operations,facile,1,12,,number-check,soustractionTrou,S1.1.1
@@ -319,7 +324,7 @@ exercice,fr/exercices/ce2/maths/operations/pose-soustraction-01,d6345999,Poser u
 exercice,fr/exercices/ce2/maths/operations/vocabulaire-01,e5b3c817,Vocabulaire des opérations,CE2,maths,operations,facile,3,3,,select,,S2.1.4
 application,fr/applications/ce2/maths/operations/addition-trou,be7e0175,Additions à trou,CE2,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.1
 application,fr/applications/ce2/maths/operations/comparer-expressions,c9d0e1f2,"Compare sans calculer (+, -, x)",CE2,maths,operations,moyen,2,12,,compare,compareExpressions,S3.1.1
-application,fr/applications/ce2/maths/operations/comparer-mult-nombre,g7c50001,Comparer — multiplication et nombre,CE2,maths,operations,moyen,1,10,,compare,comparerOpNombre,
+application,fr/applications/ce2/maths/operations/comparer-mult-nombre,b6624fac,Comparer — multiplication et nombre,CE2,maths,operations,moyen,1,10,,compare,comparerOpNombre,
 application,fr/applications/ce2/maths/operations/decodage-emojis,e53c02b1,Décodage d'Emojis,CE2,maths,operations,moyen,1,10,,number-check,decodageEmojis,S1.1.1
 application,fr/applications/ce2/maths/operations/decodage-monstres,54ce2f51,Décodage de Monstres,CE2,maths,operations,moyen,1,10,,number-check,decodageEmojis,S1.1.1
 application,fr/applications/ce2/maths/operations/division-simple,f66022f9,Divisions,CE2,maths,operations,moyen,1,10,,number-check,divisionSimple,S1.1.1
@@ -423,7 +428,7 @@ exercice,fr/exercices/cm1/maths/mesures/perimetre-figures,65387951,Périmètre d
 exercice,fr/exercices/cm1/maths/mesures/perimetre-quadrillage,b4f9c3a2,Périmètre sur quadrillage,CM1,maths,mesures,moyen,4,4,,number-check,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/tableaux-mesures-01,43ad49f5,Tableaux de conversions,CM1,maths,mesures,moyen,3,3,,fill-table,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/volumes-02,500db905,Conversions de volumes (décimaux),CM1,maths,mesures,moyen,5,5,,convert,,S1.1.1
-application,fr/applications/cm1/maths/mesures,2a0791f6,Lire l'heure — toutes les minutes,CM1,maths,mesures,difficile,1,10,,clock,lireHeure,I1.1.1
+application,fr/applications/cm1/maths/mesures,16e8a600,Lire l'heure — toutes les minutes,CM1,maths,mesures,difficile,1,10,,clock,lireHeure,I1.1.1
 exercice,fr/exercices/cm1/maths/mesures/durees-03,e7f3a891,Comparer les durées,CM1,maths,mesures,difficile,3,3,,compare,,I1.1.1
 application,fr/applications/cm1/maths/nombres/trier-fractions,6743adb1,Trier des fractions,CM1,maths,nombres,facile,3,18,too-long,sort,trierFractions,S2.1.3
 exercice,fr/exercices/cm1/maths/nombres/fractions-01,64533d30,Découvrir les fractions,CM1,maths,nombres,facile,4,4,,fraction,,S2.1.3
@@ -438,12 +443,12 @@ exercice,fr/exercices/cm1/maths/nombres/fractions-04,6292f09a,Fractions : calcul
 exercice,fr/exercices/cm1/maths/nombres/fractions-equiv-01,d9851e0c,Fractions équivalentes,CM1,maths,nombres,difficile,3,3,,true-false | mcq,,S2.1.3
 application,fr/applications/cm1/maths/numeration/ajouter-valeur-pos-facile,2c4ec422,Ajouter des milliers,CM1,maths,numeration,facile,1,12,,number-check,ajouterPositionnel,
 application,fr/applications/cm1/maths/numeration/blocs-valeur-position-01,c4f2a801,Valeur de position — centaines,CM1,maths,numeration,facile,1,8,,click-blocks,blocsValeurPosition,S2.1.2
-application,fr/applications/cm1/maths/numeration/calcul-mental-grands-01,04810e26,Calcul mental — grands nombres,CM1,maths,numeration,facile,1,8,,number-check,calcMentalGrands,S1.1.1
-application,fr/applications/cm1/maths/numeration/mcq-decimaux-01,j0f80001,QCM — Fractions et décimaux,CM1,maths,numeration,facile,1,12,,mcq,mcqDecimaux,
-application,fr/applications/cm1/maths/numeration/multi-decimal-pow10-facile,i9e70001,Multiplier un décimal par 10,CM1,maths,numeration,facile,1,12,,number-check,multiDecimalPuissance10,
+application,fr/applications/cm1/maths/numeration/calcul-mental-grands-01,4.81e+29,Calcul mental — grands nombres,CM1,maths,numeration,facile,1,8,,number-check,calcMentalGrands,S1.1.1
+application,fr/applications/cm1/maths/numeration/mcq-decimaux-01,d958cb61,QCM — Fractions et décimaux,CM1,maths,numeration,facile,1,12,,mcq,mcqDecimaux,
+application,fr/applications/cm1/maths/numeration/multi-decimal-pow10-facile,ff368f2f,Multiplier un décimal par 10,CM1,maths,numeration,facile,1,12,,number-check,multiDecimalPuissance10,
 application,fr/applications/cm1/maths/numeration/multiples-facile,c122ce8b,"Multiples de 2, 3 et 10",CM1,maths,numeration,facile,3,30,too-long,checkbox,multiplesOf,S1.1.1
 application,fr/applications/cm1/maths/numeration/position-chiffre-01,a3e7c501,Position d'un chiffre,CM1,maths,numeration,facile,2,16,too-long,mcq,positionChiffre,S2.1.2
-application,fr/applications/cm1/maths/numeration/trier-decimaux-facile,h8d60001,Ranger des décimaux — 1 décimale,CM1,maths,numeration,facile,1,12,,drag-sort,trierDecimaux,
+application,fr/applications/cm1/maths/numeration/trier-decimaux-facile,905717a3,Ranger des décimaux — 1 décimale,CM1,maths,numeration,facile,1,12,,drag-sort,trierDecimaux,
 exercice,fr/exercices/cm1/maths/numeration/tableau-numeration-01,ead5bb7c,Tableau de numération,CM1,maths,numeration,facile,3,3,,fill-table,,S1.1.1
 application,fr/applications/cm1/maths/numeration/ajouter-valeur-pos-moyen,e8e8f69a,Ajouter des dizaines de milliers,CM1,maths,numeration,moyen,1,12,,number-check,ajouterPositionnel,
 application,fr/applications/cm1/maths/numeration/arrondir-millier,83e8ee29,Arrondir au millier,CM1,maths,numeration,moyen,1,10,,number-check,arrondirNombre,S1.1.1
@@ -453,14 +458,14 @@ application,fr/applications/cm1/maths/numeration/convertir-decimaux,d4f10004,Con
 application,fr/applications/cm1/maths/numeration/decimal-triple-01,bc37e1f0,Représentations des décimaux,CM1,maths,numeration,moyen,1,10,,decimal-triple,decimalTriple,N4.2
 application,fr/applications/cm1/maths/numeration/decomp-decimal-01,b7e93c02,Décomposition additive — nombres décimaux,CM1,maths,numeration,moyen,1,12,,decomp,decompoAdditifDecimal,S1.1.2
 application,fr/applications/cm1/maths/numeration/lire-boulier,4700f520,Lire un boulier — jusqu'au million,CM1,maths,numeration,moyen,3,18,too-long,number-check,lireAbacus,S2.1.2
-application,fr/applications/cm1/maths/numeration/mcq-decimaux-02,j0f80002,QCM — Décimaux variés,CM1,maths,numeration,moyen,1,15,too-long,mcq,mcqDecimaux,
-application,fr/applications/cm1/maths/numeration/multi-decimal-pow10-moyen,i9e70002,Multiplier un décimal par 10 ou 100,CM1,maths,numeration,moyen,1,12,,number-check,multiDecimalPuissance10,
+application,fr/applications/cm1/maths/numeration/mcq-decimaux-02,42e84d42,QCM — Décimaux variés,CM1,maths,numeration,moyen,1,15,too-long,mcq,mcqDecimaux,
+application,fr/applications/cm1/maths/numeration/multi-decimal-pow10-moyen,5b54886a,Multiplier un décimal par 10 ou 100,CM1,maths,numeration,moyen,1,12,,number-check,multiDecimalPuissance10,
 application,fr/applications/cm1/maths/numeration/multiples-moyen,57aead3c,"Multiples de 2 à 9, 10 et 100",CM1,maths,numeration,moyen,4,40,too-long,checkbox,multiplesOf,S1.1.1
 application,fr/applications/cm1/maths/numeration/place-valeur-01,ea8d26cf,Valeur des chiffres jusqu'au million,CM1,maths,numeration,moyen,1,15,too-long,number-check,chiffrePlaceValeur,S1.1.1
 application,fr/applications/cm1/maths/numeration/suites-cm1,07fae9b0,Suites arithmétiques,CM1,maths,numeration,moyen,1,10,,sequence,compterDeNCE1,S3.2.1
 application,fr/applications/cm1/maths/numeration/tableau-decimaux,9ef84019,Tableau de numération — décimaux,CM1,maths,numeration,moyen,1,13,too-long,fill-table,decompoTableauDecimal,S1.1.2
 application,fr/applications/cm1/maths/numeration/tableau-grands-nombres,16f31c46,Tableau de numération,CM1,maths,numeration,moyen,2,13,too-long,fill-table,decompoTableau,S1.1.1
-application,fr/applications/cm1/maths/numeration/trier-decimaux-moyen,h8d60002,Ranger des décimaux — 2 décimales,CM1,maths,numeration,moyen,1,12,,drag-sort,trierDecimaux,
+application,fr/applications/cm1/maths/numeration/trier-decimaux-moyen,191ebf04,Ranger des décimaux — 2 décimales,CM1,maths,numeration,moyen,1,12,,drag-sort,trierDecimaux,
 exercice,fr/exercices/cm1/maths/numeration/comparer-01,43080a40,Comparer des nombres,CM1,maths,numeration,moyen,3,3,,compare,,S3.1.1
 exercice,fr/exercices/cm1/maths/numeration/droite-graduee-01,1a26b27e,Droite graduée — décimaux : lire (1),CM1,maths,numeration,moyen,5,5,,number-line,,S1.1.1
 exercice,fr/exercices/cm1/maths/numeration/droite-graduee-02,dbbc76f3,Placer des décimaux,CM1,maths,numeration,moyen,5,5,,number-line,,S1.1.1
@@ -489,13 +494,15 @@ exercice,fr/exercices/cm1/maths/operations/divisions-03,c9f2a748,Multiplication 
 exercice,fr/exercices/cm1/maths/operations/estimer-addition-01,2509a055,Estimer une addition,CM1,maths,operations,facile,5,5,,mcq,,S1.1.1
 exercice,fr/exercices/cm1/maths/operations/estimer-multiplication-01,00ad3f63,Estimer une multiplication,CM1,maths,operations,facile,5,5,,mcq,,S1.1.1
 application,fr/applications/cm1/maths/operations/addition-trou,aa335a76,Additions à trou,CM1,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/comparer-div-nombre,g7c50002,Comparer — division et nombre,CM1,maths,operations,moyen,1,10,,compare,comparerOpNombre,
+application,fr/applications/cm1/maths/operations/comparer-div-nombre,c3719208,Comparer — division et nombre,CM1,maths,operations,moyen,1,10,,compare,comparerOpNombre,
 application,fr/applications/cm1/maths/operations/decodage-emojis,0c17e38b,Décodage d'Emojis,CM1,maths,operations,moyen,1,10,,number-check,decodageEmojis,S1.1.1
 application,fr/applications/cm1/maths/operations/div-puissances-10-02,c4bdc16d,Diviser par 10 100 1 000 (décimaux),CM1,maths,operations,moyen,1,10,,number-check,divDecimales,S1.1.1
 application,fr/applications/cm1/maths/operations/division-simple,2d6f83a1,Division simple,CM1,maths,operations,moyen,1,10,,number-check,divisionSimple,S1.1.1
 application,fr/applications/cm1/maths/operations/division-trou,82598d93,Divisions à trou,CM1,maths,operations,moyen,1,10,,number-check,divisionTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/equilibrer-sub-01,cm10001,Équilibrer des soustractions,CM1,maths,operations,moyen,1,12,,number-check,equilibrerOp,
+application,fr/applications/cm1/maths/operations/equilibrer-sub-01,9c6cbaf2,Équilibrer des soustractions,CM1,maths,operations,moyen,1,12,,number-check,equilibrerOp,
 application,fr/applications/cm1/maths/operations/familles-faits,a7b8c9d0,"Familles de faits (x, /)",CM1,maths,operations,moyen,2,12,,checkbox,famillesFaits,S2.2.1
+application,fr/applications/cm1/maths/operations/machine-decouverte,Infinity,Découvre la règle,CM1,maths,operations,moyen,1,6,,function-machine,functionMachineDiscover,
+application,fr/applications/cm1/maths/operations/machine-fonctions,046ebe66,Machine à fonctions,CM1,maths,operations,moyen,1,6,,function-machine,functionMachineCompute,
 application,fr/applications/cm1/maths/operations/mult-div-trou-02,e8f9a0b1,× ÷ puissances de 10 — décimaux,CM1,maths,operations,moyen,1,10,,number-check,multDivTrou,S1.1.1
 application,fr/applications/cm1/maths/operations/mult-puissances-10-02,467bfa52,Multiplier par 10 à 1 000 (décimaux),CM1,maths,operations,moyen,1,10,,number-check,multDecimales,S1.1.1
 application,fr/applications/cm1/maths/operations/multiplication-tables,c9d8e7f6,Tables de multiplication,CM1,maths,operations,moyen,1,15,too-long,number-check,multiplicationSimple,S1.1.1
@@ -556,10 +563,14 @@ exercice,fr/exercices/cm2/maths/fractions/visuel-01,b7c4e039,Représenter des fr
 application,fr/applications/cm2/maths/fractions/trier-fractions,cb798ab0,Trier des fractions,CM2,maths,fractions,difficile,1,12,,sort,trierFractions,S2.1.3
 exercice,fr/exercices/cm2/maths/fractions/suites-fractions-01,90db3b85,Suites de fractions,CM2,maths,fractions,difficile,5,5,,sequence,,S3.1.2 | S3.2.1
 application,fr/applications/cm2/maths/geometrie/perimetre,6e13d754,Périmètre de figures,CM2,maths,geometrie,facile,1,12,,number-check,perimetreFormes,S1.1.1
+application,fr/applications/cm2/maths/geometrie/perimetre-deduction,8c4e61a3,Périmètres — déduire les côtés manquants,CM2,maths,geometrie,moyen,4,4,,number-check,,S1.2.1
 exercice,fr/exercices/cm2/maths/geometrie/aires-01,6a1e87e7,Les aires,CM2,maths,geometrie,moyen,5,5,,number-check | mcq | true-false,,S1.1.1 | S3.2.3
+application,fr/applications/cm2/maths/geometrie/perimetre-mixte,7f2a3b91,Périmètres — conversions mm/cm,CM2,maths,geometrie,difficile,5,5,,number-check,,S1.2.1
+application,fr/applications/cm2/maths/logique/labyrinthe-impairs,39ca90e4,Labyrinthe nombres impairs,CM2,maths,logique,difficile,1,6,,maze,labyrinthe,
+application,fr/applications/cm2/maths/logique/venn-emojis,b48ed308,Diagramme de Venn,CM2,maths,logique,difficile,1,8,,venn,vennEmojis,
 application,fr/applications/cm2/maths/mesures/comparer-longueurs,11d03b87,Comparer des longueurs,CM2,maths,mesures,difficile,1,12,,mcq,comparerLongueurs,S3.1.1
 application,fr/applications/cm2/maths/mesures/comparer-volumes,b1dc5d23,Comparer des volumes,CM2,maths,mesures,difficile,1,12,,mcq,comparerVolumes,S3.1.1
-application,fr/applications/cm2/maths/mesures/suites-horaires-quart,j0f80005,Suites d'heures — quarts d'heure,CM2,maths,mesures,difficile,1,12,,sequence,suitesHoraires,
+application,fr/applications/cm2/maths/mesures/suites-horaires-quart,f7adbc1a,Suites d'heures — quarts d'heure,CM2,maths,mesures,difficile,1,12,,sequence,suitesHoraires,
 exercice,fr/exercices/cm2/maths/mesures/perimetre-figures,4ddee698,Périmètre de figures composées,CM2,maths,mesures,difficile,6,6,,number-check,,S1.1.1
 exercice,fr/exercices/cm2/maths/mesures/perimetre-quadrillage-02,4579a40d,Périmètre sur quadrillage 2,CM2,maths,mesures,difficile,6,6,,number-check,,S1.1.1
 exercice,fr/exercices/cm2/maths/numeration/comparer-01,443b8e02,Comparer des grands nombres,CM2,maths,numeration,facile,3,3,,compare,,S3.1.1
@@ -574,17 +585,19 @@ exercice,fr/exercices/cm2/maths/numeration/observer-01,08dd32f1,Observe et répo
 exercice,fr/exercices/cm2/maths/numeration/quiz-01,517ccaf0,Quiz numération,CM2,maths,numeration,moyen,6,6,,mcq,,S1.1.1 | S2.1.2 | S2.1.4 | S3.1.1
 exercice,fr/exercices/cm2/maths/numeration/recomposer-01,e01e8c83,Recompose les nombres,CM2,maths,numeration,moyen,6,6,,number-check,,S1.1.1
 application,fr/applications/cm2/maths/numeration/decimal-triple-01,7f0dfdea,Nombres décimaux — triple représentation,CM2,maths,numeration,difficile,1,10,,decimal-triple,decimalTriple,N4.2
-application,fr/applications/cm2/maths/numeration/multi-decimal-pow10-difficile,i9e70003,"Multiplier un décimal par 10, 100 ou 1000",CM2,maths,numeration,difficile,1,12,,number-check,multiDecimalPuissance10,
-application,fr/applications/cm2/maths/numeration/trier-decimaux-difficile,h8d60003,Ranger des décimaux — mélangé (1 à 3 décimales),CM2,maths,numeration,difficile,1,12,,drag-sort,trierDecimaux,
+application,fr/applications/cm2/maths/numeration/multi-decimal-pow10-difficile,3ade08d9,"Multiplier un décimal par 10, 100 ou 1000",CM2,maths,numeration,difficile,1,12,,number-check,multiDecimalPuissance10,
+application,fr/applications/cm2/maths/numeration/trier-decimaux-difficile,369acde9,Ranger des décimaux — mélangé (1 à 3 décimales),CM2,maths,numeration,difficile,1,12,,drag-sort,trierDecimaux,
 exercice,fr/exercices/cm2/maths/numeration/suites-decimaux-01,2f62599c,Suites de nombres décimaux,CM2,maths,numeration,difficile,5,5,,sequence,,S3.1.2 | S3.2.1
 application,fr/applications/cm2/maths/operations/multiplication-tables,5c3e3352,Tables de multiplication,CM2,maths,operations,facile,1,12,,number-check,multiplicationSimple,S1.1.1
 application,fr/applications/cm2/maths/operations/division-simple,58526a59,Divisions,CM2,maths,operations,moyen,1,12,,number-check,divisionSimple,S1.1.1
-application,fr/applications/cm2/maths/operations/equilibrer-mult-01,cm20001,Équilibrer des multiplications,CM2,maths,operations,moyen,1,12,,number-check,equilibrerOp,
-application,fr/applications/cm2/maths/operations/comparer-ops-nombre,g7c50003,Comparer — opérations et nombre (mélangé),CM2,maths,operations,difficile,1,10,,compare,comparerOpNombre,
+application,fr/applications/cm2/maths/operations/equilibrer-mult-01,da8b7ab6,Équilibrer des multiplications,CM2,maths,operations,moyen,1,12,,number-check,equilibrerOp,
+application,fr/applications/cm2/maths/operations/comparer-ops-nombre,ff455797,Comparer — opérations et nombre (mélangé),CM2,maths,operations,difficile,1,10,,compare,comparerOpNombre,
 application,fr/applications/cm2/maths/operations/decodage-emojis,5da5b813,Décodage d'Emojis,CM2,maths,operations,difficile,1,10,,number-check,decodageEmojis,S1.1.1
 application,fr/applications/cm2/maths/operations/decodage-monstres,04c4b03e,Décodage de Monstres,CM2,maths,operations,difficile,1,10,,number-check,decodageEmojis,S1.1.1
+application,fr/applications/cm2/maths/operations/machine-decouverte,f024db3e,Découvre la règle,CM2,maths,operations,difficile,1,8,,function-machine,functionMachineDiscover,
+application,fr/applications/cm2/maths/operations/machine-fonctions,feb5f319,Machine à fonctions,CM2,maths,operations,difficile,1,8,,function-machine,functionMachineCompute,
 application,fr/applications/cm2/maths/operations/table-fonction-decouverte,e5a30003,Tables entrée/sortie — trouve la règle,CM2,maths,operations,difficile,1,12,,fill-table,tableEntreeSortie,
-application,fr/applications/cm2/maths/operations/triangle-arithmetique,03948178,Triangle arithmétique,CM2,maths,operations,difficile,1,8,,tri-arith,triArith,S1.1.1
+application,fr/applications/cm2/maths/operations/triangle-arithmetique,d91b649d,Triangle arithmétique,CM2,maths,operations,difficile,1,8,,tri-arith,triArith,S1.1.1
 exercice,fr/exercices/cm2/maths/operations/pyramides-01,a21f1dae,Pyramides d'additions — grands nombres,CM2,maths,operations,difficile,5,5,,pyramid,,S1.2.2
 exercice,fr/exercices/cm2/maths/operations/pyramides-decimaux-01,408abda7,Pyramides d'additions — nombres décimaux,CM2,maths,operations,difficile,5,5,,pyramid,,S1.2.2
 exercice,fr/exercices/cm2/maths/pourcentages/pourcentages-01,f7681d0e,Les pourcentages,CM2,maths,pourcentages,moyen,5,5,,true-false | number-check | mcq | problem,,M2.1 | S1.1.1 | S3.2.3

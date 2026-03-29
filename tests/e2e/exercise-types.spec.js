@@ -478,3 +478,118 @@ test.describe('decodage-monstres — CM2 (3-digit)', () => {
     await expect(badges).toHaveCount(6);
   });
 });
+
+// ─── function-machine (compute) ─────────────────────────────────────────────
+// Series: machine-fonctions CE2 (438aaff0) — generated: input → rule → ?
+test.describe('function-machine compute — machine-fonctions CE2', () => {
+  test('machine renders with input, rule, and output field', async ({ page }) => {
+    await page.goto('/fr/applications/438aaff0/');
+    await waitForAlpine(page);
+    // Input box, rule label, and output input rendered
+    await expect(page.getByText('Entrée')).toBeVisible();
+    await expect(page.getByText('Règle')).toBeVisible();
+    await expect(page.getByText('Sortie')).toBeVisible();
+    await expect(page.locator('input[placeholder="?"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Vérifier' })).toBeVisible();
+  });
+
+  test('correct answer marks exercise solved', async ({ page }) => {
+    await page.goto('/fr/applications/438aaff0/');
+    await waitForAlpine(page);
+    // Read the expected answer from Alpine data
+    const answer = await page.evaluate(() => {
+      const el = document.querySelector('[x-data]');
+      const data = Alpine.$data(el);
+      return String(data.exercises[data.currentIndex].machine.answer);
+    });
+    await page.locator('input[placeholder="?"]').fill(answer);
+    await page.getByRole('button', { name: 'Vérifier' }).click();
+    await expect(page.locator('text=Bonne réponse !')).toBeVisible();
+  });
+});
+
+// ─── function-machine (discover) ────────────────────────────────────────────
+// Series: machine-decouverte CE2 (0ca8524c) — generated: pairs table + MCQ
+test.describe('function-machine discover — machine-decouverte CE2', () => {
+  test('pairs table and rule choices render', async ({ page }) => {
+    await page.goto('/fr/applications/0ca8524c/');
+    await waitForAlpine(page);
+    // Pairs table with Entrée/Sortie headers
+    await expect(page.locator('table').first()).toBeVisible();
+    await expect(page.getByText('Entrée').first()).toBeVisible();
+    await expect(page.getByText('Sortie').first()).toBeVisible();
+    // 4 MCQ rule choice buttons in 2×2 grid
+    const choices = page.locator('.grid-cols-2 button');
+    await expect(choices).toHaveCount(4);
+  });
+
+  test('clicking correct rule marks exercise solved', async ({ page }) => {
+    await page.goto('/fr/applications/0ca8524c/');
+    await waitForAlpine(page);
+    // Read the correct answer index from Alpine data
+    const answerIdx = await page.evaluate(() => {
+      const el = document.querySelector('[x-data]');
+      const data = Alpine.$data(el);
+      return data.exercises[data.currentIndex].machine.answer;
+    });
+    const choices = page.locator('.grid-cols-2 button');
+    await choices.nth(answerIdx).click();
+    await expect(page.locator('text=Bonne réponse !')).toBeVisible();
+  });
+});
+
+// ─── maze ────────────────────────────────────────────────────────────────────
+// Series: labyrinthe-pairs CE2 (7477702d) — generated: path through even numbers
+test.describe('maze — labyrinthe-pairs CE2', () => {
+  test('grid, rule label, and legend render', async ({ page }) => {
+    await page.goto('/fr/applications/7477702d/');
+    await waitForAlpine(page);
+    // Rule label badge visible
+    await expect(page.locator('.rounded-full').first()).toBeVisible();
+    // Grid buttons rendered (4×4 = 16 cells)
+    const cells = page.locator('.inline-grid button');
+    await expect(cells).toHaveCount(16);
+    // Legend markers
+    await expect(page.getByText('Départ')).toBeVisible();
+    await expect(page.getByText('Arrivée')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Vérifier' })).toBeVisible();
+  });
+
+  test('clicking start cell adds it to path', async ({ page }) => {
+    await page.goto('/fr/applications/7477702d/');
+    await waitForAlpine(page);
+    // Click the first cell (start = [0,0])
+    const cells = page.locator('.inline-grid button');
+    await cells.nth(0).click();
+    // Cell should now have primary color ring indicating it's in the path
+    await expect(cells.nth(0)).toHaveClass(/ring-2/);
+  });
+});
+
+// ─── venn ────────────────────────────────────────────────────────────────────
+// Series: venn-emojis CE2 (585d15f8) — generated: classify emojis
+test.describe('venn — venn-emojis CE2', () => {
+  test('circles, labels, item bank, and outside zone render', async ({ page }) => {
+    await page.goto('/fr/applications/585d15f8/');
+    await waitForAlpine(page);
+    // SVG circles visible
+    await expect(page.locator('svg circle').first()).toBeVisible();
+    // Item bank has emoji buttons (at least 5)
+    const bank = page.locator('button:has(> span)').filter({ hasText: /[^\w\s]/ });
+    const count = await bank.count();
+    expect(count).toBeGreaterThanOrEqual(5);
+    // Outside zone text
+    await expect(page.getByText('Ni l\'un ni l\'autre')).toBeVisible();
+  });
+
+  test('selecting and placing an emoji works', async ({ page }) => {
+    await page.goto('/fr/applications/585d15f8/');
+    await waitForAlpine(page);
+    // Click first emoji in bank to select it
+    const bankItems = page.locator('button[x-show="!vennPlacements[i]"]');
+    const firstEmoji = bankItems.first();
+    await firstEmoji.click();
+    // Should have selection ring
+    await expect(firstEmoji).toHaveClass(/ring-2/);
+  });
+});

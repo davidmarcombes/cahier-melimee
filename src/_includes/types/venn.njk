@@ -5,58 +5,55 @@
 
   <template x-if="cur.venn">
     <div>
-      {# Venn diagram — SVG circles + HTML zone overlays #}
-      <div class="relative mx-auto" style="width: 340px; height: 240px;">
-        {# SVG circles as background #}
-        <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 340 240">
-          <circle cx="130" cy="125" r="105" fill="none" stroke="currentColor" stroke-width="2.5"
-            class="text-blue-400 dark:text-blue-500"/>
-          <circle cx="210" cy="125" r="105" fill="none" stroke="currentColor" stroke-width="2.5"
-            class="text-rose-400 dark:text-rose-500"/>
-          {# Light fills #}
-          <circle cx="130" cy="125" r="104" class="fill-blue-100/50 dark:fill-blue-900/20" style="mix-blend-mode:multiply"/>
-          <circle cx="210" cy="125" r="104" class="fill-rose-100/50 dark:fill-rose-900/20" style="mix-blend-mode:multiply"/>
+      {# Venn diagram — SVG circles + clip-path zones #}
+      <div class="relative mx-auto" style="width: 340px; height: 230px;">
+        {# SVG circles (visual) #}
+        <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 340 230">
+          <circle cx="130" cy="120" r="100" class="fill-blue-50 dark:fill-blue-950/30"/>
+          <circle cx="210" cy="120" r="100" class="fill-rose-50 dark:fill-rose-950/30"/>
+          <circle cx="130" cy="120" r="100" fill="none" stroke-width="2.5" class="stroke-blue-400 dark:stroke-blue-500"/>
+          <circle cx="210" cy="120" r="100" fill="none" stroke-width="2.5" class="stroke-rose-400 dark:stroke-rose-500"/>
         </svg>
 
         {# Labels above circles #}
-        <div class="absolute top-0 left-0 w-[155px] text-center">
-          <span class="text-xs font-bold text-blue-600 dark:text-blue-400" x-text="cur.venn.labelA"></span>
+        <div class="absolute z-30 pointer-events-none" style="top: 4px; left: 10px; width: 130px; text-align: center;">
+          <span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-white/80 dark:bg-slate-900/80 px-1.5 py-0.5 rounded" x-text="cur.venn.labelA"></span>
         </div>
-        <div class="absolute top-0 right-0 w-[155px] text-center">
-          <span class="text-xs font-bold text-rose-600 dark:text-rose-400" x-text="cur.venn.labelB"></span>
+        <div class="absolute z-30 pointer-events-none" style="top: 4px; right: 10px; width: 130px; text-align: center;">
+          <span class="text-xs font-bold text-rose-600 dark:text-rose-400 bg-white/80 dark:bg-slate-900/80 px-1.5 py-0.5 rounded" x-text="cur.venn.labelB"></span>
         </div>
 
-        {# Zone A only — left crescent #}
-        <div class="absolute cursor-pointer rounded-l-full"
-          style="left: 25px; top: 30px; width: 105px; height: 190px;"
-          @click="vennPlaceZone('a')"
-          :class="{'ring-2 ring-blue-400 ring-inset': vennSelected !== null}">
-          <div class="flex flex-wrap content-center justify-center gap-1 w-full h-full p-2 pointer-events-none">
+        {# Zone A — full container clipped to left circle #}
+        <div class="absolute inset-0 cursor-pointer z-10"
+          style="clip-path: circle(100px at 130px 120px);"
+          @click="vennPlaceZone('a')">
+          <div class="absolute flex flex-wrap content-center justify-center gap-1 p-1"
+            style="left: 30px; top: 40px; width: 80px; height: 160px;">
             <template x-for="(it, i) in cur.venn.items" :key="'pa'+i">
               <span x-show="vennPlacements[i] === 'a'" class="text-2xl leading-none" x-text="it.char"></span>
             </template>
           </div>
         </div>
 
-        {# Zone AB — intersection center #}
-        <div class="absolute cursor-pointer z-10"
-          style="left: 130px; top: 30px; width: 80px; height: 190px;"
-          @click="vennPlaceZone('ab')">
-          <div class="flex flex-wrap content-center justify-center gap-1 w-full h-full p-1 pointer-events-none">
-            <template x-for="(it, i) in cur.venn.items" :key="'pab'+i">
-              <span x-show="vennPlacements[i] === 'ab'" class="text-2xl leading-none" x-text="it.char"></span>
+        {# Zone B — full container clipped to right circle #}
+        <div class="absolute inset-0 cursor-pointer z-10"
+          style="clip-path: circle(100px at 210px 120px);"
+          @click="vennPlaceZone('b')">
+          <div class="absolute flex flex-wrap content-center justify-center gap-1 p-1"
+            style="right: 30px; top: 40px; width: 80px; height: 160px;">
+            <template x-for="(it, i) in cur.venn.items" :key="'pb'+i">
+              <span x-show="vennPlacements[i] === 'b'" class="text-2xl leading-none" x-text="it.char"></span>
             </template>
           </div>
         </div>
 
-        {# Zone B only — right crescent #}
-        <div class="absolute cursor-pointer rounded-r-full"
-          style="right: 25px; top: 30px; width: 105px; height: 190px;"
-          @click="vennPlaceZone('b')"
-          :class="{'ring-2 ring-rose-400 ring-inset': vennSelected !== null}">
-          <div class="flex flex-wrap content-center justify-center gap-1 w-full h-full p-2 pointer-events-none">
-            <template x-for="(it, i) in cur.venn.items" :key="'pb'+i">
-              <span x-show="vennPlacements[i] === 'b'" class="text-2xl leading-none" x-text="it.char"></span>
+        {# Zone AB — intersection, higher z-index captures clicks in overlap #}
+        <div class="absolute cursor-pointer z-20"
+          style="left: 110px; top: 20px; width: 120px; height: 200px;"
+          @click="vennPlaceZone('ab')">
+          <div class="flex flex-wrap content-center justify-center gap-1 w-full h-full p-1">
+            <template x-for="(it, i) in cur.venn.items" :key="'pab'+i">
+              <span x-show="vennPlacements[i] === 'ab'" class="text-2xl leading-none" x-text="it.char"></span>
             </template>
           </div>
         </div>
@@ -64,10 +61,9 @@
 
       {# Outside zone #}
       <div class="flex justify-center">
-        <div class="px-4 py-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 min-h-[2.5rem] min-w-[140px] flex flex-wrap justify-center gap-1 cursor-pointer"
-          @click="vennPlaceZone('out')"
-          :class="{'ring-2 ring-slate-400': vennSelected !== null}">
-          <span class="text-xs text-content-subtle self-center" x-show="!Object.values(vennPlacements).some(v => v === 'out')">Ni l'un ni l'autre</span>
+        <div class="px-4 py-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 min-h-[2.5rem] min-w-[140px] flex flex-wrap justify-center items-center gap-1 cursor-pointer"
+          @click="vennPlaceZone('out')">
+          <span class="text-xs text-content-subtle" x-show="!Object.values(vennPlacements).some(v => v === 'out')">Ni l'un ni l'autre</span>
           <template x-for="(it, i) in cur.venn.items" :key="'po'+i">
             <span x-show="vennPlacements[i] === 'out'" class="text-2xl leading-none" x-text="it.char"></span>
           </template>

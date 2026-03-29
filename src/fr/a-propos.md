@@ -5,7 +5,7 @@ lang: fr
 locale: fr-FR
 ---
 
-**Le Cahier Mélimée** est une plateforme d'exercices en ligne, **gratuite**, **anonyme** et **souveraine**, conçue pour les élèves du CP à la 3e. 
+**Le cahier Mélimée** est une plateforme d'exercices en ligne, **gratuite**, **anonyme** et **souveraine**, conçue pour les élèves du CP à la 3e. 
 
 C’est un espace où l'on vient pour apprendre, sans être observé, sans être interrompu et sans rien dépenser.
 
@@ -29,10 +29,10 @@ L'accès est total, sans publicité et sans "options payantes". Sur Mélimée, o
 Le projet est **Open Source** et hébergé en France sur une infrastructure indépendante. Nous refusons les dépendances aux GAFAM : pas de tracking, pas de cookies tiers, pas de scripts de surveillance. Nous finançons notre propre liberté pour garantir la vôtre.
 
 ### 🖋️ Sobriété et Focus
-L'interface est épurée, inspirée du "cahier d'antan". Pas de surcharge sensorielle, pas de notifications inutiles. L'élève se concentre sur l'essentiel : l'exercice et la réflexion.
+L'interface est épurée. Pas de surcharge sensorielle, pas de notifications inutiles. L'élève se concentre sur l'essentiel : l'exercice et la réflexion.
 
 ### 📈 Apprentissage Progressif
-Nos séries thématiques accompagnent l'élève à son rythme. L'objectif n'est pas la note, mais la pratique et la compréhension de ses propres zones de progression.
+Nos séries thématiques accompagnent l'élève à son rythme. L'objectif n'est pas la note, mais la pratique régulière et la compréhension de ses propres zones de progression.
 
 ## Pour qui est fait ce cahier ?
 
@@ -46,4 +46,4 @@ Le Cahier Mélimée est un bien commun. Le code est disponible librement sous li
 
 ## Qui paye l'hébergement ? 💶
 
-Le site repose sur une architecture technique minimale et ultra-optimisée. Cela nous permet de maintenir des coûts très bas, couverts par les fondateurs. Ce modèle garantit notre indépendance : tant que nous pouvons payer le serveur, Salto continuera de bondir !
+Le site repose sur une architecture technique minimale et ultra-optimisée. Cela nous permet de maintenir des coûts très bas, couverts par les fondateurs. Ce modèle garantit notre indépendance : tant que nous pouvons payer les serveurs, Salto continuera de bondir !

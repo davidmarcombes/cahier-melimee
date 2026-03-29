@@ -7,7 +7,7 @@ locale: fr-FR
 
 ## Principe fondamental
 
-Cahier Mélimée est conçu selon le principe d'**anonymat radical** : nous ne collectons aucune donnée à caractère personnel (PII). Cette politique décrit les données que nous traitons et celles que nous ne traitons pas.
+Le cahier de Mélimée est conçu selon le principe d'**anonymat radical** : nous ne collectons aucune donnée à caractère personnel (PII). Cette politique décrit les données que nous traitons et celles que nous ne traitons pas.
 
 ## Données que nous ne collectons PAS
 
@@ -16,7 +16,7 @@ Cahier Mélimée est conçu selon le principe d'**anonymat radical** : nous ne c
 - Adresses IP
 - Données de géolocalisation
 - Âge ou date de naissance
-- Cookies de suivi ou publicitaires
+- Cookies publicitaires
 - Données comportementales ou analytiques
 
 ## Données que nous traitons
@@ -42,7 +42,7 @@ Aucune donnée n'est transmise à des tiers, des régies publicitaires ou des se
 
 ## Cookies et stockage local
 
-Ce site n'utilise **aucun cookie**. Un stockage local est utilisé uniquement pour les préférences d'affichage (par exemple mode jour/nuit).
+Ce site n'utilise **aucun cookie**. Un stockage local est utilisé uniquement pour les préférences d'affichage et les données de progression.
 
 ## Contact
 
@@ -50,4 +50,4 @@ Pour toute question relative à cette politique, vous pouvez nous contacter à :
 
 ## Mise à jour
 
-Cette politique peut être mise à jour. La date de dernière modification est le 18 février 2026.
+Cette politique peut être mise à jour. La date de dernière modification est le 29 mars 2026.

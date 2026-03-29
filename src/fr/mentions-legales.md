@@ -7,7 +7,7 @@ locale: fr-FR
 
 ## Éditeur du site
 
-**Cahier Mélimée** est un projet open source à but éducatif.
+**Le cahier de Mélimée** est un projet open source à but éducatif.
 
 - **Responsable de publication :** [À compléter]
 - **Hébergement :** [À compléter]
@@ -15,7 +15,7 @@ locale: fr-FR
 
 ## Propriété intellectuelle
 
-Le code source de ce site est distribué sous licence open source. Les contenus pédagogiques (exercices, textes, illustrations) sont la propriété de leurs auteurs respectifs, sauf mention contraire.
+Le code source de ce site est distribué sous licence open source EUPL v1.2. Les contenus pédagogiques (exercices, textes, illustrations) sont la propriété de leurs auteurs respectifs, sauf mention contraire.
 
 ## Responsabilité
 
@@ -27,7 +27,7 @@ Ce site ne collecte **aucune donnée personnelle** au sens du RGPD. Aucun email,
 
 ## Cookies
 
-Ce site n'utilise aucun cookie publicitaire ni cookie de suivi. Seul un stockage local (localStorage) est utilisé pour mémoriser les préférences d'affichage (mode jour/nuit).
+Ce site n'utilise aucun cookie publicitaire ni cookie de suivi. Seul un stockage local (localStorage) est utilisé pour mémoriser les préférences d'affichage (et la progresssion de l'utilisateur.
 
 ## Droit applicable
 
