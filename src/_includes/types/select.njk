@@ -2,7 +2,7 @@
 <div x-show="cur.type === 'select'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
 
   {# Optional body #}
-  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4"></div>
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4 max-w-none text-content-subtle"></div>
 
   {# Statement rows with inline dropdowns #}
   <div class="space-y-3 mb-6">
@@ -19,12 +19,12 @@
         <select
           x-model="selectAnswers[i]"
           :disabled="solved"
-          class="rounded-lg border-2 px-2 py-1 text-sm sm:text-base font-semibold bg-white dark:bg-slate-700 text-content-default transition-colors cursor-pointer"
+          class="rounded-lg border-2 px-2 py-1 text-sm sm:text-base font-semibold transition-colors cursor-pointer"
           :class="{
-            'border-green-500 text-green-700 dark:text-green-300': solved,
-            'border-red-400 text-red-700 dark:text-red-300': selectErrors.includes(i) && !solved,
-            'border-primary-400 dark:border-primary-500': !solved && selectAnswers[i] && !selectErrors.includes(i),
-            'border-slate-300 dark:border-slate-500': !solved && !selectAnswers[i]
+            'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-700 dark:text-green-300': solved,
+            'bg-red-50 dark:bg-red-900/20 border-red-400 text-red-700 dark:text-red-300': selectErrors.includes(i) && !solved,
+            'bg-primary-50 dark:bg-primary-900/20 border-primary-400 dark:border-primary-500 text-content-default': !solved && selectAnswers[i] && !selectErrors.includes(i),
+            'bg-slate-100 dark:bg-slate-600 border-slate-300 dark:border-slate-500 text-content-subtle': !solved && !selectAnswers[i]
           }"
         >
           <option value="">— choisir —</option>

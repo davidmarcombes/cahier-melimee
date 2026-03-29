@@ -15,13 +15,13 @@
   </p>
 
   {# SVG container — click target for place mode #}
-  <div class="relative"
+  <div class="relative max-w-xs mx-auto"
        @click="cur.cg && cur.cg.mode === 'place' && !solved && cgPlace($event)"
        :class="cur.cg && cur.cg.mode === 'place' && !solved ? 'cursor-crosshair' : ''">
-    <svg viewBox="0 0 420 410" class="w-full text-content-default" x-html="coordinateGridSvg"></svg>
+    <svg viewBox="0 0 435 428" class="w-full text-content-default" x-html="coordinateGridSvg"></svg>
     {# Placed point overlay (place mode only) #}
     <svg x-show="cur.cg && cur.cg.mode === 'place' && cgPoint !== null"
-         viewBox="0 0 420 410"
+         viewBox="0 0 435 428"
          class="absolute inset-0 w-full h-full pointer-events-none"
          x-html="cgMarkerSvg"></svg>
   </div>

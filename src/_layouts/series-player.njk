@@ -16,7 +16,7 @@ isSeriesPage: true
 {% for ex in exercises %}
   {% if ex.data.generator %}{% set hasGenerators = true %}{% set needsSvgJs = true %}{% endif %}
   {% if ex.data.svg %}{% set needsSvgJs = true %}{% endif %}
-  {% if ex.data.type === 'ruler' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' or ex.data.type === 'svg-tiles' %}{% set needsSvgJs = true %}{% endif %}
+  {% if ex.data.type === 'ruler' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' or ex.data.type === 'svg-tiles' or ex.data.type === 'fraction' %}{% set needsSvgJs = true %}{% endif %}
   {% if '$' in (ex.data.title or '') %}{% set needsKatex = true %}{% endif %}
 {% endfor %}
 
@@ -57,7 +57,7 @@ isSeriesPage: true
   <div x-show="_ready">
 
   {# Exercise title #}
-  <h1 class="text-2xl font-bold text-content-default mb-4 text-center" x-html="cur.title || ''"></h1>
+  <h1 class="exercise-title text-2xl font-bold text-content-default mb-4 text-center" x-html="cur.title || ''"></h1>
 
   {# Type-specific visual blocks (only included when the series uses that type) #}
   {% if 'number-check' in usedTypes %}{% include "types/number-check.njk" %}{% endif %}
@@ -98,6 +98,7 @@ isSeriesPage: true
   {% if 'inverse-problem' in usedTypes %}{% include "types/inverse-problem.njk" %}{% endif %}
   {% if 'tri-arith' in usedTypes %}{% include "types/tri-arith.njk" %}{% endif %}
   {% if 'decimal-triple' in usedTypes %}{% include "types/decimal-triple.njk" %}{% endif %}
+  {% if 'decomp' in usedTypes %}{% include "types/decomp.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
   {% if 'sequence' in usedTypes or 'bounding' in usedTypes or 'convert' in usedTypes %}
@@ -106,19 +107,21 @@ isSeriesPage: true
 
   {# Answer input + check button (for number-check, problem, clock, fraction and base-10) #}
   {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes or 'number-line' in usedTypes %}
-  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || (cur.type === 'number-line' && cur.nl && cur.nl.mode !== 'place')) && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6">
+  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || (cur.type === 'number-line' && cur.nl && cur.nl.mode !== 'place')) && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6" :class="cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'number-line' ? 'justify-center' : ''"  >
     <input
       type="text"
       x-model="userInput"
       @keydown.enter="check()"
       :disabled="solved"
-      placeholder="Ta réponse…"
+      :placeholder="cur.type === 'clock' ? 'hh:mm' : cur.type === 'fraction' ? 'a / b' : cur.type === 'base-10' ? 'Réponse' : cur.type === 'ruler' || cur.type === 'number-line' ? '0,0' : 'Ta réponse…'"
       aria-label="Ta réponse"
       x-ref="input"
-      class="w-full px-4 py-3 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
+      class="px-4 py-3 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
         bg-surface-subtle text-content-default
         border-slate-200 dark:border-slate-700"
       :class="{
+        'w-32': cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'number-line',
+        'w-full': cur.type !== 'clock' && cur.type !== 'fraction' && cur.type !== 'base-10' && cur.type !== 'ruler' && cur.type !== 'number-line',
         'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
         'border-red-400 bg-red-50 dark:bg-red-900/20': showError
       }"
@@ -220,6 +223,9 @@ isSeriesPage: true
     {% if 'decimal-triple' in usedTypes %}
     <span x-show="cur.type === 'decimal-triple'">Certaines valeurs ne sont pas correctes. Essaie encore !</span>
     {% endif %}
+    {% if 'decomp' in usedTypes %}
+    <span x-show="cur.type === 'decomp'">Certaines valeurs ne sont pas correctes. Essaie encore !</span>
+    {% endif %}
   </div>
 
   {# Success feedback #}
@@ -228,7 +234,7 @@ isSeriesPage: true
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="opacity-0 scale-95"
     x-transition:enter-end="opacity-100 scale-100"
-    class="p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 text-center"
+    class="mt-4 p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 text-center"
   >
     Bonne réponse !
   </div>

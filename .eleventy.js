@@ -722,8 +722,7 @@ module.exports = async function (eleventyConfig) {
           if (ex.data.direction) item.direction = ex.data.direction;
         }
         if (ex.data.type === 'select' && ex.data.statements) {
-          const globalChoices = ex.data.choices ? ex.data.choices.map(String) : null;
-          item.selectChoices = globalChoices;
+          if (ex.data.choices) item.selectChoices = ex.data.choices.map(String);
           item.selectStatements = ex.data.statements.map((s) => {
             const parts = String(s.template).split('___');
             const stmt = { before: parts[0] || '', after: parts[1] || '', answer: String(s.answer) };
@@ -837,7 +836,7 @@ module.exports = async function (eleventyConfig) {
     const emojiMap = new Map(); // series id → emoji
     for (const group of byTitle.values()) {
       if (group.length < 2) continue;
-      group.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+      group.sort((a, b) => String(a.id ?? '').localeCompare(String(b.id ?? '')));
       group.forEach((s, i) => emojiMap.set(s.id, DISAMBIG_EMOJIS[i % DISAMBIG_EMOJIS.length]));
     }
 

@@ -9,15 +9,15 @@ params:
   places:
     - label: "1000"
       value: 1000
-      color: "#059669"
+      color: "var(--green)"
     - label: "100"
       value: 100
-      color: "#dc2626"
+      color: "var(--red)"
     - label: "10"
       value: 10
-      color: "#7c3aed"
+      color: "var(--purple)"
     - label: "1"
       value: 1
-      color: "#2563eb"
+      color: "var(--p)"
 class: "S2.1.2"
 ---

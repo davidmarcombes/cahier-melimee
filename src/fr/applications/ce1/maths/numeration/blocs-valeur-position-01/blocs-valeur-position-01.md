@@ -9,9 +9,9 @@ params:
   places:
     - label: "10"
       value: 10
-      color: "#7c3aed"
+      color: "var(--purple)"
     - label: "1"
       value: 1
-      color: "#2563eb"
+      color: "var(--p)"
 class: "S2.1.2"
 ---

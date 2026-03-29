@@ -1,8 +1,8 @@
 <div x-show="cur.type === 'fill-table'" class="space-y-4">
   <template x-if="cur.svg">
-    <div class="flex justify-center mb-2" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
+    <div class="w-full mb-2" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
-  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm mb-2"></div>
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4 max-w-none text-content-subtle"></div>
   <div class="overflow-x-auto">
     <table class="w-full border-collapse text-sm">
       <thead x-show="cur.table && cur.table.headers && cur.table.headers.length">

@@ -26,11 +26,9 @@
           </template>
         </div>
 
-        {# Digit × value below #}
-        <div class="mt-1.5 text-center text-xs font-bold leading-tight" :style="'color:' + col.color">
-          <div><span x-text="clickBlockLevels[ci] || 0"></span> × <span x-text="col.label"></span></div>
-          <div x-text="((clickBlockLevels[ci] || 0) * col.value).toLocaleString('fr-FR', {maximumFractionDigits: 10})"></div>
-        </div>
+        {# Total below #}
+        <div class="mt-1.5 text-center text-sm font-bold" :style="'color:' + col.color"
+             x-text="((clickBlockLevels[ci] || 0) * col.value).toLocaleString('fr-FR', {maximumFractionDigits: 10})"></div>
 
       </div>
     </template>

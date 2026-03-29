@@ -1,0 +1,54 @@
+{# decomp — additive place-value decomposition: 346 = [3] centaines + [4] dizaines + [6] unités #}
+<div x-show="cur.type === 'decomp'" class="space-y-6">
+
+  {# Number display #}
+  <div class="text-center text-5xl font-bold text-content-default tracking-wide"
+       x-text="cur.decomp?.number"></div>
+
+  {# Decomposition rows #}
+  <div class="flex flex-col items-center gap-3">
+    <template x-for="(part, i) in (cur.decomp?.parts || [])" :key="i">
+      <div>
+        {# Comma separator row #}
+        <div x-show="part.comma"
+             class="text-3xl font-bold text-content-subtle text-center w-8">,</div>
+
+        {# Input row #}
+        <div x-show="!part.comma" class="flex items-center gap-3">
+          <span class="w-6 text-right text-2xl font-mono text-content-subtle select-none"
+                x-text="part.inputIdx === 0 ? '=' : '+'"></span>
+          <input
+            type="text"
+            inputmode="numeric"
+            :value="decompInputs[part.inputIdx]"
+            @input="decompInputs = decompInputs.map((v, idx) => idx === part.inputIdx ? $event.target.value : v); decompErrors = []"
+            @keydown.enter="check()"
+            :disabled="solved"
+            class="w-14 px-2 py-2 text-xl text-center font-bold border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-surface-subtle text-content-default border-slate-200 dark:border-slate-700"
+            :class="{
+              'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+              'border-red-400 bg-red-50 dark:bg-red-900/20 animate-bounce': !solved && decompErrors.includes(part.inputIdx)
+            }"
+          />
+          <span class="text-xl text-content-default min-w-[6rem]" x-text="part.label"></span>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  {# Verify button #}
+  <div class="flex justify-center">
+    <button
+      type="button"
+      @click="check()"
+      :disabled="solved || decompInputs.some(v => !v.trim())"
+      class="px-8 py-2.5 text-base font-bold rounded-xl transition-all active:scale-95
+             disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+  </div>
+
+</div>
