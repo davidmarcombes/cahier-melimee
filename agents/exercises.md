@@ -54,6 +54,8 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `logic-grid` | `types/logic-grid.njk` | Logic grid puzzle — click cells to place marks. |
 | `true-false` | `types/true-false.njk` | Vrai/Faux table — tick true or false per assertion. |
 | `compare` | `types/compare.njk` | Compare numbers — pick < or > between two values. |
+| `compare-expressions` | `types/compare-expressions.njk` | Compare two expression strings without calculating — pick < = >. Fields: `comparisons[]` (left, right; answer auto-computed or explicit). |
+| `estimation` | `types/estimation.njk` | Two-stage: estimate first (≈), then compute exactly (=). Both validated on Vérifier. Fields: `operation`, `estimate` (or `estimates[]`), `answer`. |
 | `multi-question` | `types/multi-question.njk` | Shared context + multiple sub-questions, each validated on Enter. |
 | `mcq` | `types/mcq.njk` | Multiple choice — click the correct answer among 3-5 shuffled choices. |
 | `ruler` | `types/ruler.njk` | Graduated ruler with markers — read a value. SVG via `rulerSvg` getter. |

@@ -65,6 +65,8 @@ isSeriesPage: true
   {% if 'pyramid' in usedTypes %}{% include "types/pyramid.njk" %}{% endif %}
   {% if 'true-false' in usedTypes %}{% include "types/true-false.njk" %}{% endif %}
   {% if 'compare' in usedTypes %}{% include "types/compare.njk" %}{% endif %}
+  {% if 'compare-expressions' in usedTypes %}{% include "types/compare-expressions.njk" %}{% endif %}
+  {% if 'estimation' in usedTypes %}{% include "types/estimation.njk" %}{% endif %}
   {% if 'multi-question' in usedTypes %}{% include "types/multi-question.njk" %}{% endif %}
   {% if 'mcq' in usedTypes %}{% include "types/mcq.njk" %}{% endif %}
   {% if 'clock' in usedTypes %}{% include "types/clock.njk" %}{% endif %}
@@ -167,6 +169,12 @@ isSeriesPage: true
     {% endif %}
     {% if 'compare' in usedTypes %}
     <span x-show="cur.type === 'compare'">Certains signes ne sont pas corrects. Essaie encore !</span>
+    {% endif %}
+    {% if 'compare-expressions' in usedTypes %}
+    <span x-show="cur.type === 'compare-expressions'">Certains signes ne sont pas corrects. Essaie encore !</span>
+    {% endif %}
+    {% if 'estimation' in usedTypes %}
+    <span x-show="cur.type === 'estimation'">Au moins une réponse n'est pas correcte. Essaie encore !</span>
     {% endif %}
     {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes or 'thermometer' in usedTypes %}
     <span x-show="cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'thermometer'">Ce n'est pas la bonne réponse. Essaie encore !</span>

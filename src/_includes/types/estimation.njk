@@ -1,0 +1,50 @@
+{# Estimation — two-stage: estimate first, then compute exactly #}
+<div x-show="cur.type === 'estimation'" class="space-y-4">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-2 max-w-none text-content-subtle"></div>
+
+  <div class="flex flex-col gap-3">
+    {# Estimate row #}
+    <div class="flex items-center gap-3">
+      <span class="text-xl font-bold text-content-subtle w-8 text-right shrink-0 select-none">≈</span>
+      <input
+        type="text"
+        x-model="estInput"
+        @keydown.enter="check()"
+        @input="estError = false"
+        :disabled="solved"
+        placeholder="Ton estimation…"
+        aria-label="Estimation"
+        class="flex-1 px-4 py-3 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-surface-subtle text-content-default"
+        :class="{'border-green-500 bg-green-50 dark:bg-green-900/20': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': estError && !solved, 'border-slate-200 dark:border-slate-700': !estError && !solved}"
+      />
+    </div>
+
+    {# Exact row #}
+    <div class="flex items-center gap-3">
+      <span class="text-xl font-bold text-content-subtle w-8 text-right shrink-0 select-none">=</span>
+      <input
+        type="text"
+        x-model="userInput"
+        @keydown.enter="check()"
+        @input="exactError = false"
+        :disabled="solved"
+        placeholder="Calcul exact…"
+        aria-label="Calcul exact"
+        class="flex-1 px-4 py-3 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-surface-subtle text-content-default"
+        :class="{'border-green-500 bg-green-50 dark:bg-green-900/20': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': exactError && !solved, 'border-slate-200 dark:border-slate-700': !exactError && !solved}"
+      />
+    </div>
+  </div>
+
+  {# Verify button #}
+  <div x-show="!solved" class="flex justify-center pt-2">
+    <button
+      type="button"
+      @click="check()"
+      :disabled="!estInput.trim() || !userInput.trim()"
+      class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      Vérifier
+    </button>
+  </div>
+</div>

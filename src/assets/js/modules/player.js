@@ -86,6 +86,9 @@ export function seriesPlayer(exercises, seriesId) {
     vennPlacements: {}, // venn: itemIdx → zone ('a','b','ab','out')
     vennSelected: null, // venn: currently selected item index
     vennErrors: [],     // venn: item indices with wrong placement
+    estInput: '',       // estimation: estimate field input
+    estError: false,    // estimation: estimate input is wrong
+    exactError: false,  // estimation: exact input is wrong
 
     /* Helpers */
     get cur() {
@@ -378,6 +381,10 @@ export function seriesPlayer(exercises, seriesId) {
       this.vennPlacements = {};
       this.vennSelected = null;
       this.vennErrors = [];
+
+      this.estInput = '';
+      this.estError = false;
+      this.exactError = false;
 
       this.dtInputs = _e.type === 'decimal-triple'
         ? { fracNum: '', fracDen: '', decimal: '', dizaines: '', unites: '', dixiemes: '', centiemes: '', milliemes: '' }
@@ -1013,7 +1020,7 @@ export function seriesPlayer(exercises, seriesId) {
         return;
       }
 
-      if (_e.type === 'compare') {
+      if (_e.type === 'compare' || _e.type === 'compare-expressions') {
         if (this.cmpInputs.some((v) => v === null)) { this._flashError(); return; }
         const wrong = (_e.comparisons || []).map((c, i) => this.cmpInputs[i] !== c.answer ? i : -1).filter(i => i !== -1);
         if (wrong.length === 0) {
@@ -1106,6 +1113,22 @@ export function seriesPlayer(exercises, seriesId) {
         
         if (isCorrect) this._markSolvedAndAdvance();
         else this._flashError();
+        return;
+      }
+
+      if (_e.type === 'estimation') {
+        if (!this.estInput.trim() || !this.userInput.trim()) { this._flashError(); return; }
+        const estOk = (_e.estAnswers || []).some(a => normalizeAnswer(a) === normalizeAnswer(this.estInput));
+        const exactOk = (_e.answers || []).some(a => normalizeAnswer(a) === normalizeAnswer(this.userInput));
+        this.estError = !estOk;
+        this.exactError = !exactOk;
+        if (estOk && exactOk) {
+          this.estError = false;
+          this.exactError = false;
+          this._markSolvedAndAdvance();
+        } else {
+          this._flashError();
+        }
         return;
       }
 

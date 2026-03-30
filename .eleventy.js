@@ -612,6 +612,34 @@ module.exports = async function (eleventyConfig) {
           });
         }
 
+        if (ex.data.type === 'compare-expressions' && ex.data.comparisons) {
+          item.comparisons = ex.data.comparisons.map((c) => {
+            const l = interpolate(String(c.left));
+            const r = interpolate(String(c.right));
+            let answer;
+            if (c.answer) {
+              answer = c.answer.trim();
+            } else {
+              try {
+                const evalExpr = (s) => Function('"use strict"; return (' + s.replace(/×/g, '*').replace(/÷/g, '/') + ')')();
+                const nl = evalExpr(l);
+                const nr = evalExpr(r);
+                answer = nl < nr ? '<' : nl > nr ? '>' : '=';
+              } catch {
+                answer = '?';
+              }
+            }
+            return { left: l, right: r, answer };
+          });
+        }
+
+        if (ex.data.type === 'estimation') {
+          const estVals = ex.data.estimates
+            ? (Array.isArray(ex.data.estimates) ? ex.data.estimates : [ex.data.estimates])
+            : ex.data.estimate !== undefined ? [ex.data.estimate] : [];
+          item.estAnswers = estVals.map(v => String(v).trim().toLowerCase());
+        }
+
         if (ex.data.type === 'fraction-paint') {
           let num = ex.data.numerator;
           let den = ex.data.denominator;
@@ -913,7 +941,7 @@ module.exports = async function (eleventyConfig) {
     // Canonical lookup tables — kept in sync with CSV_TYPES / CSV_CLASSES in app.js
     // Add new entries at the END to preserve existing indices; never reorder.
     // Multi-type series all map to "multi" — no composite entries.
-    const CSV_TYPES = ["","bar-chart","base-10","bounding","calc-chain","checkbox","click-blocks","clock","column-op","compare","compare-groups","convert","coordinate-grid","count-objects","decimal-triple","decomp","drag-sort","fill-table","fraction","fraction-check","fraction-paint","function-machine","inverse-problem","logic-grid","magic-color","matching","maze","mcq","multi","multi-question","number-check","number-hunt","number-line","problem","pyramid","ruler","select","sequence","sort","svg-tiles","thermometer","tile-select","tri-arith","true-false","venn","defi"];
+    const CSV_TYPES = ["","bar-chart","base-10","bounding","calc-chain","checkbox","click-blocks","clock","column-op","compare","compare-groups","convert","coordinate-grid","count-objects","decimal-triple","decomp","drag-sort","fill-table","fraction","fraction-check","fraction-paint","function-machine","inverse-problem","logic-grid","magic-color","matching","maze","mcq","multi","multi-question","number-check","number-hunt","number-line","problem","pyramid","ruler","select","sequence","sort","svg-tiles","thermometer","tile-select","tri-arith","true-false","venn","defi","compare-expressions","estimation"];
     const CSV_CLASSES = ["A1.1","A1.2","A2.1","A2.2","A2.3","A2.4","A3.1","A3.2","A3.3","A4.1","A4.2","D1.1.1","I1.1.1","I1.1.2","M1.1","M1.2","M1.3","M1.4","M2.1","M2.2","M2.3","M3.1","M3.2","M3.3","N4.2","S1.1.1","S1.1.2","S1.1.3","S1.2.1","S1.2.2","S1.2.3","S1.3.1","S2.1.1","S2.1.2","S2.1.3","S2.1.4","S2.2.1","S2.2.2","S3.1.1","S3.1.2","S3.2.1","S3.2.2","S3.2.3","S4.1.2"];
 
     const lines = ['id,l,s,t,title,d,f,ty,cl'];

@@ -43,6 +43,8 @@ const TYPE_SCHEMAS = {
   'calc-chain': { required: ['chain'] },
   'inverse-problem': { required: ['ipBase', 'ipInverses'], arrays: ['ipInverses'] },
   'decimal-triple': { required: [], requireOneOf: [['dtFrac', 'dtDecimal', 'dtPlaces', 'dtGiven'], ['generator']] },
+  'compare-expressions': { required: ['comparisons'], arrays: ['comparisons'], arrayFields: { comparisons: ['left', 'right'] } },
+  estimation: { required: [], requireOneOf: [['estimate', 'answer'], ['estimates', 'answer']] },
 };
 
 const COLORS = {
