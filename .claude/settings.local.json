@@ -187,7 +187,9 @@
       "Bash(# Let me directly check if the pages are being generated from _pages # Build clean and look at the output npm run clean 2>&1 && npx @11ty/eleventy 2>&1)",
       "Bash(# Check a built exercise page — does it contain Alpine x-data? head -50 _site/fr/exercices/3b314e9c/index.html)",
       "Bash(# Check the CSS file exists ls -la _site/css/styles.css)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(sed -i \"s/title: ''Représentation de fractions \\($\\\\\\\\frac{1}{10}$\\)''/title: ''Représentation de fractions \\(1\\\\/10\\)''/\" \"e:/Code/cahier-melimee/src/fr/exercices/cm1/maths/fractions/repr-fraction-decimale-01/02-repr-fraction-decimale-01.md\")",
+      "Bash(__NEW_LINE_62652e233283effc__ sed:*)"
     ]
   }
 }

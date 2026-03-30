@@ -42,7 +42,7 @@ Nos séries thématiques accompagnent l'élève à son rythme. L'objectif n'est 
 
 ## Un projet ouvert 🐧
 
-Le Cahier Mélimée est un bien commun. Le code est disponible librement sous licence EUPL (European Union Public Licence) car nous croyons que les outils éducatifs doivent appartenir à tous. Les contributions, qu'elles soient pédagogiques ou techniques, sont les bienvenues. [Découvrir comment contribuer](/fr/contribuer/).
+Le Cahier Mélimée est un bien commun. Le code est disponible librement sous licence EUPL (European Union Public Licence) car nous croyons que les outils éducatifs doivent appartenir à tous. Les contributions, qu'elles soient pédagogiques ou techniques, sont les bienvenues. [Découvrir comment contribuer](../contribuer/).
 
 ## Qui paye l'hébergement ? 💶
 

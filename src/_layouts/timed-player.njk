@@ -15,7 +15,7 @@ isSeriesPage: true
 
   {# ── READY SCREEN ───────────────────────────────────── #}
   <div x-show="phase === 'ready'" class="flex flex-col items-center justify-center min-h-[60vh] text-center gap-6">
-    <a href="/fr/" class="self-start text-slate-400 hover:text-primary-500 transition-colors" aria-label="Retour">
+    <a href="{{ '/fr/' | url }}" class="self-start text-slate-400 hover:text-primary-500 transition-colors" aria-label="Retour">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </a>
     <div class="text-7xl select-none">⏱️</div>
@@ -150,7 +150,7 @@ isSeriesPage: true
     >
       Rejouer
     </button>
-    <a href="/fr/" class="text-content-subtle hover:text-primary-500 transition-colors text-sm">
+    <a href="{{ '/fr/' | url }}" class="text-content-subtle hover:text-primary-500 transition-colors text-sm">
       Retour à l'accueil
     </a>
   </div>

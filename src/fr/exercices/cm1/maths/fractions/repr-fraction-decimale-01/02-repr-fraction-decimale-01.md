@@ -1,6 +1,6 @@
 ---
 type: fraction-check
-title: 'Représentation de fractions ($\frac{1}{10}$)'
+title: 'Représentation de fractions (1/10)'
 answer: "7/10"
 svg:
   gen: mathGridSvg

@@ -37,12 +37,12 @@
       <table class="mx-auto border-collapse">
         <thead>
           <tr>
-            <template x-if="cur.dtPlaces[0] !== null"><th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dizaines</th></template>
-            <th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">unités</th>
-            <th class="px-1 border-none bg-transparent"></th>
-            <template x-if="cur.dtPlaces[2] !== null"><th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dixièmes</th></template>
-            <template x-if="cur.dtPlaces[3] !== null"><th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">centièmes</th></template>
-            <template x-if="cur.dtPlaces[4] !== null"><th class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">millièmes</th></template>
+            <template x-if="cur.dtPlaces[0] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dizaines</th></template>
+            <th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">unités</th>
+            <th scope="col" class="px-1 border-none bg-transparent"></th>
+            <template x-if="cur.dtPlaces[2] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dixièmes</th></template>
+            <template x-if="cur.dtPlaces[3] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">centièmes</th></template>
+            <template x-if="cur.dtPlaces[4] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">millièmes</th></template>
           </tr>
         </thead>
         <tbody>

@@ -12,12 +12,10 @@ isSeriesPage: true
 {% set usedTypes = exercises | extractTypes %}
 {% set hasGenerators = false %}
 {% set needsSvgJs = false %}
-{% set needsKatex = false %}
 {% for ex in exercises %}
   {% if ex.data.generator %}{% set hasGenerators = true %}{% set needsSvgJs = true %}{% endif %}
   {% if ex.data.svg %}{% set needsSvgJs = true %}{% endif %}
   {% if ex.data.type === 'ruler' or ex.data.type === 'thermometer' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' or ex.data.type === 'svg-tiles' or ex.data.type === 'fraction' %}{% set needsSvgJs = true %}{% endif %}
-  {% if '$' in (ex.data.title or '') %}{% set needsKatex = true %}{% endif %}
 {% endfor %}
 
 {% if needsSvgJs %}
@@ -28,9 +26,6 @@ isSeriesPage: true
 {% endif %}
 {% if hasGenerators %}
 <script src="{{ '/assets/js/generators.js' | url }}"></script>
-{% endif %}
-{% if needsKatex %}
-<link rel="stylesheet" href="{{ '/assets/katex/katex.min.css' | url }}">
 {% endif %}
 
 

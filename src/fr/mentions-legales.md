@@ -23,7 +23,7 @@ Les informations fournies sur ce site le sont à titre pédagogique. L'éditeur 
 
 ## Données personnelles
 
-Ce site ne collecte **aucune donnée personnelle** au sens du RGPD. Aucun email, nom, adresse IP ou cookie de suivi n'est utilisé. Voir notre page [Confidentialité](/fr/confidentialite/) pour plus de détails.
+Ce site ne collecte **aucune donnée personnelle** au sens du RGPD. Aucun email, nom, adresse IP ou cookie de suivi n'est utilisé. Voir notre page [Confidentialité](../confidentialite/) pour plus de détails.
 
 ## Cookies
 

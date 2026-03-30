@@ -1,6 +1,6 @@
 ---
 type: fraction-check
-title: 'Représentation de fractions ($\frac{1}{100}$)'
+title: 'Représentation de fractions (1/100)'
 answer: ["50/100", "5/10"]
 svg:
   gen: mathGridSvg

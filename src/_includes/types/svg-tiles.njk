@@ -29,22 +29,22 @@
         }"
       >
         <!-- The SVG content -->
-        <div class="flex-1 flex items-center justify-center p-4 w-full min-h-[140px]" x-html="window[svg.gen](...Object.values(svg.par))"></div>
-        
+        <span class="flex-1 flex items-center justify-center p-4 w-full min-h-[140px]" x-html="window[svg.gen](...Object.values(svg.par))"></span>
+
         <!-- The bottom bar with checkmark -->
-        <div class="w-full h-8 flex items-center justify-center transition-colors"
+        <span class="w-full h-8 flex items-center justify-center transition-colors"
              :class="{
                'bg-primary-500': svgSelected.includes(i) && !solved && !svgErrors.includes(i),
                'bg-green-500': solved && (cur.answers || []).includes(i),
                'bg-red-400': svgErrors.includes(i),
                'bg-[#cdecfa] dark:bg-slate-700': !svgSelected.includes(i) && !solved && !svgErrors.includes(i)
              }">
-           <svg class="w-6 h-6 text-white transition-opacity duration-200" 
-                :class="(svgSelected.includes(i) || (solved && (cur.answers || []).includes(i))) ? 'opacity-100' : 'opacity-100'" 
+           <svg class="w-6 h-6 text-white transition-opacity duration-200"
+                :class="(svgSelected.includes(i) || (solved && (cur.answers || []).includes(i))) ? 'opacity-100' : 'opacity-100'"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
            </svg>
-        </div>
+        </span>
       </button>
     </template>
   </div>
