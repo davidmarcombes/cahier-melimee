@@ -130,6 +130,12 @@ export function seriesPlayer(exercises, seriesId) {
       return typeof rulerExerciseSvg !== 'undefined' ? rulerExerciseSvg(this.cur.ruler) : '';
     },
 
+    /* Thermometer SVG */
+    get thermometerSvg() {
+      if (this.cur.type !== 'thermometer' || !this.cur.thermometer) return '';
+      return typeof thermometerExerciseSvg !== 'undefined' ? thermometerExerciseSvg(this.cur.thermometer) : '';
+    },
+
     /* Coordinate-grid SVG */
     get coordinateGridSvg() {
       if (this.cur.type !== 'coordinate-grid' || !this.cur.cg) return '';
@@ -417,7 +423,8 @@ export function seriesPlayer(exercises, seriesId) {
           parts.push({ t: 'i', idx: ii++ });
         } else {
           const v = t.replace(/\x00(\d+)\x00/g, (_, i) => stash[+i]);
-          parts.push({ t: 'x', v });
+          // Boundary spaces collapse inside inline-block; promote to non-breaking.
+          parts.push({ t: 'x', v: v.replace(/^ +| +$/g, (s) => '\u00A0'.repeat(s.length)) });
         }
       }
       return parts;

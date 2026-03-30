@@ -1,12 +1,10 @@
 ---
-type: ruler
+type: thermometer
 title: "Lis la température"
 min: 0
 max: 30
-divisions: 5
 markers:
-  - label: "°C"
-    value: 20
+  - value: 20
 answer: "20"
 class: "I1.1.2"
 ---

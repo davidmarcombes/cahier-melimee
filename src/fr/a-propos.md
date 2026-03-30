@@ -5,7 +5,7 @@ lang: fr
 locale: fr-FR
 ---
 
-**Le cahier Mélimée** est une plateforme d'exercices en ligne, **gratuite**, **anonyme** et **souveraine**, conçue pour les élèves du CP à la 3e. 
+**Le cahier Mélimée** est une plateforme d'exercices en ligne, **gratuite**, **anonyme** et **souveraine**, conçue pour les élèves du CP au CM2. 
 
 C’est un espace où l'on vient pour apprendre, sans être observé, sans être interrompu et sans rien dépenser.
 

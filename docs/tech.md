@@ -61,7 +61,7 @@ html: true
 `npm run build` n'autorise aucune erreur sur la chaîne CI/CD :
 
 1. **Unit Testing** : Vitest pour les algorithmes de génération aléatoire (`npm test`).
-2. **E2E Testing** : Playwright sur le `_site/` compilé — un test par type d'exercice (`npm run test:e2e`). 40 tests couvrent 27 types via un serveur statique sur `:4173`.
+2. **E2E Testing** : Playwright sur le `_site/` compilé — un test par série (layout) et un par type (smoke) (`npm run test:e2e`). 689 tests couvrent 634 séries et 44 types via un serveur statique sur `:4173`.
 3. **Exercise Validation** : Schémas JSON stricts sur chaque `.md`.
 4. **Token Injection** : Transformation de `design-tokens.json` vers Tailwind & CSS Vars.
 5. **Eleventy Core** : Assemblage Nunjucks + Minification HTML (Terser).

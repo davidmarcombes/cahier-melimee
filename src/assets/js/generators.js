@@ -396,7 +396,14 @@ const generators = {
 
       const digits = [];
       for (let i = 0; i < magnitude; i++) {
-        digits.push(rand(0, 9));
+        // Skip 5 for the deciding digit (just below the rounding boundary)
+        // to avoid the ambiguous halfway case.
+        if (i === magnitude - order) {
+          const d = rand(0, 8);
+          digits.push(d < 5 ? d : d + 1); // 0-4 or 6-9, never 5
+        } else {
+          digits.push(rand(0, 9));
+        }
       }
       const num = digits.reduce((acc, digit) => acc * 10 + digit, 0);
       const rounded = Math.round(num / Math.pow(10, order)) * Math.pow(10, order);
@@ -4262,6 +4269,178 @@ const generators = {
           labelB: theme.labelB,
           items,
         },
+      };
+    },
+  },
+
+  /* ── Venn Diagram (Number Properties) ────────────────────────── */
+  vennNombres: {
+    generate(params = {}) {
+      const level = params.level || 'CE2';
+
+      function range(lo, hi) {
+        const r = [];
+        for (let i = lo; i <= hi; i++) r.push(i);
+        return r;
+      }
+
+      const isMultOf = k => n => n % k === 0;
+      const isDivOf  = k => n => n > 0 && k % n === 0;
+      const isPrime  = n => {
+        if (n < 2) return false;
+        for (let i = 2; i * i <= n; i++) if (n % i === 0) return false;
+        return true;
+      };
+
+      const themesByLevel = {
+        CE1: [
+          { labelA: 'Nombre pair',   labelB: 'Inférieur à 10',  predA: n => n % 2 === 0,  predB: n => n < 10,   pool: range(1, 20) },
+          { labelA: 'Nombre pair',   labelB: 'Multiple de 5',   predA: n => n % 2 === 0,  predB: isMultOf(5),   pool: range(1, 20) },
+          { labelA: 'Nombre impair', labelB: 'Supérieur à 10',  predA: n => n % 2 !== 0,  predB: n => n > 10,   pool: range(1, 20) },
+          { labelA: 'Inférieur à 10', labelB: 'Multiple de 3',  predA: n => n < 10,        predB: isMultOf(3),   pool: range(1, 20) },
+        ],
+        CE2: [
+          { labelA: 'Multiple de 2', labelB: 'Multiple de 3',   predA: isMultOf(2), predB: isMultOf(3),  pool: range(2, 30) },
+          { labelA: 'Multiple de 5', labelB: 'Multiple de 2',   predA: isMultOf(5), predB: isMultOf(2),  pool: range(2, 40) },
+          { labelA: 'Inférieur à 20', labelB: 'Multiple de 3',  predA: n => n < 20, predB: isMultOf(3),  pool: range(1, 35) },
+          { labelA: 'Multiple de 2', labelB: 'Multiple de 5',   predA: isMultOf(2), predB: isMultOf(5),  pool: range(2, 40) },
+          { labelA: 'Multiple de 3', labelB: 'Inférieur à 15',  predA: isMultOf(3), predB: n => n < 15,  pool: range(1, 30) },
+        ],
+        CM1: [
+          { labelA: 'Multiple de 3', labelB: 'Multiple de 4',   predA: isMultOf(3),  predB: isMultOf(4),  pool: range(1, 48) },
+          { labelA: 'Diviseur de 24', labelB: 'Diviseur de 36', predA: isDivOf(24),  predB: isDivOf(36),  pool: range(1, 24) },
+          { labelA: 'Nombre premier', labelB: 'Nombre impair',  predA: isPrime,      predB: n => n % 2 !== 0, pool: range(1, 30) },
+          { labelA: 'Multiple de 3', labelB: 'Multiple de 6',   predA: isMultOf(3),  predB: isMultOf(6),  pool: range(1, 36) },
+          { labelA: 'Multiple de 4', labelB: 'Multiple de 6',   predA: isMultOf(4),  predB: isMultOf(6),  pool: range(2, 48) },
+        ],
+        CM2: [
+          { labelA: 'Multiple de 6', labelB: 'Multiple de 9',    predA: isMultOf(6),  predB: isMultOf(9),  pool: range(1, 72) },
+          { labelA: 'Diviseur de 36', labelB: 'Diviseur de 60',  predA: isDivOf(36),  predB: isDivOf(60),  pool: range(1, 36) },
+          { labelA: 'Multiple de 4', labelB: 'Multiple de 6',    predA: isMultOf(4),  predB: isMultOf(6),  pool: range(2, 60) },
+          { labelA: 'Multiple de 7', labelB: 'Multiple de 3',    predA: isMultOf(7),  predB: isMultOf(3),  pool: range(1, 70) },
+          { labelA: 'Nombre premier', labelB: 'Multiple de 2',   predA: isPrime,      predB: isMultOf(2),  pool: range(1, 50) },
+        ],
+      };
+
+      const themes = themesByLevel[level] || themesByLevel.CE2;
+      const theme  = randItem(themes);
+
+      // Classify all pool numbers into zones
+      const byZone = { a: [], b: [], ab: [], out: [] };
+      for (const n of theme.pool) {
+        const inA = theme.predA(n), inB = theme.predB(n);
+        if (inA && inB)       byZone.ab.push(n);
+        else if (inA)         byZone.a.push(n);
+        else if (inB)         byZone.b.push(n);
+        else                  byZone.out.push(n);
+      }
+
+      // At least 2 from each non-empty zone
+      const chosen = new Set();
+      for (const z of ['a', 'b', 'ab', 'out']) {
+        shuffle([...byZone[z]]).slice(0, Math.min(2, byZone[z].length)).forEach(n => chosen.add(n));
+      }
+
+      // Fill to 8-10 total
+      const target = rand(8, 10);
+      shuffle(theme.pool.filter(n => !chosen.has(n)))
+        .slice(0, Math.max(0, target - chosen.size))
+        .forEach(n => chosen.add(n));
+
+      const items = shuffle([...chosen]).map(n => {
+        const inA = theme.predA(n), inB = theme.predB(n);
+        return { char: String(n), zone: inA && inB ? 'ab' : inA ? 'a' : inB ? 'b' : 'out' };
+      });
+
+      return {
+        type: 'venn',
+        title: 'Classe les nombres',
+        venn: { labelA: theme.labelA, labelB: theme.labelB, items },
+      };
+    },
+  },
+
+  /* ── Venn Diagram (Geometric Shapes) ────────────────────────── */
+  vennFormes: {
+    generate(params = {}) {
+      const level = params.level || 'CE2';
+
+      // Each shape: Unicode char + boolean properties
+      const shapes = {
+        carre:    { char: '■', quadri: true,  allEqual: true,  rightAngle: true,  parallel: true  },
+        rect:     { char: '▬', quadri: true,  allEqual: false, rightAngle: true,  parallel: true  },
+        losange:  { char: '◆', quadri: true,  allEqual: true,  rightAngle: false, parallel: true  },
+        paralelo: { char: '▱', quadri: true,  allEqual: false, rightAngle: false, parallel: true  },
+        trapeze:  { char: '⏢', quadri: true,  allEqual: false, rightAngle: false, parallel: false },
+        triEqui:  { char: '△', quadri: false, allEqual: true,  rightAngle: false, parallel: false },
+        triRect:  { char: '▷', quadri: false, allEqual: false, rightAngle: true,  parallel: false },
+        triQqque: { char: '▲', quadri: false, allEqual: false, rightAngle: false, parallel: false },
+        cercle:   { char: '●', quadri: false, allEqual: false, rightAngle: false, parallel: false },
+        hexagone: { char: '⬡', quadri: false, allEqual: true,  rightAngle: false, parallel: false },
+      };
+
+      const themesByLevel = {
+        CE2: [
+          {
+            labelA: 'A 4 côtés', labelB: 'A tous les côtés égaux',
+            predA: s => s.quadri, predB: s => s.allEqual,
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'triEqui', 'triQqque', 'cercle'],
+          },
+          {
+            labelA: 'A 4 côtés', labelB: 'A un angle droit',
+            predA: s => s.quadri, predB: s => s.rightAngle,
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'triRect', 'triQqque', 'cercle'],
+          },
+        ],
+        CM1: [
+          {
+            labelA: 'Est un quadrilatère', labelB: 'A des angles droits',
+            predA: s => s.quadri, predB: s => s.rightAngle,
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'trapeze', 'triRect', 'triQqque', 'cercle'],
+          },
+          {
+            labelA: 'A deux paires de côtés parallèles', labelB: 'A tous les côtés égaux',
+            predA: s => s.parallel, predB: s => s.allEqual,
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'triEqui', 'triQqque', 'cercle'],
+          },
+          {
+            labelA: 'Est un quadrilatère', labelB: 'A tous les côtés égaux',
+            predA: s => s.quadri, predB: s => s.allEqual,
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'trapeze', 'triEqui', 'triQqque', 'cercle', 'hexagone'],
+          },
+        ],
+        CM2: [
+          {
+            labelA: 'A deux paires de côtés parallèles', labelB: 'A des angles droits',
+            predA: s => s.parallel, predB: s => s.rightAngle,
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'triRect', 'triQqque', 'cercle'],
+          },
+          {
+            labelA: 'Est un quadrilatère', labelB: 'A deux paires de côtés parallèles',
+            predA: s => s.quadri, predB: s => s.parallel,
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'trapeze', 'triRect', 'triQqque', 'cercle'],
+          },
+          {
+            labelA: 'A tous les côtés égaux', labelB: 'A des angles droits',
+            predA: s => s.allEqual, predB: s => s.rightAngle,
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'triEqui', 'triRect', 'triQqque', 'cercle', 'hexagone'],
+          },
+        ],
+      };
+
+      const themes = themesByLevel[level] || themesByLevel.CE2;
+      const theme  = randItem(themes);
+
+      const items = shuffle(theme.pool).map(key => {
+        const s = shapes[key];
+        const inA = theme.predA(s), inB = theme.predB(s);
+        return { char: s.char, zone: inA && inB ? 'ab' : inA ? 'a' : inB ? 'b' : 'out' };
+      });
+
+      return {
+        type: 'venn',
+        title: 'Classe les figures',
+        venn: { labelA: theme.labelA, labelB: theme.labelB, items },
       };
     },
   },

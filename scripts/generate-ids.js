@@ -23,7 +23,7 @@ function generateUniqueId(folderName) {
   while (true) {
     const seed = `${folderName}-${process.hrtime.bigint()}-${Math.random()}`;
     newId = crypto.createHash('md5').update(seed).digest('hex').slice(0, 8);
-    if (!idMap.has(newId)) break;
+    if (!idMap.has(newId) && /^[a-f]/.test(newId)) break;
   }
   idMap.set(newId, []);
   return newId;
@@ -76,8 +76,8 @@ function run() {
     console.error('');
   }
 
-  // --- Flag non-hex IDs (agent-invented slugs, not generated hashes) ---
-  const HEX8 = /^[0-9a-f]{8}$/;
+  // --- Flag IDs that don't start with a letter (digit-leading IDs can be parsed as numbers by YAML) ---
+  const HEX8 = /^[a-f][0-9a-f]{7}$/;
   const nonHex = [...idMap.entries()]
     .filter(([id]) => !HEX8.test(id))
     .flatMap(([id, paths]) => paths.map((p) => ({ id, path: p })));
@@ -98,9 +98,10 @@ function run() {
     console.error('');
   }
 
-  // --- PASS 2: Assign missing IDs ---
+  // --- PASS 2: Assign missing IDs and replace non-compliant ones ---
   const preExistingCount = idMap.size;
   let assignedCount = 0;
+  let replacedCount = 0;
   for (const yamlPath of yamlPaths) {
     const folderPath = path.dirname(yamlPath);
     const folderName = path.basename(folderPath);
@@ -111,6 +112,27 @@ function run() {
       fs.writeFileSync(yamlPath, `id: ${newId}\n` + content, 'utf8');
       console.log(`✅ Assigned id: ${newId} to: ${path.relative(ROOT, folderPath)}`);
       assignedCount++;
+    } else {
+      const raw = content.match(/^id:\s*(.+)/m);
+      if (raw) {
+        const value = raw[1].replace(/\r$/, '').trim();
+        const isQuoted = /^["']/.test(value);
+        const id = value.replace(/^["']|["']$/g, '').trim();
+        if (!HEX8.test(id)) {
+          const newId = generateUniqueId(folderName);
+          const fixed = content.replace(/^id:\s*.+$/m, `id: ${newId}`);
+          fs.writeFileSync(yamlPath, fixed, 'utf8');
+          const paths = idMap.get(id) || [];
+          idMap.delete(id);
+          idMap.set(newId, paths);
+          console.log(`✅ Replaced id: ${id} → ${newId} in: ${path.relative(ROOT, folderPath)}`);
+          replacedCount++;
+        } else if (isQuoted) {
+          const fixed = content.replace(/^id:\s*.+$/m, `id: ${id}`);
+          fs.writeFileSync(yamlPath, fixed, 'utf8');
+          console.log(`✅ Unquoted id: ${id} in: ${path.relative(ROOT, folderPath)}`);
+        }
+      }
     }
   }
 
@@ -120,6 +142,7 @@ function run() {
   console.log(`- Non-hex IDs detected:      ${nonHex.length}`);
   console.log(`- Duplicates detected:       ${duplicates.length}`);
   console.log(`- New IDs assigned this run: ${assignedCount}`);
+  console.log(`- Non-compliant IDs replaced: ${replacedCount}`);
   console.log(`- Total unique IDs in system: ${idMap.size}`);
 
   if (quoted.length || nonHex.length || duplicates.length) process.exit(1);

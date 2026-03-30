@@ -26,6 +26,7 @@ const TYPE_SCHEMAS = {
   'fill-table': { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
   'column-op':    { required: ['top', 'operation', 'result'] },
   ruler: { required: [] },
+  thermometer: { required: [] },
   'number-line': { required: ['min', 'max', 'answer'] },
   'coordinate-grid': { required: ['answer'] },
   'fraction-check': { required: [], requireOneOf: [['answer'], ['answers']], arrays: ['answers'] },

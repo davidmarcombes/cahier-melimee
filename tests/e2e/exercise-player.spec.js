@@ -18,14 +18,18 @@ import { test, expect } from '@playwright/test';
  * Series pages put x-cloak on the root x-data div; Alpine removes it on boot.
  */
 async function waitForAlpine(page) {
-  // Wait until the main Alpine container is visible (x-cloak removed)
-  await page.waitForSelector('[x-data]:not([x-cloak])', { timeout: 8000 });
+  // Wait for the main player container to be ready and visible
+  await page.waitForSelector('[x-data*="seriesPlayer"]', { timeout: 8000 });
+  await page.waitForFunction(() => {
+    const el = document.querySelector('[x-data*="seriesPlayer"]');
+    return el && typeof Alpine !== 'undefined' && Alpine.$data(el)._ready;
+  }, { timeout: 4000 });
 }
 
 // ─── MCQ ─────────────────────────────────────────────────────────────────────
 
 test.describe('MCQ — suites figurales CP', () => {
-  const URL = '/fr/exercices/3b314e9c/';
+  const URL = '/fr/exercices/e1721603/';
   // Exercise 01: 🔴 🔵 🔴 🔵 🔴 ___  answer: 🔵  wrong: 🔴
 
   test.beforeEach(async ({ page }) => {
@@ -69,7 +73,7 @@ test.describe('MCQ — suites figurales CP', () => {
 // ─── number-check ────────────────────────────────────────────────────────────
 
 test.describe('number-check — liens numériques CP', () => {
-  const URL = '/fr/exercices/9a7b0e5d/';
+  const URL = '/fr/exercices/d2fd2d9e/';
   // Exercise 01: "10 = 6 + ?"  answer: "4"
 
   test.beforeEach(async ({ page }) => {
@@ -173,7 +177,7 @@ test.describe('calc-chain — calcul réfléchi CE1', () => {
 // ─── Progress / navigation ────────────────────────────────────────────────────
 
 test.describe('Series progress', () => {
-  const URL = '/fr/exercices/3b314e9c/';
+  const URL = '/fr/exercices/e1721603/';
 
   test('progress bar advances after solving exercise 1', async ({ page }) => {
     await page.goto(URL);

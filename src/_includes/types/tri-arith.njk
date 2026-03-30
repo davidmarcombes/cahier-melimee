@@ -5,6 +5,9 @@
 #}
 <div x-show="cur.type === 'tri-arith'" class="space-y-6">
 
+  {# Rule explanation #}
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle"></div>
+
   {# ── triangle visual ────────────────────────────────────────────── #}
   <div class="relative mx-auto" style="width:300px;height:240px">
 

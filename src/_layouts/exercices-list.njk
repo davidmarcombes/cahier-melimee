@@ -3,160 +3,168 @@ layout: base
 ---
 
 {% if site.devMode %}
-<script>window.__seriesTypes = {{ collections.seriesMeta | seriesTypesMap | dump | safe }};</script>
+  <script>
+    window.__seriesTypes = {{ collections.seriesMeta | seriesTypesMap | dump | safe }};
+  </script>
 {% endif %}
-
-<div x-data="{
-  filters: JSON.parse(sessionStorage.getItem('exf') || '{&quot;level&quot;:&quot;&quot;,&quot;topic&quot;:&quot;&quot;,&quot;difficulty&quot;:&quot;&quot;}'),
-  search: '',
-  limit: 12,
-  {% if site.devMode %}showUnvalidated: false,
-  validatedIds: new Set(),
-  onePerType: false,
-  seriesTypes: window.__seriesTypes || {},
-  {% endif %}get all() { return $store.exercises.data || [] },
-  get options() {
-    const u = (k) => [...new Set(this.all.map(s => s[k]).filter(Boolean))].sort();
-    return { level: u('level'), topic: u('topic'), difficulty: u('difficulty') }
-  },
-  get filtered() {
-    const q = this.search.toLowerCase();
-    let list = this.all.filter(s =>
-      (!this.filters.level || s.level === this.filters.level) &&
-      (!this.filters.topic || s.topic === this.filters.topic) &&
-      (!this.filters.difficulty || s.difficulty === this.filters.difficulty) &&
-      (!q || (s.title + ' ' + s.topic).toLowerCase().includes(q)){% if site.devMode %} &&
-      (!this.showUnvalidated || !this.validatedIds.has(s.id)){% endif %}
-    );
-    {% if site.devMode %}if (this.onePerType) {
-      const seen = new Set();
-      list = list.filter(s => {
-        const types = this.seriesTypes[s.id];
-        if (!types || !types.length) return true;
-        const key = types.slice().sort().join(',');
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-    }{% endif %}
-    return list;
-  },
-  get visible() { return this.filtered.slice(0, this.limit) },
-  get hasActiveFilter() { return Object.values(this.filters).some(v => v !== '') || this.search !== ''{% if site.devMode %} || this.showUnvalidated || this.onePerType{% endif %} },
-  resetFilters() {
-    this.filters = { level: '', topic: '', difficulty: '' };
-    this.search = '';
-    {% if site.devMode %}this.showUnvalidated = false;
-    this.onePerType = false;
-    {% endif %}this.limit = 12
-  }{% if site.devMode %},
-  async loadValidatedIds() {
-    try {
-      const res = await fetch('/api/human-validated-ids');
-      if (res.ok) this.validatedIds = new Set(await res.json());
-    } catch (_) {}
-  }{% endif %}
-}" x-init="$store.exercises.load();{% if site.devMode %} loadValidatedIds();{% endif %} $watch('filters', v => { this.limit = 12; sessionStorage.setItem('exf', JSON.stringify(v)) }); $watch('search', () => { this.limit = 12 })" x-cloak class="py-4">
-
+<div
+  x-data="{ filters: JSON.parse(sessionStorage.getItem('exf') ||
+    '{&quot;level&quot;:&quot;&quot;,&quot;topic&quot;:&quot;&quot;,&quot;difficulty&quot;:&quot;&quot;}'), search: '',
+    limit: 12, _seed: Math.random(), {% if site.devMode %}showUnvalidated: false, validatedIds: new Set(), onePerType: false,
+    seriesTypes: window.__seriesTypes || {}, {% endif %}get all() { return $store.exercises.data || [] }, get options() {
+    const u = (k) => [...new Set(this.all.map(s => s[k]).filter(Boolean))].sort(); return { level: u('level'), topic:
+    u('topic'), difficulty: u('difficulty') } }, get filtered() { const q = this.search.toLowerCase(); let list =
+    this.all.filter(s => (!this.filters.level || s.level === this.filters.level) && (!this.filters.topic || s.topic ===
+    this.filters.topic) && (!this.filters.difficulty || s.difficulty === this.filters.difficulty) && (!q || (s.title + ' ' +
+    s.topic).toLowerCase().includes(q)){% if site.devMode %} && (!this.showUnvalidated || !this.validatedIds.has(s.id)){%
+    endif %} ); {% if site.devMode %}if (this.onePerType) { const seen = new Set(); list = list.filter(s => { const types =
+    this.seriesTypes[s.id]; if (!types || !types.length) return true; const key = types.slice().sort().join(','); if
+    (seen.has(key)) return false; seen.add(key); return true; }); }{% endif %} return list; }, get ordered() { const list =
+    this.filtered; const seed = this._seed; if
+    (this.filters.topic || this.search) return list; const arr = list.map((s, i) => ({ s, r: (Math.sin(seed * 9301 + i *
+    49297 + 233) * 93701) % 1 })); arr.sort((a, b) => a.r - b.r); const groups = new Map(); for (const { s } of arr) { const k = s.typeKey || ''; if (!groups.has(k))
+    groups.set(k, []); groups.get(k).push(s); } const cols = [...groups.values()]; const out = []; for (let i = 0; out.length
+    < list.length; i++) for (const col of cols) { if (i < col.length) out.push(col[i]); } return out; }, get visible() {
+    return this.ordered.slice(0, this.limit) }, get hasActiveFilter() { return Object.values(this.filters).some(v => v !==
+    '') || this.search !== ''{% if site.devMode %} || this.showUnvalidated || this.onePerType{% endif %} }, resetFilters() {
+    this.filters = { level: '', topic: '', difficulty: '' }; this.search = ''; {% if site.devMode %}this.showUnvalidated =
+    false; this.onePerType = false; {% endif %}this.limit = 12 }, shuffleList() { this._seed = Math.random(); } {% if site.devMode %}, async loadValidatedIds() { try { const res = await fetch('/api/human-validated-ids'); if
+    (res.ok) this.validatedIds = new Set(await res.json()); } catch (_) {} }{% endif %} }"
+  x-init="$store.exercises.load();{% if site.devMode %} loadValidatedIds();{% endif %} $watch('filters', v => { this.limit
+    = 12; sessionStorage.setItem('exf', JSON.stringify(v)) }); $watch('search', () => { this.limit = 12 })"
+  x-cloak
+  class="py-4">
   <h1 class="text-3xl font-extrabold text-content-default mb-6">{{ title }}</h1>
-
   {{ content | safe }}
-
   {# Loading state #}
   <div x-show="$store.exercises.loading" class="text-center py-12 text-content-subtle">
     Chargement...
   </div>
-
   <template x-if="$store.exercises.data">
     <div>
       {# Filters #}
       <div class="flex flex-wrap gap-3 mb-8">
         <div class="w-full md:w-64 relative">
-          <input 
-            type="text" 
-            x-model="search" 
-            placeholder="Rechercher un exercice..." 
-            class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
-          >
-          <div class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+          <input
+            type="text"
+            x-model="search"
+            placeholder="Rechercher un exercice..."
+            class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle
+              text-content-default focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
           </div>
+          <select
+            x-model="filters.level"
+            aria-label="Filtrer par niveau"
+            class="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default
+              focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+            <option value="">Tous les niveaux</option>
+            <template x-for="v in options.level" :key="v">
+              <option :value="v" x-text="v"></option>
+            </template>
+          </select>
+          <select
+            x-model="filters.topic"
+            aria-label="Filtrer par thème"
+            class="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default
+              focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+            <option value="">Tous les th&#232;mes</option>
+            <template x-for="v in options.topic" :key="v">
+              <option :value="v" x-text="v"></option>
+            </template>
+          </select>
+          <select
+            x-model="filters.difficulty"
+            aria-label="Filtrer par difficulté"
+            class="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default
+              focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+            <option value="">Difficult&#233;</option>
+            <template x-for="v in options.difficulty" :key="v">
+              <option :value="v" x-text="(v === 'difficile' ? '&#x1F41E; ' : v === 'moyen' ? '&#x1F41D; ' : '&#x1F997; ') + v"></option>
+            </template>
+          </select>
+          {% if site.devMode %}
+            <button
+              type="button"
+              @click="showUnvalidated = !showUnvalidated; limit = 12"
+              :class="showUnvalidated ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700' : 'text-slate-500 border-slate-200 dark:border-slate-700'"
+              class="px-3 py-2 text-sm rounded-xl border transition-all"
+              title="Afficher uniquement les séries non validées">
+              Non validées
+            </button>
+            <button
+              type="button"
+              @click="onePerType = !onePerType; limit = 12"
+              :class="onePerType ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 border-violet-300 dark:border-violet-700' : 'text-slate-500 border-slate-200 dark:border-slate-700'"
+              class="px-3 py-2 text-sm rounded-xl border transition-all"
+              title="Afficher une seule série par type d'exercice">
+              1 par type
+            </button>
+          {% endif %}
+          <button
+            type="button"
+            x-show="hasActiveFilter"
+            @click="resetFilters()"
+            class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all active:scale-90"
+            title="Réinitialiser les filtres">
+            <span class="text-xl leading-none">↶</span>
+          </button>
         </div>
-
-        <select x-model="filters.level" aria-label="Filtrer par niveau" class="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
-          <option value="">Tous les niveaux</option>
-          <template x-for="v in options.level" :key="v">
-            <option :value="v" x-text="v"></option>
-          </template>
-        </select>
-
-        <select x-model="filters.topic" aria-label="Filtrer par thème" class="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
-          <option value="">Tous les th&#232;mes</option>
-          <template x-for="v in options.topic" :key="v">
-            <option :value="v" x-text="v"></option>
-          </template>
-        </select>
-
-        <select x-model="filters.difficulty" aria-label="Filtrer par difficulté" class="px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
-          <option value="">Difficult&#233;</option>
-          <template x-for="v in options.difficulty" :key="v">
-            <option :value="v" x-text="(v === 'difficile' ? '&#x1F41E; ' : v === 'moyen' ? '&#x1F41D; ' : '&#x1F997; ') + v"></option>
-          </template>
-        </select>
-
-        {% if site.devMode %}
-        <button type="button" @click="showUnvalidated = !showUnvalidated; limit = 12"
-                :class="showUnvalidated ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700' : 'text-slate-500 border-slate-200 dark:border-slate-700'"
-                class="px-3 py-2 text-sm rounded-xl border transition-all"
-                title="Afficher uniquement les séries non validées">
-          Non validées
-        </button>
-        <button type="button" @click="onePerType = !onePerType; limit = 12"
-                :class="onePerType ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 border-violet-300 dark:border-violet-700' : 'text-slate-500 border-slate-200 dark:border-slate-700'"
-                class="px-3 py-2 text-sm rounded-xl border transition-all"
-                title="Afficher une seule série par type d'exercice">
-          1 par type
-        </button>
-        {% endif %}
-
-        <button type="button" x-show="hasActiveFilter" @click="resetFilters()" class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all active:scale-90" title="Réinitialiser les filtres">
-          <span class="text-xl leading-none">↶</span>
-        </button>
-      </div>
-
-      {# Series cards #}
-      <div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <template x-for="s in visible" :key="s.id">
-          <a :href="s.seriesUrl" :title="s.title + ' - Niveau ' + s.level + ' - Difficult&#233; ' + s.difficulty" class="block p-3 bg-surface-subtle rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-500 hover:shadow-md transition-all group">
-            <div class="flex justify-between items-start gap-2 mb-1">
-              <h2 class="text-sm font-extrabold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400 leading-tight line-clamp-1" x-text="s.title"></h2>
-              <div class="flex items-center gap-1 shrink-0">
-                <span x-show="s.isDefi" class="text-xs" title="Défi chronométré">&#x23F1;&#xFE0F;</span>
-                <span class="text-xs" x-text="s.difficulty === 'difficile' ? '&#x1F41E;' : s.difficulty === 'moyen' ? '&#x1F41D;' : '&#x1F997;'"></span>
+        {# Series cards #}
+        <div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <template x-for="s in visible" :key="s.id">
+            <a
+              :href="s.seriesUrl"
+              :title="s.title + ' - Niveau ' + s.level + ' - Difficult&#233; ' + s.difficulty"
+              class="block p-3 bg-surface-subtle rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-500
+                hover:shadow-md transition-all group">
+              <div class="flex justify-between items-start gap-2 mb-1">
+                <h2
+                  class="text-sm font-extrabold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400
+                    leading-tight line-clamp-1"
+                  x-text="s.title"></h2>
+                <div class="flex items-center gap-1 shrink-0">
+                  <span x-show="s.isDefi" class="text-xs" title="Défi chronométré">&#x23F1;&#xFE0F;</span>
+                  <span
+                    class="text-xs"
+                    x-text="s.difficulty === 'difficile' ? '&#x1F41E;' : s.difficulty === 'moyen' ? '&#x1F41D;' : '&#x1F997;'"></span>
+                </div>
               </div>
-            </div>
-            <div class="flex items-center gap-1.5 text-[11px] text-content-subtle">
-              <span class="font-bold text-primary-600 dark:text-primary-400 uppercase shrink-0" x-text="s.level"></span>
-              <span class="opacity-30 select-none">|</span>
-              <span class="truncate" x-text="s.topic"></span>
-            </div>
-          </a>
-        </template>
+              <div class="flex items-center gap-1.5 text-[11px] text-content-subtle">
+                <span class="font-bold text-primary-600 dark:text-primary-400 uppercase shrink-0" x-text="s.level"></span>
+                <span class="opacity-30 select-none">|</span>
+                <span class="truncate" x-text="s.topic"></span>
+              </div>
+            </a>
+          </template>
+        </div>
+        {# Show more + shuffle #}
+        <div x-show="ordered.length > 0" class="flex items-center justify-center gap-3 mt-6">
+          <button
+            type="button"
+            x-show="limit < ordered.length"
+            @click="limit += 12"
+            class="px-6 py-2 text-sm font-medium border border-slate-300 dark:border-slate-600 text-content-default rounded-xl
+              hover:bg-surface-subtle transition-all">
+            Voir plus
+          </button>
+          <button
+            type="button"
+            @click="shuffleList()"
+            class="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 rounded-xl
+              hover:bg-surface-subtle transition-all active:scale-90"
+            title="Mélanger">
+            Mélanger
+          </button>
+        </div>
+        {# Empty state #}
+        <div x-show="ordered.length === 0" class="text-center py-12 text-content-subtle">
+          Aucune s&#233;rie ne correspond aux filtres s&#233;lectionn&#233;s.
+        </div>
       </div>
-
-      {# Show more button #}
-      <div x-show="limit < filtered.length" class="text-center mt-6">
-        <button type="button" @click="limit += 12" class="px-6 py-2 text-sm font-medium border border-slate-300 dark:border-slate-600 text-content-default rounded-xl hover:bg-surface-subtle transition-all">
-          Voir plus
-        </button>
-      </div>
-
-      {# Empty state #}
-      <div x-show="filtered.length === 0" class="text-center py-12 text-content-subtle">
-        Aucune s&#233;rie ne correspond aux filtres s&#233;lectionn&#233;s.
-      </div>
-    </div>
-  </template>
-</div>
+    </template>
+  </div>

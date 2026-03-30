@@ -98,7 +98,7 @@ describe('seriesPlayer Logic', () => {
         
         const parts = p.trouParts;
         expect(parts.some(p => p.t === 'f' && p.n === '1' && p.d === '2')).toBe(true);
-        expect(parts.some(p => p.t === 'x' && p.v.includes('Calculate '))).toBe(true);
+        expect(parts.some(p => p.t === 'x' && p.v.includes('Calculate'))).toBe(true);
     });
   });
 });

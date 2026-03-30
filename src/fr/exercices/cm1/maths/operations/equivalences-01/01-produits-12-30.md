@@ -1,6 +1,6 @@
 ---
 type: matching
-title: "Multiplications équivalentes (1)"
+title: Multiplications équivalentes
 pairs:
   - left: "3 × 4"
     right: "2 × 6"

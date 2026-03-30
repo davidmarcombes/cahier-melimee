@@ -580,6 +580,74 @@ function rulerExerciseSvg(r) {
   return s;
 }
 
+function thermometerExerciseSvg(r) {
+  if (!r) return '';
+  const min = r.min ?? 0;
+  const max = r.max ?? 30;
+  const range = max - min;
+  if (range <= 0) return '';
+
+  const PPD = 12;
+  const CX = 44;
+  const HALF_OW = 8;   // half outer tube width → tube is 16px wide
+  const HALF_IW = 5;   // half mercury column width → column is 10px wide
+  const BULB_R = 18;
+  const TOP_Y = 30;
+  const TUBE_H = range * PPD;
+  const BOT_Y = TOP_Y + TUBE_H;
+  const BULB_CY = BOT_Y + BULB_R - 2;
+  const SVG_H = BULB_CY + BULB_R + 10;
+  const SVG_W = 120;
+
+  const val = r.markers?.[0]?.value ?? min;
+  const fillH = Math.max(0, (val - min) * PPD);
+  const mercuryTop = BOT_Y - fillH;
+
+  const RED = '#ef4444';
+  const GRAY = '#94a3b8';
+  const DARK = '#334155';
+
+  let s = `<svg viewBox="0 0 ${SVG_W} ${SVG_H}" class="mx-auto" style="max-height:460px;width:auto">`;
+
+  // Bulb fill (always red)
+  s += `<circle cx="${CX}" cy="${BULB_CY}" r="${BULB_R}" fill="${RED}"/>`;
+
+  // Tube background — white rect with full rounding covers top of bulb for a clean junction
+  s += `<rect x="${CX - HALF_OW}" y="${TOP_Y}" width="${HALF_OW * 2}" height="${TUBE_H}" rx="${HALF_OW}" fill="white"/>`;
+
+  // Mercury column + bridge down to bulb centre
+  if (fillH > 0) {
+    const bridgeH = fillH + (BULB_CY - BOT_Y) + BULB_R;
+    s += `<rect x="${CX - HALF_IW}" y="${mercuryTop}" width="${HALF_IW * 2}" height="${bridgeH}" fill="${RED}"/>`;
+  }
+
+  // Tube border on top (stroke only — visually contains the mercury)
+  s += `<rect x="${CX - HALF_OW}" y="${TOP_Y}" width="${HALF_OW * 2}" height="${TUBE_H}" rx="${HALF_OW}" fill="none" stroke="${GRAY}" stroke-width="2"/>`;
+
+  // Bulb border
+  s += `<circle cx="${CX}" cy="${BULB_CY}" r="${BULB_R}" fill="none" stroke="${GRAY}" stroke-width="2"/>`;
+
+  // Ticks and labels — half-degree steps, labels every 5°
+  const LABEL_STEP = range <= 10 ? 2 : 5;
+  for (let t = min; t <= max + 0.001; t += 0.5) {
+    const y = BOT_Y - (t - min) * PPD;
+    const isWhole = Math.abs(t - Math.round(t)) < 0.001;
+    const isLabel = isWhole && Math.round(t) % LABEL_STEP === 0;
+    const tickX = CX + HALF_OW + 1;
+    const len = isLabel ? 12 : isWhole ? 7 : 4;
+    s += `<line x1="${tickX}" y1="${y}" x2="${tickX + len}" y2="${y}" stroke="${DARK}" stroke-width="${isLabel ? 1.5 : 1}"/>`;
+    if (isLabel) {
+      s += `<text x="${tickX + len + 3}" y="${y + 4}" fill="${DARK}" font-size="11" font-family="sans-serif">${Math.round(t)}</text>`;
+    }
+  }
+
+  // °C unit label at top
+  s += `<text x="${CX + HALF_OW + 3}" y="${TOP_Y - 8}" fill="#64748b" font-size="11" font-family="sans-serif">°C</text>`;
+
+  s += `</svg>`;
+  return s;
+}
+
 function numberLineSvg(nl) {
   if (!nl) return '';
   const min = nl.min ?? 0;

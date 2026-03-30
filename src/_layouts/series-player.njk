@@ -16,7 +16,7 @@ isSeriesPage: true
 {% for ex in exercises %}
   {% if ex.data.generator %}{% set hasGenerators = true %}{% set needsSvgJs = true %}{% endif %}
   {% if ex.data.svg %}{% set needsSvgJs = true %}{% endif %}
-  {% if ex.data.type === 'ruler' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' or ex.data.type === 'svg-tiles' or ex.data.type === 'fraction' %}{% set needsSvgJs = true %}{% endif %}
+  {% if ex.data.type === 'ruler' or ex.data.type === 'thermometer' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' or ex.data.type === 'svg-tiles' or ex.data.type === 'fraction' %}{% set needsSvgJs = true %}{% endif %}
   {% if '$' in (ex.data.title or '') %}{% set needsKatex = true %}{% endif %}
 {% endfor %}
 
@@ -77,6 +77,7 @@ isSeriesPage: true
   {% if 'fraction' in usedTypes %}{% include "types/fraction.njk" %}{% endif %}
   {% if 'base-10' in usedTypes %}{% include "types/base-10.njk" %}{% endif %}
   {% if 'ruler' in usedTypes %}{% include "types/ruler.njk" %}{% endif %}
+  {% if 'thermometer' in usedTypes %}{% include "types/thermometer.njk" %}{% endif %}
   {% if 'fraction-check' in usedTypes %}{% include "types/fraction-check.njk" %}{% endif %}
   {% if 'fraction-paint' in usedTypes %}{% include "types/fraction-paint.njk" %}{% endif %}
   {% if 'tile-select' in usedTypes %}{% include "types/tile-select.njk" %}{% endif %}
@@ -109,22 +110,22 @@ isSeriesPage: true
   {% endif %}
 
   {# Answer input + check button (for number-check, problem, clock, fraction and base-10) #}
-  {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes or 'number-line' in usedTypes %}
-  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || (cur.type === 'number-line' && cur.nl && cur.nl.mode !== 'place')) && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6" :class="cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'number-line' ? 'justify-center' : ''"  >
+  {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes or 'thermometer' in usedTypes or 'number-line' in usedTypes %}
+  <div x-show="(cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'thermometer' || (cur.type === 'number-line' && cur.nl && cur.nl.mode !== 'place')) && !(cur.operation && cur.operation.includes('?'))" class="flex items-center gap-3 mb-6" :class="cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'thermometer' || cur.type === 'number-line' ? 'justify-center' : ''"  >
     <input
       type="text"
       x-model="userInput"
       @keydown.enter="check()"
       :disabled="solved"
-      :placeholder="cur.type === 'clock' ? 'hh:mm' : cur.type === 'fraction' ? 'a / b' : cur.type === 'base-10' ? 'Réponse' : cur.type === 'ruler' || cur.type === 'number-line' ? '0,0' : 'Ta réponse…'"
+      :placeholder="cur.type === 'clock' ? 'hh:mm' : cur.type === 'fraction' ? 'a / b' : cur.type === 'base-10' ? 'Réponse' : cur.type === 'ruler' || cur.type === 'thermometer' || cur.type === 'number-line' ? '0,0' : 'Ta réponse…'"
       aria-label="Ta réponse"
       x-ref="input"
       class="px-4 py-3 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors
         bg-surface-subtle text-content-default
         border-slate-200 dark:border-slate-700"
       :class="{
-        'w-32': cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'number-line',
-        'w-full': cur.type !== 'clock' && cur.type !== 'fraction' && cur.type !== 'base-10' && cur.type !== 'ruler' && cur.type !== 'number-line',
+        'w-32': cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'thermometer' || cur.type === 'number-line',
+        'w-full': cur.type !== 'clock' && cur.type !== 'fraction' && cur.type !== 'base-10' && cur.type !== 'ruler' && cur.type !== 'thermometer' && cur.type !== 'number-line',
         'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
         'border-red-400 bg-red-50 dark:bg-red-900/20': showError
       }"
@@ -151,7 +152,7 @@ isSeriesPage: true
     x-transition:enter="transition ease-out duration-200"
     x-transition:enter-start="opacity-0 -translate-y-2"
     x-transition:enter-end="opacity-100 translate-y-0"
-    class="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300"
+    class="mt-4 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300"
   >
     {% if 'matching' in usedTypes %}
     <span x-show="cur.type === 'matching' && matchConnections.length < (cur.pairs ? cur.pairs.left.length : 0)">Relie tous les éléments avant de vérifier !</span>
@@ -172,8 +173,8 @@ isSeriesPage: true
     {% if 'compare' in usedTypes %}
     <span x-show="cur.type === 'compare'">Certains signes ne sont pas corrects. Essaie encore !</span>
     {% endif %}
-    {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes %}
-    <span x-show="cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler'">Ce n'est pas la bonne réponse. Essaie encore !</span>
+    {% if 'number-check' in usedTypes or 'problem' in usedTypes or 'clock' in usedTypes or 'fraction' in usedTypes or 'base-10' in usedTypes or 'ruler' in usedTypes or 'thermometer' in usedTypes %}
+    <span x-show="cur.type === 'number-check' || cur.type === 'problem' || cur.type === 'clock' || cur.type === 'fraction' || cur.type === 'base-10' || cur.type === 'ruler' || cur.type === 'thermometer'">Ce n'est pas la bonne réponse. Essaie encore !</span>
     {% endif %}
     {% if 'number-line' in usedTypes %}
     <span x-show="cur.type === 'number-line'">Ce n'est pas la bonne réponse. Essaie encore !</span>
@@ -236,7 +237,10 @@ isSeriesPage: true
     <span x-show="cur.type === 'maze'">Le chemin n'est pas correct. Essaie encore !</span>
     {% endif %}
     {% if 'venn' in usedTypes %}
-    <span x-show="cur.type === 'venn'">Certains emojis ne sont pas bien placés. Essaie encore !</span>
+    <span x-show="cur.type === 'venn'">Certains éléments ne sont pas bien placés. Essaie encore !</span>
+    {% endif %}
+    {% if 'tri-arith' in usedTypes %}
+    <span x-show="cur.type === 'tri-arith'">Certains nombres ne sont pas corrects. Essaie encore !</span>
     {% endif %}
   </div>
 

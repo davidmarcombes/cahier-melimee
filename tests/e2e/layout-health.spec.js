@@ -25,6 +25,13 @@ const SITE_DIR = join(process.cwd(), '_site');
 
 function discoverPages() {
   const pages = [];
+  // Index pages for each section
+  for (const section of ['exercices', 'applications', 'defis']) {
+    if (existsSync(join(SITE_DIR, 'fr', section, 'index.html'))) {
+      pages.push({ label: `${section}/index`, url: `/fr/${section}/` });
+    }
+  }
+  // Individual series pages
   for (const section of ['exercices', 'applications', 'defis']) {
     const dir = join(SITE_DIR, 'fr', section);
     if (!existsSync(dir)) continue;
@@ -43,6 +50,11 @@ const PAGES = discoverPages();
 
 async function waitForAlpine(page) {
   await page.waitForSelector('[x-data]:not([x-cloak])', { timeout: 8000 });
+  // For list pages: wait until the loading spinner disappears (CSV fetched)
+  const spinner = page.locator('[x-show="$store.exercises.loading"]');
+  if (await spinner.count() > 0) {
+    await spinner.waitFor({ state: 'hidden', timeout: 8000 });
+  }
 }
 
 // ─── Checks ───────────────────────────────────────────────────────────────────
@@ -50,13 +62,22 @@ async function waitForAlpine(page) {
 async function runHealthChecks(page, url) {
   const jsErrors = [];
   page.on('pageerror', err => jsErrors.push(err.message));
+  page.on('console', msg => {
+    if (msg.type() === 'error') {
+      const text = msg.text();
+      // Catch Alpine expression errors (logged via console.error, not thrown)
+      if (text.includes('Alpine Expression Error') || text.includes('Alpine Warning')) {
+        jsErrors.push(text);
+      }
+    }
+  });
 
   await page.goto(url);
   await waitForAlpine(page);
 
   const issues = [];
 
-  // 1. JS errors
+  // 1. JS errors (uncaught exceptions + Alpine expression errors)
   if (jsErrors.length > 0) {
     issues.push(`JS error: ${jsErrors[0]}`);
   }

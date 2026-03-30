@@ -206,13 +206,22 @@ module.exports = async function (eleventyConfig) {
           continue; // No page generated without an ID
         }
 
-        // Scan MD files in this series folder to collect exercise types
+        // Scan MD files in this series folder to collect exercise types and classes
         const mdFiles = fs.readdirSync(seriesDir).filter((f) => f.endsWith('.md'));
         const usedTypes = [
           ...new Set(
             mdFiles.flatMap((f) => {
               const content = fs.readFileSync(path.join(seriesDir, f), 'utf8');
-              const m = content.match(/^type:\s*(.+)$/m);
+              const m = content.match(/^type:\s*["']?([^"'\r\n]+)["']?/m);
+              return m ? [m[1].trim()] : [];
+            })
+          ),
+        ];
+        const usedClasses = [
+          ...new Set(
+            mdFiles.flatMap((f) => {
+              const content = fs.readFileSync(path.join(seriesDir, f), 'utf8');
+              const m = content.match(/^class:\s*["']?([^"'\r\n]+)["']?/m);
               return m ? [m[1].trim()] : [];
             })
           ),
@@ -229,6 +238,7 @@ module.exports = async function (eleventyConfig) {
           difficulty: meta.difficulty || '',
           folder: folder,
           usedTypes,
+          usedClasses,
         });
       }
     });
@@ -630,6 +640,16 @@ module.exports = async function (eleventyConfig) {
           };
         }
 
+        if (ex.data.type === 'thermometer') {
+          item.thermometer = {
+            min: Number(interpolate(String(ex.data.min ?? 0))),
+            max: Number(interpolate(String(ex.data.max ?? 30))),
+            markers: (ex.data.markers || []).map((m) => ({
+              value: Number(interpolate(String(m.value))),
+            })),
+          };
+        }
+
         if (ex.data.type === 'number-line') {
           item.nl = {
             mode: ex.data.mode || 'read',
@@ -890,7 +910,13 @@ module.exports = async function (eleventyConfig) {
       group.forEach((s, i) => emojiMap.set(s.id, DISAMBIG_EMOJIS[i % DISAMBIG_EMOJIS.length]));
     }
 
-    const lines = ['id,l,s,t,title,d,f'];
+    // Canonical lookup tables — kept in sync with CSV_TYPES / CSV_CLASSES in app.js
+    // Add new entries at the END to preserve existing indices; never reorder.
+    // Multi-type series all map to "multi" — no composite entries.
+    const CSV_TYPES = ["","bar-chart","base-10","bounding","calc-chain","checkbox","click-blocks","clock","column-op","compare","compare-groups","convert","coordinate-grid","count-objects","decimal-triple","decomp","drag-sort","fill-table","fraction","fraction-check","fraction-paint","function-machine","inverse-problem","logic-grid","magic-color","matching","maze","mcq","multi","multi-question","number-check","number-hunt","number-line","problem","pyramid","ruler","select","sequence","sort","svg-tiles","thermometer","tile-select","tri-arith","true-false","venn","defi"];
+    const CSV_CLASSES = ["A1.1","A1.2","A2.1","A2.2","A2.3","A2.4","A3.1","A3.2","A3.3","A4.1","A4.2","D1.1.1","I1.1.1","I1.1.2","M1.1","M1.2","M1.3","M1.4","M2.1","M2.2","M2.3","M3.1","M3.2","M3.3","N4.2","S1.1.1","S1.1.2","S1.1.3","S1.2.1","S1.2.2","S1.2.3","S1.3.1","S2.1.1","S2.1.2","S2.1.3","S2.1.4","S2.2.1","S2.2.2","S3.1.1","S3.1.2","S3.2.1","S3.2.2","S3.2.3","S4.1.2"];
+
+    const lines = ['id,l,s,t,title,d,f,ty,cl'];
     for (const s of allMeta) {
       const l = LEVEL_CODES[s.level] || '?';
       const subj = (s.topic || '').charAt(0).toUpperCase() || '?';
@@ -899,10 +925,15 @@ module.exports = async function (eleventyConfig) {
       const f = s.folder === 'applications' ? 'a' : s.folder === 'defis' ? 'd' : 'e';
       const emoji = emojiMap.get(s.id) ? ` ${emojiMap.get(s.id)}` : '';
       const title = (s.seriesTitle || '').replace(/,/g, ' ') + emoji;
+      const types = s.usedTypes || [];
+      const typeSig = s.folder === 'defis' ? 'defi' : types.length > 1 ? 'multi' : types[0] || '';
+      const tyIdx = CSV_TYPES.indexOf(typeSig);
+      const clIdx = CSV_CLASSES.indexOf((s.usedClasses || [])[0] || '');
       if (t.length > 12) csvWarnings.push(`topic > 12 chars: "${t}" in ${s.series}`);
       if (title.includes(',')) csvWarnings.push(`title had comma (replaced): "${s.seriesTitle}" in ${s.series}`);
-      const line = `${s.id},${l},${subj},${t},${title},${d},${f}`;
-      if (line.length > 64) csvWarnings.push(`line > 64 chars (${line.length}): ${line}`);
+      if (tyIdx < 0) csvWarnings.push(`unknown type sig "${typeSig}" in ${s.series} — add to CSV_TYPES`);
+      if (clIdx < 0 && (s.usedClasses || []).length) csvWarnings.push(`unknown class "${s.usedClasses[0]}" in ${s.series} — add to CSV_CLASSES`);
+      const line = `${s.id},${l},${subj},${t},${title},${d},${f},${tyIdx >= 0 ? tyIdx : ''},${clIdx >= 0 ? clIdx : ''}`;
       lines.push(line);
     }
     return lines.join('\n');

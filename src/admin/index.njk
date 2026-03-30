@@ -91,6 +91,24 @@ permalink: /admin/
         </template>
       </div>
 
+      <div class="flex items-center gap-1.5">
+        <span class="text-xs font-medium text-slate-400 uppercase tracking-wide">Template</span>
+        <select x-model="filters.template"
+                class="px-2 py-0.5 rounded-md text-xs font-medium border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-400 cursor-pointer">
+          <option value="">Tous</option>
+          <template x-for="t in allTemplates" :key="t">
+            <option :value="t" x-text="t"></option>
+          </template>
+        </select>
+      </div>
+
+      <label class="flex items-center gap-1.5 cursor-pointer select-none ml-auto">
+        <input type="checkbox" x-model="filters.onePerTemplate"
+               class="w-3.5 h-3.5 rounded border-slate-300 dark:border-slate-600 text-primary-500 accent-primary-500 cursor-pointer"/>
+        <span class="text-xs font-medium text-slate-600 dark:text-slate-300">1 par template</span>
+        <span class="text-xs text-slate-400" x-show="filters.onePerTemplate" x-text="'(' + filtered.length + ' séries)'"></span>
+      </label>
+
     </div>
   </div>
 
@@ -258,12 +276,20 @@ function adminDashboard() {
   return {
     rows: raw,
     search: '',
-    filters: { kinds: [], levels: [], difficulties: [], humanStatus: '', llmStatus: '' },
+    filters: { kinds: [], levels: [], difficulties: [], humanStatus: '', llmStatus: '', template: '', onePerTemplate: false },
     sort: { col: 'level', dir: 'asc' },
     copied: false,
 
     get allLevels() {
       return ['CP','CE1','CE2','CM1','CM2'];
+    },
+
+    get allTemplates() {
+      const set = new Set();
+      for (const r of this.rows) {
+        if (r.types) r.types.split('|').forEach(t => { const v = t.trim(); if (v) set.add(v); });
+      }
+      return [...set].sort((a, b) => a.localeCompare(b, 'fr'));
     },
 
     get levelCounts() {
@@ -301,6 +327,19 @@ function adminDashboard() {
         result = result.filter(r => r.humanStatus === this.filters.humanStatus);
       if (this.filters.llmStatus)
         result = result.filter(r => r.llmStatus === this.filters.llmStatus);
+      if (this.filters.template)
+        result = result.filter(r => r.types && r.types.split('|').map(t => t.trim()).includes(this.filters.template));
+
+      if (this.filters.onePerTemplate) {
+        const seen = new Set();
+        result = result.filter(r => {
+          if (r.kind === 'defi') return false;
+          const key = (r.types || '') + '|' + r.kind;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      }
 
       return [...result].sort((a, b) => {
         let av = a[this.sort.col] ?? '';
@@ -335,7 +374,7 @@ function adminDashboard() {
 
     resetFilters() {
       this.search = '';
-      this.filters = { kinds: [], levels: [], difficulties: [], humanStatus: '', llmStatus: '' };
+      this.filters = { kinds: [], levels: [], difficulties: [], humanStatus: '', llmStatus: '', template: '', onePerTemplate: false };
     },
 
     seriesUrl(row) {
