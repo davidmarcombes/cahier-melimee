@@ -3,7 +3,6 @@ type: number-check
 title: "Deux tiers d'un groupe"
 operation: "2/3 de 12 billes = ?"
 answer: "8"
-class: "S2.1.3"
 ---
 
 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵

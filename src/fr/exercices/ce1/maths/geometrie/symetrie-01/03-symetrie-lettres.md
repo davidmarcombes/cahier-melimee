@@ -10,7 +10,6 @@ statements:
     answer: true
   - text: "La lettre B a un axe de symétrie horizontal."
     answer: true
-class: "S2.1.4"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

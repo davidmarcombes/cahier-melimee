@@ -8,5 +8,4 @@ params:
   minBase: 5
   maxBase: 30
   mode: inverse
-class: "S1.2.2"
 ---

@@ -6,7 +6,6 @@ tiles:
   - "1/4"
   - "1/3"
   - "1/2"
-class: "S2.1.3"
 ---
 
 Glisse les fractions pour les ranger dans l'ordre **croissant** (du plus petit au plus grand).

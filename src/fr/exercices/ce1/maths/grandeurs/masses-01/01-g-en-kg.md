@@ -14,7 +14,6 @@ items:
   - prompt: "5 kg"
     answer: "5000"
     unit: "g"
-class: "S1.1.1"
 ---
 
 Convertis les kilogrammes en grammes. **1 kg = 1 000 g**

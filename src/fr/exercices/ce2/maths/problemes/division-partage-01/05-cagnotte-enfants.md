@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.2"
 title: "La cagnotte de la classe"
 answer: "7"
 ---

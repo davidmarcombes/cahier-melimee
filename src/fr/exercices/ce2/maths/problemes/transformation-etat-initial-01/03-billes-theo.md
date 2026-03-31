@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.4"
 title: "Les billes de Théo"
 answer: "58"
 ---

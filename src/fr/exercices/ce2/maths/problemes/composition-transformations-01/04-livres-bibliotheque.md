@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.2"
 title: "La bibliothèque de classe"
 answer: "14"
 ---

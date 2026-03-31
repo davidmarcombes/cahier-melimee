@@ -1,6 +1,5 @@
 ---
 type: multi-question
-class: "S1.1.1"
 title: "Les bouteilles d'eau"
 context: "3 bouteilles d'eau coûtent 6 €."
 questions:

@@ -9,7 +9,6 @@ ipInverses:
     answer: 7
   - text: "Le fleuriste a **21** roses. Il fait des bouquets de **7** roses. Combien de bouquets fait-il ?"
     answer: 3
-class: "S2.2.2"
 ---
 
 Résous le premier problème, puis ses variantes.

@@ -14,7 +14,6 @@ items:
   - prompt: "500 cL"
     answer: "5"
     unit: "L"
-class: "S1.1.1"
 ---
 
 Convertis les centilitres en litres.

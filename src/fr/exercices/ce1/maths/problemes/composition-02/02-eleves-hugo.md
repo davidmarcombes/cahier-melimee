@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.2"
 title: "La cour de récréation"
 answer: "14"
 ---

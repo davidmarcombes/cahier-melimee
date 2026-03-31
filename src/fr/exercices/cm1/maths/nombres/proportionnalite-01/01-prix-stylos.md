@@ -6,7 +6,6 @@ rows:
   - ["Prix (€)", "0,60", "?", "3,00", "?"]
 answers:
   - ["1,80", "6,00"]
-class: "S1.1.1"
 ---
 
 Complète le tableau. Le prix est proportionnel au nombre de stylos.

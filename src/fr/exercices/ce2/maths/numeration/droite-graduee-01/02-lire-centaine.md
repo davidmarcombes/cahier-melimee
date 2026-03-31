@@ -7,7 +7,6 @@ step: 100
 value: 700
 label: "B"
 answer: "700"
-class: "S1.1.1"
 ---
 
 Quel nombre le point B indique-t-il ?

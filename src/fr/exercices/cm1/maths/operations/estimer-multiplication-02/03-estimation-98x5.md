@@ -7,7 +7,6 @@ choices:
   - "450"
   - "550"
   - "400"
-class: "S1.1.1"
 ---
 
 Sans calculer le résultat exact, quelle est la **meilleure estimation** de **98 x 5** ?

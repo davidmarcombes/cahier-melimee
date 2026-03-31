@@ -10,7 +10,6 @@ chain:
       answer: "48"
     - op: "÷ 6"
       answer: "8"
-class: "S1.1.3"
 ---
 
 Suis la chaîne et calcule chaque résultat.

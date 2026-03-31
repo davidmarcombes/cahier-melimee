@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.1"
 title: "L'âge de Jules et de sa mère"
 answer: "42"
 ---

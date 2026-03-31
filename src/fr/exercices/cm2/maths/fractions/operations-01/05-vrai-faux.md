@@ -12,7 +12,6 @@ statements:
     answer: false
   - text: "4/6 = 2/3"
     answer: true
-class: "S2.1.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

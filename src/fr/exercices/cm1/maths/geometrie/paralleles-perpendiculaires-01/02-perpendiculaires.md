@@ -9,5 +9,4 @@ statements:
   - "Deux droites perpendiculaires sont aussi parallèles."
   - "Deux droites perpendiculaires se croisent en exactement un point."
 checkedAnswers: [0, 1, 3, 5]
-class: "S1.1.1"
 ---

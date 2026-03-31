@@ -3,7 +3,6 @@ type: number-check
 title: "Trois quarts d'un groupe"
 operation: "3/4 de 16 images = ?"
 answer: "12"
-class: "S2.1.3"
 ---
 
 🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️🖼️

@@ -7,7 +7,6 @@ solution:
   Emma: "Violon"
   Noa: "Flûte"
   Bastien: "Batterie"
-class: "S3.2.2"
 ---
 
 - Bastien frappe sur des peaux tendues et des cymbales.

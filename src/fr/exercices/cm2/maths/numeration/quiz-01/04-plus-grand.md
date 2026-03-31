@@ -7,7 +7,6 @@ choices:
   - "3 201 654"
   - "3 210 089"
   - "3 209 999"
-class: "S3.1.1"
 ---
 
 Compare ces quatre nombres et trouve le plus grand.

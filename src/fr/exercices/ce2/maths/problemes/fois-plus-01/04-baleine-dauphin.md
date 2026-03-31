@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.1"
 title: "La baleine et le dauphin"
 answer: "16"
 ---

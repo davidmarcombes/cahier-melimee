@@ -7,5 +7,4 @@ questions:
     answer: "46"
   - text: "Quelle est son aire (en m²) ?"
     answer: "120"
-class: "S1.1.1"
 ---

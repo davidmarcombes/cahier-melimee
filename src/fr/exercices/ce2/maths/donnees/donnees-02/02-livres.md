@@ -14,7 +14,6 @@ questions:
     answer: "2"
   - text: "Combien de livres au total sur les 4 mois ?"
     answer: "14"
-class: "D1.1.1"
 ---
 
 Observe le diagramme du nombre de livres lus chaque mois et réponds aux questions.

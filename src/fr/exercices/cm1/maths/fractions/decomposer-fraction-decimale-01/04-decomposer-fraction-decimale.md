@@ -12,7 +12,6 @@ svg:
     sstep: 0.1
     label:
       3.2: "32/10"
-class: "S2.1.3"
 ---
 
 Décompose cette fraction en un entier et une fraction inférieure à 1.

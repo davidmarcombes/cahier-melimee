@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les autocollants de Léa et Tom"
 answer: "15"
 ---

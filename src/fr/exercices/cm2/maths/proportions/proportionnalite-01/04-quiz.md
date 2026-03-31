@@ -7,7 +7,6 @@ choices:
   - "6,00 €"
   - "8,00 €"
   - "9,00 €"
-class: "S1.1.1"
 ---
 
 3 cahiers coûtent **4,50 €**. Combien coûtent **5 cahiers** ?

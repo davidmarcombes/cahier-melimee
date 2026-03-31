@@ -7,7 +7,6 @@ solution:
   Léa: "Lapin"
   Hugo: "Chat"
   Inès: "Chien"
-class: "S3.2.2"
 ---
 
 - Hugo n'aime ni le chien ni le lapin.

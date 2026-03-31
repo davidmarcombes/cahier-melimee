@@ -12,7 +12,6 @@ choices:
   - "un cône"
   - "un tube"
 answer: "un cylindre"
-class: "S1.1.1"
 ---
 
 Mélimee a dessiné un solide. Quel est son nom ?

@@ -10,7 +10,6 @@ pairs:
     right: "10 ans"
   - left: "1 siècle"
     right: "100 ans"
-class: "I1.1.1"
 ---
 
 Relie chaque durée à son équivalence.

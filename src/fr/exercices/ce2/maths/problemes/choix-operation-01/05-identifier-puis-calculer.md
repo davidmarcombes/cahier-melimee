@@ -7,7 +7,6 @@ questions:
     answer: "division"
   - text: "Combien de crayons chaque enfant reçoit-il ?"
     answer: "8"
-class: "S1.1.1"
 ---
 
 Lis le problème, puis réponds aux deux questions.

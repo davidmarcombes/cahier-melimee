@@ -9,7 +9,6 @@ svg:
     top: 10
     left: 3.5
     right: "?"
-class: "S1.3.1"
 ---
 
 Complète l'arbre pour obtenir un total de 10.

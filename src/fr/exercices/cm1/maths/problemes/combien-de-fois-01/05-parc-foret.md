@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.2"
 title: "Le parc et la forêt"
 answer: "7"
 ---

@@ -5,5 +5,4 @@ repeat: 5
 params:
   digits: 5
   allowZeroDigit: true
-class: "S1.1.1"
 ---

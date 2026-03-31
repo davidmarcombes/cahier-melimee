@@ -9,7 +9,6 @@ svg:
     top: 5
     left: "?"
     right: 2.15
-class: "S1.3.1"
 ---
 
 Calcule le complément pour arriver à 5.

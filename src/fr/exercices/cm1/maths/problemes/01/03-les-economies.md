@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.1"
 title: "Les économies"
 answer: "23"
 ---

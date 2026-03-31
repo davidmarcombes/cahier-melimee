@@ -7,7 +7,6 @@ choices:
   - "Un angle aigu"
   - "Un angle droit"
   - "Un angle plat"
-class: "S1.1.1"
 ---
 
 Un angle qui mesure **120 degrés**, c'est :

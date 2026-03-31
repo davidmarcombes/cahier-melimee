@@ -155,13 +155,14 @@ module.exports = async function (eleventyConfig) {
       result.push({
         series:      relPath,
         id:          meta.id,
-        seriesTitle: meta.seriesTitle || path.basename(seriesDir),
+        title: meta.title || path.basename(seriesDir),
         level:       (parts[0] || '').toUpperCase(),
         topic:       parts[1] || '',
         subtopic:    parts[2] || '',
         difficulty:  meta.difficulty || '',
         duration:    meta.duration   ?? 60,
         folder:      'defis',
+        usedClasses: meta.class ? [String(meta.class).trim()] : [],
       });
     }
     return result;
@@ -217,24 +218,15 @@ module.exports = async function (eleventyConfig) {
             })
           ),
         ];
-        const usedClasses = [
-          ...new Set(
-            mdFiles.flatMap((f) => {
-              const content = fs.readFileSync(path.join(seriesDir, f), 'utf8');
-              const m = content.match(/^class:\s*["']?([^"'\r\n]+)["']?/m);
-              return m ? [m[1].trim()] : [];
-            })
-          ),
-        ];
+        const usedClasses = meta.class ? [String(meta.class).trim()] : [];
 
         result.push({
           series: relPath,
           id: meta.id,
-          seriesTitle: meta.seriesTitle || path.basename(seriesDir),
+          title: meta.title || path.basename(seriesDir),
           level: (parts[0] || '').toUpperCase(),
           topic: parts[1] || '',
           subtopic: parts[2] || '',
-          skill: meta.skill || '',
           difficulty: meta.difficulty || '',
           folder: folder,
           usedTypes,
@@ -260,15 +252,6 @@ module.exports = async function (eleventyConfig) {
   // Extract unique exercise types from a series (for conditional template includes)
   eleventyConfig.addFilter('extractTypes', function (exercises) {
     return [...new Set(exercises.map((ex) => ex.data.type || 'number-check'))];
-  });
-
-  // Convert seriesMeta collection to {id: [types]} map (devMode use)
-  eleventyConfig.addFilter('seriesTypesMap', function (seriesMeta) {
-    const map = {};
-    for (const s of seriesMeta) {
-      if (s.id && s.usedTypes && s.usedTypes.length) map[s.id] = s.usedTypes;
-    }
-    return map;
   });
 
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
@@ -379,42 +362,7 @@ module.exports = async function (eleventyConfig) {
             tens: ex.data.tens != null ? Number(interpolate(String(ex.data.tens))) : null,
             ones: ex.data.ones != null ? Number(interpolate(String(ex.data.ones))) : null,
           };
-          const h = b.hundreds !== null ? b.hundreds : Math.floor(b.number / 100);
-          const t = b.tens !== null ? b.tens : Math.floor((b.number % 100) / 10);
-          const u = b.ones !== null ? b.ones : b.number % 10;
-
-          // Inline SVG shape helpers — classes defined in a per-SVG <style> block
-          const U = 12, TEN_H = 120, PAD = 8, GAP_TYPE = 18, GAP_SAME = 4;
-          const b10Style = '<style>.h{fill:var(--b10-h);stroke:var(--b10-hs)}.t{fill:var(--b10-t);stroke:var(--b10-ts)}.u{fill:var(--b10-u);stroke:var(--b10-us)}.h,.t,.u{stroke-width:1}.lh{stroke:var(--b10-hs)}.lt{stroke:var(--b10-ts)}.lh,.lt{stroke-width:.5;opacity:.5}</style>';
-          const b10Unit = (x, y) =>
-            `<rect class="u" x="${x+1}" y="${y+1}" width="${U-2}" height="${U-2}" rx="1"/>`;
-          const b10Ten = (x, y) => {
-            let lines = '';
-            for (let i = 1; i < 10; i++)
-              lines += `<line class="lt" x1="${x+.5}" y1="${y+i*U}" x2="${x+U-.5}" y2="${y+i*U}"/>`;
-            return `<rect class="t" x="${x+.5}" y="${y+.5}" width="${U-1}" height="${TEN_H-1}" rx="1"/>${lines}`;
-          };
-          const b10Hundred = (x, y) => {
-            let lines = '';
-            for (let i = 1; i < 10; i++) {
-              lines += `<line class="lh" x1="${x+.5}" y1="${y+i*U}" x2="${x+TEN_H-.5}" y2="${y+i*U}"/>`;
-              lines += `<line class="lh" x1="${x+i*U}" y1="${y+.5}" x2="${x+i*U}" y2="${y+TEN_H-.5}"/>`;
-            }
-            return `<rect class="h" x="${x+.5}" y="${y+.5}" width="${TEN_H-1}" height="${TEN_H-1}" rx="1"/>${lines}`;
-          };
-
-          let svg = b10Style;
-          let currentX = PAD;
-          for (let i = 0; i < h; i++) { svg += b10Hundred(currentX, PAD); currentX += TEN_H + GAP_SAME; }
-          if (h > 0 && (t > 0 || u > 0)) currentX += GAP_TYPE - GAP_SAME;
-          for (let i = 0; i < t; i++) { svg += b10Ten(currentX, PAD); currentX += U + GAP_SAME; }
-          if (t > 0 && u > 0) currentX += GAP_TYPE - GAP_SAME;
-          const uCols = Math.ceil(u / 10);
-          for (let i = 0; i < u; i++) {
-            svg += b10Unit(currentX + Math.floor(i / 10) * (U + GAP_SAME), PAD + TEN_H - (i % 10 + 1) * U);
-          }
-          if (u > 0) currentX += uCols * (U + GAP_SAME) - GAP_SAME;
-          item.base10 = { ...b, markup: svg, width: currentX + PAD, height: TEN_H + 2 * PAD };
+          item.base10 = b; // SVG rendered client-side by base10Render() in generators.js
         }
 
         const parseSvgElement = (dataSvg) => {
@@ -927,7 +875,7 @@ module.exports = async function (eleventyConfig) {
     // Groups sorted by id so assignment is stable across builds.
     const byTitle = new Map();
     for (const s of allMeta) {
-      const key = (s.seriesTitle || '').trim();
+      const key = (s.title || '').trim();
       if (!byTitle.has(key)) byTitle.set(key, []);
       byTitle.get(key).push(s);
     }
@@ -942,7 +890,7 @@ module.exports = async function (eleventyConfig) {
     // Add new entries at the END to preserve existing indices; never reorder.
     // Multi-type series all map to "multi" — no composite entries.
     const CSV_TYPES = ["","bar-chart","base-10","bounding","calc-chain","checkbox","click-blocks","clock","column-op","compare","compare-groups","convert","coordinate-grid","count-objects","decimal-triple","decomp","drag-sort","fill-table","fraction","fraction-check","fraction-paint","function-machine","inverse-problem","logic-grid","magic-color","matching","maze","mcq","multi","multi-question","number-check","number-hunt","number-line","problem","pyramid","ruler","select","sequence","sort","svg-tiles","thermometer","tile-select","tri-arith","true-false","venn","defi","compare-expressions","estimation"];
-    const CSV_CLASSES = ["A1.1","A1.2","A2.1","A2.2","A2.3","A2.4","A3.1","A3.2","A3.3","A4.1","A4.2","D1.1.1","I1.1.1","I1.1.2","M1.1","M1.2","M1.3","M1.4","M2.1","M2.2","M2.3","M3.1","M3.2","M3.3","N4.2","S1.1.1","S1.1.2","S1.1.3","S1.2.1","S1.2.2","S1.2.3","S1.3.1","S2.1.1","S2.1.2","S2.1.3","S2.1.4","S2.2.1","S2.2.2","S3.1.1","S3.1.2","S3.2.1","S3.2.2","S3.2.3","S4.1.2"];
+    const CSV_CLASSES = ["A1.1","A1.2","A2.1","A2.2","A2.3","A2.4","A3.1","A3.2","A3.3","A4.1","A4.2","D1.1.1","I1.1.1","I1.1.2","M1.1","M1.2","M1.3","M1.4","M2.1","M2.2","M2.3","M3.1","M3.2","M3.3","N4.2","S1.1.1","S1.1.2","S1.1.3","S1.2.1","S1.2.2","S1.2.3","S1.3.1","S2.1.1","S2.1.2","S2.1.3","S2.1.4","S2.2.1","S2.2.2","S3.1.1","S3.1.2","S3.2.1","S3.2.2","S3.2.3","S4.1.2","S3.1.3"];
 
     const lines = ['id,l,s,t,title,d,f,ty,cl'];
     for (const s of allMeta) {
@@ -952,13 +900,13 @@ module.exports = async function (eleventyConfig) {
       const d = DIFF_CODES[s.difficulty] || '?';
       const f = s.folder === 'applications' ? 'a' : s.folder === 'defis' ? 'd' : 'e';
       const emoji = emojiMap.get(s.id) ? ` ${emojiMap.get(s.id)}` : '';
-      const title = (s.seriesTitle || '').replace(/,/g, ' ') + emoji;
+      const title = (s.title || '').replace(/,/g, ' ') + emoji;
       const types = s.usedTypes || [];
       const typeSig = s.folder === 'defis' ? 'defi' : types.length > 1 ? 'multi' : types[0] || '';
       const tyIdx = CSV_TYPES.indexOf(typeSig);
       const clIdx = CSV_CLASSES.indexOf((s.usedClasses || [])[0] || '');
       if (t.length > 12) csvWarnings.push(`topic > 12 chars: "${t}" in ${s.series}`);
-      if (title.includes(',')) csvWarnings.push(`title had comma (replaced): "${s.seriesTitle}" in ${s.series}`);
+      if (title.includes(',')) csvWarnings.push(`title had comma (replaced): "${s.title}" in ${s.series}`);
       if (tyIdx < 0) csvWarnings.push(`unknown type sig "${typeSig}" in ${s.series} — add to CSV_TYPES`);
       if (clIdx < 0 && (s.usedClasses || []).length) csvWarnings.push(`unknown class "${s.usedClasses[0]}" in ${s.series} — add to CSV_CLASSES`);
       const line = `${s.id},${l},${subj},${t},${title},${d},${f},${tyIdx >= 0 ? tyIdx : ''},${clIdx >= 0 ? clIdx : ''}`;

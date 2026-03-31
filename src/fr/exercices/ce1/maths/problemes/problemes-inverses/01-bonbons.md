@@ -9,7 +9,6 @@ ipInverses:
     answer: 8
   - text: "Tom a **8** bonbons. Il en mange quelques-uns. Il lui en reste **5**. Combien en a-t-il mangé ?"
     answer: 3
-class: "S2.2.1"
 ---
 
 Résous le premier problème, puis ses variantes.

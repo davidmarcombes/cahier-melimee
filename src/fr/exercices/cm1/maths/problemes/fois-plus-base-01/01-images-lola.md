@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "Les images de Lola et son frère"
 answer: "12"
 ---

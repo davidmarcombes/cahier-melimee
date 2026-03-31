@@ -7,7 +7,6 @@ choices:
   - "12 °C"
   - "5 °C"
   - "19 °C"
-class: "S3.1.1"
 ---
 
 Parmi ces températures, laquelle est la **plus chaude** ?

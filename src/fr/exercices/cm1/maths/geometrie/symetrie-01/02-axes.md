@@ -10,7 +10,6 @@ pairs:
     right: "2 axes"
   - left: "Triangle isocèle (non équilatéral)"
     right: "1 axe"
-class: "S1.1.1"
 ---
 
 Relie chaque figure à son nombre d'axes de symétrie.

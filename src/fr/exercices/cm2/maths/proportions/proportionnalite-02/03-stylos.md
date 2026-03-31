@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M3.1"
 title: "Le prix des stylos"
 answer: "14"
 ---

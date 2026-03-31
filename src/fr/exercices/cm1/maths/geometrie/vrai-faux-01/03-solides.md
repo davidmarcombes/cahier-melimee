@@ -12,7 +12,6 @@ statements:
     answer: true
   - text: "Un cube a 10 arêtes."
     answer: false
-class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

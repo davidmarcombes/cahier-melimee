@@ -12,7 +12,6 @@ answers:
   - ["8"]
   - ["4"]
   - ["2"]
-class: "S1.1.1"
 ---
 
 Complète le tableau avec le chiffre manquant.

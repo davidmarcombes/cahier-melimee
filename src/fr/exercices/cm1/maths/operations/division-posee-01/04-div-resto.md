@@ -3,7 +3,6 @@ type: number-check
 title: "Division avec reste"
 operation: "157 ÷ 13"
 answer: "12"
-class: "S1.2.1"
 ---
 
 Pose et effectue la division. Écris le quotient entier.

@@ -10,7 +10,6 @@ statements:
     answer: true
   - text: "15 °C est plus chaud que 22 °C."
     answer: false
-class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

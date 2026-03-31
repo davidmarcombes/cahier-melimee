@@ -12,7 +12,6 @@ statements:
     answer: false
   - text: "Un cube a toutes ses faces identiques."
     answer: true
-class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

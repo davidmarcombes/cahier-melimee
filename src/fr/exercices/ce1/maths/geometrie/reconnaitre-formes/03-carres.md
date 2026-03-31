@@ -25,7 +25,6 @@ tiles:
     par:
       size: 70
 answers: [1, 3]
-class: "S1.1.1"
 ---
 
 Clique sur tous les **carrés**.

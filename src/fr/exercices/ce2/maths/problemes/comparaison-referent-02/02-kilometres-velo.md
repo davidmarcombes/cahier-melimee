@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.3"
 title: "La randonnée à vélo"
 answer: "145"
 ---

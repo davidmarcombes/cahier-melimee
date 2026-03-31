@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les points de Bastien et Camille"
 answer: "29"
 ---

@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.2"
 title: "Les crayons de Paul"
 answer: "17"
 ---

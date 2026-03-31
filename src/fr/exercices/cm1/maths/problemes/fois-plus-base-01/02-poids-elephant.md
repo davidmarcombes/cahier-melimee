@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "L'éléphant et le poney"
 answer: "500"
 ---

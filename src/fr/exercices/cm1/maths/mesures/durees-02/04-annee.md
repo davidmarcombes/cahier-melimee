@@ -11,7 +11,6 @@ tileAnswers:
   - 0
   - 2
   - 4
-class: "I1.1.1"
 ---
 
 Plusieurs réponses peuvent être correctes.

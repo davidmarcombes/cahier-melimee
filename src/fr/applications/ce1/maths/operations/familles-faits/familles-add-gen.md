@@ -6,5 +6,4 @@ params:
   mode: add
   min: 1
   max: 20
-class: "S2.2.1"
 ---

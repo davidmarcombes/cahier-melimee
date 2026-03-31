@@ -7,7 +7,6 @@ solution:
   Zoé: "Guitare"
   Antoine: "Trompette"
   Inès: "Piano"
-class: "S3.2.2"
 ---
 
 - Antoine souffle dans un instrument en cuivre qui brille.

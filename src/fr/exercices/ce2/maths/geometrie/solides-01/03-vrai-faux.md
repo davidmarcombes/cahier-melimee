@@ -12,7 +12,6 @@ statements:
     answer: false
   - text: "Le patron d'un cube est composé de 6 carrés."
     answer: true
-class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

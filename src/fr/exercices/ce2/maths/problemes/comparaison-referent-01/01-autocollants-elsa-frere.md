@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.3"
 title: "Les autocollants d'Elsa et son frère"
 answer: "35"
 ---

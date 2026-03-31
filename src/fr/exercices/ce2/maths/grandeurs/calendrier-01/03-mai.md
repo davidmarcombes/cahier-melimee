@@ -13,7 +13,6 @@ questions:
     answer: "26"
   - text: "Combien y a-t-il de jours en mai ?"
     answer: "31"
-class: "I1.1.1"
 ---
 
 Observe le calendrier de mai 2025 et réponds aux questions.

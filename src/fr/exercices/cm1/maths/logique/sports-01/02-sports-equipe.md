@@ -7,7 +7,6 @@ solution:
   Romain: "Football"
   Chloé: "Gym"
   Axel: "Vélo"
-class: "S3.2.2"
 ---
 
 - Axel roule sur deux roues pour s'entraîner chaque mardi.

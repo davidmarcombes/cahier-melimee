@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.1"
 title: "Les autocollants d'Inès et Léo"
 answer: "18"
 ---

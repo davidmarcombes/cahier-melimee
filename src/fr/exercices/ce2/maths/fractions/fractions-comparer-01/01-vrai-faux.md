@@ -12,7 +12,6 @@ statements:
     answer: true
   - text: "Un demi et deux demis, c'est la même chose."
     answer: false
-class: "S2.1.3"
 ---
 
 Plus on partage en **beaucoup de parts**, plus chaque part est **petite**.

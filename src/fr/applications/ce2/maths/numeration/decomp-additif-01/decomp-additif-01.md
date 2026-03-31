@@ -6,5 +6,4 @@ repeat: 12
 params:
   minVal: 100
   maxVal: 999
-class: "S1.1.1"
 ---

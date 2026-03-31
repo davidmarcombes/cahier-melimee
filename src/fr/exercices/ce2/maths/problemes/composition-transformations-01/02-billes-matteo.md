@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.2"
 title: "Les billes de Mattéo"
 answer: "7"
 ---

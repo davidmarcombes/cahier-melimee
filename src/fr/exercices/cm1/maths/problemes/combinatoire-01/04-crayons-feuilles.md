@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M3.2"
 title: "Les crayons et les feuilles"
 answer: "15"
 ---

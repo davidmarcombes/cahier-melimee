@@ -7,5 +7,4 @@ params:
   max: 999
   pairs: 5
   style: standard
-class: "S1.1.1"
 ---

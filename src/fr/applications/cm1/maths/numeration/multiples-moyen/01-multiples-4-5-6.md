@@ -6,5 +6,4 @@ params:
   divisors: [4, 5, 6]
   min: 4
   max: 100
-class: "S1.1.1"
 ---

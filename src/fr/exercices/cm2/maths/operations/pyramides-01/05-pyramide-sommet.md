@@ -6,7 +6,6 @@ pyramid:
   - [null, null, 750]
   - [null, null]
   - [2820]
-class: "S1.2.2"
 ---
 
 Utilise le sommet et les cases connues pour compléter toute la pyramide.

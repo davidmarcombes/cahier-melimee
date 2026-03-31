@@ -309,7 +309,7 @@ async function run() {
 
   // Write index.yaml
   const yamlContent = `id: ${id}
-seriesTitle: "${cleanTitle}"
+title: "${cleanTitle}"
 difficulty: ${difficulty}
 `;
   fs.writeFileSync(path.join(targetDir, 'index.yaml'), yamlContent);

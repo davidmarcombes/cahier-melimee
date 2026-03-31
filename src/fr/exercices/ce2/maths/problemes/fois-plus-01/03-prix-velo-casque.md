@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.1"
 title: "Le vélo et le casque"
 answer: "75"
 ---

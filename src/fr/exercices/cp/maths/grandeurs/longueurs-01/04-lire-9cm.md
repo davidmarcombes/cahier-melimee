@@ -8,7 +8,6 @@ markers:
   - label: "A"
     value: 9
 answer: "9"
-class: "I1.1.2"
 ---
 
 Quelle est la mesure indiquée par la flèche A ? (en cm)

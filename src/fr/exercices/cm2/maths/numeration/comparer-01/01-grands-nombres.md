@@ -14,7 +14,6 @@ comparisons:
     right: 804090365
   - left: 123614897
     right: 123614876
-class: "S3.1.1"
 ---
 
 Compare ces grands nombres. Choisis **<** ou **>**.

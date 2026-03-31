@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.3"
 title: "Les images de Victor"
 answer: "13"
 ---

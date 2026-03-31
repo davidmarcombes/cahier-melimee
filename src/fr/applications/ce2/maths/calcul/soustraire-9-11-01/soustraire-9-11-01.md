@@ -5,5 +5,4 @@ repeat: 10
 params:
   min: 20
   max: 70
-class: "S1.1.1"
 ---

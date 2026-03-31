@@ -5,7 +5,6 @@ hundreds: 3
 tens: 2
 ones: 4
 answer: "324"
-class: "S2.1.2"
 ---
 
 Observe bien les plaques de 100, les barres de 10 et les unités.

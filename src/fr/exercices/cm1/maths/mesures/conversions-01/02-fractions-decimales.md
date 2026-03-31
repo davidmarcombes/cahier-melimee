@@ -12,7 +12,6 @@ items:
     answer: "0,1"
   - prompt: "7/10"
     answer: "0,7"
-class: "S2.1.3"
 ---
 
 Écris chaque fraction en nombre décimal.

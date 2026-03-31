@@ -83,7 +83,7 @@ After writing: npm run generate:ids && npm run validate:exercises
 
 - [ ] `list-series` before writing — no duplicates
 - [ ] `show-type` before writing — correct schema
-- [ ] `index.yaml` has `seriesTitle` + `difficulty`, NO `id`
+- [ ] `index.yaml` has `title` + `difficulty`, NO `id`
 - [ ] 5 exercises per series
 - [ ] Answers are strings (`"42"` not `42`) for text fields
 - [ ] `generate:ids` run after all files created

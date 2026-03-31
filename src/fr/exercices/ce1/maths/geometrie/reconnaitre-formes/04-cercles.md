@@ -25,7 +25,6 @@ tiles:
       w: 70
       h: 50
 answers: [1, 4]
-class: "S1.1.1"
 ---
 
 Clique sur tous les **cercles**.

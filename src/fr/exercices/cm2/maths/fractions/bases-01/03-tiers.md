@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.2"
 title: "Le tiers d'un nombre"
 answer: "9"
 ---

@@ -7,7 +7,6 @@ choices:
   - "500"
   - "700"
   - "400"
-class: "S1.1.1"
 ---
 
 Sans calculer le résultat exact, quelle est la **meilleure estimation** de **403 + 196** ?

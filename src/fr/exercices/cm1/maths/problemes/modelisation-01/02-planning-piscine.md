@@ -8,7 +8,6 @@ questions:
     answer: "3"
   - text: "Combien de minutes Paul nage-t-il en tout dans la semaine ?"
     answer: "135"
-class: "S1.1.1"
 ---
 
 Paul va à la piscine selon ce planning :

@@ -24,7 +24,6 @@ tiles:
       pixA: 70
       pixB: 50
 answers: [1, 3, 5]
-class: "S1.1.1"
 ---
 
 Clique sur toutes les figures qui possèdent au moins un **angle droit**.

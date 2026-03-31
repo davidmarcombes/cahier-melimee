@@ -12,5 +12,4 @@ pairs:
     right: "semaines"
   - left: "les grandes vacances"
     right: "mois"
-class: "I1.1.1"
 ---

@@ -11,7 +11,6 @@ statements:
     answer: "division (÷)"
   - template: "Une école a 134 filles et 118 garçons. Il faut utiliser l'___."
     answer: "addition (+)"
-class: "S1.1.1"
 ---
 
 Pour chaque situation, choisis la bonne opération.

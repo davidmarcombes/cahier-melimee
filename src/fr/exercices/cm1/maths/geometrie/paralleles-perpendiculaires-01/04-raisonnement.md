@@ -9,5 +9,4 @@ statements:
   - "Si la droite (a) est perpendiculaire à (b), et (b) perpendiculaire à (c), alors (a) et (c) sont perpendiculaires."
   - "Si la droite (a) est parallèle à (b), et (b) est perpendiculaire à (c), alors (a) est aussi perpendiculaire à (c)."
 checkedAnswers: [0, 2, 3, 5]
-class: "S1.1.1"
 ---

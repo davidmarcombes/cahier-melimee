@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.2"
 title: "La trousse d'Inès"
 answer: "8"
 ---

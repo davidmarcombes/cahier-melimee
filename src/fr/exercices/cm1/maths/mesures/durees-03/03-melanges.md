@@ -14,7 +14,6 @@ comparisons:
   - left: "1 semaine"
     right: "1 mois"
     answer: "<"
-class: "I1.1.1"
 ---
 
 Compare ces durées. Choisis **<**, **>** ou **=**.

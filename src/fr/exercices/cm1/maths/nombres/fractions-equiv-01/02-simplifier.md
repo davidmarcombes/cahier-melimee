@@ -7,7 +7,6 @@ choices:
   - "4/6"
   - "1/3"
   - "3/4"
-class: "S2.1.3"
 ---
 
 Quelle est la forme simplifiée de **6/9** ?

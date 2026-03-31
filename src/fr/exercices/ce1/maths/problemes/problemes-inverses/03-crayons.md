@@ -9,7 +9,6 @@ ipInverses:
     answer: 10
   - text: "Il y a **10** crayons dans la boîte. La maîtresse en ajoute quelques-uns. Maintenant il y en a **16**. Combien en a-t-elle ajouté ?"
     answer: 6
-class: "S2.2.1"
 ---
 
 Résous le premier problème, puis ses variantes.

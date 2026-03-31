@@ -9,5 +9,4 @@ statements:
   - "Ses 4 côtés sont égaux."
   - "C'est un quadrilatère."
 checkedAnswers: [0, 2, 3, 5]
-class: "S1.1.1"
 ---

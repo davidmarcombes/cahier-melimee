@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.1"
 title: "La collection de billes"
 answer: "125"
 ---

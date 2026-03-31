@@ -13,7 +13,6 @@ questions:
     answer: "21"
   - text: "Quel jour de la semaine est le 31 mai ?"
     answer: "samedi"
-class: "I1.1.1"
 ---
 
 Observe le calendrier de mai 2025 et réponds aux questions.

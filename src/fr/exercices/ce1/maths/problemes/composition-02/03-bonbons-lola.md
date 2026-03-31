@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.2"
 title: "Le sachet de Lola"
 answer: "9"
 ---

@@ -8,5 +8,4 @@ params:
   maxA: 15
   minB: 2
   maxB: 15
-class: "S1.1.1"
 ---

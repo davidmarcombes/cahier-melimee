@@ -10,7 +10,6 @@ statements:
     answer: true
   - text: "Un nombre qui se termine par 9 est toujours impair."
     answer: true
-class: "I1.1.2"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

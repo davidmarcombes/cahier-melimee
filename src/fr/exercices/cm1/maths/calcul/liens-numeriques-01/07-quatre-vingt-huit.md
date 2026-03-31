@@ -9,7 +9,6 @@ svg:
     top: 88
     left: 39
     right: "?"
-class: "S1.2.1"
 ---
 
 Trouve le terme manquant pour équilibrer l'arbre de calcul.

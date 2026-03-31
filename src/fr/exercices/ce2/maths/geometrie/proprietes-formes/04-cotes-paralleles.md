@@ -27,7 +27,6 @@ tiles:
       n: 5
       size: 70
 answers: [1, 3, 4]
-class: "S1.1.1"
 ---
 
 Clique sur toutes les figures qui possèdent au moins **une paire de côtés parallèles**.

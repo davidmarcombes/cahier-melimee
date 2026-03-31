@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.2"
 title: "Le sous-marin"
 answer: "25"
 ---

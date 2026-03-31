@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les billes de Mia et son frère"
 answer: "25"
 ---

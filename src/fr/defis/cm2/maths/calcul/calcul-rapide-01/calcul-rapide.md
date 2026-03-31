@@ -6,5 +6,4 @@ repeat: 60
 params:
   level: cm2
   difficulty: facile
-class: "S1.1.1"
 ---

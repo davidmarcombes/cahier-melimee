@@ -10,7 +10,6 @@ tiles:
 tileAnswers:
   - 0
   - 2
-class: "I1.1.1"
 ---
 
 Plusieurs réponses peuvent être correctes.

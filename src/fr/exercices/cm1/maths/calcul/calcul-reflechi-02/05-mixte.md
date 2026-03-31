@@ -12,7 +12,6 @@ chain:
       answer: "300"
     - op: "- 125"
       answer: "175"
-class: "S1.1.3"
 ---
 
 Suis la chaîne et calcule chaque résultat.

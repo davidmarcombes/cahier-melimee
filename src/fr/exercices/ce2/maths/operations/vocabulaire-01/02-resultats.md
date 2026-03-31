@@ -11,5 +11,4 @@ statements:
     answer: "produit"
   - template: "Le résultat d'une division s'appelle le ___."
     answer: "quotient"
-class: "S2.1.4"
 ---

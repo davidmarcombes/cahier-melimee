@@ -8,7 +8,6 @@ solution:
   Clément: "Ski"
   Noémie: "Handball"
   Arthur: "Natation"
-class: "S3.2.2"
 ---
 
 - Clément s'entraîne sur des pistes enneigées en montagne.

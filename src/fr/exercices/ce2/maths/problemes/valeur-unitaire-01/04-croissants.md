@@ -1,6 +1,5 @@
 ---
 type: multi-question
-class: "S3.1.2"
 title: "Les croissants"
 context: "À la boulangerie, 4 croissants coûtent 8 €."
 questions:

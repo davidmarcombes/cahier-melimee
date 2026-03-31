@@ -9,7 +9,6 @@ params:
   countMax: 7
   opMin: 1
   opMax: 5
-class: "S2.1.1"
 ---
 
 Compte les fruits, puis additionne le nombre.

@@ -11,7 +11,6 @@ choices:
   - "un cercle"
   - "un cylindre"
 answer: "une sphère"
-class: "S1.1.1"
 ---
 
 Mélimee a dessiné un solide. Quel est son nom ?

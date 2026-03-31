@@ -9,7 +9,6 @@ questions:
     answer: "31"
   - text: "Combien fait 294 + 37 ?"
     answer: "331"
-class: "S1.1.3"
 ---
 
 Utilise la stratégie du passage par la centaine.

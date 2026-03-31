@@ -14,7 +14,6 @@ items:
   - prompt: "10 cL"
     answer: "100"
     unit: "mL"
-class: "S1.1.1"
 ---
 
 Convertis les centilitres en millilitres.

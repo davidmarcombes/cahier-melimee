@@ -1,6 +1,5 @@
 ---
 type: multi-question
-class: "S1.1.1"
 title: "Le tissu au marché"
 context: "5 mètres de tissu coûtent 35 €."
 questions:

@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.2"
 title: "Les billes de Zoé"
 answer: "12"
 ---

@@ -8,7 +8,6 @@ params:
   maxSub: 9
   minResult: 0
   maxResult: 9
-class: "S1.1.1"
 ---
 
 Calcule le plus vite possible !

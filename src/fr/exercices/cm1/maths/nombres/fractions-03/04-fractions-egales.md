@@ -7,7 +7,6 @@ choices:
   - "1/4"
   - "3/4"
   - "1/3"
-class: "S2.1.3"
 ---
 
 Parmi ces fractions, laquelle est **égale à 1/2** ?

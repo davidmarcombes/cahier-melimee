@@ -6,7 +6,6 @@ pyramid:
   - [6.80, null, null]
   - [null, null]
   - [29.20]
-class: "S1.2.2"
 ---
 
 Retrouve les cases manquantes en utilisant les indices.

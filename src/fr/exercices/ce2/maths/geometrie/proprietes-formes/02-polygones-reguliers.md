@@ -27,7 +27,6 @@ tiles:
       h: 50
       skew: 20
 answers: [1, 2, 4]
-class: "S1.1.1"
 ---
 
 Un polygone régulier a tous ses côtés de même longueur et tous ses angles égaux. Clique sur tous les **polygones réguliers**.

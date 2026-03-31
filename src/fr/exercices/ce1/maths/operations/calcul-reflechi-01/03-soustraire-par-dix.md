@@ -9,7 +9,6 @@ questions:
     answer: "2"
   - text: "Combien font 14 - 6 ?"
     answer: "8"
-class: "S1.1.3"
 ---
 
 Pour calculer **14 - 6**, on enlève d'abord 4 pour aller à 10, puis on enlève le reste.

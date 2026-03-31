@@ -9,7 +9,6 @@ svg:
     top: 100
     left: 88.5
     right: "?"
-class: "S1.3.1"
 ---
 
 Quel nombre décimal manque-t-il pour atteindre 100 ?

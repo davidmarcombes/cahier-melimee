@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.3"
 title: "Les passagers de l'avion"
 answer: "63"
 ---

@@ -14,5 +14,4 @@ statements:
   - template: "Un rectangle a ___ côtés."
     answer: "4"
     choices: ["2", "3", "4", "6"]
-class: "S1.1.1"
 ---

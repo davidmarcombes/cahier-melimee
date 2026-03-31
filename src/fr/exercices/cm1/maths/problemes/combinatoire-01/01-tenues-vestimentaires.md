@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M3.2"
 title: "Les tenues vestimentaires"
 answer: "6"
 ---

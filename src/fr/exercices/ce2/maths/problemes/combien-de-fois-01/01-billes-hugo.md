@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.2"
 title: "Les billes d'Hugo"
 answer: "4"
 ---

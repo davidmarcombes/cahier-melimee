@@ -14,7 +14,6 @@ items:
   - prompt: "3 L"
     answer: "3000"
     unit: "mL"
-class: "S1.1.1"
 ---
 
 Convertis les litres en millilitres.

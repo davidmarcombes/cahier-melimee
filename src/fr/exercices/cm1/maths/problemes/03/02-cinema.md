@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.1"
 title: "La séance de cinéma"
 answer: "16:15"
 ---

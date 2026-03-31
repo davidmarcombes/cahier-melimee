@@ -6,7 +6,6 @@ pyramid:
   - [null, null, null]
   - [null, null]
   - [null]
-class: "S1.2.2"
 ---
 
 Complète la pyramide avec des nombres à 4 chiffres.

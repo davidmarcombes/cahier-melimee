@@ -8,7 +8,6 @@ params:
   maxA: 12
   minB: 1
   maxB: 10
-class: "S1.1.1"
 ---
 
 Calcule le produit des deux nombres.

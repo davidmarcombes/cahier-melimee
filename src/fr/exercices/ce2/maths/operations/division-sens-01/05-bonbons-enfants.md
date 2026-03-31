@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.2"
 title: "Le partage des bonbons"
 answer: "7"
 ---

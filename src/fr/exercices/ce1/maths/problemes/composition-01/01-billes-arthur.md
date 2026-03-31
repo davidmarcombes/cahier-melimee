@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.1"
 title: "Les billes d'Arthur"
 answer: "21"
 ---

@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.4"
 title: "La caisse du club"
 answer: "722"
 ---

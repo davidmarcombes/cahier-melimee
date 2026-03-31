@@ -19,5 +19,4 @@ params:
     - label: "1"
       value: 1
       color: "var(--p)"
-class: "S2.1.2"
 ---

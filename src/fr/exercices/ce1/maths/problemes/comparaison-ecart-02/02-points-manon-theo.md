@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.1"
 title: "Les points de Manon et Théo"
 answer: "24"
 ---

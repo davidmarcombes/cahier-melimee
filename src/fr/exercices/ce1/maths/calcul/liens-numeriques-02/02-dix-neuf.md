@@ -9,7 +9,6 @@ svg:
     top: 19
     left: "?"
     right: 9
-class: "S1.1.1"
 ---
 
 Trouve le nombre manquant pour compléter l'arbre.

@@ -12,5 +12,4 @@ pairs:
     right: "quarante"
   - left: "50"
     right: "cinquante"
-class: "S2.1.4"
 ---

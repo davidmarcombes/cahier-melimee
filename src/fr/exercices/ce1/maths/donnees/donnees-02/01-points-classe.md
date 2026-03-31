@@ -12,7 +12,6 @@ questions:
     answer: "jeudi"
   - text: "Combien de points a-t-il eu le lundi ?"
     answer: "6"
-class: "S2.1.1"
 ---
 
 Observe le diagramme des points de Hugo à la dictée et réponds aux questions.

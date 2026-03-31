@@ -1,6 +1,5 @@
 ---
 type: inverse-problem
-class: "S2.2.2"
 title: "La famille de Lucie"
 ipBase:
   text: "Lucie a 15 billes. Elle en donne 4 à son frère. Combien lui en reste-t-il ?"

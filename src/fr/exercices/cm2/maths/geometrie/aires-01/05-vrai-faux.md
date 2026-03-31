@@ -10,7 +10,6 @@ statements:
     answer: false
   - text: "Un rectangle de 3 cm × 4 cm a la même aire qu'un carré de côté 3 cm."
     answer: false
-class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

@@ -4470,3 +4470,31 @@ function magicColorIdx(rule, n, params) {
 // Dual export: Node.js (build time) + browser (runtime)
 if (typeof module !== 'undefined') module.exports = generators;
 if (typeof window !== 'undefined') window.AppGenerators = generators;
+
+// ── Base-10 blocks renderer ────────────────────────────────────────────────
+// Called at runtime from the base-10 exercise template.
+// Returns { markup: string, width: number, height: number }.
+function base10Render(b) {
+  const U = 12, TEN_H = 120, PAD = 8, GAP_TYPE = 18, GAP_SAME = 4;
+  const num = b.number || 0;
+  const h = b.hundreds !== null && b.hundreds !== undefined ? b.hundreds : Math.floor(num / 100);
+  const t = b.tens    !== null && b.tens    !== undefined ? b.tens    : Math.floor((num % 100) / 10);
+  const u = b.ones    !== null && b.ones    !== undefined ? b.ones    : num % 10;
+
+  const style = '<style>.h{fill:var(--b10-h);stroke:var(--b10-hs)}.t{fill:var(--b10-t);stroke:var(--b10-ts)}.u{fill:var(--b10-u);stroke:var(--b10-us)}.h,.t,.u{stroke-width:1}.lh{stroke:var(--b10-hs)}.lt{stroke:var(--b10-ts)}.lh,.lt{stroke-width:.5;opacity:.5}</style>';
+  const unit    = (x, y) => `<rect class="u" x="${x+1}" y="${y+1}" width="${U-2}" height="${U-2}" rx="1"/>`;
+  const ten     = (x, y) => { let s=''; for (let i=1;i<10;i++) s+=`<line class="lt" x1="${x+.5}" y1="${y+i*U}" x2="${x+U-.5}" y2="${y+i*U}"/>`; return `<rect class="t" x="${x+.5}" y="${y+.5}" width="${U-1}" height="${TEN_H-1}" rx="1"/>${s}`; };
+  const hundred = (x, y) => { let s=''; for (let i=1;i<10;i++) { s+=`<line class="lh" x1="${x+.5}" y1="${y+i*U}" x2="${x+TEN_H-.5}" y2="${y+i*U}"/>`; s+=`<line class="lh" x1="${x+i*U}" y1="${y+.5}" x2="${x+i*U}" y2="${y+TEN_H-.5}"/>`; } return `<rect class="h" x="${x+.5}" y="${y+.5}" width="${TEN_H-1}" height="${TEN_H-1}" rx="1"/>${s}`; };
+
+  let svg = style, x = PAD;
+  for (let i=0;i<h;i++) { svg += hundred(x, PAD); x += TEN_H + GAP_SAME; }
+  if (h>0 && (t>0||u>0)) x += GAP_TYPE - GAP_SAME;
+  for (let i=0;i<t;i++) { svg += ten(x, PAD); x += U + GAP_SAME; }
+  if (t>0 && u>0) x += GAP_TYPE - GAP_SAME;
+  const uCols = Math.ceil(u / 10);
+  for (let i=0;i<u;i++) svg += unit(x + Math.floor(i/10)*(U+GAP_SAME), PAD + TEN_H - (i%10+1)*U);
+  if (u>0) x += uCols*(U+GAP_SAME) - GAP_SAME;
+  return { markup: svg, width: x + PAD, height: TEN_H + 2*PAD };
+}
+if (typeof window !== 'undefined') window.base10Render = base10Render;
+if (typeof module !== 'undefined' && module.exports) Object.defineProperty(module.exports, 'base10Render', { value: base10Render, enumerable: false });

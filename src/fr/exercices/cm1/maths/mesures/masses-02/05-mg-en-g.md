@@ -14,7 +14,6 @@ items:
   - prompt: "3 000 mg"
     answer: "3"
     unit: "g"
-class: "S1.1.1"
 ---
 
 Convertis les milligrammes en grammes.

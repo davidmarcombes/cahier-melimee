@@ -10,7 +10,6 @@ params:
     - dizaines
   minCoef: 10
   maxCoef: 25
-class: "S1.1.1"
 ---
 
 Réfléchis bien : les coefficients sont plus grands. Écris le résultat.

@@ -11,5 +11,4 @@ statements:
     answer: "25 %"
   - template: "1/2 = ___."
     answer: "50 %"
-class: "S2.1.3"
 ---

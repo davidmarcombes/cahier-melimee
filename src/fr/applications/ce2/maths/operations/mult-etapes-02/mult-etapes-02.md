@@ -8,5 +8,4 @@ params:
   aMax: 9
   bMin: 2
   bMax: 9
-class: "S1.1.1"
 ---

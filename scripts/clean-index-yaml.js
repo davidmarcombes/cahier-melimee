@@ -2,7 +2,7 @@
 /**
  * clean-index-yaml.js — Remove unused fields from all index.yaml files.
  * Fields removed: description, level, subject, topic, created_at
- * Fields kept:    id, seriesTitle, difficulty, skill
+ * Fields kept:    id, title, difficulty, skill
  */
 'use strict';
 const fs = require('fs');

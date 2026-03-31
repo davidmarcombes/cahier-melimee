@@ -8,7 +8,6 @@ params:
   direction: asc
   sameDenominator: true
   # denominator: 8   ← décommenter pour fixer le dénominateur (clone facile)
-class: "S2.1.3"
 ---
 
 Range ces fractions du **plus petit au plus grand**.

@@ -7,7 +7,6 @@ choices:
   - "96 m"
   - "20 m"
   - "Impossible à résoudre"
-class: "S4.1.2"
 ---
 
 Un jardin mesure 12 m de long et 8 m de large. Quel est le périmètre de ce jardin ?

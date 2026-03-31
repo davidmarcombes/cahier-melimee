@@ -11,7 +11,6 @@ questions:
     answer: "jeudi"
   - text: "Combien y a-t-il de lundis en mai ?"
     answer: "4"
-class: "I1.1.1"
 ---
 
 Observe le calendrier de mai 2025 et réponds aux questions.

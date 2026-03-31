@@ -9,7 +9,6 @@ svg:
     top: 2.5
     left: "?"
     right: 1.2
-class: "S1.3.1"
 ---
 
 Trouve le nombre décimal manquant dans l'arbre.

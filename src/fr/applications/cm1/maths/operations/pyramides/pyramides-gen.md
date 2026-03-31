@@ -8,5 +8,4 @@ params:
   minBase: 10
   maxBase: 50
   showApex: false
-class: "S1.2.2"
 ---

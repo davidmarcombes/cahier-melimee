@@ -6,7 +6,7 @@
  * Usage: node scripts/generate-report.js [--output=report.csv]
  *
  * Columns:
- *   kind, path, id, seriesTitle, level, subject, topic, difficulty,
+ *   kind, path, id, title, level, subject, topic, difficulty,
  *   exerciseCount, repeatTotal, types, generators, classes
  */
 'use strict';
@@ -102,7 +102,6 @@ for (const { dir: scanRoot, kind } of SCAN) {
 
     const types = new Set();
     const generators = new Set();
-    const classes = new Set();
     let repeatTotal = 0;
 
     for (const mdPath of mdFiles) {
@@ -111,10 +110,12 @@ for (const { dir: scanRoot, kind } of SCAN) {
       const t = data.type || 'number-check';
       types.add(t);
       if (data.generator) generators.add(data.generator);
-      if (data.class) classes.add(data.class);
       const repeat = data.repeat ?? 1;
       repeatTotal += repeat;
     }
+
+    // class lives in index.yaml only (since migration)
+    const seriesClass = meta.class ? String(meta.class).trim() : '';
 
     const lengthFlag =
       repeatTotal < 2 ? 'too-short' : repeatTotal > 12 ? 'too-long' : '';
@@ -123,7 +124,7 @@ for (const { dir: scanRoot, kind } of SCAN) {
       kind,
       path: relPath,
       id: meta.id ?? '',
-      seriesTitle: meta.seriesTitle ?? '',
+      title: meta.title ?? '',
       level,
       subject,
       topic,
@@ -133,7 +134,7 @@ for (const { dir: scanRoot, kind } of SCAN) {
       lengthFlag,
       types: [...types].join(' | '),
       generators: [...generators].join(' | '),
-      classes: [...classes].sort().join(' | '),
+      class: seriesClass,
     });
   }
 }
@@ -159,7 +160,7 @@ const COLUMNS = [
   'kind',
   'path',
   'id',
-  'seriesTitle',
+  'title',
   'level',
   'subject',
   'topic',
@@ -169,7 +170,7 @@ const COLUMNS = [
   'lengthFlag',
   'types',
   'generators',
-  'classes',
+  'class',
 ];
 
 const lines = [COLUMNS.join(',')];
@@ -222,9 +223,7 @@ console.log(`\n${C.cyan}Generator-based series:${C.reset} ${genSeries} / ${rows.
 // Vergnaud class coverage
 const byClass = {};
 for (const r of rows) {
-  for (const cls of r.classes.split(' | ').filter(Boolean)) {
-    byClass[cls] = (byClass[cls] || 0) + 1;
-  }
+  if (r.class) byClass[r.class] = (byClass[r.class] || 0) + 1;
 }
 const VERGNAUD_CODES = [
   'A1.1','A1.2',
@@ -269,13 +268,14 @@ if (uncoveredS.length) {
 }
 
 // Missing fields (level/subject/topic are always inferred from path, not checked)
-const missing = rows.filter((r) => !r.id || !r.difficulty);
+const missing = rows.filter((r) => !r.id || !r.difficulty || !r.class);
 if (missing.length) {
   console.log(`\n${C.yellow}⚠  Series with incomplete metadata (${missing.length}):${C.reset}`);
   for (const r of missing) {
     const issues = [];
     if (!r.id) issues.push('no id');
     if (!r.difficulty) issues.push('no difficulty');
+    if (!r.class) issues.push('no class');
     console.log(`  ${r.path}  [${issues.join(', ')}]`);
   }
 }

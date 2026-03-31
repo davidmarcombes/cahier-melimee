@@ -6,5 +6,4 @@ repeat: 6
 params:
   count: 25
   cols: 6
-class: "S1.1.1"
 ---

@@ -12,7 +12,6 @@ statements:
     answer: true
   - text: "On peut vérifier une symétrie en pliant le long de l'axe."
     answer: true
-class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

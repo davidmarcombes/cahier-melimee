@@ -7,5 +7,4 @@ params:
   min: 100000
   max: 9999999
   count: 4
-class: "S3.1.1"
 ---

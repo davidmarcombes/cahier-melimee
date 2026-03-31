@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.1"
 title: "L'argent d'Alice"
 answer: "21"
 ---

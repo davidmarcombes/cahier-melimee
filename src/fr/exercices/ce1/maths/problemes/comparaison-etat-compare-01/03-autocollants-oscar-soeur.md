@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les autocollants d'Oscar et sa sœur"
 answer: "31"
 ---

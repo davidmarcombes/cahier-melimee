@@ -6,7 +6,6 @@ given:
   - '<span class="frac"><span class="fn">2</span><span class="fd">3</span></span>'
   - '<span class="frac"><span class="fn">3</span><span class="fd">3</span></span>'
 answers: ["4/3", "5/3", "6/3"]
-class: "S3.2.1"
 ---
 
 Continue la suite de fractions. Écris tes réponses sous la forme **a/b** (ex : 4/3).

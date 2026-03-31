@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.1"
 title: "La sortie scolaire"
 answer: "90"
 ---

@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les billes dans les sacs"
 answer: "22"
 ---

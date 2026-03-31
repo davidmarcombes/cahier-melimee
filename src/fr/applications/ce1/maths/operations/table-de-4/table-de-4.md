@@ -8,7 +8,6 @@ params:
   maxA: 4
   minB: 1
   maxB: 10
-class: "S1.1.1"
 ---
 
 Calcule chaque multiplication de la table de 4.

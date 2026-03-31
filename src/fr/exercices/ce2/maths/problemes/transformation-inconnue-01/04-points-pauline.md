@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.3"
 title: "Les points de Pauline"
 answer: "47"
 ---

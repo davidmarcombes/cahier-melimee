@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.1"
 title: "Le panier de Camille"
 answer: "18"
 ---

@@ -2,7 +2,6 @@
 type: fraction-check
 title: "Écrire une fraction"
 answer: "3/4"
-class: "S2.1.3"
 ---
 
 Un carré est partagé en **4 parts égales**. Tu colories **3 parts**.

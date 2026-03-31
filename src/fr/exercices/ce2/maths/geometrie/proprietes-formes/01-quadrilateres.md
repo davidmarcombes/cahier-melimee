@@ -24,7 +24,6 @@ tiles:
     par:
       r: 35
 answers: [0, 2, 4]
-class: "S1.1.1"
 ---
 
 Clique sur toutes les figures qui ont exactement **4 côtés** (les quadrilatères).

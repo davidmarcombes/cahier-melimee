@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.3"
 title: "L'argent d'Océane"
 answer: "36"
 ---

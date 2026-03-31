@@ -6,7 +6,6 @@ svg:
   par:
     name: c-block-on-grid.svg
 answer: "90"
-class: "S1.1.1"
 ---
 
 Chaque carré du quadrillage représente **5 mm**. Calcule le périmètre de cette figure en mm.

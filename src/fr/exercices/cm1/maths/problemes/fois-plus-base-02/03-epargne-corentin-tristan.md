@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "L'épargne de Corentin et Tristan"
 answer: "36"
 ---

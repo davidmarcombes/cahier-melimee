@@ -9,7 +9,6 @@ ipInverses:
     answer: 12
   - text: "Emma a **12** images. Elle en donne quelques-unes. Il lui en reste **7**. Combien en a-t-elle donné ?"
     answer: 5
-class: "S2.2.1"
 ---
 
 Résous le premier problème, puis ses variantes.

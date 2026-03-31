@@ -10,7 +10,6 @@ pairs:
     right: "365 jours"
   - left: "1 millénaire"
     right: "10 siècles"
-class: "I1.1.1"
 ---
 
 Relie chaque durée à son équivalence.

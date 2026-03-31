@@ -8,7 +8,6 @@ params:
   maxTens: 9
   minOnes: 0
   maxOnes: 9
-class: "S1.1.1"
 ---
 
 Trouve le nombre à partir de ses dizaines et unités.

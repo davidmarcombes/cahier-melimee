@@ -10,7 +10,6 @@ answers:
   - ["1", "4"]
   - ["0", "6"]
   - ["3", "2"]
-class: "S1.1.1"
 ---
 
 Retrouve les chiffres manquants.

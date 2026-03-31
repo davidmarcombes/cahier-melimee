@@ -9,5 +9,4 @@ points:
     y: 0
     label: D
 answer: "5,0"
-class: "S1.1.1"
 ---

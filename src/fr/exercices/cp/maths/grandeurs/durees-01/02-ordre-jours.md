@@ -12,7 +12,6 @@ pairs:
     right: "jeudi"
   - left: "5e jour"
     right: "vendredi"
-class: "I1.1.1"
 ---
 
 Relie chaque position au bon jour de la semaine.

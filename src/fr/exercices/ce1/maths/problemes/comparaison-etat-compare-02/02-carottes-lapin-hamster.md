@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les carottes du lapin et du hamster"
 answer: "11"
 ---

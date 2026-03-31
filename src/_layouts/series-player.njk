@@ -13,7 +13,8 @@ isSeriesPage: true
 {% set hasGenerators = false %}
 {% set needsSvgJs = false %}
 {% for ex in exercises %}
-  {% if ex.data.generator %}{% set hasGenerators = true %}{% set needsSvgJs = true %}{% endif %}
+  {% if ex.data.generator or ex.data.type === 'base-10' %}{% set hasGenerators = true %}{% endif %}
+  {% if ex.data.generator %}{% set needsSvgJs = true %}{% endif %}
   {% if ex.data.svg %}{% set needsSvgJs = true %}{% endif %}
   {% if ex.data.type === 'ruler' or ex.data.type === 'thermometer' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' or ex.data.type === 'svg-tiles' or ex.data.type === 'fraction' %}{% set needsSvgJs = true %}{% endif %}
 {% endfor %}

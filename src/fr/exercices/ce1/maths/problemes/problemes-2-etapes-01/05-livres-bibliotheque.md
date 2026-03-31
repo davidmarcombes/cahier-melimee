@@ -7,7 +7,6 @@ questions:
     answer: "17"
   - text: "Combien de livres reste-t-il à la fin de la journée ?"
     answer: "11"
-class: "S1.1.1"
 ---
 
 Lis le problème, puis réponds aux deux questions.

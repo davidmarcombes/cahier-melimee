@@ -9,7 +9,6 @@ ipInverses:
     answer: 5
   - text: "On range **20** billes dans des sachets de **5**. Combien de sachets faut-il ?"
     answer: 4
-class: "S2.2.2"
 ---
 
 Résous le premier problème, puis ses variantes.

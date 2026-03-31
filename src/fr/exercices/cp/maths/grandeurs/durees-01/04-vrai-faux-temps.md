@@ -12,7 +12,6 @@ statements:
     answer: true
   - text: "Il y a 6 jours dans une semaine."
     answer: false
-class: "I1.1.1"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

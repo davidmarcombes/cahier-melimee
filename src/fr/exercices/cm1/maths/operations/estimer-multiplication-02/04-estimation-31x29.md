@@ -7,7 +7,6 @@ choices:
   - "800"
   - "1 000"
   - "600"
-class: "S1.1.1"
 ---
 
 Sans calculer le résultat exact, quelle est la **meilleure estimation** de **31 x 29** ?

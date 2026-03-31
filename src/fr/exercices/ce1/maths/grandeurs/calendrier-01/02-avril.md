@@ -11,7 +11,6 @@ questions:
     answer: "mardi"
   - text: "Combien y a-t-il de samedis en avril ?"
     answer: "4"
-class: "I1.1.1"
 ---
 
 Observe le calendrier d'avril 2025 et réponds aux questions.

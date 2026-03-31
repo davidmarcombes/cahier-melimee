@@ -9,7 +9,6 @@ questions:
     answer: "45"
   - text: "Combien font 54 − 9 ?"
     answer: "45"
-class: "S1.1.3"
 ---
 
 Pour calculer **54 − 9**, on enlève 10 puis on rajoute 1.

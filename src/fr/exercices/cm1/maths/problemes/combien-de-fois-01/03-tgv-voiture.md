@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.2"
 title: "Le TGV et la voiture"
 answer: "6"
 ---

@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.2"
 title: "La tirelire de Louis"
 answer: "13"
 ---

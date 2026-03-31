@@ -9,7 +9,6 @@ questions:
     answer: "2"
   - text: "Combien font 12 - 9 ?"
     answer: "3"
-class: "S1.1.2"
 ---
 
 Pour calculer **12 - 9**, on remonte de 9 jusqu'à 12 pour trouver la différence.

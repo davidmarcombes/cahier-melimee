@@ -14,7 +14,6 @@ items:
   - prompt: "1 L"
     answer: "100"
     unit: "cL"
-class: "S1.1.1"
 ---
 
 Convertis en centilitres. **1 dL = 10 cL** — **1 L = 100 cL**

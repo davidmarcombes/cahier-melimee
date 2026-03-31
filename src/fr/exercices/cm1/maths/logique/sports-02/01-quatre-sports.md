@@ -8,7 +8,6 @@ solution:
   Léa: "Natation"
   Zach: "Tennis"
   Juliette: "Football"
-class: "S3.2.2"
 ---
 
 - Léa s'entraîne dans un bassin olympique tous les samedis.

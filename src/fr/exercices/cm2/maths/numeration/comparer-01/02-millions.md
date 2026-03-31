@@ -14,7 +14,6 @@ comparisons:
     right: 49999999
   - left: 31415926
     right: 31415962
-class: "S3.1.1"
 ---
 
 Compare ces nombres. Choisis **<** ou **>**.

@@ -7,7 +7,6 @@ pyramid:
   - [null, null, null]
   - [null, null]
   - [null]
-class: "S1.2.2"
 ---
 
 Cette pyramide a 5 étages. Complète chaque case manquante.

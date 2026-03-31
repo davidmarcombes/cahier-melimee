@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.3"
 title: "La librairie"
 answer: "109"
 ---

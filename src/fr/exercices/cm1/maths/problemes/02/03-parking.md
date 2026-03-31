@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.1"
 title: "Le parking du supermarché"
 answer: "160"
 ---

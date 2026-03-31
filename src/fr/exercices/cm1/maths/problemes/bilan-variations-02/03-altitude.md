@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.1"
 title: "La randonnée en montagne"
 answer: "285"
 ---

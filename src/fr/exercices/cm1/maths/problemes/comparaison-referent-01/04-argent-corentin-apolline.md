@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.3"
 title: "L'argent de Corentin et Apolline"
 answer: "58"
 ---

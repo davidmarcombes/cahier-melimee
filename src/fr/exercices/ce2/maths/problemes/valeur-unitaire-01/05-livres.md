@@ -1,6 +1,5 @@
 ---
 type: multi-question
-class: "S1.1.1"
 title: "Les livres de la bibliothèque"
 context: "6 livres coûtent 24 €."
 questions:

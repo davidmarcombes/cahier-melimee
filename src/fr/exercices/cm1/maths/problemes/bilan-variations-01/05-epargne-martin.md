@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.1"
 title: "L'épargne de Martin"
 answer: "27"
 ---

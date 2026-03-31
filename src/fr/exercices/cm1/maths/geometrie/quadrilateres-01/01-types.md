@@ -10,7 +10,6 @@ pairs:
     right: "4 côtés égaux, pas forcément d'angle droit"
   - left: "Parallélogramme"
     right: "Côtés opposés parallèles et égaux"
-class: "S1.1.1"
 ---
 
 Relie chaque quadrilatère à sa description.

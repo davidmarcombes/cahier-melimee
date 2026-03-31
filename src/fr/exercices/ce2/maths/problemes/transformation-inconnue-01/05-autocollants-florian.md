@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.3"
 title: "Les autocollants de Florian"
 answer: "38"
 ---

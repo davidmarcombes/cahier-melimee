@@ -1,6 +1,5 @@
 ---
 type: multi-question
-class: "S1.1.1"
 title: "Le bouquet de tulipes"
 context: "Un bouquet de 4 tulipes coûte 12 €."
 questions:

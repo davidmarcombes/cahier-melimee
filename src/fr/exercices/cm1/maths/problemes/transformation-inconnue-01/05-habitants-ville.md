@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.3"
 title: "Les habitants de la ville"
 answer: "1300"
 ---

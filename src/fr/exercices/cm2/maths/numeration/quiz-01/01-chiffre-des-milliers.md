@@ -7,7 +7,6 @@ choices:
   - "4"
   - "3"
   - "7"
-class: "S2.1.2"
 ---
 
 Observe bien le nombre **45 327** et trouve le chiffre des milliers.

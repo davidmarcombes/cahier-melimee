@@ -6,7 +6,6 @@ repeat: 10
 params:
   min: 2
   max: 3
-class: "S1.1.1"
 ---
 
 Calcule et écris le nombre entier correspondant.

@@ -6,7 +6,6 @@ repeat: 8
 params:
   firstPV: 3
   lastPV: 4
-class: "S2.1.3"
 ---
 
 Sélectionne les tuiles qui composent ce nombre.

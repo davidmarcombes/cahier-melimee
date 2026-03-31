@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.2"
 title: "Les bonbons"
 answer: "4"
 ---

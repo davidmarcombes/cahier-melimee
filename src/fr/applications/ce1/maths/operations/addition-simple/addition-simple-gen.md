@@ -8,7 +8,6 @@ params:
   maxA: 500
   minB: 10
   maxB: 50
-class: "S1.1.1"
 ---
 
 Calcule la somme des deux nombres.

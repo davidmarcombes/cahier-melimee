@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.3"
 title: "Les billes de Théo et Emma"
 answer: "33"
 ---

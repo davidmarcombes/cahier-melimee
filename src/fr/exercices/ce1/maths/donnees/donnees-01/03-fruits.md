@@ -7,7 +7,6 @@ values: [5, 3, 7, 4]
 yMax: 8
 yStep: 1
 unit: "nombre de fruits"
-class: "S2.1.1"
 ---
 
 Dans le panier, il y a **5** pommes, **3** poires, **7** bananes et **4** oranges.

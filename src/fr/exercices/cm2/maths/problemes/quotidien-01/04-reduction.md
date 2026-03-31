@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.2"
 title: "La réduction"
 answer: "21"
 ---

@@ -12,7 +12,6 @@ statements:
     answer: false
   - text: "Un losange a exactement 2 axes de symétrie."
     answer: true
-class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

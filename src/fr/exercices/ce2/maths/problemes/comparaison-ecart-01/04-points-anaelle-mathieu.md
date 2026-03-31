@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.1"
 title: "Les points d'Anaelle et Mathieu"
 answer: "53"
 ---

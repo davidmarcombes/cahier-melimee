@@ -7,5 +7,4 @@ params:
   count: 2
   min: 100
   max: 999
-class: "S1.1.1"
 ---

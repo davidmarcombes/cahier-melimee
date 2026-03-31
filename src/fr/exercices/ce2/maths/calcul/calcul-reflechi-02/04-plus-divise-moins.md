@@ -10,7 +10,6 @@ chain:
       answer: "12"
     - op: "- 7"
       answer: "5"
-class: "S1.1.3"
 ---
 
 Suis la chaîne et calcule chaque résultat.

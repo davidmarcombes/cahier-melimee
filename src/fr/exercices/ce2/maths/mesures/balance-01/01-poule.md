@@ -7,5 +7,4 @@ svg:
   par:
     left: ["🐔"]
     right: [3, 1, 7]
-class: "I1.1.2"
 ---

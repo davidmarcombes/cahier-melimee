@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "Le stade et la salle des fêtes"
 answer: "200"
 ---

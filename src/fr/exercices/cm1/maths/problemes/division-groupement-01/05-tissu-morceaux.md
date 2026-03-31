@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.3"
 title: "Les morceaux de tissu"
 answer: "20"
 ---

@@ -8,7 +8,6 @@ params:
   maxResult: 9
   minSub: 1
   maxSub: 9
-class: "S1.1.1"
 ---
 
 Quel nombre manque dans la soustraction ?

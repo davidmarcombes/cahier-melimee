@@ -10,7 +10,6 @@ pairs:
     right: "l'après-midi"
   - left: "On se couche"
     right: "le soir"
-class: "I1.1.1"
 ---
 
 Relie chaque activité au bon moment de la journée.

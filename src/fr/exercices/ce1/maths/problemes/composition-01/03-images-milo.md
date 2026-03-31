@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.1"
 title: "Les images de Milo et Emma"
 answer: "27"
 ---

@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M3.2"
 title: "Les menus du restaurant"
 answer: "24"
 ---

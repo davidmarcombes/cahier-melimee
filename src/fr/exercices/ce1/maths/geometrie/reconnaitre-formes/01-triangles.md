@@ -24,7 +24,6 @@ tiles:
       w: 70
       h: 50
 answers: [0, 3]
-class: "S1.1.1"
 ---
 
 Clique sur tous les **triangles**.

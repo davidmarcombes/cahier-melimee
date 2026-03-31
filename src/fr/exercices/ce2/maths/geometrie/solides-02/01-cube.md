@@ -11,7 +11,6 @@ choices:
   - "un carré"
   - "un pavé droit"
 answer: "un cube"
-class: "S1.1.1"
 ---
 
 Mélimee a dessiné un solide. Quel est son nom ?

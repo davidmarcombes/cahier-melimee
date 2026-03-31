@@ -13,6 +13,5 @@ params:
   variants:
     - mult_input
     - div_result
-class: "S1.1.1"
 ---
 

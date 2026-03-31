@@ -12,7 +12,6 @@ statements:
     answer: true
   - text: "Un quart est plus grand qu'un demi."
     answer: false
-class: "S2.1.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

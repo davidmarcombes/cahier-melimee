@@ -14,7 +14,6 @@ items:
   - prompt: "750 mL"
     answer: "0,75"
     unit: "L"
-class: "S1.1.1"
 ---
 
 Convertis les millilitres en litres.

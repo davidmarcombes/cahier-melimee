@@ -9,7 +9,6 @@ questions:
     answer: "5"
   - text: "Combien fait 47 + 8 ?"
     answer: "55"
-class: "S1.1.3"
 ---
 
 Utilise la stratégie du passage par la dizaine.

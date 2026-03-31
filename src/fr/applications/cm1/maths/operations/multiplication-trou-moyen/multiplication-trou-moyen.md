@@ -1,6 +1,6 @@
 ---
 type: number-check
-title: "Multiplications à trou (Moyen)"
+title: "Multiplications à trou "
 generator: "multiplicationTrou"
 repeat: 12
 params:
@@ -8,7 +8,6 @@ params:
   maxA: 12
   minB: 2
   maxB: 12
-class: "S1.1.1"
 ---
 
 Trouve le nombre manquant dans chaque multiplication !

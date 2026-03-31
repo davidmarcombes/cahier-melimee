@@ -10,7 +10,6 @@ pairs:
     right: "40 c"
   - left: "1 pièce de 50 c"
     right: "50 c"
-class: "S1.1.1"
 ---
 
 Relie chaque collection à sa valeur.

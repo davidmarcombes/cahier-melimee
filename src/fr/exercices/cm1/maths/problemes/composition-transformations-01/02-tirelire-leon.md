@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.2"
 title: "La tirelire de Léon"
 answer: "27"
 ---

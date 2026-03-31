@@ -10,7 +10,6 @@ pairs:
     right: "3 axes"
   - left: "Cercle"
     right: "Infinité d'axes"
-class: "S1.1.1"
 ---
 
 Relie chaque figure au nombre de ses axes de symétrie.

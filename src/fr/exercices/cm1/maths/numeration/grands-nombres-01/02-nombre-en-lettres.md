@@ -7,7 +7,6 @@ choices:
   - "soixante-douze-mille-quatre-cents-cinq"
   - "septante-deux-mille-quatre-cent-cinq"
   - "soixante-douze-mille-quarante-cinq"
-class: "S2.1.4"
 ---
 
 Choisis la bonne écriture en lettres du nombre **72 405**.

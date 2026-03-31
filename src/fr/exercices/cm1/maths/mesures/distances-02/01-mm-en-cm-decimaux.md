@@ -14,7 +14,6 @@ items:
   - prompt: "5 mm"
     answer: "0,5"
     unit: "cm"
-class: "S1.1.1"
 ---
 
 Convertis les millimètres en centimètres.

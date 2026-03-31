@@ -8,5 +8,4 @@ statements:
   - "L'angle formé par deux droites perpendiculaires est de 90°."
   - "Deux droites perpendiculaires sont aussi parallèles."
 checkedAnswers: [0, 2, 3]
-class: "S1.1.1"
 ---

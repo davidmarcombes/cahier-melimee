@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.3"
 title: "Les glaces du magasin"
 answer: "75"
 ---

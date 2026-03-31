@@ -9,5 +9,4 @@ questions:
     answer: "3"
   - text: "Partie entière ?"
     answer: "8"
-class: "S1.1.1"
 ---

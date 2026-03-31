@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.1"
 title: "Le livre d'Élodie"
 answer: "23"
 ---

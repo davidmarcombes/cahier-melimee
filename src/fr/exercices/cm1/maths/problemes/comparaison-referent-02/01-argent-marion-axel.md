@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.3"
 title: "L'argent de Marion et Axel"
 answer: "45"
 ---

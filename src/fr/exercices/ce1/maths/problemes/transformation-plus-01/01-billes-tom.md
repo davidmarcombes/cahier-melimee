@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.1"
 title: "Les billes de Tom"
 answer: "15"
 ---

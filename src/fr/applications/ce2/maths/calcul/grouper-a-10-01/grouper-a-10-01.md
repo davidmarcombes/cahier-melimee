@@ -4,5 +4,4 @@ generator: groupeA10
 repeat: 10
 params:
   level: facile
-class: "S1.1.1"
 ---

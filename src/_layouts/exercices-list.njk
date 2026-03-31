@@ -2,27 +2,20 @@
 layout: base
 ---
 
-{% if site.devMode %}
-  <script>
-    window.__seriesTypes = {{ collections.seriesMeta | seriesTypesMap | dump | safe }};
-  </script>
-{% endif %}
 <div
   x-data="{ filters: JSON.parse(sessionStorage.getItem('exf') ||
     '{&quot;level&quot;:&quot;&quot;,&quot;topic&quot;:&quot;&quot;,&quot;difficulty&quot;:&quot;&quot;}'), search: '',
     limit: 12, _seed: Math.random(), {% if site.devMode %}showUnvalidated: false, validatedIds: new Set(), onePerType: false,
-    seriesTypes: window.__seriesTypes || {}, {% endif %}get all() { return $store.exercises.data || [] }, get options() {
+    {% endif %}get all() { return $store.exercises.data || [] }, get options() {
     const u = (k) => [...new Set(this.all.map(s => s[k]).filter(Boolean))].sort(); return { level: u('level'), topic:
     u('topic'), difficulty: u('difficulty') } }, get filtered() { const q = this.search.toLowerCase(); let list =
     this.all.filter(s => (!this.filters.level || s.level === this.filters.level) && (!this.filters.topic || s.topic ===
     this.filters.topic) && (!this.filters.difficulty || s.difficulty === this.filters.difficulty) && (!q || (s.title + ' ' +
     s.topic).toLowerCase().includes(q)){% if site.devMode %} && (!this.showUnvalidated || !this.validatedIds.has(s.id)){%
-    endif %} ); {% if site.devMode %}if (this.onePerType) { const seen = new Set(); list = list.filter(s => { const types =
-    this.seriesTypes[s.id]; if (!types || !types.length) return true; const key = types.slice().sort().join(','); if
-    (seen.has(key)) return false; seen.add(key); return true; }); }{% endif %} return list; }, get ordered() { const list =
+    endif %} ); {% if site.devMode %}if (this.onePerType) { const seen = new Set(); list = list.filter(s => { const key = s.typeKey || ''; if (seen.has(key)) return false; seen.add(key); return true; }); }{% endif %} return list; }, get ordered() { const list =
     this.filtered; const seed = this._seed; if
     (this.filters.topic || this.search) return list; const arr = list.map((s, i) => ({ s, r: (Math.sin(seed * 9301 + i *
-    49297 + 233) * 93701) % 1 })); arr.sort((a, b) => a.r - b.r); const groups = new Map(); for (const { s } of arr) { const k = s.typeKey || ''; if (!groups.has(k))
+    49297 + 233) * 93701) % 1 })); arr.sort((a, b) => a.r - b.r); const groups = new Map(); for (const { s } of arr) { const k = (s.typeKey || '') + '|' + (s.classKey || ''); if (!groups.has(k))
     groups.set(k, []); groups.get(k).push(s); } const cols = [...groups.values()]; const out = []; for (let i = 0; out.length
     < list.length; i++) for (const col of cols) { if (i < col.length) out.push(col[i]); } return out; }, get visible() {
     return this.ordered.slice(0, this.limit) }, get hasActiveFilter() { return Object.values(this.filters).some(v => v !==

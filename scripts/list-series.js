@@ -86,7 +86,7 @@ for (const indexPath of indexFiles) {
   const content = fs.readFileSync(indexPath, 'utf8');
   const meta    = parseYamlSimple(content);
   const id      = meta.id || '(no id)';
-  const title   = meta.seriesTitle || '(untitled)';
+  const title   = meta.title || '(untitled)';
   const diff    = meta.difficulty  || '—';
 
   const seriesDir = path.dirname(indexPath);

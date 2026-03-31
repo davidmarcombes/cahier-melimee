@@ -12,7 +12,6 @@ statements:
     answer: false
   - text: "0 est un multiple de 5."
     answer: true
-class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

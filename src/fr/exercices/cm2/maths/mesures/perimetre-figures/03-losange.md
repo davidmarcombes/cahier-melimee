@@ -6,7 +6,6 @@ svg:
   par:
     name: lasange-6cm.svg
 answer: "24"
-class: "S1.1.1"
 ---
 
 Calcule le périmètre de ce losange en centimètres.

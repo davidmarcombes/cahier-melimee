@@ -8,7 +8,6 @@ solution:
   Clara: "Gym"
   Simon: "Tir à l'arc"
   Yasmine: "Patinage"
-class: "S3.2.2"
 ---
 
 - Yasmine glisse sur la glace avec des patins à lames chaque dimanche.

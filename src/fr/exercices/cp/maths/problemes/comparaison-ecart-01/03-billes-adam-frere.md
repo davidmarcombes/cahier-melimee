@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.1"
 title: "Les billes d'Adam et son frère"
 answer: "4"
 ---

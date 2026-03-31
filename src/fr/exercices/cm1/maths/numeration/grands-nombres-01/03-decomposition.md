@@ -11,7 +11,6 @@ questions:
     answer: "5"
   - text: "Quel est le nombre de centaines ?"
     answer: "1562"
-class: "S1.1.1"
 ---
 
 Observe le nombre ci-dessus et réponds aux questions.

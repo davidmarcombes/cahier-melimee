@@ -7,7 +7,6 @@ choices:
   - "16"
   - "26"
   - "Impossible à résoudre"
-class: "S3.2.2"
 ---
 
 Un berger a 26 moutons et 10 chèvres. Quel est l'âge du capitaine ?

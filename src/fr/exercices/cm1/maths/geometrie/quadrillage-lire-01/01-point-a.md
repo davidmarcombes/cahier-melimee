@@ -9,5 +9,4 @@ points:
     y: 6
     label: A
 answer: "3,6"
-class: "S1.1.1"
 ---

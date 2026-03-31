@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M3.3"
 title: "Le voyage en train"
 answer: "450"
 ---

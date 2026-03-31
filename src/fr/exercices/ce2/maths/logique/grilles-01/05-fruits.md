@@ -7,7 +7,6 @@ solution:
   Adam: "Banane"
   Léa: "Fraise"
   Tom: "Pomme"
-class: "S2.1.1"
 ---
 
 - Adam ne préfère pas la pomme.

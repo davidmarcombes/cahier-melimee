@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "L'arbre et l'arbuste"
 answer: "7"
 ---

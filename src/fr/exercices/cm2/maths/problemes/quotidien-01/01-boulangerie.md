@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.1"
 title: "La boulangerie"
 answer: "36"
 ---

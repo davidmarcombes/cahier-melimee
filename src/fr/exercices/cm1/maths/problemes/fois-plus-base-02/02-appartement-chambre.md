@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "L'appartement et la chambre"
 answer: "20"
 ---

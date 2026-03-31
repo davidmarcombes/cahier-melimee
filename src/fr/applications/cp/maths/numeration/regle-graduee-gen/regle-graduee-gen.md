@@ -9,7 +9,6 @@ params:
   divisions: 1
   subdivisions: 0
   label: "A"
-class: "I1.1.2"
 ---
 
 Quel nombre est indiqué par la flèche **A** ?

@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.1"
 title: "Compter des pièces"
 answer: "4"
 ---

@@ -14,7 +14,6 @@ items:
   - prompt: "1 L 250 mL"
     answer: "1250"
     unit: "mL"
-class: "S1.1.1"
 ---
 
 Convertis chaque mesure dans l'unité demandée.

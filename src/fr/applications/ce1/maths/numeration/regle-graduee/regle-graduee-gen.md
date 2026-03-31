@@ -7,7 +7,6 @@ params:
   min: 0
   max: 5
   divisions: 10
-class: "I1.1.2"
 ---
 
 Quel nombre décimal est indiqué par la flèche ? (ex : 2,7)

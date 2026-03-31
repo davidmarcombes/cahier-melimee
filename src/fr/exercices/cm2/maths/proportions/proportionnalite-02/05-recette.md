@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M3.1"
 title: "La recette de grand-mère"
 answer: "450"
 ---

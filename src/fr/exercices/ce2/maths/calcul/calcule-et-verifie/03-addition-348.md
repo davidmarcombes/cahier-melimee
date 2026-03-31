@@ -7,7 +7,6 @@ questions:
     answer: "623"
   - text: "Vérification : 623 − 275 = ?"
     answer: "348"
-class: "S1.1.1"
 ---
 
 **Étape 1** : calcule. **Étape 2** : vérifie avec l'opération inverse.

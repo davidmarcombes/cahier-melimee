@@ -12,5 +12,4 @@ params:
       value: 10
     - label: "unités"
       value: 1
-class: "S2.1.2"
 ---

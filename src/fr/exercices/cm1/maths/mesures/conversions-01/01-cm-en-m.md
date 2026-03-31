@@ -14,7 +14,6 @@ items:
   - prompt: "1 000 cm"
     answer: "10"
     unit: "m"
-class: "S1.1.1"
 ---
 
 Convertis les centimètres en mètres.

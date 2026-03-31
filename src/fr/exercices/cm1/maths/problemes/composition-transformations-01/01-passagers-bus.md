@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.2"
 title: "Les passagers du bus"
 answer: "3"
 ---

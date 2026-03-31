@@ -6,5 +6,4 @@ repeat: 12
 params:
   min: 1
   max: 9
-class: "S1.1.2"
 ---

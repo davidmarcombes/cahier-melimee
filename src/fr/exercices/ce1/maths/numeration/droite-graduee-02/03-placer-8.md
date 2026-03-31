@@ -5,5 +5,4 @@ min: 0
 max: 10
 step: 1
 answer: "8"
-class: "S1.1.1"
 ---

@@ -9,6 +9,5 @@ params:
     - 1000
   maxDec: 2
   wholeMax: 99
-class: "S1.1.1"
 ---
 

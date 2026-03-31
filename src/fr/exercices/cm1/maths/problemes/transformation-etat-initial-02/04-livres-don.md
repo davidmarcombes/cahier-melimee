@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.4"
 title: "Le don de livres"
 answer: "4 518"
 ---

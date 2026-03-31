@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.1"
 title: "Les œufs de la ferme"
 answer: "72"
 ---

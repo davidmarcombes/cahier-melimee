@@ -7,7 +7,6 @@ choices:
   - "90"
   - "110"
   - "150"
-class: "S1.1.1"
 ---
 
 Sans calculer le résultat exact, quelle est la **meilleure estimation** de **5 x 19** ?

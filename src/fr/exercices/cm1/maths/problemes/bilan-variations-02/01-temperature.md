@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.1"
 title: "La température de la journée"
 answer: "7"
 ---

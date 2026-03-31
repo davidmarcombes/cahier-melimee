@@ -1,6 +1,5 @@
 ---
 type: multi-question
-class: "S1.1.1"
 title: "Les cahiers de la papeterie"
 context: "6 cahiers coûtent 18 €."
 questions:

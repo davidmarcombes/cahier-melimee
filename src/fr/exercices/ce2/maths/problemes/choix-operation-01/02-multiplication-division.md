@@ -11,7 +11,6 @@ statements:
     answer: "multiplication (×)"
   - template: "35 élèves sont répartis en 5 groupes égaux. Il faut utiliser la ___."
     answer: "division (÷)"
-class: "S1.1.1"
 ---
 
 Pour chaque situation, choisis la bonne opération.

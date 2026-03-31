@@ -8,7 +8,6 @@ chain:
       answer: "10"
     - op: "+ 2"
       answer: "12"
-class: "S1.1.1"
 ---
 
 Calcule **7 + 5** en passant par 10.

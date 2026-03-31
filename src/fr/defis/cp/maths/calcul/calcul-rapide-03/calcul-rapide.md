@@ -6,5 +6,4 @@ repeat: 60
 params:
   level: cp
   difficulty: difficile
-class: "S1.1.1"
 ---

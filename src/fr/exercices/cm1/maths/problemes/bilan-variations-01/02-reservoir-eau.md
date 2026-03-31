@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.1"
 title: "Le réservoir d'eau"
 answer: "63"
 ---

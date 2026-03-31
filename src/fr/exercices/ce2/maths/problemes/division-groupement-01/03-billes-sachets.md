@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.3"
 title: "Les sachets de billes"
 answer: "9"
 ---

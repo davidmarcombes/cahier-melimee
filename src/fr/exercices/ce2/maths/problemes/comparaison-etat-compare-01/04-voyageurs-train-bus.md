@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Le train et le bus"
 answer: "68"
 ---

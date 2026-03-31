@@ -8,7 +8,6 @@ params:
   countMax: 7
   opMin: 1
   opMax: 5
-class: "S1.1.1"
 ---
 
 Compte les insectes, puis calcule.

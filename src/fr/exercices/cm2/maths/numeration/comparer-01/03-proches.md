@@ -14,7 +14,6 @@ comparisons:
     right: 45678910
   - left: 300000000
     right: 299999999
-class: "S3.1.1"
 ---
 
 Attention, ces nombres sont très proches ! Choisis **<** ou **>**.

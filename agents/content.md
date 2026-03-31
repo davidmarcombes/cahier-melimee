@@ -21,7 +21,7 @@ node scripts/show-type.js multi-question
 #    slug = kebab-case, ends with -01 (first series of that topic)
 
 # 4. Create index.yaml (NO id — generate:ids assigns it)
-#    seriesTitle: "Human readable title"
+#    title: "Human readable title"
 #    difficulty: facile | moyen | difficile
 
 # 5. Create exercise files: 01-slug.md, 02-slug.md, ...
@@ -70,14 +70,14 @@ src/fr/exercices/
 
 - Folder: `topic-variant-01` → `calcul-reflechi-01`, `division-sens-01`
 - Files: `01-short-description.md` (kebab-case, ~3 words max)
-- `seriesTitle`: French, human-readable, quoted if it contains colons
+- `title`: French, human-readable, quoted if it contains colons
 
 ---
 
 ## index.yaml
 
 ```yaml
-seriesTitle: "Titre humain de la série"
+title: "Titre humain de la série"
 difficulty: facile          # facile | moyen | difficile
 ```
 

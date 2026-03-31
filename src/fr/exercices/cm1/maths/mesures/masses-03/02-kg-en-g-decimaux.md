@@ -14,7 +14,6 @@ items:
   - prompt: "0,25 kg"
     answer: "250"
     unit: "g"
-class: "S1.1.1"
 ---
 
 Convertis les kilogrammes en grammes.

@@ -7,7 +7,6 @@ questions:
     answer: "20"
   - text: "Combien de billes a-t-il à la fin ?"
     answer: "16"
-class: "S1.1.1"
 ---
 
 Lis le problème, puis réponds aux deux questions.

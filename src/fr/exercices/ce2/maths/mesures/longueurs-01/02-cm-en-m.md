@@ -11,7 +11,6 @@ items:
   - prompt: "350 cm"
     answer: "3,5"
     unit: "m"
-class: "S1.1.1"
 ---
 
 Convertis les centimètres en mètres.

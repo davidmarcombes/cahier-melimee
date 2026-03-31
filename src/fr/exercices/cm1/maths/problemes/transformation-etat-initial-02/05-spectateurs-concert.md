@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.4"
 title: "Le concert"
 answer: "2 856"
 ---

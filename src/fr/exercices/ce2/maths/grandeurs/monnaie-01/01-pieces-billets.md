@@ -12,7 +12,6 @@ statements:
     answer: true
   - text: "10 pièces de 10 centimes font 1 euro."
     answer: true
-class: "S3.2.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

@@ -3,7 +3,6 @@ type: number-check
 title: "Le tiers d'une collection"
 operation: "tiers de 9 pommes = ?"
 answer: "3"
-class: "S2.1.3"
 ---
 
 🍎🍎🍎🍎🍎🍎🍎🍎🍎

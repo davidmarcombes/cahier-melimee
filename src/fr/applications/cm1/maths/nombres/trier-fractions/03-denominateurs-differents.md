@@ -8,7 +8,6 @@ params:
   direction: asc
   sameDenominator: false
   # clone this file and set sameDenominator: true + a fixed denominator for an easier version
-class: "S2.1.3"
 ---
 
 Range ces fractions du **plus petit au plus grand**.

@@ -10,5 +10,4 @@ params:
   count: 5
   trueRatio: 0.5
   style: relational
-class: "S3.2.3"
 ---

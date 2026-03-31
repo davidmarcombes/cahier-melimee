@@ -14,7 +14,6 @@ questions:
     answer: "4"
   - text: "Combien de degrés de différence entre mardi et vendredi ?"
     answer: "4"
-class: "D1.1.1"
 ---
 
 Observe le diagramme des températures de la semaine et réponds aux questions.

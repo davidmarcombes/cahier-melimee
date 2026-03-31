@@ -7,7 +7,6 @@ pyramid:
   - [null, null, null]
   - [null, null]
   - [null]
-class: "S1.2.2"
 ---
 
 Complète cette grande pyramide de 5 étages avec des nombres décimaux.

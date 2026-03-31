@@ -7,7 +7,6 @@ choices:
   - "cm"
   - "m"
   - "L"
-class: "S2.1.3"
 ---
 
 On mesure l'aire d'une feuille de papier. On utilisera :

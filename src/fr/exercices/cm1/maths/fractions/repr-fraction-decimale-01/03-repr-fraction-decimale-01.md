@@ -8,7 +8,6 @@ svg:
     cols: 10
     rows: 10
     filled: 25
-class: "S2.1.3"
 ---
 
 **Quelle fraction de cette grille de 100 cases est coloriée ?**

@@ -1,6 +1,5 @@
 ---
 type: matching
-class: "S2.1.4"
 title: "Relie les nombres (11 à 15)"
 pairs:
   - left: "11"

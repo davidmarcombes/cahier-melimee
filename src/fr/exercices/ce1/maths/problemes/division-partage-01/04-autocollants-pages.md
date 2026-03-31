@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.2"
 title: "Les autocollants"
 answer: "4"
 ---

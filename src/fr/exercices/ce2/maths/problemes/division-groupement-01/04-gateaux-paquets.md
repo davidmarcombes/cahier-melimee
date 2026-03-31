@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.3"
 title: "Les gâteaux en paquets"
 answer: "8"
 ---

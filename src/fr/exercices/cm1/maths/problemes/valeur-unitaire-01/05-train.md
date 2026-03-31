@@ -1,6 +1,5 @@
 ---
 type: multi-question
-class: "S1.1.1"
 title: "Le trajet en train"
 context: "Un train parcourt 450 km en 3 heures."
 questions:

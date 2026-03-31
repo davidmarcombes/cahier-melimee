@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.2"
 title: "Les groupes de sport"
 answer: "6"
 ---

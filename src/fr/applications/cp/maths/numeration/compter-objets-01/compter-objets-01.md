@@ -6,5 +6,4 @@ repeat: 10
 params:
   min: 2
   max: 7
-class: "S2.1.1"
 ---

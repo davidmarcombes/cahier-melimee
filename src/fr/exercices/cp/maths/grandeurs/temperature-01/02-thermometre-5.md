@@ -6,7 +6,6 @@ max: 30
 markers:
   - value: 5
 answer: "5"
-class: "I1.1.2"
 ---
 
 Quelle température indique le thermomètre ?

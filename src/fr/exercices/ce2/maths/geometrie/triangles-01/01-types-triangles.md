@@ -10,7 +10,6 @@ pairs:
     right: "Tous les côtés différents"
   - left: "Triangle rectangle"
     right: "Un angle droit"
-class: "S1.1.1"
 ---
 
 Relie chaque type de triangle à sa définition.

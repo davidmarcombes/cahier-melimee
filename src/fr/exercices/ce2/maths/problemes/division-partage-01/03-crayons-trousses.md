@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.2"
 title: "Les crayons dans les trousses"
 answer: "9"
 ---

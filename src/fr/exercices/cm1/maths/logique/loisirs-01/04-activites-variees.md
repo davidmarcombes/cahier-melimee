@@ -8,7 +8,6 @@ solution:
   Hugo: "Randonnée"
   Aïcha: "Photo"
   Marius: "Poterie"
-class: "S3.2.2"
 ---
 
 - Hugo explore les sentiers de montagne avec son sac à dos chaque dimanche.

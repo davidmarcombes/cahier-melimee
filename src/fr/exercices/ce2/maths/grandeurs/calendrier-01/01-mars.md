@@ -13,7 +13,6 @@ questions:
     answer: "28"
   - text: "Quelle date tombe exactement 2 semaines après le 3 mars ?"
     answer: "17"
-class: "I1.1.1"
 ---
 
 Observe le calendrier de mars 2025 et réponds aux questions.

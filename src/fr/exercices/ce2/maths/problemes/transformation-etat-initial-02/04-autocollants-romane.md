@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.4"
 title: "Les autocollants de Romane"
 answer: "85"
 ---

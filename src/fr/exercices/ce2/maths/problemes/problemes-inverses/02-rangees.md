@@ -9,7 +9,6 @@ ipInverses:
     answer: 8
   - text: "On a **48** chaises à placer en rangées de **8**. Combien de rangées faut-il ?"
     answer: 6
-class: "S2.2.2"
 ---
 
 Résous le premier problème, puis ses variantes.

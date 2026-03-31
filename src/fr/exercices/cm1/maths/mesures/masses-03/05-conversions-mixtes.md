@@ -14,7 +14,6 @@ items:
   - prompt: "4 t 500 kg"
     answer: "4500"
     unit: "kg"
-class: "S1.1.1"
 ---
 
 Convertis chaque mesure dans l'unité demandée.

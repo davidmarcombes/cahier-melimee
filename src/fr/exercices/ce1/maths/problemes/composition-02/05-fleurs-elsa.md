@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.2"
 title: "Le bouquet d'Elsa"
 answer: "6"
 ---

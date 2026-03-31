@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.1"
 title: "Le jardin et le balcon"
 answer: "24"
 ---

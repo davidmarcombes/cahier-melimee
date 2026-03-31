@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.2"
 title: "L'éléphant et le cheval"
 answer: "6"
 ---

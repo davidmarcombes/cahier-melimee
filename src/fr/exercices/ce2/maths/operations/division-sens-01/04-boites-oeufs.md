@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.3"
 title: "Les boîtes d'œufs"
 answer: "7"
 ---

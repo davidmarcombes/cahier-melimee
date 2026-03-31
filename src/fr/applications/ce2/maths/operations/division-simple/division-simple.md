@@ -8,7 +8,6 @@ params:
   maxDivisor: 9
   minQuotient: 2
   maxQuotient: 10
-class: "S1.1.1"
 ---
 
 Calcule chaque division.

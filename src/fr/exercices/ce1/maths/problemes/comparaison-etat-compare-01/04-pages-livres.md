@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les deux livres"
 answer: "17"
 ---

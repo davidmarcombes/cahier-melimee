@@ -9,7 +9,6 @@ svg:
     top: 120
     left: 80
     right: "?"
-class: "S1.1.2"
 ---
 
 Calcule la valeur manquante pour compléter cet arbre.

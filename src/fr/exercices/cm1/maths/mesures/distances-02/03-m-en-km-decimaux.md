@@ -14,7 +14,6 @@ items:
   - prompt: "4 200 m"
     answer: "4,2"
     unit: "km"
-class: "S1.1.1"
 ---
 
 Convertis les mètres en kilomètres.

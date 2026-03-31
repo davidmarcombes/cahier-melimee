@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.1"
 title: "La librairie en fin de semaine"
 answer: "55"
 ---

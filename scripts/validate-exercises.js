@@ -95,7 +95,7 @@ function validateSeries(seriesDir, errors) {
     return;
   }
 
-  if (!meta.seriesTitle) errors.push(`${rel}/index.yaml: missing "seriesTitle"`);
+  if (!meta.title) errors.push(`${rel}/index.yaml: missing "title"`);
   if (!meta.difficulty) {
     errors.push(`${rel}/index.yaml: missing "difficulty"`);
   } else if (!VALID_DIFFICULTIES.includes(meta.difficulty)) {

@@ -7,7 +7,6 @@ values: [3, 5, 2, 4]
 yMax: 6
 yStep: 1
 unit: "nombre d'élèves"
-class: "D1.1.1"
 ---
 
 Dans la classe, **3** élèves préfèrent le chat, **5** le chien, **2** le lapin et **4** le poisson.

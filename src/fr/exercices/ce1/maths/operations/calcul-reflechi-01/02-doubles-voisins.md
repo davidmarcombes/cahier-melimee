@@ -7,7 +7,6 @@ questions:
     answer: "12"
   - text: "Combien font 6 + 7 ?"
     answer: "13"
-class: "S1.1.2"
 ---
 
 Pour calculer **6 + 7**, on utilise le double de 6, puis on ajoute 1.

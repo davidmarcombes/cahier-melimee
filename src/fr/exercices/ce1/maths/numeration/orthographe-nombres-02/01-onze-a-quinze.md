@@ -12,5 +12,4 @@ pairs:
     right: "quatorze"
   - left: "15"
     right: "quinze"
-class: "S2.1.4"
 ---

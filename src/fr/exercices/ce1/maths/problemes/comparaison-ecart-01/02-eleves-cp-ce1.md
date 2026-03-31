@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.1"
 title: "Les élèves du CP et du CE1"
 answer: "4"
 ---

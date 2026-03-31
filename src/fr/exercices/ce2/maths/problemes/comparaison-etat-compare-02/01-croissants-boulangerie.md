@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les croissants de la boulangerie"
 answer: "76"
 ---

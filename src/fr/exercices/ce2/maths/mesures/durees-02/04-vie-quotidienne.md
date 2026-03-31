@@ -12,5 +12,4 @@ pairs:
     right: "années"
   - left: "le Moyen Âge"
     right: "siècles"
-class: "I1.1.1"
 ---

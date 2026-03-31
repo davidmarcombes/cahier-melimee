@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les billes de Timéo et Inès"
 answer: "39"
 ---

@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.2"
 title: "Les images d'Ava et Lola"
 answer: "23"
 ---

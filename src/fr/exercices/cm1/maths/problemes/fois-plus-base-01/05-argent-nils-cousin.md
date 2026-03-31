@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "L'argent de poche de Nils et son cousin"
 answer: "14"
 ---

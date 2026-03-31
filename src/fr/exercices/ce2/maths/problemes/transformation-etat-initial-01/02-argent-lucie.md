@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.4"
 title: "L'argent de Lucie"
 answer: "80"
 ---

@@ -9,7 +9,6 @@ questions:
     answer: "60"
   - text: "Combien font 100 − 37 ?"
     answer: "63"
-class: "S1.1.2"
 ---
 
 Pour calculer **100 − 37**, on remonte de 37 jusqu'à 100 par étapes.

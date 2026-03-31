@@ -8,7 +8,6 @@ params:
   maxA: 10
   minB: 6
   maxB: 6
-class: "S1.1.1"
 ---
 
 Calcule le résultat de chaque addition.

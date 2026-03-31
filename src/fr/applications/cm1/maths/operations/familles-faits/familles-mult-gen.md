@@ -5,5 +5,4 @@ repeat: 6
 params:
   mode: mult
   maxFactor: 12
-class: "S2.2.1"
 ---

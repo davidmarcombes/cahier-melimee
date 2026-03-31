@@ -1,6 +1,5 @@
 ---
 type: multi-question
-class: "S1.1.1"
 title: "Les paquets de bonbons"
 context: "5 paquets de bonbons contiennent 30 bonbons au total."
 questions:

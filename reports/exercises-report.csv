@@ -1,49 +1,49 @@
-kind,path,id,seriesTitle,level,subject,topic,difficulty,exerciseCount,repeatTotal,lengthFlag,types,generators,classes
-application,fr/applications/cp/maths/calcul/grouper-10-01,f898081c,Grouper pour faire 10,CP,maths,calcul,facile,1,10,,number-check,grouper10,S1.1.1
+kind,path,id,title,level,subject,topic,difficulty,exerciseCount,repeatTotal,lengthFlag,types,generators,class
+application,fr/applications/cp/maths/calcul/grouper-10-01,f898081c,Grouper pour faire 10,CP,maths,calcul,facile,1,10,,number-check,grouper10,S1.1.2
 defi,fr/defis/cp/maths/calcul/calcul-rapide-01,b325ed56,Calcul rapide CP,CP,maths,calcul,facile,1,60,too-long,number-check,fluencyMix,S1.1.1
 exercice,fr/exercices/cp/maths/calcul/liens-numeriques-01,d2fd2d9e,Décomposer en arbre,CP,maths,calcul,facile,5,5,,number-check,,S1.1.1
-application,fr/applications/cp/maths/calcul/grouper-10-02,e4368522,Grouper pour faire 10,CP,maths,calcul,moyen,1,12,,number-check,grouper10,S1.1.1
+application,fr/applications/cp/maths/calcul/grouper-10-02,e4368522,Grouper pour faire 10,CP,maths,calcul,moyen,1,12,,number-check,grouper10,S1.1.2
 defi,fr/defis/cp/maths/calcul/calcul-rapide-02,f26da083,Calcul rapide CP,CP,maths,calcul,moyen,1,60,too-long,number-check,fluencyMix,S1.1.1
 exercice,fr/exercices/cp/maths/calcul/passage-par-10,e64b5527,Passe par 10,CP,maths,calcul,moyen,6,6,,calc-chain,,S1.1.1
 defi,fr/defis/cp/maths/calcul/calcul-rapide-03,ba420d39,Calcul rapide CP,CP,maths,calcul,difficile,1,60,too-long,number-check,fluencyMix,S1.1.1
-exercice,fr/exercices/cp/maths/geometrie/figures-01,bb4ea68d,Les figures planes,CP,maths,geometrie,facile,5,5,,mcq,,S1.1.1 | S2.2.1
-exercice,fr/exercices/cp/maths/geometrie/quadrillage-lire-01,c96bf18b,Lire les coordonnées d'un point,CP,maths,geometrie,facile,5,5,,coordinate-grid,,S1.1.1
-exercice,fr/exercices/cp/maths/geometrie/solides-01,e79e169e,Les solides,CP,maths,geometrie,facile,3,3,,matching | true-false,,S2.1.1 | S2.1.4 | S3.2.3
-exercice,fr/exercices/cp/maths/geometrie/symetrie-01,f0954c70,La symétrie,CP,maths,geometrie,facile,3,3,,true-false | mcq,,S1.1.1 | S2.1.4 | S3.2.3
-exercice,fr/exercices/cp/maths/grandeurs/durees-01,d45be6a5,Les jours et moments de la journée,CP,maths,grandeurs,facile,5,5,,mcq | matching | true-false,,I1.1.1
-exercice,fr/exercices/cp/maths/grandeurs/longueurs-01,e00d4ed5,Mesurer avec une règle,CP,maths,grandeurs,facile,5,5,,ruler | mcq,,I1.1.2 | S3.1.1
-exercice,fr/exercices/cp/maths/grandeurs/temperature-01,a36c76d0,Chaud ou froid ? Lire la température,CP,maths,grandeurs,facile,5,5,,thermometer | matching | mcq | true-false,,I1.1.2 | S1.1.1 | S3.1.1 | S3.2.3
+exercice,fr/exercices/cp/maths/geometrie/figures-01,bb4ea68d,Les figures planes,CP,maths,geometrie,facile,5,5,,mcq,,S1.1.1
+exercice,fr/exercices/cp/maths/geometrie/quadrillage-lire-01,c96bf18b,Lire des coordonnées,CP,maths,geometrie,facile,5,5,,coordinate-grid,,S1.1.1
+exercice,fr/exercices/cp/maths/geometrie/solides-01,e79e169e,Les solides,CP,maths,geometrie,facile,3,3,,matching | true-false,,S2.1.1
+exercice,fr/exercices/cp/maths/geometrie/symetrie-01,f0954c70,La symétrie,CP,maths,geometrie,facile,3,3,,true-false | mcq,,S1.1.1
+exercice,fr/exercices/cp/maths/grandeurs/durees-01,d45be6a5,Jours et moments,CP,maths,grandeurs,facile,5,5,,mcq | matching | true-false,,I1.1.1
+exercice,fr/exercices/cp/maths/grandeurs/longueurs-01,e00d4ed5,Mesurer avec une règle,CP,maths,grandeurs,facile,5,5,,ruler | mcq,,I1.1.2
+exercice,fr/exercices/cp/maths/grandeurs/temperature-01,a36c76d0,La température,CP,maths,grandeurs,facile,5,5,,thermometer | matching | mcq | true-false,,I1.1.2
 exercice,fr/exercices/cp/maths/logique/suites-figurales-01,e1721603,Suites de figures,CP,maths,logique,facile,5,5,,mcq,,S3.2.1
-application,fr/applications/cp/maths/numeration/chasse-aux-nombres-01,f5b2d847,Chasse aux nombres (1 → 15),CP,maths,numeration,facile,1,6,,number-hunt,huntNombres,S1.1.1
-application,fr/applications/cp/maths/numeration/coloriage-magique-01,e8cc9784,Coloriage magique — nombres pairs,CP,maths,numeration,facile,2,5,,magic-color,magicColorGrid,S1.1.1
+application,fr/applications/cp/maths/numeration/chasse-aux-nombres-01,f5b2d847,Chasse aux nombres 1 → 15,CP,maths,numeration,facile,1,6,,number-hunt,huntNombres,S2.1.1
+application,fr/applications/cp/maths/numeration/coloriage-magique-01,e8cc9784,Coloriage magique: nombres pairs,CP,maths,numeration,facile,2,5,,magic-color,magicColorGrid,S3.2.1
 application,fr/applications/cp/maths/numeration/comparer-groupes-01,d2d61ad6,Autant plus ou moins ?,CP,maths,numeration,facile,1,8,,compare-groups,comparerGroupes,S3.1.1
 application,fr/applications/cp/maths/numeration/comparer-nombres,d169e1aa,Comparer des nombres,CP,maths,numeration,facile,1,8,,tile-select,comparerNombres,S3.1.1
 application,fr/applications/cp/maths/numeration/complement-10-01,cd396ab8,Compléter jusqu'à 10,CP,maths,numeration,facile,1,10,,count-objects,complementA10Emoji,S1.1.2
-application,fr/applications/cp/maths/numeration/compter-de-n,fdcd10fa,Compter de N en N,CP,maths,numeration,facile,1,10,,sequence,compterDeN,S2.1.1
+application,fr/applications/cp/maths/numeration/compter-de-n,fdcd10fa,Compter de N en N,CP,maths,numeration,facile,1,10,,sequence,compterDeN,S3.2.1
 application,fr/applications/cp/maths/numeration/compter-objets-01,d3cf4160,Compter des objets,CP,maths,numeration,facile,1,10,,count-objects,compterObjets,S2.1.1
-application,fr/applications/cp/maths/numeration/decompo-gen,fc3ad173,Dizaines et unités,CP,maths,numeration,facile,1,10,,number-check,decompositionBase10,S1.1.1
-application,fr/applications/cp/maths/numeration/pair-ou-impair,db2e3961,Pair ou impair ?,CP,maths,numeration,facile,1,12,,number-check,pairOuImpair,S1.1.1
-application,fr/applications/cp/maths/numeration/regle-graduee-gen,bb9d74ac,Lecture sur la règle graduée,CP,maths,numeration,facile,1,10,,ruler,ruler,I1.1.2
+application,fr/applications/cp/maths/numeration/decompo-gen,fc3ad173,Dizaines et unités,CP,maths,numeration,facile,1,10,,number-check,decompositionBase10,S2.1.2
+application,fr/applications/cp/maths/numeration/pair-ou-impair,db2e3961,Pair ou impair ?,CP,maths,numeration,facile,1,12,,number-check,pairOuImpair,S3.2.1
+application,fr/applications/cp/maths/numeration/regle-graduee-gen,bb9d74ac,Lecture sur la règle graduée,CP,maths,numeration,facile,1,10,,ruler,ruler,S3.1.3
 application,fr/applications/cp/maths/numeration/trier-nombres-01,f3447a61,Trier trois nombres,CP,maths,numeration,facile,1,8,,drag-sort,trierNombres,S3.1.2
 exercice,fr/exercices/cp/maths/numeration/comparer-01,cb15795f,Comparer des nombres,CP,maths,numeration,facile,4,4,,compare,,S3.1.1
-exercice,fr/exercices/cp/maths/numeration/decompo-100-01,feab9a9f,Dizaines et unités jusqu'à 100,CP,maths,numeration,facile,5,5,,base-10,,S2.1.2
-exercice,fr/exercices/cp/maths/numeration/decompo-20-01,a2ce60ce,Décomposer les nombres jusqu'à 20,CP,maths,numeration,facile,5,5,,number-check,,S1.1.1 | S2.1.3
-exercice,fr/exercices/cp/maths/numeration/mots-01,daf40046,Nombres en lettres (11 à 20),CP,maths,numeration,facile,2,2,,matching,,S2.1.4
-exercice,fr/exercices/cp/maths/numeration/pairs-impairs-01,ab91822c,Nombres pairs et impairs,CP,maths,numeration,facile,3,3,,true-false,,I1.1.2 | S3.2.3
+exercice,fr/exercices/cp/maths/numeration/decompo-20-01,a2ce60ce,Décomposer les nombres,CP,maths,numeration,facile,5,5,,number-check,,S2.1.3
+exercice,fr/exercices/cp/maths/numeration/mots-01,daf40046,11 à 20 en lettres,CP,maths,numeration,facile,2,2,,matching,,S2.1.4
+exercice,fr/exercices/cp/maths/numeration/pairs-impairs-01,ab91822c,Nombres pairs et impairs,CP,maths,numeration,facile,3,3,,true-false,,S3.2.3
 exercice,fr/exercices/cp/maths/numeration/regle-graduee-01,cfec2046,Lecture sur la règle graduée,CP,maths,numeration,facile,5,5,,ruler,,I1.1.2
-exercice,fr/exercices/cp/maths/numeration/suites-01,dc15cc4b,Suites de nombres,CP,maths,numeration,facile,5,5,,sequence,,S3.1.2 | S3.2.1
-application,fr/applications/cp/maths/numeration/arrondir-dizaine,d5d4ec4f,Arrondir à la dizaine,CP,maths,numeration,moyen,1,10,,number-check,arrondirNombre,S1.1.1
-application,fr/applications/cp/maths/numeration/chasse-aux-nombres-02,bda429a9,Chasse aux nombres (1 → 25),CP,maths,numeration,moyen,1,6,,number-hunt,huntNombres,S1.1.1
-application,fr/applications/cp/maths/numeration/comparer-groupes-02,ae87d857,Autant plus ou moins ? (grands nbr.),CP,maths,numeration,moyen,1,8,,compare-groups,comparerGroupes,S3.1.1
-application,fr/applications/cp/maths/numeration/complement-10-02,c38e29b2,Compléter jusqu'à 10 (calcul),CP,maths,numeration,moyen,1,12,,number-check,complementA10Nombre,S1.1.2
-application,fr/applications/cp/maths/numeration/compter-objets-02,de655624,Compter des objets (grands nombres),CP,maths,numeration,moyen,1,10,,count-objects,compterObjets,S2.1.1
+exercice,fr/exercices/cp/maths/numeration/suites-01,dc15cc4b,Suites de nombres,CP,maths,numeration,facile,5,5,,sequence,,S3.2.1
+application,fr/applications/cp/maths/numeration/arrondir-dizaine,d5d4ec4f,Arrondir à la dizaine,CP,maths,numeration,moyen,1,10,,number-check,arrondirNombre,S3.1.2
+application,fr/applications/cp/maths/numeration/chasse-aux-nombres-02,bda429a9,Chasse aux nombres 1 → 25,CP,maths,numeration,moyen,1,6,,number-hunt,huntNombres,S2.1.1
+application,fr/applications/cp/maths/numeration/comparer-groupes-02,ae87d857,Autant plus ou moins ?,CP,maths,numeration,moyen,1,8,,compare-groups,comparerGroupes,S3.1.1
+application,fr/applications/cp/maths/numeration/complement-10-02,c38e29b2,Compléter jusqu'à 10,CP,maths,numeration,moyen,1,12,,number-check,complementA10Nombre,S1.1.2
+application,fr/applications/cp/maths/numeration/compter-objets-02,de655624,Compter des objets,CP,maths,numeration,moyen,1,10,,count-objects,compterObjets,S2.1.1
 application,fr/applications/cp/maths/numeration/trier-nombres-02,e44d7873,Trier cinq nombres,CP,maths,numeration,moyen,1,8,,drag-sort,trierNombres,S3.1.2
-exercice,fr/exercices/cp/maths/numeration/decompo-100-02,fd72d04d,Dizaines et unités — nombres difficiles,CP,maths,numeration,moyen,6,6,,base-10,,S2.1.2
+exercice,fr/exercices/cp/maths/numeration/decompo-100-01,feab9a9f,Dizaines et unités,CP,maths,numeration,moyen,5,5,,base-10,,S2.1.2
+exercice,fr/exercices/cp/maths/numeration/decompo-100-02,fd72d04d,Dizaines et unités,CP,maths,numeration,moyen,6,6,,base-10,,S2.1.2
 exercice,fr/exercices/cp/maths/numeration/encadrement-01,d2ad0e37,Encadrer à la dizaine,CP,maths,numeration,moyen,5,5,,bounding,,S1.1.1
 application,fr/applications/cp/maths/operations/addition-facile,b1c2d3e4,Addition facile,CP,maths,operations,facile,1,10,,number-check,additionFacile,S1.1.1
-application,fr/applications/cp/maths/operations/ajouter-10,cafd4a96,Ajouter ou enlever 10,CP,maths,operations,facile,1,10,,number-check,ajouterSoustraire10,S1.1.2
+application,fr/applications/cp/maths/operations/ajouter-10,cafd4a96,Ajouter ou enlever 10,CP,maths,operations,facile,1,10,,number-check,ajouterSoustraire10,S1.1.3
 application,fr/applications/cp/maths/operations/complements-10,af07bda0,Compléments à 10,CP,maths,operations,facile,1,10,,number-check,complements10,S1.1.2
-application,fr/applications/cp/maths/operations/decodage-emojis,f9cd979c,Décodage d'Emojis,CP,maths,operations,facile,1,8,,number-check,decodageEmojis,S1.1.1
+application,fr/applications/cp/maths/operations/decodage-emojis,f9cd979c,Décodage d'Emojis,CP,maths,operations,facile,1,8,,number-check,decodageEmojis,S2.1.4
 application,fr/applications/cp/maths/operations/doubles-moities,e28bdf32,Doubles et moitiés,CP,maths,operations,facile,1,10,,number-check,doublesMoities,S1.1.2
 application,fr/applications/cp/maths/operations/soustraction-facile,f5a6b7c8,Soustraction facile,CP,maths,operations,facile,1,10,,number-check,soustractionFacile,S1.1.1
 application,fr/applications/cp/maths/operations/tables-addition,f2221a62,Tables d'addition,CP,maths,operations,facile,1,12,,number-check,tablesAdditionCP,S1.1.1
@@ -51,83 +51,84 @@ application,fr/applications/cp/maths/operations/tables-soustraction,e78474b5,Tab
 exercice,fr/exercices/cp/maths/operations/bases-01,dc949eb2,Opérations de base,CP,maths,operations,facile,2,2,,number-check,,S1.1.1
 exercice,fr/exercices/cp/maths/operations/complement-10-01,d809b5df,Les compléments à 10,CP,maths,operations,facile,9,9,,number-check,,S1.1.2
 exercice,fr/exercices/cp/maths/operations/doubles-01,e00d0976,Les doubles,CP,maths,operations,facile,8,8,,number-check,,S1.1.2
-exercice,fr/exercices/cp/maths/operations/pose-addition-01,a6f99048,Additions posées (sans retenue),CP,maths,operations,facile,5,5,,column-op,,S1.1.1
+exercice,fr/exercices/cp/maths/operations/pose-addition-01,a6f99048,Additions posées sans retenue,CP,maths,operations,facile,5,5,,column-op,,S1.1.1
 exercice,fr/exercices/cp/maths/operations/pyramides-01,cff7c3e5,Pyramides d'additions,CP,maths,operations,facile,5,5,,pyramid,,S1.2.2
 exercice,fr/exercices/cp/maths/operations/tables-addition-01,e4841d2d,Tables d'addition (1–5),CP,maths,operations,facile,5,5,,number-check,,S1.1.1
-exercice,fr/exercices/cp/maths/operations/trous-add-01,b88e7469,Additions à trou,CP,maths,operations,facile,5,5,,number-check,,S1.1.1 | S1.1.2
+exercice,fr/exercices/cp/maths/operations/trous-add-01,b88e7469,Additions à trou,CP,maths,operations,facile,5,5,,number-check,,S1.1.1
 exercice,fr/exercices/cp/maths/operations/trous-sous-01,beba8bb7,Soustractions à trou,CP,maths,operations,facile,5,5,,number-check,,S1.1.1
-application,fr/applications/cp/maths/operations/soustraction-trou,f674672e,Soustractions à trou,CP,maths,operations,moyen,1,10,,number-check,soustractionTrou,S1.1.1
-application,fr/applications/cp/maths/operations/trous-addition-gen,d51a6fc1,Additions à trou,CP,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.1
+application,fr/applications/cp/maths/operations/soustraction-trou,f674672e,Soustractions à trou,CP,maths,operations,moyen,1,10,,number-check,soustractionTrou,S1.1.3
+application,fr/applications/cp/maths/operations/trous-addition-gen,d51a6fc1,Additions à trou,CP,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.3
 exercice,fr/exercices/cp/maths/operations/mult-intro-01,b1cf9293,Introduction à la multiplication,CP,maths,operations,moyen,5,5,,number-check,,S1.1.1
 exercice,fr/exercices/cp/maths/operations/mult-intro-02,a25dd5cc,Calculer une multiplication,CP,maths,operations,moyen,5,5,,number-check,,S1.1.1
 exercice,fr/exercices/cp/maths/operations/mult-intro-03,d3d2ea1b,Écrire une multiplication,CP,maths,operations,moyen,5,5,,number-check,,S1.1.1
-exercice,fr/exercices/cp/maths/operations/pose-addition-02,cd59eb7c,Additions posées (avec retenue),CP,maths,operations,moyen,5,5,,column-op,,S1.1.1
+exercice,fr/exercices/cp/maths/operations/pose-addition-02,cd59eb7c,Additions posées avec retenue,CP,maths,operations,moyen,5,5,,column-op,,S1.1.1
 exercice,fr/exercices/cp/maths/problemes/comparaison-ecart-01,e0f1a2b3,Combien de plus ou moins ?,CP,maths,problemes,facile,5,5,,problem,,A3.1
-exercice,fr/exercices/cp/maths/problemes/quotidien-01,c25790a9,Problèmes du quotidien,CP,maths,problemes,facile,2,2,,problem,,A2.1 | A2.2
+exercice,fr/exercices/cp/maths/problemes/quotidien-01,c25790a9,Problèmes du quotidien,CP,maths,problemes,facile,2,2,,problem,,A2.1
 exercice,fr/exercices/cp/maths/problemes/problemes-inverses,bf550a3f,Problèmes inverses,CP,maths,problemes,moyen,1,1,too-short,inverse-problem,,S2.2.2
 defi,fr/defis/ce1/maths/calcul/calcul-rapide-01,ccf520c1,Calcul rapide CE1,CE1,maths,calcul,facile,1,60,too-long,number-check,fluencyMix,S1.1.1
-exercice,fr/exercices/ce1/maths/calcul/liens-numeriques-01,aba5fee8,Décomposer un nombre (arbre),CE1,maths,calcul,facile,5,5,,number-check,,S1.1.1
+exercice,fr/exercices/ce1/maths/calcul/comparer-expressions-01,cb4cd88b,Comparer des additions sans calculer,CE1,maths,calcul,facile,3,3,,compare-expressions,,
+exercice,fr/exercices/ce1/maths/calcul/liens-numeriques-01,aba5fee8,Décomposer en arbre,CE1,maths,calcul,facile,5,5,,number-check,,S1.1.1
 exercice,fr/exercices/ce1/maths/calcul/liens-numeriques-02,abac47f3,Compléter les arbres de calcul,CE1,maths,calcul,facile,5,5,,number-check,,S1.1.1
 defi,fr/defis/ce1/maths/calcul/calcul-rapide-02,aafa53f7,Calcul rapide CE1,CE1,maths,calcul,moyen,1,60,too-long,number-check,fluencyMix,S1.1.1
-exercice,fr/exercices/ce1/maths/calcul/calcul-reflechi-02,b138801a,Chaînes de calcul (2 étapes),CE1,maths,calcul,moyen,5,5,,calc-chain,,S1.1.2 | S1.1.3
+exercice,fr/exercices/ce1/maths/calcul/calcul-reflechi-02,b138801a,Chaînes de calcul,CE1,maths,calcul,moyen,5,5,,calc-chain,,S1.1.3
 exercice,fr/exercices/ce1/maths/calcul/calcule-et-verifie,f2920e6a,Calcule et vérifie,CE1,maths,calcul,moyen,6,6,,multi-question,,S1.1.1
 exercice,fr/exercices/ce1/maths/calcul/passage-par-10,dc2b64ea,Passe par 10,CE1,maths,calcul,moyen,6,6,,calc-chain,,S1.1.1
 defi,fr/defis/ce1/maths/calcul/calcul-rapide-03,d48ee74b,Calcul rapide CE1,CE1,maths,calcul,difficile,1,60,too-long,number-check,fluencyMix,S1.1.1
-exercice,fr/exercices/ce1/maths/donnees/donnees-01,ff5a382e,Construire un diagramme en barres,CE1,maths,donnees,facile,3,3,,bar-chart,,D1.1.1 | S2.1.1
-exercice,fr/exercices/ce1/maths/donnees/donnees-02,dd823746,Lire un diagramme en barres,CE1,maths,donnees,moyen,3,3,,bar-chart,,D1.1.1 | S2.1.1
-exercice,fr/exercices/ce1/maths/geometrie/angle-droit-01,c6309e42,L'angle droit,CE1,maths,geometrie,facile,3,3,,true-false | mcq,,S1.1.1 | S3.2.3
-exercice,fr/exercices/ce1/maths/geometrie/figures-01,f7877320,Les figures planes,CE1,maths,geometrie,facile,5,5,,mcq | true-false,,S1.1.1 | S2.2.1 | S3.2.3
+exercice,fr/exercices/ce1/maths/donnees/donnees-01,ff5a382e,Construire un diagramme en barres,CE1,maths,donnees,facile,3,3,,bar-chart,,D1.1.1
+exercice,fr/exercices/ce1/maths/donnees/donnees-02,dd823746,Lire un diagramme en barres,CE1,maths,donnees,moyen,3,3,,bar-chart,,D1.1.1
+exercice,fr/exercices/ce1/maths/geometrie/angle-droit-01,c6309e42,L'angle droit,CE1,maths,geometrie,facile,3,3,,true-false | mcq,,S1.1.1
+exercice,fr/exercices/ce1/maths/geometrie/figures-01,f7877320,Les figures planes,CE1,maths,geometrie,facile,5,5,,mcq | true-false,,S1.1.1
 exercice,fr/exercices/ce1/maths/geometrie/figures-02,d2a8f103,Propriétés des figures,CE1,maths,geometrie,facile,3,3,,select,,S1.1.1
 exercice,fr/exercices/ce1/maths/geometrie/quadrillage-lire-01,c8ef203b,Lire les coordonnées d'un point,CE1,maths,geometrie,facile,5,5,,coordinate-grid,,S1.1.1
 exercice,fr/exercices/ce1/maths/geometrie/quadrillage-placer-01,ffcdf024,Placer un point sur le quadrillage,CE1,maths,geometrie,facile,5,5,,coordinate-grid,,S1.1.1
 exercice,fr/exercices/ce1/maths/geometrie/reconnaitre-formes,d7edac36,Reconnais les formes,CE1,maths,geometrie,facile,4,4,,svg-tiles,,S1.1.1
-exercice,fr/exercices/ce1/maths/geometrie/solides-01,a92789a5,Les solides,CE1,maths,geometrie,moyen,4,4,,matching | true-false | mcq,,S1.1.1 | S2.1.1 | S2.2.1 | S3.2.3
-exercice,fr/exercices/ce1/maths/geometrie/symetrie-01,c597c6bf,La symétrie,CE1,maths,geometrie,moyen,3,3,,true-false | mcq,,S1.1.1 | S2.1.4 | S3.2.3
+exercice,fr/exercices/ce1/maths/geometrie/solides-01,a92789a5,Les solides,CE1,maths,geometrie,moyen,4,4,,matching | true-false | mcq,,S1.1.1
+exercice,fr/exercices/ce1/maths/geometrie/symetrie-01,c597c6bf,La symétrie,CE1,maths,geometrie,moyen,3,3,,true-false | mcq,,S1.1.1
 exercice,fr/exercices/ce1/maths/grandeurs/calendrier-01,a0a35d04,Lire un calendrier,CE1,maths,grandeurs,facile,3,3,,multi-question,,I1.1.1
 exercice,fr/exercices/ce1/maths/grandeurs/durees-01,ad885698,Les durées,CE1,maths,grandeurs,facile,3,3,,true-false | convert | mcq,,I1.1.1
-exercice,fr/exercices/ce1/maths/grandeurs/monnaie-01,b4c89751,La monnaie,CE1,maths,grandeurs,facile,5,5,,true-false | problem | number-check | matching,,A1.1 | A1.2 | S1.1.1 | S2.2.1 | S3.2.3
-exercice,fr/exercices/ce1/maths/grandeurs/longueurs-01,d81c39ec,Les longueurs,CE1,maths,grandeurs,moyen,3,3,,convert | true-false,,S1.1.1 | S3.1.1
-exercice,fr/exercices/ce1/maths/grandeurs/masses-01,df1633b0,Les masses,CE1,maths,grandeurs,moyen,3,3,,convert | true-false | mcq,,S1.1.1 | S2.1.1 | S3.1.1
-application,fr/applications/ce1/maths/logique/venn-nombres,cd81c7ff,Diagramme de Venn - Nombres,CE1,maths,logique,facile,1,5,,venn,vennNombres,
+exercice,fr/exercices/ce1/maths/grandeurs/monnaie-01,b4c89751,La monnaie,CE1,maths,grandeurs,facile,5,5,,true-false | problem | number-check | matching,,A1.1
+exercice,fr/exercices/ce1/maths/grandeurs/longueurs-01,d81c39ec,Les longueurs,CE1,maths,grandeurs,moyen,3,3,,convert | true-false,,S1.1.1
+exercice,fr/exercices/ce1/maths/grandeurs/masses-01,df1633b0,Les masses,CE1,maths,grandeurs,moyen,3,3,,convert | true-false | mcq,,S1.1.1
+application,fr/applications/ce1/maths/logique/venn-nombres,cd81c7ff,Diagramme de Venn - Nombres,CE1,maths,logique,facile,1,5,,venn,vennNombres,S3.1.1
 exercice,fr/exercices/ce1/maths/logique/grille-01,ed716734,Grilles logiques,CE1,maths,logique,moyen,2,2,,logic-grid,,S3.2.2
 exercice,fr/exercices/ce1/maths/logique/suites-figurales-01,ea65ce37,Suites de figures,CE1,maths,logique,moyen,5,5,,mcq,,S3.2.1
-application,fr/applications/ce1/maths/mesures,eb4e3806,Lire l'heure — heures et demies,CE1,maths,mesures,facile,1,10,,clock,lireHeure,I1.1.1
+application,fr/applications/ce1/maths/mesures,eb4e3806,Lire l'heure: heures et demies,CE1,maths,mesures,facile,1,10,,clock,lireHeure,I1.1.1
 exercice,fr/exercices/ce1/maths/mesures/heure-01,f3a022b4,Apprendre à lire l'heure,CE1,maths,mesures,facile,3,3,,clock,,I1.1.1
-exercice,fr/exercices/ce1/maths/mesures/heure-02,ec211e07,Lire l'heure (quarts et 5 minutes),CE1,maths,mesures,moyen,6,6,,clock,,I1.1.1
-application,fr/applications/ce1/maths/numeration/arrondir-dizaine,deebc0de,Arrondir à la dizaine,CE1,maths,numeration,facile,1,10,,number-check,arrondirNombre,S1.1.1
-application,fr/applications/ce1/maths/numeration/blocs-valeur-position-01,a2e9f310,Valeur de position — dizaines/unités,CE1,maths,numeration,facile,1,8,,click-blocks,blocsValeurPosition,S2.1.2
-application,fr/applications/ce1/maths/numeration/pairs-impairs,dd80f187,Nombres pairs et impairs,CE1,maths,numeration,facile,1,10,,number-check,pairOuImpair,S1.1.1
-application,fr/applications/ce1/maths/numeration/regle-graduee,d226ef83,Lecture sur la règle graduée,CE1,maths,numeration,facile,1,8,,ruler,ruler,I1.1.2
+exercice,fr/exercices/ce1/maths/mesures/heure-02,ec211e07,Lire l'heure: quarts et 5 minutes,CE1,maths,mesures,moyen,6,6,,clock,,I1.1.1
+application,fr/applications/ce1/maths/numeration/arrondir-dizaine,deebc0de,Arrondir à la dizaine,CE1,maths,numeration,facile,1,10,,number-check,arrondirNombre,S3.1.2
+application,fr/applications/ce1/maths/numeration/blocs-valeur-position-01,a2e9f310,Valeur de position,CE1,maths,numeration,facile,1,8,,click-blocks,blocsValeurPosition,S2.1.2
+application,fr/applications/ce1/maths/numeration/pairs-impairs,dd80f187,Nombres pairs et impairs,CE1,maths,numeration,facile,1,10,,number-check,pairOuImpair,S3.2.1
+application,fr/applications/ce1/maths/numeration/regle-graduee,d226ef83,Lecture sur la règle graduée,CE1,maths,numeration,facile,1,8,,ruler,ruler,S3.1.3
 application,fr/applications/ce1/maths/numeration/suite-nombres-01,ab304efb,Suites de nombres,CE1,maths,numeration,facile,1,8,,fill-table,suiteNombres,S3.2.1
 application,fr/applications/ce1/maths/numeration/suite-nombres-02,f429195b,Suites de nombres,CE1,maths,numeration,facile,1,8,,fill-table,suiteNombres,S3.2.1
 application,fr/applications/ce1/maths/numeration/suite-nombres-03,b2c96643,Suites de nombres,CE1,maths,numeration,facile,1,8,,fill-table,suiteNombres,S3.2.1
-exercice,fr/exercices/ce1/maths/numeration/base10-01,bd18991c,Les blocs de base 10,CE1,maths,numeration,facile,2,2,,base-10,,S2.1.2
+exercice,fr/exercices/ce1/maths/numeration/base10-01,bd18991c,Les blocs de base 10,CE1,maths,numeration,facile,6,6,,base-10,,S2.1.2
 exercice,fr/exercices/ce1/maths/numeration/encadrement-01,b4dee3bc,Encadrement de nombres,CE1,maths,numeration,facile,4,4,,bounding,,S1.1.1
 exercice,fr/exercices/ce1/maths/numeration/ordonner-01,a64655d2,Ranger des nombres dans l'ordre,CE1,maths,numeration,facile,5,5,,drag-sort,,S3.1.2
-exercice,fr/exercices/ce1/maths/numeration/orthographe-nombres-01,f6b9d3d8,Orthographe des nombres — 1 à 10,CE1,maths,numeration,facile,3,3,,matching,,S2.1.4
-exercice,fr/exercices/ce1/maths/numeration/regle-graduee-01,df12040a,Lecture sur la règle graduée,CE1,maths,numeration,facile,4,4,,ruler,,I1.1.2 | S2.1.3
+exercice,fr/exercices/ce1/maths/numeration/orthographe-nombres-01,f6b9d3d8,Orthographe de 1 à 10,CE1,maths,numeration,facile,3,3,,matching,,S2.1.4
+exercice,fr/exercices/ce1/maths/numeration/regle-graduee-01,df12040a,Lecture sur la règle graduée,CE1,maths,numeration,facile,4,4,,ruler,,I1.1.2
 exercice,fr/exercices/ce1/maths/numeration/suites-01,ffaa8232,Suites de nombres,CE1,maths,numeration,facile,3,3,,sequence,,S3.2.1
-application,fr/applications/ce1/maths/numeration/arrondir-centaine,c4305c95,Arrondir à la centaine,CE1,maths,numeration,moyen,1,10,,number-check,arrondirNombre,S1.1.1
-application,fr/applications/ce1/maths/numeration/chasse-aux-nombres-01,b38d4b69,Chasse aux nombres,CE1,maths,numeration,moyen,1,5,,number-hunt,huntNombres,S1.1.1
-application,fr/applications/ce1/maths/numeration/coloriage-magique-01,b0c846aa,Coloriage magique — araignée,CE1,maths,numeration,moyen,1,2,,magic-color,magicColorGrid,S1.1.1
-application,fr/applications/ce1/maths/numeration/comparer-1000,e6a588e0,Comparer des nombres jusqu'à 1 000,CE1,maths,numeration,moyen,1,10,,tile-select,comparerNombres,S3.1.1
+application,fr/applications/ce1/maths/numeration/arrondir-centaine,c4305c95,Arrondir à la centaine,CE1,maths,numeration,moyen,1,10,,number-check,arrondirNombre,S3.1.2
+application,fr/applications/ce1/maths/numeration/chasse-aux-nombres-01,b38d4b69,Chasse aux nombres,CE1,maths,numeration,moyen,1,5,,number-hunt,huntNombres,S2.1.1
+application,fr/applications/ce1/maths/numeration/coloriage-magique-01,b0c846aa,Coloriage magique: araignée,CE1,maths,numeration,moyen,1,2,,magic-color,magicColorGrid,S3.2.1
+application,fr/applications/ce1/maths/numeration/comparer-1000,e6a588e0,Comparer des nombres < 1 000,CE1,maths,numeration,moyen,1,10,,tile-select,comparerNombres,S3.1.1
 application,fr/applications/ce1/maths/numeration/comparer-groupes-01,e028e272,Comparer des groupes,CE1,maths,numeration,moyen,1,8,,compare-groups,comparerGroupes,S3.1.1
-application,fr/applications/ce1/maths/numeration/decompo-gen,cf457f3d,"Centaines, dizaines et unités",CE1,maths,numeration,moyen,1,10,,number-check,decompositionCentaines,S1.1.1
+application,fr/applications/ce1/maths/numeration/decompo-gen,cf457f3d,"Centaines, dizaines et unités",CE1,maths,numeration,moyen,1,10,,number-check,decompositionCentaines,S2.1.2
 application,fr/applications/ce1/maths/numeration/suites-ce1,eb79fc0d,Suites de nombres,CE1,maths,numeration,moyen,1,10,,sequence,compterDeNCE1,S3.2.1
-exercice,fr/exercices/ce1/maths/numeration/base10-02,a7894c93,"Centaines, dizaines et unités — nombres difficiles",CE1,maths,numeration,moyen,6,6,,base-10,,S2.1.2
+exercice,fr/exercices/ce1/maths/numeration/base10-02,a7894c93,"Centaines, dizaines et unités",CE1,maths,numeration,moyen,6,6,,base-10,,S2.1.2
 exercice,fr/exercices/ce1/maths/numeration/droite-graduee-01,b76399b4,Lire la droite graduée,CE1,maths,numeration,moyen,5,5,,number-line,,S1.1.1
 exercice,fr/exercices/ce1/maths/numeration/droite-graduee-02,e1cbe4d0,Placer sur la droite graduée,CE1,maths,numeration,moyen,5,5,,number-line,,S1.1.1
-exercice,fr/exercices/ce1/maths/numeration/orthographe-nombres-02,f778c825,Orthographe des nombres — 11 à 20,CE1,maths,numeration,moyen,3,3,,matching,,S2.1.4
-exercice,fr/exercices/ce1/maths/numeration/orthographe-nombres-03,fcd93099,Orthographe des nombres — dizaines,CE1,maths,numeration,difficile,3,3,,matching,,S2.1.4
+exercice,fr/exercices/ce1/maths/numeration/orthographe-nombres-02,f778c825,Orthographe de 11 à 20,CE1,maths,numeration,moyen,3,3,,matching,,S2.1.4
+exercice,fr/exercices/ce1/maths/numeration/orthographe-nombres-03,fcd93099,Orthographe des dizaines,CE1,maths,numeration,difficile,3,3,,matching,,S2.1.4
 application,fr/applications/ce1/maths/operations/addition-1,b8d5306d,Table d'addition de 1,CE1,maths,operations,facile,1,10,,number-check,additionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/addition-2,c664eaa1,Table d'addition de 2,CE1,maths,operations,facile,1,10,,number-check,additionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/addition-3,efbb31a2,Table d'addition de 3,CE1,maths,operations,facile,1,10,,number-check,additionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/addition-4,d5b12470,Table d'addition de 4,CE1,maths,operations,facile,1,10,,number-check,additionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/addition-5,eb192211,Table d'addition de 5,CE1,maths,operations,facile,1,10,,number-check,additionFacile,S1.1.1
-application,fr/applications/ce1/maths/operations/decodage-emojis,d25cdee2,Décodage d'Emojis,CE1,maths,operations,facile,1,10,,number-check,decodageEmojis,S1.1.1
+application,fr/applications/ce1/maths/operations/decodage-emojis,d25cdee2,Décodage d'Emojis,CE1,maths,operations,facile,1,10,,number-check,decodageEmojis,S2.1.4
 application,fr/applications/ce1/maths/operations/doubles-moities,d4f7c81d,Doubles et moitiés,CE1,maths,operations,facile,1,10,,number-check,doublesMoities,S1.1.2
-application,fr/applications/ce1/maths/operations/fruits-facile,a42fc2b1,Additions de fruits (Facile),CE1,maths,operations,facile,1,10,,number-check,comptageFruits,S2.1.1
-application,fr/applications/ce1/maths/operations/insectes-facile,c2943519,Compter et calculer (Facile),CE1,maths,operations,facile,1,10,,number-check,comptageInsectes,S1.1.1
+application,fr/applications/ce1/maths/operations/fruits-facile,a42fc2b1,Additions de fruits opérations,CE1,maths,operations,facile,1,10,,number-check,comptageFruits,S2.1.4
+application,fr/applications/ce1/maths/operations/insectes-facile,c2943519,Compter et calculer,CE1,maths,operations,facile,1,10,,number-check,comptageInsectes,S2.1.4
 application,fr/applications/ce1/maths/operations/pyramides,a6988124,Pyramides d'additions,CE1,maths,operations,facile,1,8,,pyramid,pyramideAdditions,S1.2.2
 application,fr/applications/ce1/maths/operations/soustraction-1,cc1287bd,Table de soustraction de 1,CE1,maths,operations,facile,1,10,,number-check,soustractionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/soustraction-2,f8f47e92,Table de soustraction de 2,CE1,maths,operations,facile,1,10,,number-check,soustractionFacile,S1.1.1
@@ -140,9 +141,9 @@ application,fr/applications/ce1/maths/operations/table-de-3,cbcd21db,Table de 3,
 application,fr/applications/ce1/maths/operations/table-de-4,ee79aefc,Table de 4,CE1,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
 application,fr/applications/ce1/maths/operations/table-de-5,d85624e3,Table de 5,CE1,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
 exercice,fr/exercices/ce1/maths/operations/additions-01,c6217178,Additions CE1,CE1,maths,operations,facile,3,3,,number-check,,S1.1.1
-exercice,fr/exercices/ce1/maths/operations/pose-addition-01,c3d4e5f6,Additions posées,CE1,maths,operations,facile,5,5,,column-op,,S1.1.1 | S2.1.2
-exercice,fr/exercices/ce1/maths/operations/pose-soustraction-01,d4e5f6a7,Soustractions posées,CE1,maths,operations,facile,5,5,,column-op,,S1.1.1 | S2.1.2
-exercice,fr/exercices/ce1/maths/operations/pyramides-02,f6760aa4,Pyramides d'additions (facile),CE1,maths,operations,facile,6,6,,pyramid,,S1.2.2
+exercice,fr/exercices/ce1/maths/operations/pose-addition-01,c3d4e5f6,Additions posées,CE1,maths,operations,facile,5,5,,column-op,,S1.1.1
+exercice,fr/exercices/ce1/maths/operations/pose-soustraction-01,d4e5f6a7,Soustractions posées,CE1,maths,operations,facile,5,5,,column-op,,S1.1.1
+exercice,fr/exercices/ce1/maths/operations/pyramides-02,f6760aa4,Pyramides d'additions,CE1,maths,operations,facile,6,6,,pyramid,,S1.2.2
 exercice,fr/exercices/ce1/maths/operations/tables-01,d2d5c61b,Tables de multiplication,CE1,maths,operations,facile,4,4,,number-check,,S1.1.1
 application,fr/applications/ce1/maths/operations/addition-10,d3a30870,Table d'addition de 10,CE1,maths,operations,moyen,1,10,,number-check,additionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/addition-11,e6fc44c6,Table d'addition de 11,CE1,maths,operations,moyen,1,10,,number-check,additionFacile,S1.1.1
@@ -151,16 +152,16 @@ application,fr/applications/ce1/maths/operations/addition-7,f28593db,Table d'add
 application,fr/applications/ce1/maths/operations/addition-8,c133bdd6,Table d'addition de 8,CE1,maths,operations,moyen,1,10,,number-check,additionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/addition-9,ed3d6003,Table d'addition de 9,CE1,maths,operations,moyen,1,10,,number-check,additionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/addition-simple,b18d8344,Addition Simple,CE1,maths,operations,moyen,1,10,,number-check,additionSimple,S1.1.1
-application,fr/applications/ce1/maths/operations/addition-trou,a1b2c3d4,Addition à trou,CE1,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.1
-application,fr/applications/ce1/maths/operations/ajouter-100,c10a8f8b,Ajouter ou soustraire 100,CE1,maths,operations,moyen,1,10,,number-check,ajouterSoustraire100,S1.1.2
-application,fr/applications/ce1/maths/operations/ajouter-soustraire-10,e2cfe849,Ajouter ou soustraire 10,CE1,maths,operations,moyen,1,10,,number-check,ajouterSoustraire10,S1.1.2
+application,fr/applications/ce1/maths/operations/addition-trou,a1b2c3d4,Addition à trou,CE1,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.3
+application,fr/applications/ce1/maths/operations/ajouter-100,c10a8f8b,Ajouter ou soustraire 100,CE1,maths,operations,moyen,1,10,,number-check,ajouterSoustraire100,S1.1.3
+application,fr/applications/ce1/maths/operations/ajouter-soustraire-10,e2cfe849,Ajouter ou soustraire 10,CE1,maths,operations,moyen,1,10,,number-check,ajouterSoustraire10,S1.1.3
 application,fr/applications/ce1/maths/operations/comparer-expressions,b8c9d0e1,"Compare sans calculer (+, -)",CE1,maths,operations,moyen,1,8,,compare,compareExpressions,S3.1.1
 application,fr/applications/ce1/maths/operations/complements-100,ca13ce59,Compléments à 100,CE1,maths,operations,moyen,1,10,,number-check,complementNombre,S1.1.2
 application,fr/applications/ce1/maths/operations/familles-faits,e5f6a7b8,"Familles de faits (+, -)",CE1,maths,operations,moyen,1,8,,checkbox,famillesFaits,S2.2.1
-application,fr/applications/ce1/maths/operations/fruits-moyen,bd0fd828,Additions de fruits (Moyen),CE1,maths,operations,moyen,1,10,,number-check,comptageFruits,S2.1.1
-application,fr/applications/ce1/maths/operations/insectes-moyen,a01ef6c8,Compter et calculer (Moyen),CE1,maths,operations,moyen,1,10,,number-check,comptageInsectes,S1.1.1
+application,fr/applications/ce1/maths/operations/fruits-moyen,bd0fd828,Additions de fruits,CE1,maths,operations,moyen,1,10,,number-check,comptageFruits,S2.1.4
+application,fr/applications/ce1/maths/operations/insectes-moyen,a01ef6c8,Compter et calculer,CE1,maths,operations,moyen,1,10,,number-check,comptageInsectes,S2.1.4
 application,fr/applications/ce1/maths/operations/multiplication-simple,ecec02ec,Multiplications,CE1,maths,operations,moyen,1,10,,number-check,multiplicationSimple,S1.1.1
-application,fr/applications/ce1/maths/operations/multiplication-trou,c28b5a9f,Multiplication à trou,CE1,maths,operations,moyen,1,10,,number-check,multiplicationTrou,S1.1.1
+application,fr/applications/ce1/maths/operations/multiplication-trou,c28b5a9f,Multiplication à trou,CE1,maths,operations,moyen,1,10,,number-check,multiplicationTrou,S1.1.3
 application,fr/applications/ce1/maths/operations/soustraction-10,ee0b087d,Table de soustraction de 10,CE1,maths,operations,moyen,1,10,,number-check,soustractionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/soustraction-11,babd64c9,Table de soustraction de 11,CE1,maths,operations,moyen,1,10,,number-check,soustractionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/soustraction-6,c1db72d8,Table de soustraction de 6,CE1,maths,operations,moyen,1,10,,number-check,soustractionFacile,S1.1.1
@@ -168,57 +169,59 @@ application,fr/applications/ce1/maths/operations/soustraction-7,d7e6b6f2,Table d
 application,fr/applications/ce1/maths/operations/soustraction-8,b5e6fbc0,Table de soustraction de 8,CE1,maths,operations,moyen,1,10,,number-check,soustractionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/soustraction-9,a05366d7,Table de soustraction de 9,CE1,maths,operations,moyen,1,10,,number-check,soustractionFacile,S1.1.1
 application,fr/applications/ce1/maths/operations/soustraction-simple,a3410763,Soustractions,CE1,maths,operations,moyen,1,10,,number-check,soustractionSimple,S1.1.1
-application,fr/applications/ce1/maths/operations/soustraction-trou,cf4da89c,Soustraction à trou,CE1,maths,operations,moyen,1,10,,number-check,soustractionTrou,S1.1.1
+application,fr/applications/ce1/maths/operations/soustraction-trou,cf4da89c,Soustraction à trou,CE1,maths,operations,moyen,1,10,,number-check,soustractionTrou,S1.1.3
 application,fr/applications/ce1/maths/operations/vrai-faux-ops,b8ced378,"Vrai ou faux (+, -)",CE1,maths,operations,moyen,1,6,,true-false,vraiFauxOps,S3.2.3
-exercice,fr/exercices/ce1/maths/operations/calcul-reflechi-01,c2af95c2,Calcul réfléchi,CE1,maths,operations,moyen,4,4,,multi-question,,S1.1.2 | S1.1.3
+exercice,fr/exercices/ce1/maths/operations/calcul-reflechi-01,c2af95c2,Calcul réfléchi,CE1,maths,operations,moyen,4,4,,multi-question,,S1.1.2
 exercice,fr/exercices/ce1/maths/operations/mult-multiples-10-01,d577a192,Multiplier par un multiple de 10,CE1,maths,operations,moyen,5,5,,number-check,,S1.1.1
 exercice,fr/exercices/ce1/maths/operations/pyramides-01,c0c2c0ad,Pyramides d'additions,CE1,maths,operations,moyen,2,2,,pyramid,,S1.2.2
-exercice,fr/exercices/ce1/maths/operations/pyramides-03,e036faca,Pyramides d'additions (moyen),CE1,maths,operations,moyen,6,6,,pyramid,,S1.2.2
+exercice,fr/exercices/ce1/maths/operations/pyramides-03,e036faca,Pyramides d'additions ,CE1,maths,operations,moyen,6,6,,pyramid,,S1.2.2
 exercice,fr/exercices/ce1/maths/operations/trous-01,c95bf3f7,Opérations à trou,CE1,maths,operations,moyen,4,4,,number-check,,S1.1.1
 exercice,fr/exercices/ce1/maths/problemes/comparaison-ecart-01,e4f5a6b7,Combien de plus ou moins ?,CE1,maths,problemes,facile,5,5,,problem,,A3.1
 exercice,fr/exercices/ce1/maths/problemes/composition-01,e1f2a3b4,Parties et tout,CE1,maths,problemes,facile,5,5,,problem,,A1.1
 exercice,fr/exercices/ce1/maths/problemes/composition-02,f2a3b4c5,Trouver la partie manquante,CE1,maths,problemes,facile,5,5,,problem,,A1.2
-exercice,fr/exercices/ce1/maths/problemes/quotidien-01,b4f5ada3,Problèmes du quotidien,CE1,maths,problemes,facile,5,5,,problem,,A2.2 | M1.1 | M1.2 | M1.4
-exercice,fr/exercices/ce1/maths/problemes/transformation-moins-01,b4c5d6e7,Combien maintenant ? (perte),CE1,maths,problemes,facile,5,5,,problem,,A2.2
-exercice,fr/exercices/ce1/maths/problemes/transformation-plus-01,a3b4c5d6,Combien maintenant ? (gain),CE1,maths,problemes,facile,5,5,,problem,,A2.1
+exercice,fr/exercices/ce1/maths/problemes/quotidien-01,b4f5ada3,Problèmes du quotidien,CE1,maths,problemes,facile,5,5,,problem,,M1.1
+exercice,fr/exercices/ce1/maths/problemes/transformation-moins-01,b4c5d6e7,Combien maintenant ?,CE1,maths,problemes,facile,5,5,,problem,,A2.2
+exercice,fr/exercices/ce1/maths/problemes/transformation-plus-01,a3b4c5d6,Combien maintenant ?,CE1,maths,problemes,facile,5,5,,problem,,A2.1
 exercice,fr/exercices/ce1/maths/problemes/comparaison-ecart-02,f6a7b8c9,Quelle est la différence ?,CE1,maths,problemes,moyen,5,5,,problem,,A3.1
 exercice,fr/exercices/ce1/maths/problemes/comparaison-etat-compare-01,c07b4a03,"De plus, de moins...",CE1,maths,problemes,moyen,5,5,,problem,,A3.2
 exercice,fr/exercices/ce1/maths/problemes/comparaison-referent-01,c640b2ac,Retrouver l'autre quantité,CE1,maths,problemes,moyen,5,5,,problem,,A3.3
 exercice,fr/exercices/ce1/maths/problemes/division-partage-01,c23792af,Partager en groupes égaux,CE1,maths,problemes,moyen,5,5,,problem,,M1.2
-exercice,fr/exercices/ce1/maths/problemes/problemes-2-etapes-01,a6a69a0c,Problèmes en deux étapes,CE1,maths,problemes,moyen,5,5,,multi-question,,S1.1.1 | S2.1.1
+exercice,fr/exercices/ce1/maths/problemes/problemes-2-etapes-01,a6a69a0c,Problèmes en deux étapes,CE1,maths,problemes,moyen,5,5,,multi-question,,S1.1.1
 exercice,fr/exercices/ce1/maths/problemes/problemes-inverses,f59c7a36,Problèmes inverses,CE1,maths,problemes,moyen,3,3,,inverse-problem,,S2.2.1
 exercice,fr/exercices/ce1/maths/problemes/transformation-inconnue-01,c5d6e7f8,Que s'est-il passé ?,CE1,maths,problemes,moyen,5,5,,problem,,A2.3
-exercice,fr/exercices/ce1/maths/problemes/comparaison-etat-compare-02,b3c4d5e6,"De plus, de moins... (2)",CE1,maths,problemes,difficile,5,5,,problem,,A3.2
-application,fr/applications/ce2/maths/calcul/ajouter-8-12-01,d3853915,Ajouter 8 ou 12,CE2,maths,calcul,facile,1,10,,number-check,add8ou12,S1.1.1
-application,fr/applications/ce2/maths/calcul/ajouter-9-11-01,dec42b3f,Ajouter 9 ou 11,CE2,maths,calcul,facile,1,10,,number-check,add9ou11,S1.1.1
+exercice,fr/exercices/ce1/maths/problemes/comparaison-etat-compare-02,b3c4d5e6,"De plus, de moins...",CE1,maths,problemes,difficile,5,5,,problem,,A3.2
+application,fr/applications/ce2/maths/calcul/ajouter-8-12-01,d3853915,Ajouter 8 ou 12,CE2,maths,calcul,facile,1,10,,number-check,add8ou12,S1.1.3
+application,fr/applications/ce2/maths/calcul/ajouter-9-11-01,dec42b3f,Ajouter 9 ou 11,CE2,maths,calcul,facile,1,10,,number-check,add9ou11,S1.1.3
 application,fr/applications/ce2/maths/calcul/complement-1000-01,e6f4a5b6,Compléments à 1 000 (centaines),CE2,maths,calcul,facile,1,8,,number-check,complementNombre,S1.1.2
-application,fr/applications/ce2/maths/calcul/equilibrer-add-01,c1e20001,Équilibrer des additions — jusqu'à 20,CE2,maths,calcul,facile,1,12,,number-check,equilibrerOp,
-application,fr/applications/ce2/maths/calcul/grouper-a-10-01,b04d799d,Grouper pour faire 10 (facile),CE2,maths,calcul,facile,1,10,,number-check,groupeA10,S1.1.1
-application,fr/applications/ce2/maths/calcul/somme-100-01,b3e1f0a2,Résultat = 100,CE2,maths,calcul,facile,1,6,,tile-select,sommesCibles,S2.2.1
-application,fr/applications/ce2/maths/calcul/soustraire-8-12-01,b192f1e8,Soustraire 8 ou 12,CE2,maths,calcul,facile,1,10,,number-check,sub8ou12,S1.1.1
-application,fr/applications/ce2/maths/calcul/soustraire-9-11-01,dc86799a,Soustraire 9 ou 11,CE2,maths,calcul,facile,1,10,,number-check,sub9ou11,S1.1.1
+application,fr/applications/ce2/maths/calcul/equilibrer-add-01,c1e20001,Équilibrer des additions — jusqu'à 20,CE2,maths,calcul,facile,1,12,,number-check,equilibrerOp,S2.2.1
+application,fr/applications/ce2/maths/calcul/grouper-a-10-01,b04d799d,Grouper pour faire 10 ,CE2,maths,calcul,facile,1,10,,number-check,groupeA10,S1.1.2
+application,fr/applications/ce2/maths/calcul/somme-100-01,b3e1f0a2,Résultat = 100,CE2,maths,calcul,facile,1,6,,tile-select,sommesCibles,S1.1.3
+application,fr/applications/ce2/maths/calcul/soustraire-8-12-01,b192f1e8,Soustraire 8 ou 12,CE2,maths,calcul,facile,1,10,,number-check,sub8ou12,S1.1.3
+application,fr/applications/ce2/maths/calcul/soustraire-9-11-01,dc86799a,Soustraire 9 ou 11,CE2,maths,calcul,facile,1,10,,number-check,sub9ou11,S1.1.3
 defi,fr/defis/ce2/maths/calcul/additions-rapides-01,f1a2b3c4,Additions rapides (< 20),CE2,maths,calcul,facile,1,40,too-long,number-check,additionFacile,S1.1.1
 defi,fr/defis/ce2/maths/calcul/calcul-rapide-01,f3f49636,Calcul rapide CE2,CE2,maths,calcul,facile,1,60,too-long,number-check,fluencyMix,S1.1.1
+exercice,fr/exercices/ce2/maths/calcul/estimation-01,b371504a,Estimer puis calculer,CE2,maths,calcul,facile,5,5,,estimation,,
 application,fr/applications/ce2/maths/calcul/complement-1000-02,f7a5b6c7,Compléments à 1 000 (dizaines),CE2,maths,calcul,moyen,1,8,,number-check,complementNombre,S1.1.2
-application,fr/applications/ce2/maths/calcul/equilibrer-add-02,c1e20002,Équilibrer des additions — jusqu'à 100,CE2,maths,calcul,moyen,1,12,,number-check,equilibrerOp,
-application,fr/applications/ce2/maths/calcul/grouper-a-10-02,ed9ded53,Grouper pour faire 10 (moyen),CE2,maths,calcul,moyen,1,10,,number-check,groupeA10,S1.1.1
-application,fr/applications/ce2/maths/calcul/somme-1000-01,c4d2e1f3,Résultat = 1 000,CE2,maths,calcul,moyen,1,6,,tile-select,sommesCibles,S2.2.1
+application,fr/applications/ce2/maths/calcul/equilibrer-add-02,c1e20002,Équilibrer des additions — jusqu'à 100,CE2,maths,calcul,moyen,1,12,,number-check,equilibrerOp,S2.2.1
+application,fr/applications/ce2/maths/calcul/grouper-a-10-02,ed9ded53,Grouper pour faire 10 ,CE2,maths,calcul,moyen,1,10,,number-check,groupeA10,S1.1.2
+application,fr/applications/ce2/maths/calcul/somme-1000-01,c4d2e1f3,Résultat = 1 000,CE2,maths,calcul,moyen,1,6,,tile-select,sommesCibles,S1.1.3
 defi,fr/defis/ce2/maths/calcul/calcul-rapide-02,d469ef49,Calcul rapide CE2,CE2,maths,calcul,moyen,1,60,too-long,number-check,fluencyMix,S1.1.1
 defi,fr/defis/ce2/maths/calcul/tables-multiplication-01,a2b3c4d5,Tables de multiplication,CE2,maths,calcul,moyen,1,50,too-long,number-check,multiplicationSimple,S1.1.1
-exercice,fr/exercices/ce2/maths/calcul/calcul-reflechi-02,e36f66f8,Chaînes de calcul (3 étapes),CE2,maths,calcul,moyen,5,5,,calc-chain,,S1.1.2 | S1.1.3
+exercice,fr/exercices/ce2/maths/calcul/calcul-reflechi-02,e36f66f8,Chaînes de calcul,CE2,maths,calcul,moyen,5,5,,calc-chain,,S1.1.3
 exercice,fr/exercices/ce2/maths/calcul/calcule-et-verifie,c6e19278,Calcule et vérifie,CE2,maths,calcul,moyen,6,6,,multi-question,,S1.1.1
+exercice,fr/exercices/ce2/maths/calcul/comparer-expressions-01,de1602ac,Comparer des expressions sans calculer,CE2,maths,calcul,moyen,4,4,,compare-expressions,,
 exercice,fr/exercices/ce2/maths/calcul/estime-puis-calcule,a5866ed6,Estime puis calcule,CE2,maths,calcul,moyen,6,6,,multi-question,,S1.1.1
-exercice,fr/exercices/ce2/maths/calcul/liens-numeriques-01,cea36dd6,Décomposer un nombre (arbre),CE2,maths,calcul,moyen,5,5,,number-check,,S1.1.1
+exercice,fr/exercices/ce2/maths/calcul/liens-numeriques-01,cea36dd6,Décomposer en arbre,CE2,maths,calcul,moyen,5,5,,number-check,,S1.1.1
 exercice,fr/exercices/ce2/maths/calcul/liens-numeriques-02,fa7e749c,Arbres de décomposition — complexes,CE2,maths,calcul,moyen,5,5,,number-check,,S1.1.2
-application,fr/applications/ce2/maths/calcul/grouper-a-10-03,b782d9d6,Grouper pour faire 10 (difficile),CE2,maths,calcul,difficile,1,10,,number-check,groupeA10,S1.1.1
-application,fr/applications/ce2/maths/calcul/somme-1000-02,d5e3f2a4,Résultat = 1 000 (calcul réfléchi),CE2,maths,calcul,difficile,1,6,,tile-select,sommesCibles,S2.2.1
+application,fr/applications/ce2/maths/calcul/grouper-a-10-03,b782d9d6,Grouper pour faire 10 ,CE2,maths,calcul,difficile,1,10,,number-check,groupeA10,S1.1.2
+application,fr/applications/ce2/maths/calcul/somme-1000-02,d5e3f2a4,Résultat = 1 000 (calcul réfléchi),CE2,maths,calcul,difficile,1,6,,tile-select,sommesCibles,S1.1.3
 defi,fr/defis/ce2/maths/calcul/calcul-rapide-03,e5d608bf,Calcul rapide CE2,CE2,maths,calcul,difficile,1,60,too-long,number-check,fluencyMix,S1.1.1
-exercice,fr/exercices/ce2/maths/donnees/donnees-01,ed533db4,Construire un diagramme en barres,CE2,maths,donnees,moyen,3,3,,bar-chart,,D1.1.1 | S2.1.1
+exercice,fr/exercices/ce2/maths/donnees/donnees-01,ed533db4,Construire un diagramme en barres,CE2,maths,donnees,moyen,3,3,,bar-chart,,D1.1.1
 exercice,fr/exercices/ce2/maths/donnees/donnees-02,d34c1b97,Lire un diagramme en barres,CE2,maths,donnees,moyen,3,3,,bar-chart,,D1.1.1
 application,fr/applications/ce2/maths/fractions/fraction-du-nombre-01,a5b6c7d8,La moitié et le quart,CE2,maths,fractions,facile,1,10,,number-check,fractionDuNombre,S2.1.3
 exercice,fr/exercices/ce2/maths/fractions/ecrire-fraction-01,d4e5f6b8,Écrire une fraction,CE2,maths,fractions,facile,5,5,,fraction-check,,S2.1.3
-exercice,fr/exercices/ce2/maths/fractions/fractions-01,e659838b,Fractions simples,CE2,maths,fractions,facile,5,5,,true-false | number-check | mcq,,S1.1.2 | S2.1.3
-exercice,fr/exercices/ce2/maths/fractions/fractions-collection-01,c7d8e9f0,Fractions d'une collection,CE2,maths,fractions,facile,6,6,,number-check,,S1.1.2 | S2.1.3
+exercice,fr/exercices/ce2/maths/fractions/fractions-01,e659838b,Fractions simples,CE2,maths,fractions,facile,5,5,,true-false | number-check | mcq,,S2.1.3
+exercice,fr/exercices/ce2/maths/fractions/fractions-collection-01,c7d8e9f0,Fractions d'une collection,CE2,maths,fractions,facile,6,6,,number-check,,S2.1.3
 exercice,fr/exercices/ce2/maths/fractions/fractions-colorier,eb65ece0,Colorie la fraction,CE2,maths,fractions,facile,6,6,,fraction-paint,,S1.1.1
 exercice,fr/exercices/ce2/maths/fractions/lire-fraction-01,a3f1d920,Lire des fractions,CE2,maths,fractions,facile,5,5,,fraction,,S2.1.3
 application,fr/applications/ce2/maths/fractions/fraction-du-nombre-02,b6c7d8e9,"Moitié, tiers et quart",CE2,maths,fractions,moyen,1,12,,number-check,fractionDuNombre,S2.1.3
@@ -229,91 +232,91 @@ exercice,fr/exercices/ce2/maths/geometrie/quadrillage-lire-01,c33e9d85,Lire les 
 exercice,fr/exercices/ce2/maths/geometrie/quadrillage-placer-01,b65f15c7,Placer un point,CE2,maths,geometrie,facile,5,5,,coordinate-grid,,S1.1.1
 exercice,fr/exercices/ce2/maths/geometrie/solides-02,add0fa62,Nommer les solides,CE2,maths,geometrie,facile,4,4,,mcq,,S1.1.1
 exercice,fr/exercices/ce2/maths/geometrie/vrai-faux-01,b9e293cd,Vrai ou faux ? Géométrie,CE2,maths,geometrie,facile,3,3,,true-false,,S3.2.3
-exercice,fr/exercices/ce2/maths/geometrie/angles-01,f2686b6b,Les angles,CE2,maths,geometrie,moyen,3,3,,matching | true-false | mcq,,S1.1.1 | S3.2.3
-exercice,fr/exercices/ce2/maths/geometrie/paralleles-perpendiculaires-01,d63bf7ba,Parallèles et perpendiculaires,CE2,maths,geometrie,moyen,4,4,,checkbox | true-false,,S1.1.1 | S3.2.3
+exercice,fr/exercices/ce2/maths/geometrie/angles-01,f2686b6b,Les angles,CE2,maths,geometrie,moyen,3,3,,matching | true-false | mcq,,S1.1.1
+exercice,fr/exercices/ce2/maths/geometrie/paralleles-perpendiculaires-01,d63bf7ba,Parallèles et perpendiculaires,CE2,maths,geometrie,moyen,4,4,,checkbox | true-false,,S1.1.1
 exercice,fr/exercices/ce2/maths/geometrie/proprietes-formes,f9ee2a66,Propriétés des figures,CE2,maths,geometrie,moyen,4,4,,svg-tiles,,S1.1.1
-exercice,fr/exercices/ce2/maths/geometrie/solides-01,a9a121ac,Les solides,CE2,maths,geometrie,moyen,3,3,,matching | true-false,,S2.1.1 | S2.2.1 | S3.2.3
-exercice,fr/exercices/ce2/maths/geometrie/symetrie-01,efda52db,La symétrie,CE2,maths,geometrie,moyen,2,2,,true-false | matching,,S1.1.1 | S3.2.3
-exercice,fr/exercices/ce2/maths/geometrie/triangles-01,bb2db41f,Les triangles,CE2,maths,geometrie,moyen,3,3,,matching | true-false | mcq,,S1.1.1 | S3.2.3
-exercice,fr/exercices/ce2/maths/grandeurs/monnaie-01,f5155038,La monnaie,CE2,maths,grandeurs,facile,4,4,,true-false | number-check | matching,,S1.1.1 | S2.2.1 | S3.2.3
+exercice,fr/exercices/ce2/maths/geometrie/solides-01,a9a121ac,Les solides,CE2,maths,geometrie,moyen,3,3,,matching | true-false,,S2.1.1
+exercice,fr/exercices/ce2/maths/geometrie/symetrie-01,efda52db,La symétrie,CE2,maths,geometrie,moyen,2,2,,true-false | matching,,S1.1.1
+exercice,fr/exercices/ce2/maths/geometrie/triangles-01,bb2db41f,Les triangles,CE2,maths,geometrie,moyen,3,3,,matching | true-false | mcq,,S1.1.1
+exercice,fr/exercices/ce2/maths/grandeurs/monnaie-01,f5155038,La monnaie,CE2,maths,grandeurs,facile,4,4,,true-false | number-check | matching,,S1.1.1
 application,fr/applications/ce2/maths/grandeurs/lire-heure,be0e466f,Lire l'heure,CE2,maths,grandeurs,moyen,1,10,,clock,lireHeure,I1.1.1
 exercice,fr/exercices/ce2/maths/grandeurs/calendrier-01,f01d913e,Lire un calendrier,CE2,maths,grandeurs,moyen,3,3,,multi-question,,I1.1.1
-exercice,fr/exercices/ce2/maths/grandeurs/contenances-01,fac00afe,Les contenances,CE2,maths,grandeurs,moyen,3,3,,convert | true-false,,S1.1.1 | S3.1.1
-exercice,fr/exercices/ce2/maths/grandeurs/durees-01,cffc03e5,Les durées,CE2,maths,grandeurs,moyen,3,3,,matching | number-check | true-false,,I1.1.1 | S2.1.3 | S3.2.3
-exercice,fr/exercices/ce2/maths/grandeurs/masses-01,c82df9fd,Les masses,CE2,maths,grandeurs,moyen,2,2,,convert | true-false,,S1.1.1 | S3.1.1
-application,fr/applications/ce2/maths/logique/labyrinthe-pairs,d60d4763,Labyrinthe nombres pairs,CE2,maths,logique,facile,1,5,,maze,labyrinthe,
-application,fr/applications/ce2/maths/logique/venn-emojis,b30fee39,Diagramme de Venn,CE2,maths,logique,facile,1,5,,venn,vennEmojis,
-application,fr/applications/ce2/maths/logique/venn-formes,a661b064,Diagramme de Venn - Figures,CE2,maths,logique,facile,1,5,,venn,vennFormes,
-application,fr/applications/ce2/maths/logique/venn-nombres,f625054e,Diagramme de Venn - Nombres,CE2,maths,logique,facile,1,6,,venn,vennNombres,
-application,fr/applications/ce2/maths/logique/labyrinthe-mult3,bbb1a25b,Labyrinthe multiples de 3,CE2,maths,logique,moyen,1,5,,maze,labyrinthe,
+exercice,fr/exercices/ce2/maths/grandeurs/contenances-01,fac00afe,Les contenances,CE2,maths,grandeurs,moyen,3,3,,convert | true-false,,S1.1.1
+exercice,fr/exercices/ce2/maths/grandeurs/durees-01,cffc03e5,Les durées,CE2,maths,grandeurs,moyen,3,3,,matching | number-check | true-false,,I1.1.1
+exercice,fr/exercices/ce2/maths/grandeurs/masses-01,c82df9fd,Les masses,CE2,maths,grandeurs,moyen,2,2,,convert | true-false,,S1.1.1
+application,fr/applications/ce2/maths/logique/labyrinthe-pairs,d60d4763,Labyrinthe nombres pairs,CE2,maths,logique,facile,1,5,,maze,labyrinthe,S1.1.1
+application,fr/applications/ce2/maths/logique/venn-emojis,b30fee39,Diagramme de Venn,CE2,maths,logique,facile,1,5,,venn,vennEmojis,S3.1.1
+application,fr/applications/ce2/maths/logique/venn-formes,a661b064,Diagramme de Venn - Figures,CE2,maths,logique,facile,1,5,,venn,vennFormes,S3.1.1
+application,fr/applications/ce2/maths/logique/venn-nombres,f625054e,Diagramme de Venn - Nombres,CE2,maths,logique,facile,1,6,,venn,vennNombres,S3.1.1
+application,fr/applications/ce2/maths/logique/labyrinthe-mult3,bbb1a25b,Labyrinthe multiples de 3,CE2,maths,logique,moyen,1,5,,maze,labyrinthe,S1.1.1
 exercice,fr/exercices/ce2/maths/logique/enigmes-fruits-01,ae577336,Énigmes de fruits,CE2,maths,logique,moyen,3,3,,problem,,S3.2.2
-exercice,fr/exercices/ce2/maths/logique/grilles-01,da73b97f,Grilles logiques,CE2,maths,logique,moyen,5,5,,logic-grid,,S2.1.1 | S3.2.2
+exercice,fr/exercices/ce2/maths/logique/grilles-01,da73b97f,Grilles logiques,CE2,maths,logique,moyen,5,5,,logic-grid,,S3.2.2
 exercice,fr/exercices/ce2/maths/logique/suites-figurales-01,d0a06044,Suites de figures,CE2,maths,logique,moyen,5,5,,mcq,,S3.2.1
 exercice,fr/exercices/ce2/maths/mesures/balance-01,e93f5398,La balance — trouver un poids,CE2,maths,mesures,facile,5,5,,number-check,,I1.1.2
-exercice,fr/exercices/ce2/maths/mesures/heure-01,d168f178,Lire l'heure — heures et demies,CE2,maths,mesures,facile,5,5,,clock,,I1.1.1
+exercice,fr/exercices/ce2/maths/mesures/heure-01,d168f178,Lire l'heure: heures et demies,CE2,maths,mesures,facile,5,5,,clock,,I1.1.1
 application,fr/applications/ce2/maths/mesures,ace5417e,Lire l'heure pas de 5 minutes,CE2,maths,mesures,moyen,1,10,,clock,lireHeure,I1.1.1
 exercice,fr/exercices/ce2/maths/mesures/balance-02,b60c1e71,La balance — possible ou impossible ?,CE2,maths,mesures,moyen,8,8,,tile-select,,I1.1.2
 exercice,fr/exercices/ce2/maths/mesures/durees-01,b3d9c041,Intuition des durées,CE2,maths,mesures,moyen,10,10,,mcq,,I1.1.1
 exercice,fr/exercices/ce2/maths/mesures/durees-02,c2a6e481,Estimer une durée,CE2,maths,mesures,moyen,6,6,,matching,,I1.1.1
-exercice,fr/exercices/ce2/maths/mesures/durees-calcul-01,c3823d72,Calculer des durées,CE2,maths,mesures,moyen,5,5,,problem,,A2.1 | A2.3 | A2.4
+exercice,fr/exercices/ce2/maths/mesures/durees-calcul-01,c3823d72,Calculer des durées,CE2,maths,mesures,moyen,5,5,,problem,,A2.1
 exercice,fr/exercices/ce2/maths/mesures/heure-02,c65bed24,Lire l'heure (par 5 minutes),CE2,maths,mesures,moyen,5,5,,clock,,I1.1.1
 exercice,fr/exercices/ce2/maths/mesures/longueurs-01,b91edc89,Mesures de longueurs,CE2,maths,mesures,moyen,3,3,,convert,,S1.1.1
 exercice,fr/exercices/ce2/maths/mesures/perimetre-01,e3cdb95d,Le périmètre,CE2,maths,mesures,moyen,5,5,,number-check,,S1.1.1
-application,fr/applications/ce2/maths/numeration/ajouter-valeur-pos-facile,ae5b79a3,Ajouter des unités ou des dizaines,CE2,maths,numeration,facile,1,12,,number-check,ajouterPositionnel,
-application,fr/applications/ce2/maths/numeration/arabic-to-roman-facile,e22820d6,Ecrire chiffres romains,CE2,maths,numeration,facile,1,10,,number-check,romanNumeralsReverse,S1.1.1
-application,fr/applications/ce2/maths/numeration/arrondir-dizaine,c2f855b3,Arrondir à la dizaine,CE2,maths,numeration,facile,1,10,,number-check,arrondirNombre,S1.1.1
+application,fr/applications/ce2/maths/numeration/ajouter-valeur-pos-facile,ae5b79a3,Ajouter des unités ou des dizaines,CE2,maths,numeration,facile,1,12,,number-check,ajouterPositionnel,S2.1.2
+application,fr/applications/ce2/maths/numeration/arabic-to-roman-facile,e22820d6,Ecrire chiffres romains,CE2,maths,numeration,facile,1,10,,number-check,romanNumeralsReverse,S2.1.4
+application,fr/applications/ce2/maths/numeration/arrondir-dizaine,c2f855b3,Arrondir à la dizaine,CE2,maths,numeration,facile,1,10,,number-check,arrondirNombre,S3.1.2
 application,fr/applications/ce2/maths/numeration/blocs-valeur-position-01,b5d1c428,Valeur de position — centaines,CE2,maths,numeration,facile,1,8,,click-blocks,blocsValeurPosition,S2.1.2
-application,fr/applications/ce2/maths/numeration/comparaison-nombres-01,d437c989,Comparer des nombres (écriture std),CE2,maths,numeration,facile,1,6,,compare,comparaisonNombres,S1.1.1
+application,fr/applications/ce2/maths/numeration/comparaison-nombres-01,d437c989,Comparer des nombres (écriture std),CE2,maths,numeration,facile,1,6,,compare,comparaisonNombres,S3.1.1
 application,fr/applications/ce2/maths/numeration/complement-a-10,dc4839da,Complément à 10,CE2,maths,numeration,facile,1,10,,number-check,complementNombre,S1.1.2
-application,fr/applications/ce2/maths/numeration/convertir-centaines-dizaines,d4f10001,Convertir centaines et dizaines,CE2,maths,numeration,facile,1,12,,number-check,convertirValeurPos,
-application,fr/applications/ce2/maths/numeration/convertir-dizaines-unites,d4f10002,Convertir dizaines et unités,CE2,maths,numeration,facile,1,12,,number-check,convertirValeurPos,
-application,fr/applications/ce2/maths/numeration/decomp-additif-01,a3f72b01,"Décomposition additive — c., d., u.",CE2,maths,numeration,facile,1,12,,decomp,decompoAdditif,S1.1.1
-application,fr/applications/ce2/maths/numeration/estimation-somme-facile,efd73d44,Estimer une somme à la dizaine,CE2,maths,numeration,facile,1,10,,mcq,estimationSomme,S2.2.1
+application,fr/applications/ce2/maths/numeration/convertir-centaines-dizaines,d4f10001,Convertir centaines et dizaines,CE2,maths,numeration,facile,1,12,,number-check,convertirValeurPos,S2.1.2
+application,fr/applications/ce2/maths/numeration/convertir-dizaines-unites,d4f10002,Convertir dizaines et unités,CE2,maths,numeration,facile,1,12,,number-check,convertirValeurPos,S2.1.2
+application,fr/applications/ce2/maths/numeration/decomp-additif-01,a3f72b01,"Décomposition additive — c., d., u.",CE2,maths,numeration,facile,1,12,,decomp,decompoAdditif,S2.1.2
+application,fr/applications/ce2/maths/numeration/estimation-somme-facile,efd73d44,Estimer une somme à la dizaine,CE2,maths,numeration,facile,1,10,,mcq,estimationSomme,S1.1.3
 application,fr/applications/ce2/maths/numeration/lire-boulier,f97f1def,Lire un boulier,CE2,maths,numeration,facile,3,18,too-long,number-check,lireAbacus,S2.1.2
-application,fr/applications/ce2/maths/numeration/nombres-pairs-impairs,a790dc59,Nombres pairs et impairs,CE2,maths,numeration,facile,3,15,too-long,checkbox,nombresPairsImpairs,S1.1.1
-application,fr/applications/ce2/maths/numeration/ordre-nombres-01,d3f7a192,Plus grand ou plus petit,CE2,maths,numeration,facile,1,10,,tile-select,comparerNombres,S1.1.1
-application,fr/applications/ce2/maths/numeration/place-valeur-01,e2413106,"Unités, dizaines, centaines",CE2,maths,numeration,facile,1,15,too-long,number-check,chiffrePlaceValeur,S1.1.1
-application,fr/applications/ce2/maths/numeration/recomposer-facile,ff79ae03,Recomposer un nombre (2-3 chiffres),CE2,maths,numeration,facile,1,10,,number-check,recomposerNombre,S1.1.1
-application,fr/applications/ce2/maths/numeration/roman-to-arabic-facile,ff80de47,Lire chiffres romains,CE2,maths,numeration,facile,1,10,,number-check,romanNumerals,S1.1.1
-application,fr/applications/ce2/maths/numeration/tableau-numeration-01,e7d98a75,Tableau de numération,CE2,maths,numeration,facile,3,16,too-long,fill-table,decompoTableau,S1.1.1
+application,fr/applications/ce2/maths/numeration/nombres-pairs-impairs,a790dc59,Nombres pairs et impairs,CE2,maths,numeration,facile,3,15,too-long,checkbox,nombresPairsImpairs,S3.2.1
+application,fr/applications/ce2/maths/numeration/ordre-nombres-01,d3f7a192,Plus grand ou plus petit,CE2,maths,numeration,facile,1,10,,tile-select,comparerNombres,S3.1.2
+application,fr/applications/ce2/maths/numeration/place-valeur-01,e2413106,"Unités, dizaines, centaines",CE2,maths,numeration,facile,1,15,too-long,number-check,chiffrePlaceValeur,S2.1.2
+application,fr/applications/ce2/maths/numeration/recomposer-facile,ff79ae03,Recomposer un nombre (2-3 chiffres),CE2,maths,numeration,facile,1,10,,number-check,recomposerNombre,S2.1.2
+application,fr/applications/ce2/maths/numeration/roman-to-arabic-facile,ff80de47,Lire chiffres romains,CE2,maths,numeration,facile,1,10,,number-check,romanNumerals,S2.1.4
+application,fr/applications/ce2/maths/numeration/tableau-numeration-01,e7d98a75,Tableau de numération,CE2,maths,numeration,facile,3,16,too-long,fill-table,decompoTableau,S2.1.2
 exercice,fr/exercices/ce2/maths/numeration/base10-01,aeed3b5f,Les blocs de base 10 jusqu'à 999,CE2,maths,numeration,facile,6,6,,base-10,,S2.1.2
-exercice,fr/exercices/ce2/maths/numeration/suites-01,c939b7ee,Suites de nombres,CE2,maths,numeration,facile,4,4,,sequence,,S3.1.2 | S3.2.1
+exercice,fr/exercices/ce2/maths/numeration/suites-01,c939b7ee,Suites de nombres,CE2,maths,numeration,facile,4,4,,sequence,,S3.2.1
 exercice,fr/exercices/ce2/maths/numeration/trier-nombres-01,bfbd8268,Ranger des nombres dans l'ordre,CE2,maths,numeration,facile,5,5,,drag-sort,,S3.1.2
-application,fr/applications/ce2/maths/numeration/ajouter-valeur-pos-moyen,a35fad5c,Ajouter des dizaines ou centaines,CE2,maths,numeration,moyen,1,12,,number-check,ajouterPositionnel,
-application,fr/applications/ce2/maths/numeration/arabic-to-roman-moyen,e163e4ac,Ecrire chiffres romains,CE2,maths,numeration,moyen,1,10,,number-check,romanNumeralsReverse,S1.1.1
-application,fr/applications/ce2/maths/numeration/arrondir-centaine,fb7fdbbb,Arrondir à la centaine,CE2,maths,numeration,moyen,2,20,too-long,number-check,arrondirNombre,S1.1.1
-application,fr/applications/ce2/maths/numeration/coloriage-magique-01,d27d7b31,Coloriage magique — étoile,CE2,maths,numeration,moyen,1,2,,magic-color,magicColorGrid,S1.1.1
-application,fr/applications/ce2/maths/numeration/comparaison-nombres-02,ae25ebc1,Comparer des nombres (écriture CDU),CE2,maths,numeration,moyen,1,6,,compare,comparaisonNombres,S1.1.1
+application,fr/applications/ce2/maths/numeration/ajouter-valeur-pos-moyen,a35fad5c,Ajouter des dizaines ou centaines,CE2,maths,numeration,moyen,1,12,,number-check,ajouterPositionnel,S2.1.2
+application,fr/applications/ce2/maths/numeration/arabic-to-roman-moyen,e163e4ac,Ecrire chiffres romains,CE2,maths,numeration,moyen,1,10,,number-check,romanNumeralsReverse,S2.1.4
+application,fr/applications/ce2/maths/numeration/arrondir-centaine,fb7fdbbb,Arrondir à la centaine,CE2,maths,numeration,moyen,2,20,too-long,number-check,arrondirNombre,S3.1.2
+application,fr/applications/ce2/maths/numeration/coloriage-magique-01,d27d7b31,Coloriage magique — étoile,CE2,maths,numeration,moyen,1,2,,magic-color,magicColorGrid,S3.2.1
+application,fr/applications/ce2/maths/numeration/comparaison-nombres-02,ae25ebc1,Comparer des nombres (écriture CDU),CE2,maths,numeration,moyen,1,6,,compare,comparaisonNombres,S3.1.1
 application,fr/applications/ce2/maths/numeration/comparer-10000,fa708ecd,Comparer des nombres jusqu'à 10 000,CE2,maths,numeration,moyen,1,10,,compare,comparerNombres,S3.1.1
 application,fr/applications/ce2/maths/numeration/complement-a-100,d9433381,Complément à 100,CE2,maths,numeration,moyen,1,10,,number-check,complementNombre,S1.1.2
-application,fr/applications/ce2/maths/numeration/convertir-valeur-melange,d4f10003,Valeurs de position — mélangé,CE2,maths,numeration,moyen,1,15,too-long,number-check,convertirValeurPos,
-application,fr/applications/ce2/maths/numeration/estimation-somme-moyen,daedfbe2,Estimer 3 nombres à la dizaine,CE2,maths,numeration,moyen,1,10,,mcq,estimationSomme,S2.2.1
-application,fr/applications/ce2/maths/numeration/nombres-pairs-impairs-02,b3e7f21a,Pairs et impairs (grands nbs),CE2,maths,numeration,moyen,3,15,too-long,checkbox,nombresPairsImpairs,S1.1.1
-application,fr/applications/ce2/maths/numeration/ordre-nombres-02,e4c8b203,Le plus grand / le plus petit (×3),CE2,maths,numeration,moyen,1,10,,tile-select,comparerNombres,S1.1.1
-application,fr/applications/ce2/maths/numeration/recomposer-moyen,bbc6bed6,Recomposer un nombre (3-4 chiffres),CE2,maths,numeration,moyen,1,10,,number-check,recomposerNombre,S1.1.1
-application,fr/applications/ce2/maths/numeration/roman-to-arabic-moyen,d1bbe0af,Lire chiffres romains,CE2,maths,numeration,moyen,1,10,,number-check,romanNumerals,S1.1.1
+application,fr/applications/ce2/maths/numeration/convertir-valeur-melange,d4f10003,Valeurs de position — mélangé,CE2,maths,numeration,moyen,1,15,too-long,number-check,convertirValeurPos,S2.1.2
+application,fr/applications/ce2/maths/numeration/estimation-somme-moyen,daedfbe2,Estimer 3 nombres à la dizaine,CE2,maths,numeration,moyen,1,10,,mcq,estimationSomme,S1.1.3
+application,fr/applications/ce2/maths/numeration/nombres-pairs-impairs-02,b3e7f21a,Pairs et impairs (grands nbs),CE2,maths,numeration,moyen,3,15,too-long,checkbox,nombresPairsImpairs,S3.2.1
+application,fr/applications/ce2/maths/numeration/ordre-nombres-02,e4c8b203,Le plus grand / le plus petit (×3),CE2,maths,numeration,moyen,1,10,,tile-select,comparerNombres,S3.1.2
+application,fr/applications/ce2/maths/numeration/recomposer-moyen,bbc6bed6,Recomposer un nombre (3-4 chiffres),CE2,maths,numeration,moyen,1,10,,number-check,recomposerNombre,S2.1.2
+application,fr/applications/ce2/maths/numeration/roman-to-arabic-moyen,d1bbe0af,Lire chiffres romains,CE2,maths,numeration,moyen,1,10,,number-check,romanNumerals,S2.1.4
 application,fr/applications/ce2/maths/numeration/suites-ce2,b5a2d023,Suites de nombres,CE2,maths,numeration,moyen,1,10,,sequence,compterDeNCE1,S3.2.1
-exercice,fr/exercices/ce2/maths/numeration/base10-02,cbe5b194,Les blocs de base 10 — nombres difficiles,CE2,maths,numeration,moyen,6,6,,base-10,,S2.1.2
+exercice,fr/exercices/ce2/maths/numeration/base10-02,cbe5b194,Les blocs de base 10,CE2,maths,numeration,moyen,6,6,,base-10,,S2.1.2
 exercice,fr/exercices/ce2/maths/numeration/droite-graduee-01,e85fea16,Droite graduée — lire et placer,CE2,maths,numeration,moyen,5,5,,number-line,,S1.1.1
 exercice,fr/exercices/ce2/maths/numeration/encadrement-01,ece691f8,Encadrement à la centaine,CE2,maths,numeration,moyen,3,3,,bounding,,S1.1.1
 exercice,fr/exercices/ce2/maths/numeration/ordonner-01,dd2805e3,Ordonner des nombres,CE2,maths,numeration,moyen,3,3,,sort,,S3.1.2
-application,fr/applications/ce2/maths/numeration/ajouter-valeur-pos-difficile,e6c5ba70,"Ajouter unités, dizaines ou centaines",CE2,maths,numeration,difficile,1,12,,number-check,ajouterPositionnel,
-application,fr/applications/ce2/maths/numeration/arabic-to-roman-difficile,e1064158,Ecrire chiffres romains,CE2,maths,numeration,difficile,1,10,,number-check,romanNumeralsReverse,S1.1.1
-application,fr/applications/ce2/maths/numeration/arrondir-millier,c492d9af,Arrondir au millier,CE2,maths,numeration,difficile,1,10,,number-check,arrondirNombre,S1.1.1
-application,fr/applications/ce2/maths/numeration/comparaison-nombres-03,c71202d0,Comparer des nombres (CDU/CDU),CE2,maths,numeration,difficile,1,6,,compare,comparaisonNombres,S1.1.1
+application,fr/applications/ce2/maths/numeration/ajouter-valeur-pos-difficile,e6c5ba70,"Ajouter unités, dizaines ou centaines",CE2,maths,numeration,difficile,1,12,,number-check,ajouterPositionnel,S2.1.2
+application,fr/applications/ce2/maths/numeration/arabic-to-roman-difficile,e1064158,Ecrire chiffres romains,CE2,maths,numeration,difficile,1,10,,number-check,romanNumeralsReverse,S2.1.4
+application,fr/applications/ce2/maths/numeration/arrondir-millier,c492d9af,Arrondir au millier,CE2,maths,numeration,difficile,1,10,,number-check,arrondirNombre,S3.1.2
+application,fr/applications/ce2/maths/numeration/comparaison-nombres-03,c71202d0,Comparer des nombres (CDU/CDU),CE2,maths,numeration,difficile,1,6,,compare,comparaisonNombres,S3.1.1
 application,fr/applications/ce2/maths/numeration/complement-a-1000,bd9ef99c,Complément à 1000,CE2,maths,numeration,difficile,1,10,,number-check,complementNombre,S1.1.2
-application,fr/applications/ce2/maths/numeration/estimation-somme-difficile,ec9d1c29,Estimer une somme à la centaine,CE2,maths,numeration,difficile,1,10,,mcq,estimationSomme,S2.2.1
-application,fr/applications/ce2/maths/numeration/recomposer-difficile,ead3b372,Recomposer un nombre (5-6 chiffres),CE2,maths,numeration,difficile,1,10,,number-check,recomposerNombre,S1.1.1
-application,fr/applications/ce2/maths/numeration/roman-to-arabic-difficile,e5aeb175,Lire chiffres romains,CE2,maths,numeration,difficile,1,10,,number-check,romanNumerals,S1.1.1
-application,fr/applications/ce2/maths/operations/addition-trou-facile,c81c58ba,Additions à trou (Facile),CE2,maths,operations,facile,1,12,,number-check,additionTrou,S1.1.1
+application,fr/applications/ce2/maths/numeration/estimation-somme-difficile,ec9d1c29,Estimer une somme à la centaine,CE2,maths,numeration,difficile,1,10,,mcq,estimationSomme,S1.1.3
+application,fr/applications/ce2/maths/numeration/recomposer-difficile,ead3b372,Recomposer un nombre (5-6 chiffres),CE2,maths,numeration,difficile,1,10,,number-check,recomposerNombre,S2.1.2
+application,fr/applications/ce2/maths/numeration/roman-to-arabic-difficile,e5aeb175,Lire chiffres romains,CE2,maths,numeration,difficile,1,10,,number-check,romanNumerals,S2.1.4
+application,fr/applications/ce2/maths/operations/addition-trou-facile,c81c58ba,Additions à trou,CE2,maths,operations,facile,1,12,,number-check,additionTrou,S1.1.3
 application,fr/applications/ce2/maths/operations/doubles-moities,f3648f2c,Doubles et moitiés,CE2,maths,operations,facile,1,10,,number-check,doublesMoities,S1.1.2
-application,fr/applications/ce2/maths/operations/fruits-addition-trou,cf7fac37,Additions à trou — Fruits,CE2,maths,operations,facile,1,12,,number-check,comptageFruits,S2.1.1
-application,fr/applications/ce2/maths/operations/fruits-soustraction-trou,e1c11318,Soustractions à trou — Fruits,CE2,maths,operations,facile,1,12,,number-check,comptageFruits,S2.1.1
-application,fr/applications/ce2/maths/operations/machine-decouverte,f9226edf,Découvre la règle,CE2,maths,operations,facile,1,5,,function-machine,functionMachineDiscover,
-application,fr/applications/ce2/maths/operations/machine-fonctions,db3c2148,Machine à fonctions,CE2,maths,operations,facile,1,6,,function-machine,functionMachineCompute,
-application,fr/applications/ce2/maths/operations/mult-etapes-01,f04a6286,Multiplier par 10 — étape par étape,CE2,maths,operations,facile,1,8,,number-check,multiplicationsEtapes,S1.1.1
-application,fr/applications/ce2/maths/operations/partager-equitable-01,a1f2c3d4,Partager équitablement,CE2,maths,operations,facile,1,6,,number-check,partagerEquitable,S1.1.1
-application,fr/applications/ce2/maths/operations/soustraction-trou-facile,a3d25ced,Soustractions à trou (Facile),CE2,maths,operations,facile,1,12,,number-check,soustractionTrou,S1.1.1
+application,fr/applications/ce2/maths/operations/fruits-addition-trou,cf7fac37,Additions à trou — Fruits,CE2,maths,operations,facile,1,12,,number-check,comptageFruits,S2.2.1
+application,fr/applications/ce2/maths/operations/fruits-soustraction-trou,e1c11318,Soustractions à trou — Fruits,CE2,maths,operations,facile,1,12,,number-check,comptageFruits,S2.2.1
+application,fr/applications/ce2/maths/operations/machine-decouverte,f9226edf,Découvre la règle,CE2,maths,operations,facile,1,5,,function-machine,functionMachineDiscover,S1.1.3
+application,fr/applications/ce2/maths/operations/machine-fonctions,db3c2148,Machine à fonctions,CE2,maths,operations,facile,1,6,,function-machine,functionMachineCompute,S1.1.1
+application,fr/applications/ce2/maths/operations/mult-etapes-01,f04a6286,Multiplier par 10 — étape par étape,CE2,maths,operations,facile,1,8,,number-check,multiplicationsEtapes,S1.1.3
+application,fr/applications/ce2/maths/operations/partager-equitable-01,a1f2c3d4,Partager équitablement,CE2,maths,operations,facile,1,6,,number-check,partagerEquitable,S2.1.3
+application,fr/applications/ce2/maths/operations/soustraction-trou-facile,a3d25ced,Soustractions à trou,CE2,maths,operations,facile,1,12,,number-check,soustractionTrou,S1.1.3
 application,fr/applications/ce2/maths/operations/table-02,d39e7a53,Table de 2,CE2,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
 application,fr/applications/ce2/maths/operations/table-03,a257fde9,Table de 3,CE2,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
 application,fr/applications/ce2/maths/operations/table-04,d76efb42,Table de 4,CE2,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
@@ -323,70 +326,72 @@ application,fr/applications/ce2/maths/operations/table-07,d21c6ffa,Table de 7,CE
 application,fr/applications/ce2/maths/operations/table-08,ba632e30,Table de 8,CE2,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
 application,fr/applications/ce2/maths/operations/table-09,b9ca21f1,Table de 9,CE2,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
 application,fr/applications/ce2/maths/operations/table-10,ac47bade,Table de 10,CE2,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
-application,fr/applications/ce2/maths/operations/table-fonction-mult,e5a30001,Entrée/sortie — multiplication,CE2,maths,operations,facile,1,12,,fill-table,tableEntreeSortie,
+application,fr/applications/ce2/maths/operations/table-fonction-mult,e5a30001,Entrée/sortie — multiplication,CE2,maths,operations,facile,1,12,,fill-table,tableEntreeSortie,S2.2.2
 exercice,fr/exercices/ce2/maths/operations/addition-ou-multiplication-01,a7d4f819,Addition ou multiplication ?,CE2,maths,operations,facile,10,10,,tile-select,,S1.1.1
 exercice,fr/exercices/ce2/maths/operations/multiplication-01,f1e9c305,De l'addition à la multiplication,CE2,maths,operations,facile,8,8,,multi-question,,S1.1.1
-exercice,fr/exercices/ce2/maths/operations/pose-addition-01,d125cf65,Poser une addition,CE2,maths,operations,facile,5,5,,column-op,,S1.1.1 | S2.1.2
-exercice,fr/exercices/ce2/maths/operations/pose-soustraction-01,d6345999,Poser une soustraction,CE2,maths,operations,facile,5,5,,column-op,,S1.1.1 | S2.1.2
+exercice,fr/exercices/ce2/maths/operations/pose-addition-01,d125cf65,Poser une addition,CE2,maths,operations,facile,5,5,,column-op,,S1.1.1
+exercice,fr/exercices/ce2/maths/operations/pose-soustraction-01,d6345999,Poser une soustraction,CE2,maths,operations,facile,5,5,,column-op,,S1.1.1
 exercice,fr/exercices/ce2/maths/operations/vocabulaire-01,e5b3c817,Vocabulaire des opérations,CE2,maths,operations,facile,3,3,,select,,S2.1.4
-application,fr/applications/ce2/maths/operations/addition-trou,be7e0175,Additions à trou,CE2,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.1
+application,fr/applications/ce2/maths/operations/addition-trou,be7e0175,Additions à trou,CE2,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.3
 application,fr/applications/ce2/maths/operations/comparer-expressions,c9d0e1f2,"Compare sans calculer (+, -, x)",CE2,maths,operations,moyen,2,12,,compare,compareExpressions,S3.1.1
-application,fr/applications/ce2/maths/operations/comparer-mult-nombre,b6624fac,Comparer — multiplication et nombre,CE2,maths,operations,moyen,1,10,,compare,comparerOpNombre,
-application,fr/applications/ce2/maths/operations/decodage-emojis,e53c02b1,Décodage d'Emojis,CE2,maths,operations,moyen,1,10,,number-check,decodageEmojis,S1.1.1
-application,fr/applications/ce2/maths/operations/decodage-monstres,a34a742a,Décodage de Monstres,CE2,maths,operations,moyen,1,10,,number-check,decodageEmojis,S1.1.1
+application,fr/applications/ce2/maths/operations/comparer-mult-nombre,b6624fac,Comparer — multiplication et nombre,CE2,maths,operations,moyen,1,10,,compare,comparerOpNombre,S3.1.1
+application,fr/applications/ce2/maths/operations/decodage-emojis,e53c02b1,Décodage d'Emojis,CE2,maths,operations,moyen,1,10,,number-check,decodageEmojis,S2.1.4
+application,fr/applications/ce2/maths/operations/decodage-monstres,a34a742a,Décodage de Monstres,CE2,maths,operations,moyen,1,10,,number-check,decodageEmojis,S2.1.4
 application,fr/applications/ce2/maths/operations/division-simple,f66022f9,Divisions,CE2,maths,operations,moyen,1,10,,number-check,divisionSimple,S1.1.1
-application,fr/applications/ce2/maths/operations/division-trou,f9294b91,Divisions à trou,CE2,maths,operations,moyen,1,10,,number-check,divisionTrou,S1.1.1
-application,fr/applications/ce2/maths/operations/familles-faits,d7cf7345,"Familles de faits (+, -, x)",CE2,maths,operations,moyen,2,12,,checkbox,famillesFaits,S2.2.1
-application,fr/applications/ce2/maths/operations/mult-directes-01,a81eceb5,"Multiplier par 10, 100 ou 1000",CE2,maths,operations,moyen,1,15,too-long,number-check,multiplicationsDirectes,S1.1.1
-application,fr/applications/ce2/maths/operations/mult-etapes-02,ebe2ee5c,Multiplier par 100 — étape par étape,CE2,maths,operations,moyen,1,8,,number-check,multiplicationsEtapes,S1.1.1
-application,fr/applications/ce2/maths/operations/multiplication-trou,c2b782d2,Multiplications à trou,CE2,maths,operations,moyen,1,10,,number-check,multiplicationTrou,S1.1.1
-application,fr/applications/ce2/maths/operations/perimetre,a4f633a0,Périmètres,CE2,maths,operations,moyen,1,10,,number-check,perimetreFormes,S1.1.1
+application,fr/applications/ce2/maths/operations/division-trou,f9294b91,Divisions à trou,CE2,maths,operations,moyen,1,10,,number-check,divisionTrou,S1.1.3
+application,fr/applications/ce2/maths/operations/familles-faits,d7cf7345,"Familles de faits (+, -, x)",CE2,maths,operations,moyen,2,12,,checkbox,famillesFaits,S2.2.2
+application,fr/applications/ce2/maths/operations/mult-directes-01,a81eceb5,"Multiplier par 10, 100 ou 1000",CE2,maths,operations,moyen,1,15,too-long,number-check,multiplicationsDirectes,S1.1.3
+application,fr/applications/ce2/maths/operations/mult-etapes-02,ebe2ee5c,Multiplier par 100 — étape par étape,CE2,maths,operations,moyen,1,8,,number-check,multiplicationsEtapes,S1.1.3
+application,fr/applications/ce2/maths/operations/multiplication-trou,c2b782d2,Multiplications à trou,CE2,maths,operations,moyen,1,10,,number-check,multiplicationTrou,S1.1.3
+application,fr/applications/ce2/maths/operations/perimetre,a4f633a0,Périmètres,CE2,maths,operations,moyen,1,10,,number-check,perimetreFormes,S1.2.1
 application,fr/applications/ce2/maths/operations/pyramides,f4547042,Pyramides d'additions,CE2,maths,operations,moyen,1,8,,pyramid,pyramideAdditions,S1.2.2
-application,fr/applications/ce2/maths/operations/soustraction-trou,a103d228,Soustractions à trou,CE2,maths,operations,moyen,1,10,,number-check,soustractionTrou,S1.1.1
-application,fr/applications/ce2/maths/operations/triangle-arithmetique,ee1f6b31,Triangle arithmétique,CE2,maths,operations,moyen,2,16,too-long,tri-arith,triArith,S1.1.1
+application,fr/applications/ce2/maths/operations/soustraction-trou,a103d228,Soustractions à trou,CE2,maths,operations,moyen,1,10,,number-check,soustractionTrou,S1.1.3
+application,fr/applications/ce2/maths/operations/triangle-arithmetique,ee1f6b31,Triangle arithmétique,CE2,maths,operations,moyen,2,16,too-long,tri-arith,triArith,S1.2.2
 application,fr/applications/ce2/maths/operations/vrai-faux-ops,e98c6937,"Vrai ou faux (+, -, x)",CE2,maths,operations,moyen,2,10,,true-false,vraiFauxOps,S3.2.3
-exercice,fr/exercices/ce2/maths/operations/addition-ou-multiplication-02,b8e5c920,Addition ou multiplication ? (2),CE2,maths,operations,moyen,10,10,,tile-select,,S1.1.1
+exercice,fr/exercices/ce2/maths/operations/addition-ou-multiplication-02,b8e5c920,Addition ou multiplication ?,CE2,maths,operations,moyen,10,10,,tile-select,,S1.1.1
 exercice,fr/exercices/ce2/maths/operations/additions-01,f1d1f5a0,Additions à trois chiffres,CE2,maths,operations,moyen,4,4,,number-check,,S1.1.1
-exercice,fr/exercices/ce2/maths/operations/calcul-reflechi-01,ce8f5d4e,Calcul réfléchi,CE2,maths,operations,moyen,4,4,,multi-question,,S1.1.2 | S1.1.3
-exercice,fr/exercices/ce2/maths/operations/division-sens-01,f8934228,Division : partage et groupement,CE2,maths,operations,moyen,5,5,,problem,,M1.2 | M1.3
+exercice,fr/exercices/ce2/maths/operations/calcul-reflechi-01,ce8f5d4e,Calcul réfléchi,CE2,maths,operations,moyen,4,4,,multi-question,,S1.1.3
+exercice,fr/exercices/ce2/maths/operations/division-sens-01,f8934228,Division : partage et groupement,CE2,maths,operations,moyen,5,5,,problem,,M1.2
 exercice,fr/exercices/ce2/maths/operations/multiplications-posees-01,d9746130,Multiplications posées,CE2,maths,operations,moyen,5,5,,column-op,,S1.1.1
 exercice,fr/exercices/ce2/maths/operations/pyramides-01,b11a2193,Pyramides d'additions CE2,CE2,maths,operations,moyen,4,4,,pyramid,,S1.2.2
 exercice,fr/exercices/ce2/maths/operations/soustractions-01,cf5ee369,Soustractions à trois chiffres,CE2,maths,operations,moyen,4,4,,number-check,,S1.1.1
 exercice,fr/exercices/ce2/maths/operations/tables-01,e09f15da,Tables de multiplication (6 à 9),CE2,maths,operations,moyen,5,13,too-long,number-check,,S1.1.1
-application,fr/applications/ce2/maths/operations/mult-etapes-03,f9a71c5b,Multiplier par 1000 — par étapes,CE2,maths,operations,difficile,1,8,,number-check,multiplicationsEtapes,S1.1.1
+application,fr/applications/ce2/maths/operations/mult-etapes-03,f9a71c5b,Multiplier par 1000 — par étapes,CE2,maths,operations,difficile,1,8,,number-check,multiplicationsEtapes,S1.1.3
 exercice,fr/exercices/ce2/maths/problemes/comparaison-ecart-01,a4b5c6d7,Quelle est la différence ?,CE2,maths,problemes,facile,5,5,,problem,,A3.1
 exercice,fr/exercices/ce2/maths/problemes/division-groupement-01,d7e8f9a0,Combien de groupes ?,CE2,maths,problemes,facile,5,5,,problem,,M1.3
 exercice,fr/exercices/ce2/maths/problemes/division-partage-01,c6d7e8f9,Partager en parts égales,CE2,maths,problemes,facile,5,5,,problem,,M1.2
 exercice,fr/exercices/ce2/maths/problemes/fois-plus-01,a6b7c8d9,Fois plus,CE2,maths,problemes,facile,5,5,,problem,,M2.1
-exercice,fr/exercices/ce2/maths/problemes/quotidien-01,fdf25fcb,Problèmes du quotidien,CE2,maths,problemes,facile,4,4,,problem,,A1.1 | A2.2 | M1.1
+exercice,fr/exercices/ce2/maths/problemes/quotidien-01,fdf25fcb,Problèmes du quotidien,CE2,maths,problemes,facile,4,4,,problem,,M1.1
 exercice,fr/exercices/ce2/maths/problemes/choix-operation-01,e6f7a8b9,Quelle opération choisir ?,CE2,maths,problemes,moyen,5,5,,select | multi-question,,S1.1.1
 exercice,fr/exercices/ce2/maths/problemes/combien-de-fois-01,c2dd8614,Combien de fois plus ?,CE2,maths,problemes,moyen,5,5,,problem,,M2.2
 exercice,fr/exercices/ce2/maths/problemes/comparaison-etat-compare-01,b5c6d7e8,"De plus, de moins...",CE2,maths,problemes,moyen,5,5,,problem,,A3.2
 exercice,fr/exercices/ce2/maths/problemes/comparaison-referent-01,c4d5e6f7,Trouver le référent,CE2,maths,problemes,moyen,5,5,,problem,,A3.3
 exercice,fr/exercices/ce2/maths/problemes/composition-transformations-01,b2c3d4e5,"Deux changements, quel bilan ?",CE2,maths,problemes,moyen,5,5,,problem,,A4.2
-exercice,fr/exercices/ce2/maths/problemes/piege-du-capitaine,e6b51289,Le piège du capitaine,CE2,maths,problemes,moyen,6,6,,mcq,,S1.2.1 | S1.2.3 | S3.2.2
+exercice,fr/exercices/ce2/maths/problemes/piege-du-capitaine,e6b51289,Le piège du capitaine,CE2,maths,problemes,moyen,6,6,,mcq,,S3.2.2
 exercice,fr/exercices/ce2/maths/problemes/problemes-inverses,edaeff3d,Problèmes inverses,CE2,maths,problemes,moyen,3,3,,inverse-problem,,S2.2.2
 exercice,fr/exercices/ce2/maths/problemes/transformation-etat-initial-01,f3a4b5c6,Quel était le début ?,CE2,maths,problemes,moyen,5,5,,problem,,A2.4
 exercice,fr/exercices/ce2/maths/problemes/transformation-inconnue-01,e2f3a4b5,Que s'est-il passé ?,CE2,maths,problemes,moyen,5,5,,problem,,A2.3
-exercice,fr/exercices/ce2/maths/problemes/valeur-unitaire-01,f3e2d1c0,Trouver le prix à l'unité,CE2,maths,problemes,moyen,5,5,,multi-question,,S1.1.1 | S3.1.2
-exercice,fr/exercices/ce2/maths/problemes/comparaison-etat-compare-02,b7c8d9e0,"De plus, de moins... (2)",CE2,maths,problemes,difficile,5,5,,problem,,A3.2
+exercice,fr/exercices/ce2/maths/problemes/valeur-unitaire-01,f3e2d1c0,Trouver le prix à l'unité,CE2,maths,problemes,moyen,5,5,,multi-question,,S1.1.1
+exercice,fr/exercices/ce2/maths/problemes/comparaison-etat-compare-02,b7c8d9e0,"De plus, de moins...",CE2,maths,problemes,difficile,5,5,,problem,,A3.2
 exercice,fr/exercices/ce2/maths/problemes/comparaison-referent-02,b124a13c,Retrouver l'autre quantité (2),CE2,maths,problemes,difficile,5,5,,problem,,A3.3
-exercice,fr/exercices/ce2/maths/problemes/transformation-etat-initial-02,a63aa703,Quel était le début ? (2),CE2,maths,problemes,difficile,5,5,,problem,,A2.4
+exercice,fr/exercices/ce2/maths/problemes/transformation-etat-initial-02,a63aa703,Quel était le début ?,CE2,maths,problemes,difficile,5,5,,problem,,A2.4
 exercice,fr/exercices/ce2/maths/problemes/transformation-etat-initial-03,c69b3aab,Combien avant ? (formes inversées),CE2,maths,problemes,difficile,5,5,,problem,,A2.4
 defi,fr/defis/cm1/maths/calcul/calcul-rapide-01,f072260c,Calcul rapide CM1,CM1,maths,calcul,facile,1,60,too-long,number-check,fluencyMix,S1.1.1
 defi,fr/defis/cm1/maths/calcul/calcul-rapide-02,a7b284a6,Calcul rapide CM1,CM1,maths,calcul,moyen,1,60,too-long,number-check,fluencyMix,S1.1.1
+exercice,fr/exercices/cm1/maths/calcul/comparer-expressions-01,e582773e,Comparer des expressions sans calculer,CM1,maths,calcul,moyen,4,4,,compare-expressions,,
+exercice,fr/exercices/cm1/maths/calcul/estimation-01,d7689c31,Estimer puis calculer,CM1,maths,calcul,moyen,5,5,,estimation,,
 defi,fr/defis/cm1/maths/calcul/calcul-rapide-03,d132bcb7,Calcul rapide CM1,CM1,maths,calcul,difficile,1,60,too-long,number-check,fluencyMix,S1.1.1
-exercice,fr/exercices/cm1/maths/calcul/calcul-reflechi-02,cfb6d0e3,Chaînes de calcul (nombres plus grands),CM1,maths,calcul,difficile,5,5,,calc-chain,,S1.1.1 | S1.1.3
+exercice,fr/exercices/cm1/maths/calcul/calcul-reflechi-02,cfb6d0e3,Chaînes de calcul (nombres plus grands),CM1,maths,calcul,difficile,5,5,,calc-chain,,S1.1.3
 exercice,fr/exercices/cm1/maths/calcul/estime-puis-calcule,a46fcf69,Estime puis calcule,CM1,maths,calcul,difficile,6,6,,multi-question,,S1.1.1
 exercice,fr/exercices/cm1/maths/calcul/liens-numeriques-01,a9148ec9,Maîtrise des liens numériques (CM1),CM1,maths,calcul,difficile,8,8,,number-check,,S1.2.1
 exercice,fr/exercices/cm1/maths/calcul/liens-numeriques-decimaux-01,f055c31e,Calcul mental avec les décimaux,CM1,maths,calcul,difficile,7,7,,number-check,,S1.3.1
-application,fr/applications/cm1/maths/decimaux/decomposer-decimal-01,d154c39c,Décomposer un nombre décimal,CM1,maths,decimaux,facile,1,8,,tile-select,decomposerDecimal,S2.1.3
+application,fr/applications/cm1/maths/decimaux/decomposer-decimal-01,d154c39c,Décomposer un nombre décimal,CM1,maths,decimaux,facile,1,8,,tile-select,decomposerDecimal,S2.1.2
 application,fr/applications/cm1/maths/decimaux/trier-decimaux,b51629c0,Trier des décimaux,CM1,maths,decimaux,facile,3,18,too-long,sort,trierDecimaux,S3.1.2
-application,fr/applications/cm1/maths/decimaux/ajouter-decimaux,acf67d2f,Additions de décimaux,CM1,maths,decimaux,moyen,1,10,,number-check,additionDecimaux,S1.1.1
+application,fr/applications/cm1/maths/decimaux/ajouter-decimaux,acf67d2f,Additions de décimaux,CM1,maths,decimaux,moyen,1,10,,number-check,additionDecimaux,S1.1.3
 application,fr/applications/cm1/maths/decimaux/comparer-decimaux,c2d71e80,Comparer des décimaux,CM1,maths,decimaux,moyen,1,10,,compare,comparerDecimaux,S3.1.1
-application,fr/applications/cm1/maths/decimaux/decomposer-decimal-02,f4014b65,Décomposer un nombre décimal,CM1,maths,decimaux,moyen,1,8,,tile-select,decomposerDecimal,S2.1.3
-application,fr/applications/cm1/maths/decimaux/soustraire-decimaux,f67a1db1,Soustractions de décimaux,CM1,maths,decimaux,moyen,1,10,,number-check,soustractionDecimaux,S1.1.1
-application,fr/applications/cm1/maths/decimaux/decomposer-decimal-03,caa56e14,Décomposer un nombre décimal,CM1,maths,decimaux,difficile,1,8,,tile-select,decomposerDecimal,S2.1.3
+application,fr/applications/cm1/maths/decimaux/decomposer-decimal-02,f4014b65,Décomposer un nombre décimal,CM1,maths,decimaux,moyen,1,8,,tile-select,decomposerDecimal,S2.1.2
+application,fr/applications/cm1/maths/decimaux/soustraire-decimaux,f67a1db1,Soustractions de décimaux,CM1,maths,decimaux,moyen,1,10,,number-check,soustractionDecimaux,S1.1.3
+application,fr/applications/cm1/maths/decimaux/decomposer-decimal-03,caa56e14,Décomposer un nombre décimal,CM1,maths,decimaux,difficile,1,8,,tile-select,decomposerDecimal,S2.1.2
 exercice,fr/exercices/cm1/maths/donnees/donnees-01,ab4ee8a0,Construire un diagramme en barres,CM1,maths,donnees,moyen,3,3,,bar-chart,,D1.1.1
 exercice,fr/exercices/cm1/maths/donnees/donnees-02,e6b1b74c,Lire un diagramme en barres,CM1,maths,donnees,moyen,3,3,,bar-chart,,D1.1.1
 application,fr/applications/cm1/maths/fractions/egalites-fractions,f3a1d8c6,Égalités de fractions décimales,CM1,maths,fractions,facile,1,10,,tile-select,egalitesFractions,S2.1.3
@@ -398,18 +403,18 @@ application,fr/applications/cm1/maths/fractions/plus-grand-fraction,c3f2a7b1,Com
 application,fr/applications/cm1/maths/fractions/recomposer-fractions,e2c7a4f9,Recomposer des fractions décimales,CM1,maths,fractions,moyen,1,10,,fraction-check,recomposerFractions,S2.1.3
 exercice,fr/exercices/cm1/maths/fractions/fractions-colorier,f1c290dd,Colorie la fraction,CM1,maths,fractions,moyen,6,6,,fraction-paint,,S2.1.3
 exercice,fr/exercices/cm1/maths/fractions/lire-fraction-decimale-regle,ff5bbffb,Lire une fraction sur une règle,CM1,maths,fractions,moyen,10,10,,fraction-check,,S2.1.3
-exercice,fr/exercices/cm1/maths/fractions/suites-fractions-01,f20ae471,Suites de fractions,CM1,maths,fractions,moyen,5,5,,sequence,,S3.1.2 | S3.2.1
+exercice,fr/exercices/cm1/maths/fractions/suites-fractions-01,f20ae471,Suites de fractions,CM1,maths,fractions,moyen,5,5,,sequence,,S3.2.1
 exercice,fr/exercices/cm1/maths/fractions/trier-fractions-01,d9d4b21a,Ranger des fractions dans l'ordre,CM1,maths,fractions,moyen,5,5,,drag-sort,,S2.1.3
 exercice,fr/exercices/cm1/maths/fractions/trier-fractions-visuel-01,fc933771,Ranger des fractions,CM1,maths,fractions,moyen,5,5,,drag-sort,,S2.1.3
 exercice,fr/exercices/cm1/maths/geometrie/quadrillage-lire-01,d276738c,Lire les coordonnées d'un point,CM1,maths,geometrie,facile,5,5,,coordinate-grid,,S1.1.1
 exercice,fr/exercices/cm1/maths/geometrie/quadrillage-placer-01,d50051b7,Placer un point sur le quadrillage,CM1,maths,geometrie,facile,5,5,,coordinate-grid,,S1.1.1
 exercice,fr/exercices/cm1/maths/geometrie/symetrie-axe-01,e8f38b61,Axe de symétrie — Facile,CM1,maths,geometrie,facile,5,5,,tile-select,,S1.1.1
-application,fr/applications/cm1/maths/geometrie/perimetre-formes,b9d4e731,Périmètres de figures géométriques,CM1,maths,geometrie,moyen,1,10,,number-check,perimetreFormes,S1.1.1
+application,fr/applications/cm1/maths/geometrie/perimetre-formes,b9d4e731,Périmètres de figures géométriques,CM1,maths,geometrie,moyen,1,10,,number-check,perimetreFormes,S1.2.1
 exercice,fr/exercices/cm1/maths/geometrie/axes-symetrie-01,f4f3b235,Axes de symétrie,CM1,maths,geometrie,moyen,8,8,,tile-select,,S1.1.1
 exercice,fr/exercices/cm1/maths/geometrie/paralleles-perpendiculaires-01,cffc5092,Parallèles et perpendiculaires,CM1,maths,geometrie,moyen,4,4,,checkbox,,S1.1.1
-exercice,fr/exercices/cm1/maths/geometrie/quadrilateres-01,e1933f9e,Les quadrilatères,CM1,maths,geometrie,moyen,3,3,,matching | true-false | mcq,,S1.1.1 | S3.2.3
-exercice,fr/exercices/cm1/maths/geometrie/solides-01,b60f45bf,Les solides,CM1,maths,geometrie,moyen,3,3,,matching | true-false | mcq,,S1.1.1 | S3.2.3
-exercice,fr/exercices/cm1/maths/geometrie/symetrie-01,f093620a,La symétrie,CM1,maths,geometrie,moyen,2,2,,true-false | matching,,S1.1.1 | S3.2.3
+exercice,fr/exercices/cm1/maths/geometrie/quadrilateres-01,e1933f9e,Les quadrilatères,CM1,maths,geometrie,moyen,3,3,,matching | true-false | mcq,,S1.1.1
+exercice,fr/exercices/cm1/maths/geometrie/solides-01,b60f45bf,Les solides,CM1,maths,geometrie,moyen,3,3,,matching | true-false | mcq,,S1.1.1
+exercice,fr/exercices/cm1/maths/geometrie/symetrie-01,f093620a,La symétrie,CM1,maths,geometrie,moyen,2,2,,true-false | matching,,S1.1.1
 exercice,fr/exercices/cm1/maths/geometrie/symetrie-axe-02,b0622bd1,Axe de symétrie — Moyen,CM1,maths,geometrie,moyen,5,5,,tile-select,,S1.1.1
 exercice,fr/exercices/cm1/maths/geometrie/vrai-faux-01,c4862f32,Vrai ou faux ? Géométrie,CM1,maths,geometrie,moyen,3,3,,true-false,,S3.2.3
 exercice,fr/exercices/cm1/maths/geometrie/symetrie-axe-03,c337bf90,Axe de symétrie — Difficile,CM1,maths,geometrie,difficile,5,5,,tile-select,,S1.1.1
@@ -424,74 +429,74 @@ exercice,fr/exercices/cm1/maths/mesures/distances-01,a02be157,Conversions de dis
 exercice,fr/exercices/cm1/maths/mesures/durees-01,a4d8f92c,Équivalences de durées,CM1,maths,mesures,facile,3,3,,matching,,I1.1.1
 exercice,fr/exercices/cm1/maths/mesures/masses-02,be328e30,Conversions de masses,CM1,maths,mesures,facile,5,5,,convert,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/volumes-01,b69c9d1b,Conversions de volumes,CM1,maths,mesures,facile,5,5,,convert,,S1.1.1
-exercice,fr/exercices/cm1/maths/mesures/aires-01,f6f9d225,Les aires,CM1,maths,mesures,moyen,4,4,,true-false | number-check | mcq,,S1.1.1 | S2.1.3 | S3.2.3
-exercice,fr/exercices/cm1/maths/mesures/conversions-01,d8bcb382,Conversions de mesures,CM1,maths,mesures,moyen,2,2,,convert,,S1.1.1 | S2.1.3
+exercice,fr/exercices/cm1/maths/mesures/aires-01,f6f9d225,Les aires,CM1,maths,mesures,moyen,4,4,,true-false | number-check | mcq,,S1.1.1
+exercice,fr/exercices/cm1/maths/mesures/conversions-01,d8bcb382,Conversions de mesures,CM1,maths,mesures,moyen,2,2,,convert,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/distances-02,b781c63e,Conversions de distances (décimaux),CM1,maths,mesures,moyen,5,5,,convert,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/durees-02,c2b7e315,Durées équivalentes,CM1,maths,mesures,moyen,5,5,,tile-select,,I1.1.1
 exercice,fr/exercices/cm1/maths/mesures/masses-01,e687a02a,Mesures de masses,CM1,maths,mesures,moyen,3,3,,convert,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/masses-03,d43e9d19,Conversions de masses (décimaux),CM1,maths,mesures,moyen,5,5,,convert,,S1.1.1
-exercice,fr/exercices/cm1/maths/mesures/perimetre-01,abc4bfc8,Le périmètre d'un polygone,CM1,maths,mesures,moyen,5,5,,mcq | number-check | true-false,,S1.1.1 | S3.2.3
+exercice,fr/exercices/cm1/maths/mesures/perimetre-01,abc4bfc8,Le périmètre d'un polygone,CM1,maths,mesures,moyen,5,5,,mcq | number-check | true-false,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/perimetre-figures,adea4758,Périmètre de figures composées,CM1,maths,mesures,moyen,4,4,,number-check,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/perimetre-quadrillage,b4f9c3a2,Périmètre sur quadrillage,CM1,maths,mesures,moyen,4,4,,number-check,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/tableaux-mesures-01,e25e131f,Tableaux de conversions,CM1,maths,mesures,moyen,3,3,,fill-table,,S1.1.1
 exercice,fr/exercices/cm1/maths/mesures/volumes-02,e9f40cd2,Conversions de volumes (décimaux),CM1,maths,mesures,moyen,5,5,,convert,,S1.1.1
 application,fr/applications/cm1/maths/mesures,bbe6f490,Lire l'heure — toutes les minutes,CM1,maths,mesures,difficile,1,10,,clock,lireHeure,I1.1.1
 exercice,fr/exercices/cm1/maths/mesures/durees-03,e7f3a891,Comparer les durées,CM1,maths,mesures,difficile,3,3,,compare,,I1.1.1
-application,fr/applications/cm1/maths/nombres/trier-fractions,b7bb0d4c,Trier des fractions,CM1,maths,nombres,facile,3,18,too-long,sort,trierFractions,S2.1.3
+application,fr/applications/cm1/maths/nombres/trier-fractions,b7bb0d4c,Trier des fractions,CM1,maths,nombres,facile,3,18,too-long,sort,trierFractions,S3.1.2
 exercice,fr/exercices/cm1/maths/nombres/fractions-01,d4fcc706,Découvrir les fractions,CM1,maths,nombres,facile,4,4,,fraction,,S2.1.3
-exercice,fr/exercices/cm1/maths/nombres/fractions-02,b334e323,Fractions et formes,CM1,maths,nombres,facile,5,5,,fraction,,S1.1.2 | S2.1.3
+exercice,fr/exercices/cm1/maths/nombres/fractions-02,b334e323,Fractions et formes,CM1,maths,nombres,facile,5,5,,fraction,,S2.1.3
 exercice,fr/exercices/cm1/maths/nombres/operations-fractions-01,f7a8b9c0,Additionner et soustraire des fractions,CM1,maths,nombres,facile,5,5,,fraction-check,,S2.1.3
-exercice,fr/exercices/cm1/maths/nombres/decimaux-01,e72bd0bd,Comprendre les décimaux,CM1,maths,nombres,moyen,3,3,,true-false | mcq | number-check,,S1.1.1 | S2.1.2
+exercice,fr/exercices/cm1/maths/nombres/decimaux-01,e72bd0bd,Comprendre les décimaux,CM1,maths,nombres,moyen,3,3,,true-false | mcq | number-check,,S1.1.1
 exercice,fr/exercices/cm1/maths/nombres/decimaux-02,d4e1f8a3,Tableau de numération — décimaux,CM1,maths,nombres,moyen,2,2,,fill-table,,S1.1.1
 exercice,fr/exercices/cm1/maths/nombres/doubles-triples-01,d50a1ac5,"Doubles, moitiés, triples et plus",CM1,maths,nombres,moyen,5,5,,select,,S1.1.2
 exercice,fr/exercices/cm1/maths/nombres/fractions-03,efc38565,Fractions : comparer et reconnaître,CM1,maths,nombres,moyen,5,5,,mcq,,S2.1.3
 exercice,fr/exercices/cm1/maths/nombres/proportionnalite-01,f6706022,Tableaux de proportionnalité,CM1,maths,nombres,moyen,3,3,,fill-table,,S1.1.1
 exercice,fr/exercices/cm1/maths/nombres/fractions-04,c61eb36e,Fractions : calculs et problèmes,CM1,maths,nombres,difficile,5,5,,problem,,M1.2
 exercice,fr/exercices/cm1/maths/nombres/fractions-equiv-01,d9851e0c,Fractions équivalentes,CM1,maths,nombres,difficile,3,3,,true-false | mcq,,S2.1.3
-application,fr/applications/cm1/maths/numeration/ajouter-valeur-pos-facile,cb6ff142,Ajouter des milliers,CM1,maths,numeration,facile,1,12,,number-check,ajouterPositionnel,
+application,fr/applications/cm1/maths/numeration/ajouter-valeur-pos-facile,cb6ff142,Ajouter des milliers,CM1,maths,numeration,facile,1,12,,number-check,ajouterPositionnel,S2.1.2
 application,fr/applications/cm1/maths/numeration/blocs-valeur-position-01,c4f2a801,Valeur de position — centaines,CM1,maths,numeration,facile,1,8,,click-blocks,blocsValeurPosition,S2.1.2
-application,fr/applications/cm1/maths/numeration/calcul-mental-grands-01,a0025999,Calcul mental — grands nombres,CM1,maths,numeration,facile,1,8,,number-check,calcMentalGrands,S1.1.1
-application,fr/applications/cm1/maths/numeration/mcq-decimaux-01,d958cb61,QCM — Fractions et décimaux,CM1,maths,numeration,facile,1,12,,mcq,mcqDecimaux,
-application,fr/applications/cm1/maths/numeration/multi-decimal-pow10-facile,ff368f2f,Multiplier un décimal par 10,CM1,maths,numeration,facile,1,12,,number-check,multiDecimalPuissance10,
-application,fr/applications/cm1/maths/numeration/multiples-facile,c122ce8b,"Multiples de 2, 3 et 10",CM1,maths,numeration,facile,3,30,too-long,checkbox,multiplesOf,S1.1.1
+application,fr/applications/cm1/maths/numeration/calcul-mental-grands-01,a0025999,Calcul mental — grands nombres,CM1,maths,numeration,facile,1,8,,number-check,calcMentalGrands,S1.1.3
+application,fr/applications/cm1/maths/numeration/mcq-decimaux-01,d958cb61,QCM — Fractions et décimaux,CM1,maths,numeration,facile,1,12,,mcq,mcqDecimaux,S2.1.2
+application,fr/applications/cm1/maths/numeration/multi-decimal-pow10-facile,ff368f2f,Multiplier un décimal par 10,CM1,maths,numeration,facile,1,12,,number-check,multiDecimalPuissance10,S2.1.2
+application,fr/applications/cm1/maths/numeration/multiples-facile,c122ce8b,"Multiples de 2, 3 et 10",CM1,maths,numeration,facile,3,30,too-long,checkbox,multiplesOf,S3.2.1
 application,fr/applications/cm1/maths/numeration/position-chiffre-01,a3e7c501,Position d'un chiffre,CM1,maths,numeration,facile,2,16,too-long,mcq,positionChiffre,S2.1.2
-application,fr/applications/cm1/maths/numeration/trier-decimaux-facile,fecaee3d,Ranger des décimaux — 1 décimale,CM1,maths,numeration,facile,1,12,,drag-sort,trierDecimaux,
+application,fr/applications/cm1/maths/numeration/trier-decimaux-facile,fecaee3d,Ranger des décimaux — 1 décimale,CM1,maths,numeration,facile,1,12,,drag-sort,trierDecimaux,S3.1.2
 exercice,fr/exercices/cm1/maths/numeration/tableau-numeration-01,ead5bb7c,Tableau de numération,CM1,maths,numeration,facile,3,3,,fill-table,,S1.1.1
-application,fr/applications/cm1/maths/numeration/ajouter-valeur-pos-moyen,e8e8f69a,Ajouter des dizaines de milliers,CM1,maths,numeration,moyen,1,12,,number-check,ajouterPositionnel,
-application,fr/applications/cm1/maths/numeration/arrondir-millier,faa99708,Arrondir au millier,CM1,maths,numeration,moyen,1,10,,number-check,arrondirNombre,S1.1.1
-application,fr/applications/cm1/maths/numeration/calcul-mental-grands-02,fd827605,Calcul mental — grands nombres,CM1,maths,numeration,moyen,1,8,,number-check,calcMentalGrands,S1.1.1
+application,fr/applications/cm1/maths/numeration/ajouter-valeur-pos-moyen,e8e8f69a,Ajouter des dizaines de milliers,CM1,maths,numeration,moyen,1,12,,number-check,ajouterPositionnel,S2.1.2
+application,fr/applications/cm1/maths/numeration/arrondir-millier,faa99708,Arrondir au millier,CM1,maths,numeration,moyen,1,10,,number-check,arrondirNombre,S3.1.2
+application,fr/applications/cm1/maths/numeration/calcul-mental-grands-02,fd827605,Calcul mental — grands nombres,CM1,maths,numeration,moyen,1,8,,number-check,calcMentalGrands,S1.1.3
 application,fr/applications/cm1/maths/numeration/comparer-grands-nombres,ed911252,Comparer de grands nombres,CM1,maths,numeration,moyen,1,10,,compare,comparerNombres,S3.1.1
-application,fr/applications/cm1/maths/numeration/convertir-decimaux,d4f10004,Convertir des valeurs décimales,CM1,maths,numeration,moyen,1,15,too-long,number-check,convertirValeurPos,
-application,fr/applications/cm1/maths/numeration/decimal-triple-01,bc37e1f0,Représentations des décimaux,CM1,maths,numeration,moyen,1,10,,decimal-triple,decimalTriple,N4.2
-application,fr/applications/cm1/maths/numeration/decomp-decimal-01,b7e93c02,Décomposition additive — décimaux,CM1,maths,numeration,moyen,1,12,,decomp,decompoAdditifDecimal,S1.1.2
+application,fr/applications/cm1/maths/numeration/convertir-decimaux,d4f10004,Convertir des valeurs décimales,CM1,maths,numeration,moyen,1,15,too-long,number-check,convertirValeurPos,S2.1.2
+application,fr/applications/cm1/maths/numeration/decimal-triple-01,bc37e1f0,Représentations des décimaux,CM1,maths,numeration,moyen,1,10,,decimal-triple,decimalTriple,S2.1.2
+application,fr/applications/cm1/maths/numeration/decomp-decimal-01,b7e93c02,Décomposition additive — décimaux,CM1,maths,numeration,moyen,1,12,,decomp,decompoAdditifDecimal,S2.1.2
 application,fr/applications/cm1/maths/numeration/lire-boulier,fb493520,Lire un boulier — jusqu'au million,CM1,maths,numeration,moyen,3,18,too-long,number-check,lireAbacus,S2.1.2
-application,fr/applications/cm1/maths/numeration/mcq-decimaux-02,d58dd91f,QCM — Décimaux variés,CM1,maths,numeration,moyen,1,15,too-long,mcq,mcqDecimaux,
-application,fr/applications/cm1/maths/numeration/multi-decimal-pow10-moyen,aa65c5cf,Multiplier un décimal par 10 ou 100,CM1,maths,numeration,moyen,1,12,,number-check,multiDecimalPuissance10,
-application,fr/applications/cm1/maths/numeration/multiples-moyen,f2527889,"Multiples de 2 à 9, 10 et 100",CM1,maths,numeration,moyen,4,40,too-long,checkbox,multiplesOf,S1.1.1
-application,fr/applications/cm1/maths/numeration/place-valeur-01,ea8d26cf,Valeur des chiffres jusqu'au million,CM1,maths,numeration,moyen,1,15,too-long,number-check,chiffrePlaceValeur,S1.1.1
+application,fr/applications/cm1/maths/numeration/mcq-decimaux-02,d58dd91f,QCM — Décimaux variés,CM1,maths,numeration,moyen,1,15,too-long,mcq,mcqDecimaux,S2.1.2
+application,fr/applications/cm1/maths/numeration/multi-decimal-pow10-moyen,aa65c5cf,Multiplier un décimal par 10 ou 100,CM1,maths,numeration,moyen,1,12,,number-check,multiDecimalPuissance10,S2.1.2
+application,fr/applications/cm1/maths/numeration/multiples-moyen,f2527889,"Multiples de 2 à 9, 10 et 100",CM1,maths,numeration,moyen,4,40,too-long,checkbox,multiplesOf,S3.2.1
+application,fr/applications/cm1/maths/numeration/place-valeur-01,ea8d26cf,Valeur des chiffres jusqu'au million,CM1,maths,numeration,moyen,1,15,too-long,number-check,chiffrePlaceValeur,S2.1.2
 application,fr/applications/cm1/maths/numeration/suites-cm1,ba6f874d,Suites arithmétiques,CM1,maths,numeration,moyen,1,10,,sequence,compterDeNCE1,S3.2.1
-application,fr/applications/cm1/maths/numeration/tableau-decimaux,bc136cd6,Tableau de numération — décimaux,CM1,maths,numeration,moyen,1,13,too-long,fill-table,decompoTableauDecimal,S1.1.2
-application,fr/applications/cm1/maths/numeration/tableau-grands-nombres,f6705ac3,Tableau de numération,CM1,maths,numeration,moyen,2,13,too-long,fill-table,decompoTableau,S1.1.1
-application,fr/applications/cm1/maths/numeration/trier-decimaux-moyen,e2a7c26b,Ranger des décimaux — 2 décimales,CM1,maths,numeration,moyen,1,12,,drag-sort,trierDecimaux,
+application,fr/applications/cm1/maths/numeration/tableau-decimaux,bc136cd6,Tableau de numération — décimaux,CM1,maths,numeration,moyen,1,13,too-long,fill-table,decompoTableauDecimal,S2.1.2
+application,fr/applications/cm1/maths/numeration/tableau-grands-nombres,f6705ac3,Tableau de numération,CM1,maths,numeration,moyen,2,13,too-long,fill-table,decompoTableau,S2.1.2
+application,fr/applications/cm1/maths/numeration/trier-decimaux-moyen,e2a7c26b,Ranger des décimaux — 2 décimales,CM1,maths,numeration,moyen,1,12,,drag-sort,trierDecimaux,S3.1.2
 exercice,fr/exercices/cm1/maths/numeration/comparer-01,c5bb5e45,Comparer des nombres,CM1,maths,numeration,moyen,3,3,,compare,,S3.1.1
 exercice,fr/exercices/cm1/maths/numeration/droite-graduee-01,f9a59f39,Droite graduée et décimaux,CM1,maths,numeration,moyen,5,5,,number-line,,S1.1.1
 exercice,fr/exercices/cm1/maths/numeration/droite-graduee-02,dbbc76f3,Placer des décimaux,CM1,maths,numeration,moyen,5,5,,number-line,,S1.1.1
-exercice,fr/exercices/cm1/maths/numeration/grands-nombres-01,b19c9737,Les grands nombres,CM1,maths,numeration,moyen,3,3,,multi-question | mcq,,S1.1.1 | S2.1.4
+exercice,fr/exercices/cm1/maths/numeration/grands-nombres-01,b19c9737,Les grands nombres,CM1,maths,numeration,moyen,3,3,,multi-question | mcq,,S1.1.1
 exercice,fr/exercices/cm1/maths/numeration/lire-nombres-100,e7a1bc77,Lire des nombres 1 à 100,CM1,maths,numeration,moyen,10,10,,number-check,,S1.1.1
 exercice,fr/exercices/cm1/maths/numeration/lire-nombres-10000,e8b18364,Lire des nombres jusqu'à 10 000,CM1,maths,numeration,moyen,10,10,,number-check,,S1.1.1
-exercice,fr/exercices/cm1/maths/numeration/multiples-01,f02ee57a,Multiples et diviseurs,CM1,maths,numeration,moyen,3,3,,true-false | mcq,,S1.1.1 | S3.2.3
+exercice,fr/exercices/cm1/maths/numeration/multiples-01,f02ee57a,Multiples et diviseurs,CM1,maths,numeration,moyen,3,3,,true-false | mcq,,S3.2.3
 exercice,fr/exercices/cm1/maths/numeration/nombre-romains-series-01,aa4499b5,Serie nombre romains,CM1,maths,numeration,moyen,3,3,,sequence,,S3.2.1
-exercice,fr/exercices/cm1/maths/numeration/suites-decimaux-01,e0789a6a,Suites de nombres décimaux,CM1,maths,numeration,moyen,5,5,,sequence,,S3.1.2 | S3.2.1
-application,fr/applications/cm1/maths/numeration/ajouter-valeur-pos-difficile,a93ea63b,"Ajouter c., mill. ou diz. de mill.",CM1,maths,numeration,difficile,1,12,,number-check,ajouterPositionnel,
-application,fr/applications/cm1/maths/numeration/calcul-mental-grands-03,c545854b,Calcul mental — grands nombres,CM1,maths,numeration,difficile,1,8,,number-check,calcMentalGrands,S1.1.1
-application,fr/applications/cm1/maths/numeration/multiples-difficile,a13db7d9,Multiples de 20 à 90 et de 200 à 900,CM1,maths,numeration,difficile,2,20,too-long,checkbox,multiplesOf,S1.1.1
+exercice,fr/exercices/cm1/maths/numeration/suites-decimaux-01,e0789a6a,Suites de nombres décimaux,CM1,maths,numeration,moyen,5,5,,sequence,,S3.2.1
+application,fr/applications/cm1/maths/numeration/ajouter-valeur-pos-difficile,a93ea63b,"Ajouter c., mill. ou diz. de mill.",CM1,maths,numeration,difficile,1,12,,number-check,ajouterPositionnel,S2.1.2
+application,fr/applications/cm1/maths/numeration/calcul-mental-grands-03,c545854b,Calcul mental — grands nombres,CM1,maths,numeration,difficile,1,8,,number-check,calcMentalGrands,S1.1.3
+application,fr/applications/cm1/maths/numeration/multiples-difficile,a13db7d9,Multiples de 20 à 90 et de 200 à 900,CM1,maths,numeration,difficile,2,20,too-long,checkbox,multiplesOf,S3.2.1
 exercice,fr/exercices/cm1/maths/numeration/encadrement-01,f8e3b0b3,Encadrement au millier,CM1,maths,numeration,difficile,3,3,,bounding,,S1.1.1
 exercice,fr/exercices/cm1/maths/numeration/lire-nombres-100M,abbae970,Lire des très grands nombres,CM1,maths,numeration,difficile,10,10,,number-check,,S1.1.1
-application,fr/applications/cm1/maths/operations/div-puissances-10-01,bc3f7d3a,"Diviser par 10, 100, 1 000 (entiers)",CM1,maths,operations,facile,1,10,,number-check,divDecimales,S1.1.1
-application,fr/applications/cm1/maths/operations/mult-div-trou-01,df163081,× ÷ puissances de 10 — trouver,CM1,maths,operations,facile,1,10,,number-check,multDivTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/mult-puissances-10-01,d1e2f3a4,Multiplier par 10 à 1 000 (entiers),CM1,maths,operations,facile,1,10,,number-check,multDecimales,S1.1.1
-application,fr/applications/cm1/maths/operations/multiplication-trou-facile,c019773e,Multiplications à trou (Facile),CM1,maths,operations,facile,1,10,,number-check,multiplicationTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/proportion-01,a0b1c2d3,Tableaux de proportionnalité (ent.),CM1,maths,operations,facile,1,6,,fill-table,tableauProportion,S1.1.1
+application,fr/applications/cm1/maths/operations/div-puissances-10-01,bc3f7d3a,"Diviser par 10, 100, 1 000 (entiers)",CM1,maths,operations,facile,1,10,,number-check,divDecimales,S1.1.3
+application,fr/applications/cm1/maths/operations/mult-div-trou-01,df163081,× ÷ puissances de 10 — trouver,CM1,maths,operations,facile,1,10,,number-check,multDivTrou,S2.2.2
+application,fr/applications/cm1/maths/operations/mult-puissances-10-01,d1e2f3a4,Multiplier par 10 à 1 000 (entiers),CM1,maths,operations,facile,1,10,,number-check,multDecimales,S1.1.3
+application,fr/applications/cm1/maths/operations/multiplication-trou-facile,c019773e,Multiplications à trou,CM1,maths,operations,facile,1,10,,number-check,multiplicationTrou,S1.1.3
+application,fr/applications/cm1/maths/operations/proportion-01,a0b1c2d3,Tableaux de proportionnalité (ent.),CM1,maths,operations,facile,1,6,,fill-table,tableauProportion,S2.2.2
 application,fr/applications/cm1/maths/operations/table-10,ba86f1bd,Table de 10,CM1,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
 application,fr/applications/cm1/maths/operations/table-11,b72da1ab,Table de 11,CM1,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
 application,fr/applications/cm1/maths/operations/table-12,cedc2e31,Table de 12,CM1,maths,operations,facile,1,10,,number-check,multiplicationSimple,S1.1.1
@@ -500,23 +505,23 @@ exercice,fr/exercices/cm1/maths/operations/divisions-02,d4e8b127,Division en gro
 exercice,fr/exercices/cm1/maths/operations/divisions-03,c9f2a748,Multiplication et division — le lien,CM1,maths,operations,facile,8,8,,number-check,,S1.1.1
 exercice,fr/exercices/cm1/maths/operations/estimer-addition-01,dea08899,Estimer une addition,CM1,maths,operations,facile,5,5,,mcq,,S1.1.1
 exercice,fr/exercices/cm1/maths/operations/estimer-multiplication-01,d8daf012,Estimer une multiplication,CM1,maths,operations,facile,5,5,,mcq,,S1.1.1
-application,fr/applications/cm1/maths/operations/addition-trou,aa335a76,Additions à trou,CM1,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/comparer-div-nombre,c3719208,Comparer — division et nombre,CM1,maths,operations,moyen,1,10,,compare,comparerOpNombre,
-application,fr/applications/cm1/maths/operations/decodage-emojis,e786d02e,Décodage d'Emojis,CM1,maths,operations,moyen,1,10,,number-check,decodageEmojis,S1.1.1
-application,fr/applications/cm1/maths/operations/div-puissances-10-02,c4bdc16d,Diviser par 10 100 1 000 (décimaux),CM1,maths,operations,moyen,1,10,,number-check,divDecimales,S1.1.1
+application,fr/applications/cm1/maths/operations/addition-trou,aa335a76,Additions à trou,CM1,maths,operations,moyen,1,10,,number-check,additionTrou,S1.1.3
+application,fr/applications/cm1/maths/operations/comparer-div-nombre,c3719208,Comparer — division et nombre,CM1,maths,operations,moyen,1,10,,compare,comparerOpNombre,S3.1.1
+application,fr/applications/cm1/maths/operations/decodage-emojis,e786d02e,Décodage d'Emojis,CM1,maths,operations,moyen,1,10,,number-check,decodageEmojis,S2.1.4
+application,fr/applications/cm1/maths/operations/div-puissances-10-02,c4bdc16d,Diviser par 10 100 1 000 (décimaux),CM1,maths,operations,moyen,1,10,,number-check,divDecimales,S1.1.3
 application,fr/applications/cm1/maths/operations/division-simple,dedf26ee,Division simple,CM1,maths,operations,moyen,1,10,,number-check,divisionSimple,S1.1.1
-application,fr/applications/cm1/maths/operations/division-trou,afdaa14e,Divisions à trou,CM1,maths,operations,moyen,1,10,,number-check,divisionTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/equilibrer-sub-01,e6349d31,Équilibrer des soustractions,CM1,maths,operations,moyen,1,12,,number-check,equilibrerOp,
-application,fr/applications/cm1/maths/operations/familles-faits,a7b8c9d0,"Familles de faits (x, /)",CM1,maths,operations,moyen,2,12,,checkbox,famillesFaits,S2.2.1
-application,fr/applications/cm1/maths/operations/machine-decouverte,b0b13a2d,Découvre la règle,CM1,maths,operations,moyen,1,6,,function-machine,functionMachineDiscover,
-application,fr/applications/cm1/maths/operations/machine-fonctions,a720dac4,Machine à fonctions,CM1,maths,operations,moyen,1,6,,function-machine,functionMachineCompute,
-application,fr/applications/cm1/maths/operations/mult-div-trou-02,e8f9a0b1,× ÷ puissances de 10 — décimaux,CM1,maths,operations,moyen,1,10,,number-check,multDivTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/mult-puissances-10-02,a45eb4bf,Multiplier par 10 à 1 000 (décimaux),CM1,maths,operations,moyen,1,10,,number-check,multDecimales,S1.1.1
+application,fr/applications/cm1/maths/operations/division-trou,afdaa14e,Divisions à trou,CM1,maths,operations,moyen,1,10,,number-check,divisionTrou,S1.1.3
+application,fr/applications/cm1/maths/operations/equilibrer-sub-01,e6349d31,Équilibrer des soustractions,CM1,maths,operations,moyen,1,12,,number-check,equilibrerOp,S2.2.1
+application,fr/applications/cm1/maths/operations/familles-faits,a7b8c9d0,"Familles de faits (x, /)",CM1,maths,operations,moyen,2,12,,checkbox,famillesFaits,S2.2.2
+application,fr/applications/cm1/maths/operations/machine-decouverte,b0b13a2d,Découvre la règle,CM1,maths,operations,moyen,1,6,,function-machine,functionMachineDiscover,S1.1.3
+application,fr/applications/cm1/maths/operations/machine-fonctions,a720dac4,Machine à fonctions,CM1,maths,operations,moyen,1,6,,function-machine,functionMachineCompute,S1.1.1
+application,fr/applications/cm1/maths/operations/mult-div-trou-02,e8f9a0b1,× ÷ puissances de 10 — décimaux,CM1,maths,operations,moyen,1,10,,number-check,multDivTrou,S2.2.2
+application,fr/applications/cm1/maths/operations/mult-puissances-10-02,a45eb4bf,Multiplier par 10 à 1 000 (décimaux),CM1,maths,operations,moyen,1,10,,number-check,multDecimales,S1.1.3
 application,fr/applications/cm1/maths/operations/multiplication-tables,c9d8e7f6,Tables de multiplication,CM1,maths,operations,moyen,1,15,too-long,number-check,multiplicationSimple,S1.1.1
-application,fr/applications/cm1/maths/operations/multiplication-trou-moyen,fed490a9,Multiplications à trou (Moyen),CM1,maths,operations,moyen,1,12,,number-check,multiplicationTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/proportion-02,e274aeb3,Tableaux de proportionnalité (½ent.),CM1,maths,operations,moyen,1,6,,fill-table,tableauProportion,S1.1.1
-application,fr/applications/cm1/maths/operations/soustraction-trou,b2915b4c,Soustractions à trou,CM1,maths,operations,moyen,1,10,,number-check,soustractionTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/table-fonction-div,e5a30002,Tables entrée/sortie — division,CM1,maths,operations,moyen,1,12,,fill-table,tableEntreeSortie,
+application,fr/applications/cm1/maths/operations/multiplication-trou-moyen,fed490a9,Multiplications à trou,CM1,maths,operations,moyen,1,12,,number-check,multiplicationTrou,S1.1.3
+application,fr/applications/cm1/maths/operations/proportion-02,e274aeb3,Tableaux de proportionnalité (½ent.),CM1,maths,operations,moyen,1,6,,fill-table,tableauProportion,S2.2.2
+application,fr/applications/cm1/maths/operations/soustraction-trou,b2915b4c,Soustractions à trou,CM1,maths,operations,moyen,1,10,,number-check,soustractionTrou,S1.1.3
+application,fr/applications/cm1/maths/operations/table-fonction-div,e5a30002,Tables entrée/sortie — division,CM1,maths,operations,moyen,1,12,,fill-table,tableEntreeSortie,S2.2.2
 application,fr/applications/cm1/maths/operations/vrai-faux-ops,d5633afa,Vrai ou faux ? Opérations,CM1,maths,operations,moyen,2,10,,true-false,vraiFauxOps,S3.2.3
 exercice,fr/exercices/cm1/maths/operations/calcul-reflechi-01,d829f89d,Calcul réfléchi,CM1,maths,operations,moyen,5,5,,multi-question,,S1.1.3
 exercice,fr/exercices/cm1/maths/operations/divisions-01,cf31768d,Divisions simples,CM1,maths,operations,moyen,4,4,,number-check,,S1.1.1
@@ -526,22 +531,22 @@ exercice,fr/exercices/cm1/maths/operations/estimer-multiplication-02,e2ad7923,Es
 exercice,fr/exercices/cm1/maths/operations/multiplications-01,cd2903a9,Multiplications posées,CM1,maths,operations,moyen,3,3,,number-check,,S1.1.1
 exercice,fr/exercices/cm1/maths/operations/tableaux-produits-01,f8ef7ed6,Tableaux de multiplications,CM1,maths,operations,moyen,3,3,,fill-table,,S1.1.1
 application,fr/applications/cm1/maths/operations/comparer-expressions,d0e1f2a3,Compare sans calculer (4 ops),CM1,maths,operations,difficile,1,8,,compare,compareExpressions,S3.1.1
-application,fr/applications/cm1/maths/operations/decodage-monstres,e6854920,Décodage de Monstres,CM1,maths,operations,difficile,1,10,,number-check,decodageEmojis,S1.1.1
-application,fr/applications/cm1/maths/operations/div-puissances-10-03,b1a60a68,"Diviser par 10, 100, 1 000, 10 000",CM1,maths,operations,difficile,1,10,,number-check,divDecimales,S1.1.1
-application,fr/applications/cm1/maths/operations/mult-div-trou-03,f9a0b1c2,× ÷ puissances de 10 — toutes formes,CM1,maths,operations,difficile,1,10,,number-check,multDivTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/mult-puissances-10-03,ccc65867,Multiplier par 10 100 1 000 10 000,CM1,maths,operations,difficile,1,10,,number-check,multDecimales,S1.1.1
-application,fr/applications/cm1/maths/operations/multiplication-trou-difficile,d3a1fd54,Multiplications à trou (Difficile),CM1,maths,operations,difficile,1,12,,number-check,multiplicationTrou,S1.1.1
-application,fr/applications/cm1/maths/operations/proportion-03,c2d3e4f5,Tableaux de proportionnalité (déc.),CM1,maths,operations,difficile,1,6,,fill-table,tableauProportion,S1.1.1
+application,fr/applications/cm1/maths/operations/decodage-monstres,e6854920,Décodage de Monstres,CM1,maths,operations,difficile,1,10,,number-check,decodageEmojis,S2.1.4
+application,fr/applications/cm1/maths/operations/div-puissances-10-03,b1a60a68,"Diviser par 10, 100, 1 000, 10 000",CM1,maths,operations,difficile,1,10,,number-check,divDecimales,S1.1.3
+application,fr/applications/cm1/maths/operations/mult-div-trou-03,f9a0b1c2,× ÷ puissances de 10 — toutes formes,CM1,maths,operations,difficile,1,10,,number-check,multDivTrou,S2.2.2
+application,fr/applications/cm1/maths/operations/mult-puissances-10-03,ccc65867,Multiplier par 10 100 1 000 10 000,CM1,maths,operations,difficile,1,10,,number-check,multDecimales,S1.1.3
+application,fr/applications/cm1/maths/operations/multiplication-trou-difficile,d3a1fd54,Multiplications à trou,CM1,maths,operations,difficile,1,12,,number-check,multiplicationTrou,S1.1.3
+application,fr/applications/cm1/maths/operations/proportion-03,c2d3e4f5,Tableaux de proportionnalité (déc.),CM1,maths,operations,difficile,1,6,,fill-table,tableauProportion,S2.2.2
 application,fr/applications/cm1/maths/operations/pyramides,b89f9bad,Pyramides d'additions,CM1,maths,operations,difficile,1,8,,pyramid,pyramideAdditions,S1.2.2
 application,fr/applications/cm1/maths/operations/pyramides-compl,bf72589c,Pyramides à trous,CM1,maths,operations,difficile,1,8,,pyramid,pyramideAdditions,S1.2.2
 application,fr/applications/cm1/maths/operations/pyramides-inv,b44ba635,Pyramides — retrouve la base,CM1,maths,operations,difficile,1,8,,pyramid,pyramideAdditions,S1.2.2
-application,fr/applications/cm1/maths/operations/triangle-arithmetique,d9d3e15f,Triangle arithmétique — difficile,CM1,maths,operations,difficile,2,12,,tri-arith,triArith,S1.1.1
+application,fr/applications/cm1/maths/operations/triangle-arithmetique,d9d3e15f,Triangle arithmétique — difficile,CM1,maths,operations,difficile,2,12,,tri-arith,triArith,S1.2.2
 exercice,fr/exercices/cm1/maths/operations/division-posee-01,c656689e,Division posée par 2 chiffres,CM1,maths,operations,difficile,5,5,,number-check,,S1.2.1
 exercice,fr/exercices/cm1/maths/operations/pyramides-01,c268f457,Pyramides d'additions CM1,CM1,maths,operations,difficile,4,4,,pyramid,,S1.2.2
 exercice,fr/exercices/cm1/maths/operations/pyramides-02,ba49b2ae,Pyramides — grands nombres,CM1,maths,operations,difficile,5,5,,pyramid,,S1.2.2
 exercice,fr/exercices/cm1/maths/operations/pyramides-decimaux-01,b6da0e79,Pyramides — nombres décimaux,CM1,maths,operations,difficile,5,5,,pyramid,,S1.2.2
-exercice,fr/exercices/cm1/maths/problemes/03,e8a47d16,Problèmes variés III,CM1,maths,problemes,facile,8,8,,problem,,A1.1 | A1.2 | A2.1 | A3.1 | M1.1 | M1.3
-exercice,fr/exercices/cm1/maths/problemes/02,d64a7ef8,Problèmes variés II,CM1,maths,problemes,moyen,9,9,,problem,,A1.1 | M1.1
+exercice,fr/exercices/cm1/maths/problemes/03,e8a47d16,Problèmes variés III,CM1,maths,problemes,facile,8,8,,problem,,A1.1
+exercice,fr/exercices/cm1/maths/problemes/02,d64a7ef8,Problèmes variés II,CM1,maths,problemes,moyen,9,9,,problem,,M1.1
 exercice,fr/exercices/cm1/maths/problemes/bilan-variations-01,fdb9e19f,Bilan de deux changements,CM1,maths,problemes,moyen,5,5,,problem,,A4.1
 exercice,fr/exercices/cm1/maths/problemes/combien-de-fois-01,c43379bd,Combien de fois plus grand ?,CM1,maths,problemes,moyen,5,5,,problem,,M2.2
 exercice,fr/exercices/cm1/maths/problemes/combinatoire-01,d62d3183,Combien de combinaisons ?,CM1,maths,problemes,moyen,5,5,,problem,,M3.2
@@ -549,11 +554,11 @@ exercice,fr/exercices/cm1/maths/problemes/comparaison-referent-01,e0491da4,Trouv
 exercice,fr/exercices/cm1/maths/problemes/composition-transformations-01,d3e4f5a6,"Deux changements, quel bilan ?",CM1,maths,problemes,moyen,5,5,,problem,,A4.2
 exercice,fr/exercices/cm1/maths/problemes/division-groupement-01,a3849682,Combien de groupes ?,CM1,maths,problemes,moyen,5,5,,problem,,M1.3
 exercice,fr/exercices/cm1/maths/problemes/modelisation-01,f06ea123,Modéliser avec un tableau,CM1,maths,problemes,moyen,5,5,,multi-question,,S1.1.1
-exercice,fr/exercices/cm1/maths/problemes/piege-du-capitaine,e8746e7d,Le piège du capitaine,CM1,maths,problemes,moyen,6,6,,mcq,,S1.2.3 | S3.2.2 | S4.1.2
+exercice,fr/exercices/cm1/maths/problemes/piege-du-capitaine,e8746e7d,Le piège du capitaine,CM1,maths,problemes,moyen,6,6,,mcq,,S3.2.2
 exercice,fr/exercices/cm1/maths/problemes/transformation-etat-initial-01,d5e6f7a8,Quel était le début ?,CM1,maths,problemes,moyen,5,5,,problem,,A2.4
 exercice,fr/exercices/cm1/maths/problemes/transformation-inconnue-01,ae893f4e,Que s'est-il passé ?,CM1,maths,problemes,moyen,5,5,,problem,,A2.3
 exercice,fr/exercices/cm1/maths/problemes/valeur-unitaire-01,e4d3c2b1,Trouver la valeur à l'unité,CM1,maths,problemes,moyen,5,5,,multi-question,,S1.1.1
-exercice,fr/exercices/cm1/maths/problemes/01,e2bfbe35,Problèmes variés I,CM1,maths,problemes,difficile,4,4,,problem,,M1.1 | M3.1
+exercice,fr/exercices/cm1/maths/problemes/01,e2bfbe35,Problèmes variés I,CM1,maths,problemes,difficile,4,4,,problem,,M1.1
 exercice,fr/exercices/cm1/maths/problemes/bilan-variations-02,ed68391f,Bilan de deux changements (2),CM1,maths,problemes,difficile,5,5,,problem,,A4.1
 exercice,fr/exercices/cm1/maths/problemes/comparaison-referent-02,c8d9e0f1,Trouver le référent,CM1,maths,problemes,difficile,5,5,,problem,,A3.3
 exercice,fr/exercices/cm1/maths/problemes/fois-plus-base-01,dfe88439,Trouver la valeur de départ,CM1,maths,problemes,difficile,5,5,,problem,,M2.3
@@ -562,55 +567,57 @@ exercice,fr/exercices/cm1/maths/problemes/transformation-etat-initial-02,abb2dab
 defi,fr/defis/cm2/maths/calcul/calcul-rapide-01,b1f010fe,Calcul rapide CM2,CM2,maths,calcul,facile,1,60,too-long,number-check,fluencyMix,S1.1.1
 defi,fr/defis/cm2/maths/calcul/calcul-rapide-02,b876c92d,Calcul rapide CM2,CM2,maths,calcul,moyen,1,60,too-long,number-check,fluencyMix,S1.1.1
 defi,fr/defis/cm2/maths/calcul/calcul-rapide-03,fe577b08,Calcul rapide CM2,CM2,maths,calcul,difficile,1,60,too-long,number-check,fluencyMix,S1.1.1
-exercice,fr/exercices/cm2/maths/decimaux/decimaux-01,ca8c7c81,Les nombres décimaux,CM2,maths,decimaux,moyen,5,5,,true-false | mcq | sort | multi-question,,S1.1.1 | S3.1.1 | S3.1.2 | S3.2.3
+exercice,fr/exercices/cm2/maths/decimaux/decimaux-01,ca8c7c81,Les nombres décimaux,CM2,maths,decimaux,moyen,5,5,,true-false | mcq | sort | multi-question,,S1.1.1
 exercice,fr/exercices/cm2/maths/fractions/bases-01,afc3c4ff,Introduction aux fractions,CM2,maths,fractions,moyen,3,3,,problem,,M1.2
 exercice,fr/exercices/cm2/maths/fractions/operations-01,eea77cc4,Opérations sur les fractions,CM2,maths,fractions,moyen,5,5,,mcq | true-false,,S2.1.3
 exercice,fr/exercices/cm2/maths/fractions/operations-fractions-01,b5a89d81,Additionner et soustraire — fractions,CM2,maths,fractions,moyen,5,5,,fraction-check,,S2.1.3
 exercice,fr/exercices/cm2/maths/fractions/visuel-01,b7c4e039,Représenter des fractions,CM2,maths,fractions,moyen,5,5,,fraction,,S2.1.3
 application,fr/applications/cm2/maths/fractions/trier-fractions,cb798ab0,Trier des fractions,CM2,maths,fractions,difficile,1,12,,sort,trierFractions,S2.1.3
-exercice,fr/exercices/cm2/maths/fractions/suites-fractions-01,ff6bf035,Suites de fractions,CM2,maths,fractions,difficile,5,5,,sequence,,S3.1.2 | S3.2.1
-application,fr/applications/cm2/maths/geometrie/perimetre,eed09cbe,Périmètre de figures,CM2,maths,geometrie,facile,1,12,,number-check,perimetreFormes,S1.1.1
+exercice,fr/exercices/cm2/maths/fractions/suites-fractions-01,ff6bf035,Suites de fractions,CM2,maths,fractions,difficile,5,5,,sequence,,S3.2.1
+application,fr/applications/cm2/maths/geometrie/perimetre,eed09cbe,Périmètre de figures,CM2,maths,geometrie,facile,1,12,,number-check,perimetreFormes,S1.2.1
 application,fr/applications/cm2/maths/geometrie/perimetre-deduction,a8db1da0,Périmètres — côtés manquants,CM2,maths,geometrie,moyen,4,4,,number-check,,S1.2.1
-exercice,fr/exercices/cm2/maths/geometrie/aires-01,ec163b25,Les aires,CM2,maths,geometrie,moyen,5,5,,number-check | mcq | true-false,,S1.1.1 | S3.2.3
+exercice,fr/exercices/cm2/maths/geometrie/aires-01,ec163b25,Les aires,CM2,maths,geometrie,moyen,5,5,,number-check | mcq | true-false,,S1.1.1
 application,fr/applications/cm2/maths/geometrie/perimetre-mixte,f31bec2f,Périmètres — conversions mm/cm,CM2,maths,geometrie,difficile,5,5,,number-check,,S1.2.1
-application,fr/applications/cm2/maths/logique/venn-formes,ad392f11,Diagramme de Venn - Figures,CM2,maths,logique,moyen,1,6,,venn,vennFormes,
-application,fr/applications/cm2/maths/logique/venn-nombres,d7e6b5c8,Diagramme de Venn - Nombres,CM2,maths,logique,moyen,1,8,,venn,vennNombres,
-application,fr/applications/cm2/maths/logique/labyrinthe-impairs,ea2bfcd7,Labyrinthe nombres impairs,CM2,maths,logique,difficile,1,6,,maze,labyrinthe,
-application,fr/applications/cm2/maths/logique/venn-emojis,b48ed308,Diagramme de Venn,CM2,maths,logique,difficile,1,8,,venn,vennEmojis,
-application,fr/applications/cm2/maths/mesures/comparer-longueurs,f2f5b01e,Comparer des longueurs,CM2,maths,mesures,difficile,1,12,,mcq,comparerLongueurs,S3.1.1
-application,fr/applications/cm2/maths/mesures/comparer-volumes,b1dc5d23,Comparer des volumes,CM2,maths,mesures,difficile,1,12,,mcq,comparerVolumes,S3.1.1
-application,fr/applications/cm2/maths/mesures/suites-horaires-quart,f7adbc1a,Suites d'heures — quarts d'heure,CM2,maths,mesures,difficile,1,12,,sequence,suitesHoraires,
+application,fr/applications/cm2/maths/logique/venn-formes,ad392f11,Diagramme de Venn - Figures,CM2,maths,logique,moyen,1,6,,venn,vennFormes,S3.1.1
+application,fr/applications/cm2/maths/logique/venn-nombres,d7e6b5c8,Diagramme de Venn - Nombres,CM2,maths,logique,moyen,1,8,,venn,vennNombres,S3.1.1
+application,fr/applications/cm2/maths/logique/labyrinthe-impairs,ea2bfcd7,Labyrinthe nombres impairs,CM2,maths,logique,difficile,1,6,,maze,labyrinthe,S1.1.1
+application,fr/applications/cm2/maths/logique/venn-emojis,b48ed308,Diagramme de Venn,CM2,maths,logique,difficile,1,8,,venn,vennEmojis,S3.1.1
+application,fr/applications/cm2/maths/mesures/comparer-longueurs,f2f5b01e,Comparer des longueurs,CM2,maths,mesures,difficile,1,12,,mcq,comparerLongueurs,I1.1.2
+application,fr/applications/cm2/maths/mesures/comparer-volumes,b1dc5d23,Comparer des volumes,CM2,maths,mesures,difficile,1,12,,mcq,comparerVolumes,I1.1.2
+application,fr/applications/cm2/maths/mesures/suites-horaires-quart,f7adbc1a,Suites d'heures — quarts d'heure,CM2,maths,mesures,difficile,1,12,,sequence,suitesHoraires,I1.1.1
 exercice,fr/exercices/cm2/maths/mesures/perimetre-figures,abb6dc38,Périmètre de figures composées,CM2,maths,mesures,difficile,6,6,,number-check,,S1.1.1
 exercice,fr/exercices/cm2/maths/mesures/perimetre-quadrillage-02,ee2325b2,Périmètre sur quadrillage 2,CM2,maths,mesures,difficile,6,6,,number-check,,S1.1.1
 exercice,fr/exercices/cm2/maths/numeration/comparer-01,df93ac15,Comparer des grands nombres,CM2,maths,numeration,facile,3,3,,compare,,S3.1.1
-application,fr/applications/cm2/maths/numeration/ajouter-decimaux,ea7f22c8,Additions de décimaux,CM2,maths,numeration,moyen,1,12,,number-check,additionDecimaux,S1.1.1
+application,fr/applications/cm2/maths/numeration/ajouter-decimaux,ea7f22c8,Additions de décimaux,CM2,maths,numeration,moyen,1,12,,number-check,additionDecimaux,S1.1.3
 application,fr/applications/cm2/maths/numeration/blocs-valeur-position-01,c7f3e056,Valeur de position — milliers,CM2,maths,numeration,moyen,1,8,,click-blocks,blocsValeurPosition,S2.1.2
 application,fr/applications/cm2/maths/numeration/comparer-decimaux,ae07cd51,Comparer des décimaux,CM2,maths,numeration,moyen,1,12,,compare,comparerDecimaux,S3.1.1
 application,fr/applications/cm2/maths/numeration/comparer-grands-nombres,c7bf03f0,Comparer des grands nombres,CM2,maths,numeration,moyen,1,12,,compare,comparerNombresPaires,S3.1.1
-application,fr/applications/cm2/maths/numeration/soustraire-decimaux,cbca5772,Soustractions de décimaux,CM2,maths,numeration,moyen,1,12,,number-check,soustractionDecimaux,S1.1.1
+application,fr/applications/cm2/maths/numeration/soustraire-decimaux,cbca5772,Soustractions de décimaux,CM2,maths,numeration,moyen,1,12,,number-check,soustractionDecimaux,S1.1.3
 application,fr/applications/cm2/maths/numeration/trier-decimaux,d941e7c0,Trier des décimaux,CM2,maths,numeration,moyen,1,12,,sort,trierDecimaux,S3.1.2
 exercice,fr/exercices/cm2/maths/numeration/chiffres-01,a7812abd,Écris en chiffres,CM2,maths,numeration,moyen,6,6,,number-check,,S2.1.2
 exercice,fr/exercices/cm2/maths/numeration/observer-01,f35de3a4,Observe et réponds,CM2,maths,numeration,moyen,3,3,,multi-question,,S1.1.1
-exercice,fr/exercices/cm2/maths/numeration/quiz-01,ebee643c,Quiz numération,CM2,maths,numeration,moyen,6,6,,mcq,,S1.1.1 | S2.1.2 | S2.1.4 | S3.1.1
+exercice,fr/exercices/cm2/maths/numeration/quiz-01,ebee643c,Quiz numération,CM2,maths,numeration,moyen,6,6,,mcq,,S1.1.1
 exercice,fr/exercices/cm2/maths/numeration/recomposer-01,e01e8c83,Recompose les nombres,CM2,maths,numeration,moyen,6,6,,number-check,,S1.1.1
-application,fr/applications/cm2/maths/numeration/decimal-triple-01,d485814b,Décimaux — triple représentation,CM2,maths,numeration,difficile,1,10,,decimal-triple,decimalTriple,N4.2
-application,fr/applications/cm2/maths/numeration/multi-decimal-pow10-difficile,aca4a3b9,"Multiplier décimal par 10, 100, 1000",CM2,maths,numeration,difficile,1,12,,number-check,multiDecimalPuissance10,
-application,fr/applications/cm2/maths/numeration/trier-decimaux-difficile,a57e3a5a,Ranger des décimaux — mélangé,CM2,maths,numeration,difficile,1,12,,drag-sort,trierDecimaux,
-exercice,fr/exercices/cm2/maths/numeration/suites-decimaux-01,b001457d,Suites de nombres décimaux,CM2,maths,numeration,difficile,5,5,,sequence,,S3.1.2 | S3.2.1
+application,fr/applications/cm2/maths/numeration/decimal-triple-01,d485814b,Décimaux — triple représentation,CM2,maths,numeration,difficile,1,10,,decimal-triple,decimalTriple,S2.1.2
+application,fr/applications/cm2/maths/numeration/multi-decimal-pow10-difficile,aca4a3b9,"Multiplier décimal par 10, 100, 1000",CM2,maths,numeration,difficile,1,12,,number-check,multiDecimalPuissance10,S2.1.2
+application,fr/applications/cm2/maths/numeration/trier-decimaux-difficile,a57e3a5a,Ranger des décimaux — mélangé,CM2,maths,numeration,difficile,1,12,,drag-sort,trierDecimaux,S3.1.2
+exercice,fr/exercices/cm2/maths/numeration/suites-decimaux-01,b001457d,Suites de nombres décimaux,CM2,maths,numeration,difficile,5,5,,sequence,,S3.2.1
 application,fr/applications/cm2/maths/operations/multiplication-tables,ec2a1126,Tables de multiplication,CM2,maths,operations,facile,1,12,,number-check,multiplicationSimple,S1.1.1
 application,fr/applications/cm2/maths/operations/division-simple,d240646a,Divisions,CM2,maths,operations,moyen,1,12,,number-check,divisionSimple,S1.1.1
-application,fr/applications/cm2/maths/operations/equilibrer-mult-01,da8b7ab6,Équilibrer des multiplications,CM2,maths,operations,moyen,1,12,,number-check,equilibrerOp,
-application,fr/applications/cm2/maths/operations/comparer-ops-nombre,ff455797,Comparer — opérations et nombre,CM2,maths,operations,difficile,1,10,,compare,comparerOpNombre,
-application,fr/applications/cm2/maths/operations/decodage-emojis,be6bb77f,Décodage d'Emojis,CM2,maths,operations,difficile,1,10,,number-check,decodageEmojis,S1.1.1
-application,fr/applications/cm2/maths/operations/decodage-monstres,e7def21d,Décodage de Monstres,CM2,maths,operations,difficile,1,10,,number-check,decodageEmojis,S1.1.1
-application,fr/applications/cm2/maths/operations/machine-decouverte,f024db3e,Découvre la règle,CM2,maths,operations,difficile,1,8,,function-machine,functionMachineDiscover,
-application,fr/applications/cm2/maths/operations/machine-fonctions,feb5f319,Machine à fonctions,CM2,maths,operations,difficile,1,8,,function-machine,functionMachineCompute,
-application,fr/applications/cm2/maths/operations/table-fonction-decouverte,e5a30003,Entrée/sortie — trouve la règle,CM2,maths,operations,difficile,1,12,,fill-table,tableEntreeSortie,
-application,fr/applications/cm2/maths/operations/triangle-arithmetique,d91b649d,Triangle arithmétique,CM2,maths,operations,difficile,1,8,,tri-arith,triArith,S1.1.1
+application,fr/applications/cm2/maths/operations/equilibrer-mult-01,da8b7ab6,Équilibrer des multiplications,CM2,maths,operations,moyen,1,12,,number-check,equilibrerOp,S2.2.2
+exercice,fr/exercices/cm2/maths/operations/comparer-expressions-01,f2b129c7,Comparer des expressions sans calculer,CM2,maths,operations,moyen,4,4,,compare-expressions,,
+exercice,fr/exercices/cm2/maths/operations/estimation-01,f3161bb2,Estimer puis calculer,CM2,maths,operations,moyen,5,5,,estimation,,
+application,fr/applications/cm2/maths/operations/comparer-ops-nombre,ff455797,Comparer — opérations et nombre,CM2,maths,operations,difficile,1,10,,compare,comparerOpNombre,S3.1.1
+application,fr/applications/cm2/maths/operations/decodage-emojis,be6bb77f,Décodage d'Emojis,CM2,maths,operations,difficile,1,10,,number-check,decodageEmojis,S2.1.4
+application,fr/applications/cm2/maths/operations/decodage-monstres,e7def21d,Décodage de Monstres,CM2,maths,operations,difficile,1,10,,number-check,decodageEmojis,S2.1.4
+application,fr/applications/cm2/maths/operations/machine-decouverte,f024db3e,Découvre la règle,CM2,maths,operations,difficile,1,8,,function-machine,functionMachineDiscover,S1.1.3
+application,fr/applications/cm2/maths/operations/machine-fonctions,feb5f319,Machine à fonctions,CM2,maths,operations,difficile,1,8,,function-machine,functionMachineCompute,S1.1.1
+application,fr/applications/cm2/maths/operations/table-fonction-decouverte,e5a30003,Entrée/sortie — trouve la règle,CM2,maths,operations,difficile,1,12,,fill-table,tableEntreeSortie,S2.2.2
+application,fr/applications/cm2/maths/operations/triangle-arithmetique,d91b649d,Triangle arithmétique,CM2,maths,operations,difficile,1,8,,tri-arith,triArith,S1.2.2
 exercice,fr/exercices/cm2/maths/operations/pyramides-01,a21f1dae,Pyramides — grands nombres,CM2,maths,operations,difficile,5,5,,pyramid,,S1.2.2
 exercice,fr/exercices/cm2/maths/operations/pyramides-decimaux-01,fee25a49,Pyramides — nombres décimaux,CM2,maths,operations,difficile,5,5,,pyramid,,S1.2.2
-exercice,fr/exercices/cm2/maths/pourcentages/pourcentages-01,f7681d0e,Les pourcentages,CM2,maths,pourcentages,moyen,5,5,,true-false | number-check | mcq | problem,,M2.1 | S1.1.1 | S3.2.3
-exercice,fr/exercices/cm2/maths/pourcentages/vocabulaire-01,f9d2a561,Fractions et pourcentages,CM2,maths,pourcentages,moyen,3,3,,select,,S2.1.3 | S2.1.4
-exercice,fr/exercices/cm2/maths/problemes/quotidien-01,a2932209,Problèmes du quotidien,CM2,maths,problemes,moyen,5,5,,problem | multi-question,,A2.2 | M1.1 | M2.1 | M3.3 | S1.1.1
+exercice,fr/exercices/cm2/maths/pourcentages/pourcentages-01,f7681d0e,Les pourcentages,CM2,maths,pourcentages,moyen,5,5,,true-false | number-check | mcq | problem,,S1.1.1
+exercice,fr/exercices/cm2/maths/pourcentages/vocabulaire-01,f9d2a561,Fractions et pourcentages,CM2,maths,pourcentages,moyen,3,3,,select,,S2.1.3
+exercice,fr/exercices/cm2/maths/problemes/quotidien-01,a2932209,Problèmes du quotidien,CM2,maths,problemes,moyen,5,5,,problem | multi-question,,A2.2
 exercice,fr/exercices/cm2/maths/proportions/proportionnalite-01,b04d00c3,La proportionnalité,CM2,maths,proportions,moyen,4,4,,fill-table | mcq,,S1.1.1
-exercice,fr/exercices/cm2/maths/proportions/proportionnalite-02,fb5d68f8,Tableaux et problèmes de proportion,CM2,maths,proportions,moyen,5,5,,fill-table | problem,,M3.1 | M3.3 | S1.1.1 | S2.1.1
+exercice,fr/exercices/cm2/maths/proportions/proportionnalite-02,fb5d68f8,Tableaux et problèmes de proportion,CM2,maths,proportions,moyen,5,5,,fill-table | problem,,M3.1

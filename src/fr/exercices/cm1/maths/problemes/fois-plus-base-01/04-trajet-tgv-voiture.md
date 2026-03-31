@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "Le trajet en TGV et en voiture"
 answer: "360"
 ---

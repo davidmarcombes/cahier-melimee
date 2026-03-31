@@ -9,5 +9,4 @@ statements:
   - "Si on les prolonge suffisamment, deux droites parallèles finissent par se croiser."
   - "Par un point extérieur à une droite, on peut tracer une droite parallèle à cette droite."
 checkedAnswers: [0, 1, 3, 5]
-class: "S1.1.1"
 ---

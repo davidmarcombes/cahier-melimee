@@ -5,5 +5,4 @@ generator: grouper10
 repeat: 12
 params:
   maxExtra: 9
-class: "S1.1.1"
 ---

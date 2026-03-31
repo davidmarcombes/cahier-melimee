@@ -12,7 +12,6 @@ statements:
     answer: true
   - text: "1 km est plus long que 1 000 m."
     answer: false
-class: "S3.1.1"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

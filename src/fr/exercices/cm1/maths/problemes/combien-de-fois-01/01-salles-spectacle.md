@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.2"
 title: "Les salles de spectacle"
 answer: "3"
 ---

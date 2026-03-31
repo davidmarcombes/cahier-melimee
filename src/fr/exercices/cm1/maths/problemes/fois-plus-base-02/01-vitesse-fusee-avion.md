@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "La fusée et l'avion"
 answer: "800"
 ---

@@ -9,5 +9,4 @@ points:
     y: 2
     label: C
 answer: "5,2"
-class: "S1.1.1"
 ---

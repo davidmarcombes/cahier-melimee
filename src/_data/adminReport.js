@@ -1,8 +1,7 @@
 /**
- * adminReport.js — build-time global data for the admin dashboard.
- * Reads exercises-report.csv, human-validate.csv and validate-llm-cache.csv,
- * joins them by seriesId and returns one enriched object per series.
- * Returns [] gracefully when any CSV is missing.
+ * adminReport.js — build-time enrichment data for the admin dashboard (devMode only).
+ * Reads human-validate.csv and validate-llm-cache.csv and returns per-series status.
+ * Returns [] gracefully when files are missing (prod has no report CSVs).
  */
 const fs = require('fs');
 const path = require('path');
@@ -46,9 +45,11 @@ function parseCSV(filePath) {
 }
 
 module.exports = function () {
-  const report = parseCSV(path.join(ROOT, 'reports/exercises-report.csv'));
   const humanRows = parseCSV(path.join(ROOT, 'reports/human-validate.csv'));
-  const llmRows = parseCSV(path.join(ROOT, 'reports/validate-llm-cache.csv'));
+  const llmRows   = parseCSV(path.join(ROOT, 'reports/validate-llm-cache.csv'));
+  const reportRows = parseCSV(path.join(ROOT, 'reports/exercises-report.csv'));
+
+  if (!humanRows.length && !llmRows.length && !reportRows.length) return [];
 
   // Aggregate human validations by seriesId
   const human = {};
@@ -63,96 +64,58 @@ module.exports = function () {
     }
   }
 
-  // Aggregate LLM results by seriesId (detect model columns dynamically)
+  // Aggregate LLM results by seriesId
   const llm = {};
   const llmMeta = llmRows[0] ? Object.keys(llmRows[0]).filter((k) => !['path','seriesId','hash','manual'].includes(k)) : [];
   for (const row of llmRows) {
     if (!row.seriesId) continue;
-    if (!llm[row.seriesId]) {
-      llm[row.seriesId] = { ok: 0, fail: 0, skip: 0, total: 0, byModel: {} };
-      for (const col of llmMeta) llm[row.seriesId].byModel[col] = { ok: 0, fail: 0, skip: 0, total: 0 };
-    }
+    if (!llm[row.seriesId]) llm[row.seriesId] = { ok: 0, fail: 0, skip: 0, total: 0 };
     for (const col of llmMeta) {
       const v = row[col];
       if (!v) continue;
       llm[row.seriesId].total++;
-      llm[row.seriesId].byModel[col].total++;
-      if (v === 'ok')   { llm[row.seriesId].ok++;   llm[row.seriesId].byModel[col].ok++; }
-      else if (v === 'fail') { llm[row.seriesId].fail++; llm[row.seriesId].byModel[col].fail++; }
-      else if (v === 'skip') { llm[row.seriesId].skip++; llm[row.seriesId].byModel[col].skip++; }
+      if (v === 'ok')        llm[row.seriesId].ok++;
+      else if (v === 'fail') llm[row.seriesId].fail++;
+      else if (v === 'skip') llm[row.seriesId].skip++;
     }
   }
 
-  // Assign disambiguation emoji to series that share a title (same logic as csvPayload)
-  const DISAMBIG_EMOJIS = [
-    '🐶','🐱','🐭','🐰','🦊','🐻','🐼','🐨','🐯','🦁',
-    '🐮','🐷','🐸','🐵','🐧','🦆','🦉','🦋','🐢','🐬',
-  ];
-  const byTitle = new Map();
-  for (const row of report) {
-    const key = (row.seriesTitle || '').trim();
-    if (!byTitle.has(key)) byTitle.set(key, []);
-    byTitle.get(key).push(row);
-  }
-  const emojiMap = new Map(); // id → emoji
-  for (const group of byTitle.values()) {
-    if (group.length < 2) continue;
-    group.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
-    group.forEach((row, i) => emojiMap.set(row.id, DISAMBIG_EMOJIS[i % DISAMBIG_EMOJIS.length]));
+  // Build id -> path map from exercises-report if available
+  const pathMap = {};
+  for (const row of reportRows) {
+    if (row.id && row.path) pathMap[row.id] = row.path;
   }
 
-  return report.map((row) => {
-    const h = human[row.id] || null;
-    const l = llm[row.id] || null;
+  // Return one entry per unique id seen across all sources
+  const ids = new Set([
+    ...humanRows.map(r => r.seriesId),
+    ...llmRows.map(r => r.seriesId),
+    ...Object.keys(pathMap),
+  ].filter(Boolean));
 
-    const humanStatus = !h
-      ? 'pending'
-      : h.validated === h.total && h.total > 0
-      ? 'ok'
-      : h.validated > 0
-      ? 'partial'
-      : 'pending';
-
-    const llmStatus = !l || l.total === 0
-      ? 'pending'
-      : l.fail > 0
-      ? 'fail'
-      : l.ok > 0
-      ? 'ok'
-      : 'skip';
-
-    const relPath = row.path || '';
+  return [...ids].map((id) => {
+    const h = human[id] || null;
+    const l = llm[id] || null;
+    const relPath = pathMap[id] || '';
     const absPath = relPath
       ? path.join(ROOT, 'src', relPath, 'index.yaml').replace(/\\/g, '/')
       : '';
-
+    const humanStatus = !h ? 'pending'
+      : h.validated === h.total && h.total > 0 ? 'ok'
+      : h.validated > 0 ? 'partial'
+      : 'pending';
+    const llmStatus = !l || l.total === 0 ? 'pending'
+      : l.fail > 0 ? 'fail'
+      : l.ok > 0 ? 'ok'
+      : 'skip';
     return {
-      kind:         row.kind       || '',
-      path:         relPath,
+      id,
+      path: relPath,
       absPath,
-      id:           row.id         || '',
-      seriesTitle:  (row.seriesTitle || '') + (emojiMap.has(row.id) ? ` ${emojiMap.get(row.id)}` : ''),
-      level:        row.level      || '',
-      topic:        row.topic      || '',
-      subtopic:     row.subtopic   || '',
-      difficulty:   row.difficulty || '',
-      exerciseCount: parseInt(row.exerciseCount) || 0,
-      repeatTotal:  parseInt(row.repeatTotal)  || 0,
-      types:        row.types      || '',
-      generators:   row.generators || '',
-      classes:      row.classes    || '',
       humanStatus,
       humanCoverage: h ? `${h.validated}/${h.total}` : '—',
-      humanDate:     h && h.latestDate ? h.latestDate.slice(0, 10) : '',
+      humanDate: h && h.latestDate ? h.latestDate.slice(0, 10) : '',
       llmStatus,
-      llmCoverage: l && l.total
-        ? llmMeta.length > 1
-          ? llmMeta.filter(m => l.byModel[m].total > 0)
-                   .map(m => `${m.split(':')[0]}: ${l.byModel[m].ok}/${l.byModel[m].total}`)
-                   .join(' | ')
-          : `${l.ok}/${l.total}`
-        : '—',
-      llmModels:     llmMeta.join(', '),
     };
   });
 };

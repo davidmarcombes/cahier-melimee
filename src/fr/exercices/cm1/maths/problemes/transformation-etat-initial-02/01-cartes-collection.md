@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.4"
 title: "La collection de cartes"
 answer: "1 248"
 ---

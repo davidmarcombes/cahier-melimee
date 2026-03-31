@@ -12,5 +12,4 @@ pairs:
     right: "mois"
   - left: "la vie d'un chêne"
     right: "siècles"
-class: "I1.1.1"
 ---

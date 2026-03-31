@@ -14,5 +14,4 @@ statements:
   - template: "Un ___ a 3 angles."
     answer: "triangle"
     choices: ["carré", "rectangle", "triangle", "cercle"]
-class: "S1.1.1"
 ---

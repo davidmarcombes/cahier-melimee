@@ -12,7 +12,6 @@ questions:
     answer: "8"
   - text: "Combien y a-t-il de fleurs en tout ?"
     answer: "22"
-class: "D1.1.1"
 ---
 
 Observe le diagramme des fleurs dans le jardin et réponds aux questions.

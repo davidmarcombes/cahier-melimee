@@ -66,7 +66,7 @@ src/
 │       ├── exercices.json  # Defaults : permalink:false, layout:null
 │       ├── series-pages.njk # Pagination : génère une page par série
 │       ├── cp-maths-operations-bases-01/
-│       │   ├── index.yaml              # Métadonnées (seriesTitle, level, topic…)
+│       │   ├── index.yaml              # Métadonnées (title, level, topic…)
 │       │   ├── 01-addition-simple.md
 │       │   └── 02-soustraction-facile.md
 │       ├── ce1-maths-multiplication-tables-01/
@@ -132,7 +132,7 @@ Pour créer une nouvelle série, suivre la convention de nommage `{level}-{topic
 1. Créer un dossier dans `src/fr/exercices/` (ex: `cm1-maths-fractions-partage-01/`)
 2. Ajouter un fichier `index.yaml` avec les métadonnées :
    ```yaml
-   seriesTitle: Fractions et partage
+   title: Fractions et partage
    level: CM1
    topic: maths
    subtopic: fractions

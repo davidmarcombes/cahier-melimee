@@ -11,7 +11,6 @@ choices:
   - "On mesure uniquement les côtés extérieurs"
   - "On divise le plus grand côté par 2"
 answer: "On multiplie un côté par le nombre de côtés"
-class: "S1.1.1"
 ---
 
 Cette étoile est un **polygone régulier** : tous ses côtés sont égaux. Quelle est la méthode la plus rapide pour calculer son périmètre ?

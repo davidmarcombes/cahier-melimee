@@ -27,7 +27,6 @@ tiles:
       bW: 80
       h: 50
 answers: [1, 4]
-class: "S1.1.1"
 ---
 
 Clique sur tous les **rectangles**. Attention, un carré n'est pas un rectangle !

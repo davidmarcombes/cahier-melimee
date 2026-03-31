@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M1.1"
 title: "L'arrosage du jardin"
 answer: "45"
 ---

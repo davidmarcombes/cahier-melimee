@@ -9,5 +9,4 @@ statements:
   - "Ses 3 côtés peuvent être de longueurs différentes."
   - "Ses angles sont toujours droits."
 checkedAnswers: [0, 1, 4]
-class: "S1.1.1"
 ---

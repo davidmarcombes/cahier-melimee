@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.3"
 title: "Les élèves du CM1 et du CM2"
 answer: "25"
 ---

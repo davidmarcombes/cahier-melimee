@@ -7,7 +7,6 @@ choices:
   - "Le carré"
   - "Le rectangle"
   - "Le losange"
-class: "S2.2.1"
 ---
 
 Quelle figure a **3 côtés** et **3 sommets** ?

@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "M2.3"
 title: "Les crayons du maître et des élèves"
 answer: "7"
 ---

@@ -7,7 +7,6 @@ step: 10
 value: 40
 label: "C"
 answer: "40"
-class: "S1.1.1"
 ---
 
 Quel nombre le point C indique-t-il ?

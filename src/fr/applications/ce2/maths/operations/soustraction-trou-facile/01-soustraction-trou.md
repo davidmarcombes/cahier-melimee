@@ -8,7 +8,6 @@ params:
   maxResult: 49
   minSub: 1
   maxSub: 49
-class: "S1.1.1"
 ---
 
 Trouve le nombre manquant.

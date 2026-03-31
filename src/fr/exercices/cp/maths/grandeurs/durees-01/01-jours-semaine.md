@@ -7,7 +7,6 @@ choices:
   - "5 jours"
   - "6 jours"
   - "8 jours"
-class: "I1.1.1"
 ---
 
 Combien y a-t-il de jours dans une **semaine** ?

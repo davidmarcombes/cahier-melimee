@@ -7,7 +7,6 @@ choices:
   - "250 km/h"
   - "1 250 km/h"
   - "Impossible à résoudre"
-class: "S3.2.2"
 ---
 
 Un train transporte 250 passagers répartis dans 5 wagons. Quelle est la vitesse du train ?

@@ -9,7 +9,6 @@ questions:
     answer: "8"
   - text: "Quel est le nombre de milliers ?"
     answer: "45"
-class: "S1.1.1"
 ---
 
 Observe le nombre ci-dessus et réponds aux questions.

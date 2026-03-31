@@ -9,7 +9,6 @@ questions:
     answer: "5"
   - text: "Combien font 97 + 8 ?"
     answer: "105"
-class: "S1.1.3"
 ---
 
 Pour calculer **97 + 8**, on complète d'abord à 100, puis on ajoute le reste.

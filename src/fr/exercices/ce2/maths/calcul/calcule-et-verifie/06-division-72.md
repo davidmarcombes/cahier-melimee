@@ -7,7 +7,6 @@ questions:
     answer: "9"
   - text: "Vérification : 9 × 8 = ?"
     answer: "72"
-class: "S1.1.1"
 ---
 
 **Étape 1** : calcule. **Étape 2** : vérifie avec l'opération inverse.

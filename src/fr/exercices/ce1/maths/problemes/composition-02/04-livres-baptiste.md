@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A1.2"
 title: "L'étagère de Baptiste"
 answer: "11"
 ---

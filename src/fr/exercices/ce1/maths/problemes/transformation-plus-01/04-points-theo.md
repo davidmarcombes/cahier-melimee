@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A2.1"
 title: "Les points de Théo"
 answer: "31"
 ---

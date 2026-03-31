@@ -10,7 +10,6 @@ pairs:
     right: "le printemps"
   - left: "Les feuilles tombent (10 °C)"
     right: "l'automne"
-class: "S1.1.1"
 ---
 
 Relie chaque description à la bonne saison.

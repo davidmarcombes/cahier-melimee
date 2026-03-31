@@ -7,5 +7,4 @@ params:
   minInt: 0
   maxInt: 9
   maxDec: 2
-class: "N4.2"
 ---

@@ -10,7 +10,6 @@ statements:
     answer: true
   - text: "La lettre Z a un axe de symétrie."
     answer: false
-class: "S2.1.4"
 ---
 
 Coche **Vrai** ou **Faux**.

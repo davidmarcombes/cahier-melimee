@@ -8,5 +8,4 @@ params:
   maxDivisor: 12
   minQuotient: 2
   maxQuotient: 15
-class: "S1.1.1"
 ---

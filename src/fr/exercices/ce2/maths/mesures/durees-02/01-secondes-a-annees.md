@@ -12,5 +12,4 @@ pairs:
     right: "jours"
   - left: "apprendre à lire"
     right: "années"
-class: "I1.1.1"
 ---

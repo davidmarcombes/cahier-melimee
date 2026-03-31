@@ -8,7 +8,6 @@ svg:
     cols: 10
     rows: 10
     filled: 8
-class: "S2.1.3"
 ---
 
 **Quelle fraction de cette grille est coloriée ?**

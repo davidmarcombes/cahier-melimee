@@ -9,7 +9,6 @@ svg:
     top: 7.8
     left: 4.2
     right: "?"
-class: "S1.3.1"
 ---
 
 Trouve le nombre manquant dans cet arbre de nombres décimaux.

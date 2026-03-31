@@ -11,7 +11,6 @@ items:
   - prompt: "120 mm"
     answer: "12"
     unit: "cm"
-class: "S1.1.1"
 ---
 
 Convertis les millimètres en centimètres.

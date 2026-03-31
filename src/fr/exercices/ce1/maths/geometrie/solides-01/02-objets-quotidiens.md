@@ -10,7 +10,6 @@ pairs:
     right: "Boule"
   - left: "Un entonnoir"
     right: "Cône"
-class: "S2.1.1"
 ---
 
 Relie chaque objet à sa forme géométrique.

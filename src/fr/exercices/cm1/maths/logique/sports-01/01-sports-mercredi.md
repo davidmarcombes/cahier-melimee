@@ -7,7 +7,6 @@ solution:
   Manon: "Volleyball"
   Titouan: "Karaté"
   Léonie: "Natation"
-class: "S3.2.2"
 ---
 
 - Titouan porte une ceinture de couleur à chaque entraînement.

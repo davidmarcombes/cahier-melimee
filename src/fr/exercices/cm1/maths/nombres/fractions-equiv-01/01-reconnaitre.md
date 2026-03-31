@@ -12,7 +12,6 @@ statements:
     answer: true
   - text: "5/10 est équivalente à 1/2."
     answer: true
-class: "S2.1.3"
 ---
 
 Lis chaque affirmation et coche **Vrai** ou **Faux**.

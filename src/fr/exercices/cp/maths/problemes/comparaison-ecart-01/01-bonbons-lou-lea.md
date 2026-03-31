@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A3.1"
 title: "Les bonbons de Lou et Léa"
 answer: "3"
 ---

@@ -10,7 +10,6 @@ pairs:
     right: "5 faces, 9 arêtes, 6 sommets"
   - left: "Tétraèdre"
     right: "4 faces, 6 arêtes, 4 sommets"
-class: "S1.1.1"
 ---
 
 Relie chaque solide à ses propriétés.

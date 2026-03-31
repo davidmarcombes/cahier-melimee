@@ -9,7 +9,6 @@ questions:
     answer: "3"
   - text: "Combien font 8 + 5 ?"
     answer: "13"
-class: "S1.1.3"
 ---
 
 Pour calculer **8 + 5**, on complète d'abord à 10, puis on ajoute le reste.

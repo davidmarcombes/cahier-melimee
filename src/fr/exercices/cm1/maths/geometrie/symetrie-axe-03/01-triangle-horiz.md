@@ -10,7 +10,6 @@ tiles:
   - "Faux"
 tileAnswers:
   - 1
-class: "S1.1.1"
 ---
 
 La droite pointillée est-elle un axe de symétrie de cette figure ?

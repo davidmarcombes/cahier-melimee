@@ -1,6 +1,5 @@
 ---
 type: problem
-class: "A4.1"
 title: "Les dépenses du club"
 answer: "145"
 ---
