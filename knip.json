@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/knip@next/schema.json",
+  "entry": [
+    ".eleventy.js",
+    "tailwind.config.js",
+    "src/assets/js/app.js",
+    "src/assets/js/generators.js",
+    "scripts/*.js",
+    "tests/**/*.spec.js",
+    "src/_data/*.js",
+    "pocketbase/pb_migrations/*.js",
+    "marp.config.mjs"
+  ],
+  "project": [
+    "**/*.{js,mjs,ts}"
+  ],
+  "ignoreDependencies": [
+    "svgo",
+    "@peaceroad/markdown-it-math-tex-to-mathml"
+  ],
+  "eleventy": false
+}

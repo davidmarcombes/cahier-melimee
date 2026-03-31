@@ -14,9 +14,15 @@
   font-display: swap;
 }
 
-/* Base-10 block colors — light and dark mode */
-.b10 { --b10-h: #bfdbfe; --b10-hs: #3b82f6; --b10-t: #60a5fa; --b10-ts: #2563eb; --b10-u: #1d4ed8; --b10-us: white; }
-.dark .b10 { --b10-h: #93c5fd; --b10-hs: #60a5fa; --b10-t: #3b82f6; --b10-ts: #93c5fd; --b10-u: #1d4ed8; --b10-us: #0f172a; }
+/* Base-10 block colors — mapped from design tokens */
+.b10 { 
+  --b10-h: var(--b10h); 
+  --b10-hs: var(--b10hs); 
+  --b10-t: var(--b10t); 
+  --b10-ts: var(--b10ts); 
+  --b10-u: var(--b10u); 
+  --b10-us: var(--b10us); 
+}
 
 /* BEGIN:design-tokens */
 @layer base {
@@ -33,6 +39,12 @@
     --ss: #f8fafc;
     --ct: #1e293b;
     --cs: #475569;
+    --b10h: #bfdbfe;
+    --b10hs: #3b82f6;
+    --b10t: #60a5fa;
+    --b10ts: #2563eb;
+    --b10u: #1d4ed8;
+    --b10us: #ffffff;
   }
   .dark {
     --p: #4da7d9;
@@ -47,6 +59,12 @@
     --ss: #1e293b;
     --ct: #f8fafc;
     --cs: #94a3b8;
+    --b10h: #93c5fd;
+    --b10hs: #60a5fa;
+    --b10t: #3b82f6;
+    --b10ts: #93c5fd;
+    --b10u: #1d4ed8;
+    --b10us: #0f172a;
   }
 }
 /* END:design-tokens */

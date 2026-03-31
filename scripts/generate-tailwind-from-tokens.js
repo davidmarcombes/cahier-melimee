@@ -37,6 +37,12 @@ const varAliases = {
   'figure-purple': 'purple',
   'figure-pink': 'pink',
   'figure-orange': 'orange',
+  'b10-h': 'b10h',
+  'b10-hs': 'b10hs',
+  'b10-t': 'b10t',
+  'b10-ts': 'b10ts',
+  'b10-u': 'b10u',
+  'b10-us': 'b10us'
 };
 
 function processColors(obj, prefix = '') {

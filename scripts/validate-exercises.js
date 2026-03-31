@@ -45,6 +45,8 @@ const TYPE_SCHEMAS = {
   'decimal-triple': { required: [], requireOneOf: [['dtFrac', 'dtDecimal', 'dtPlaces', 'dtGiven'], ['generator']] },
   'compare-expressions': { required: ['comparisons'], arrays: ['comparisons'], arrayFields: { comparisons: ['left', 'right'] } },
   estimation: { required: [], requireOneOf: [['estimate', 'answer'], ['estimates', 'answer']] },
+  'error-analysis': { required: ['steps', 'wrongStep', 'correction'], arrays: ['steps'] },
+  'compare-solutions': { required: ['solutions', 'correctSolution'], arrays: ['solutions'] },
 };
 
 const COLORS = {

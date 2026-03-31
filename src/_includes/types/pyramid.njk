@@ -1,7 +1,7 @@
 {# Pyramid visual #}
 <div x-show="cur.type === 'pyramid'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
   <template x-if="cur.svg">
-    <div class="flex justify-center mb-4" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
+    <div class="flex justify-center mb-4" x-html="(() => { try { return window[cur.svg.gen](...Object.values(cur.svg.par)); } catch(e) { console.error('svg error', e); return ''; } })()"></div>
   </template>
   <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
        x-show="cur.body" x-html="cur.body"></div>

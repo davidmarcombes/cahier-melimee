@@ -41,6 +41,7 @@
     "validate:cross": "node scripts/cross-validate.js",
     "check:duplicates": "node scripts/check-duplicates.js",
     "check:spell": "cspell \"src/**/*.md\"",
+    "check:unused": "knip",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "clean": "node -e \"const fs=require('fs');fs.rmSync('_site',{recursive:true,force:true});console.log('Cleaned _site/')\"",
@@ -78,9 +79,11 @@
     "@11ty/eleventy-img": "^4.0.2",
     "@11ty/eleventy-upgrade-help": "^3.0.2",
     "@cspell/dict-fr-fr": "^2.3.2",
+    "@cspell/dict-node": "^5.0.9",
+    "@cspell/dict-software-terms": "^5.2.2",
     "@eslint/js": "^10.0.1",
+    "@inquirer/prompts": "^8.3.2",
     "@playwright/test": "^1.58.2",
-    "@tailwindcss/typography": "^0.5.19",
     "autoprefixer": "^10.4.16",
     "concurrently": "^8.0.0",
     "cspell": "^9.6.4",
@@ -93,6 +96,7 @@
     "jimp": "^0.22.12",
     "js-yaml": "^4.1.1",
     "jsdom": "^28.1.0",
+    "knip": "^6.1.1",
     "pa11y": "^9.1.1",
     "pngjs": "^7.0.0",
     "postcss": "^8.4.32",
@@ -102,12 +106,8 @@
     "vitest": "^4.1.0"
   },
   "dependencies": {
-    "@mathjax/src": "^4.1.1",
     "@peaceroad/markdown-it-math-tex-to-mathml": "^0.2.0",
     "commander": "^14.0.3",
-    "he": "^1.2.0",
-    "inquirer": "^13.2.5",
-    "katex": "^0.16.37",
     "markdown-it": "^14.1.1"
   }
 }

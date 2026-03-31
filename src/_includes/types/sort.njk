@@ -1,6 +1,6 @@
 <div x-show="cur.type === 'sort'" class="space-y-4">
   <template x-if="cur.svg">
-    <div class="flex justify-center mb-4" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
+    <div class="flex justify-center mb-4" x-html="(() => { try { return window[cur.svg.gen](...Object.values(cur.svg.par)); } catch(e) { console.error('svg error', e); return ''; } })()"></div>
   </template>
   <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4 max-w-none text-content-subtle"></div>
 

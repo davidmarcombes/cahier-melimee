@@ -47,7 +47,7 @@
             'border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow cursor-pointer':
               !solved && dragSelected !== +pos && !dragErrors.includes(+pos)
           }"
-          x-html="dragRender((cur.tiles || [])[origIdx])"
+          x-html="(() => { try { return dragRender((cur.tiles || [])[origIdx]); } catch(e) { console.error('drag error', e); return '⚠️'; } })()"
         ></button>
       </div>
     </template>

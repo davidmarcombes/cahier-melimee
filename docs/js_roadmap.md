@@ -29,6 +29,8 @@ This document tracks the technical debt and improvements identified during the c
 ## Performance & Build
 
 - [ ] **File Splitting**: Consider splitting `generators.js` into smaller topic-based files (e.g., `gen-maths.js`, `gen-geometry.js`) to optimize conditional loading.
+- [ ] **Visual Regression Testing**: Add Playwright `toHaveScreenshot()` checks to key exercise types (Pyramids, Bar Charts, Grids) to prevent CSS regressions during refactors.
+- [x] **Generator Error Boundaries**: Wrap dynamic generator/SVG calls in `try/catch` to prevent student browser crashes on malformed input (Implemented in `player.js` & templates).
 
 ---
 **Status Update (2026-03-22):** All components refactored into ES modules. Shared constants and utilities centralized. E2E tests (41/41) PASS.

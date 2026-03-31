@@ -62,11 +62,13 @@ async function waitForAlpine(page) {
 async function runHealthChecks(page, url) {
   const jsErrors = [];
   page.on('pageerror', err => jsErrors.push(err.message));
+
+  // 1. JS errors (uncaught exceptions + Alpine expression errors + Generator errors)
   page.on('console', msg => {
     if (msg.type() === 'error') {
       const text = msg.text();
-      // Catch Alpine expression errors (logged via console.error, not thrown)
-      if (text.includes('Alpine Expression Error') || text.includes('Alpine Warning')) {
+      // Catch our new error boundary logs or Alpine internal errors
+      if (text.includes('Generator error') || text.includes('svg error') || text.includes('Alpine Expression Error')) {
         jsErrors.push(text);
       }
     }
@@ -77,10 +79,17 @@ async function runHealthChecks(page, url) {
 
   const issues = [];
 
-  // 1. JS errors (uncaught exceptions + Alpine expression errors)
+  // Check for console errors collected during page load/init
   if (jsErrors.length > 0) {
-    issues.push(`JS error: ${jsErrors[0]}`);
+    issues.push(`JS error: ${jsErrors.join(' | ')}`);
   }
+
+  // 1b. Check for visual error indicators on screen (the ⚠️ symbol or specific error text)
+  const visualErrors = await page.evaluate(() => {
+    const text = document.body.innerText;
+    return text.includes('⚠️') || text.includes('Erreur de génération');
+  });
+  if (visualErrors) issues.push('visual error indicator detected (⚠️ or Erreur de génération)');
 
   // 2. Horizontal overflow
   const overflow = await page.evaluate(() =>
@@ -101,6 +110,7 @@ async function runHealthChecks(page, url) {
   const exerciseVisible = await page.evaluate(() => {
     const root = document.querySelector('[x-data]:not([x-cloak])');
     if (!root) return false;
+    // Check if the exercise container has actual content
     return root.getBoundingClientRect().height > 50;
   });
   if (!exerciseVisible) issues.push('exercise area not visible');

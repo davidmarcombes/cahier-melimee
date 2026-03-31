@@ -11,14 +11,14 @@
         <tr>
           <th scope="col" class="w-20 sm:w-24"></th>
           <template x-for="(col, c) in (cur.grid ? cur.grid.columns : [])" :key="'gc'+c">
-            <th scope="col" class="w-12 sm:w-14 px-1 py-2 text-center text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600" x-html="col"></th>
+            <th scope="col" class="w-12 sm:w-14 px-1 py-2 text-center text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600" x-html="(() => { try { return col; } catch(e) { return ''; } })()"></th>
           </template>
         </tr>
       </thead>
       <tbody>
         <template x-for="(row, r) in (cur.grid ? cur.grid.rows : [])" :key="'gr'+r">
           <tr>
-            <td class="px-2 py-2 text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600 whitespace-nowrap" x-html="row"></td>
+            <td class="px-2 py-2 text-xs sm:text-sm font-semibold text-content-default border border-slate-200 dark:border-slate-600 whitespace-nowrap" x-html="(() => { try { return row; } catch(e) { return ''; } })()"></td>
             <template x-for="(col, c) in (cur.grid ? cur.grid.columns : [])" :key="'gc'+r+'-'+c">
               <td class="border border-slate-200 dark:border-slate-600 p-0">
                 <button

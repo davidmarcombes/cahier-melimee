@@ -1,0 +1,50 @@
+{# Constraint — fill one or two blanks with any value satisfying a constraint #}
+<div x-show="cur.type === 'constraint'" class="mb-8">
+
+  <div class="flex flex-wrap items-center justify-center gap-2 text-2xl font-bold font-mono mb-2">
+    <span x-text="(cur.ctParts || [])[0]"></span>
+    <input
+      type="text"
+      inputmode="numeric"
+      x-model="userInput"
+      @keydown.enter="check()"
+      @input="showError = false"
+      :disabled="solved"
+      aria-label="Réponse"
+      class="w-20 text-center px-2 py-1 border-b-2 bg-transparent focus:outline-none transition-colors text-content-default"
+      :class="{'border-green-500': solved, 'border-primary-500': !solved && userInput.trim(), 'border-slate-400 dark:border-slate-500': !solved && !userInput.trim()}"
+    />
+    <template x-if="(cur.ctBlanks || 0) >= 2">
+      <span class="flex items-center gap-2">
+        <span x-text="(cur.ctParts || [])[1]"></span>
+        <input
+          type="text"
+          inputmode="numeric"
+          x-model="constraintInput2"
+          @keydown.enter="check()"
+          @input="showError = false"
+          :disabled="solved"
+          aria-label="Deuxième réponse"
+          class="w-20 text-center px-2 py-1 border-b-2 bg-transparent focus:outline-none transition-colors text-content-default"
+          :class="{'border-green-500': solved, 'border-primary-500': !solved && constraintInput2.trim(), 'border-slate-400 dark:border-slate-500': !solved && !constraintInput2.trim()}"
+        />
+      </span>
+    </template>
+    <span x-text="(cur.ctParts || [])[(cur.ctBlanks || 0)]"></span>
+  </div>
+
+  <template x-if="cur.ctHint">
+    <p class="text-sm text-center text-content-subtle italic mb-4" x-text="cur.ctHint"></p>
+  </template>
+
+  <div x-show="!solved" class="flex justify-center pt-2">
+    <button
+      type="button"
+      @click="check()"
+      :disabled="!userInput.trim() || ((cur.ctBlanks || 0) >= 2 && !constraintInput2.trim())"
+      class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      Vérifier
+    </button>
+  </div>
+</div>

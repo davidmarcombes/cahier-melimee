@@ -1,0 +1,55 @@
+{# Error Analysis — click the wrong step, then type the correction #}
+{# guided mode (cur.guided): wrong step pre-highlighted, student only types correction #}
+<div x-show="cur.type === 'error-analysis'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 mb-8">
+
+  <p class="text-sm text-content-subtle text-center mb-5 italic"
+     x-text="cur.guided ? 'L\'étape en rouge contient une erreur. Écris la correction.' : 'Clique sur l\'étape qui contient une erreur, puis écris la correction.'"></p>
+
+  {# Steps list #}
+  <div class="flex flex-col gap-2 mb-6">
+    <template x-for="(step, i) in (cur.eaSteps || [])" :key="i">
+      <button
+        type="button"
+        @click="if (!solved && !cur.guided) { eaStepSelected = i; eaStepError = false; }"
+        :disabled="solved || cur.guided"
+        class="w-full px-4 py-3 text-left font-mono text-lg rounded-xl border-2 transition-all duration-150 select-none"
+        :class="{
+          'border-primary-500 bg-primary-50 dark:bg-primary-900/20 scale-[1.01] shadow': !cur.guided && eaStepSelected === i && !eaStepError && !solved,
+          'border-red-400 bg-red-50 dark:bg-red-900/20': (cur.guided && i === cur.wrongStep && !solved) || (!cur.guided && eaStepSelected === i && eaStepError),
+          'border-green-500 bg-green-50 dark:bg-green-900/20 font-bold': solved && i === cur.wrongStep,
+          'opacity-40 cursor-not-allowed': solved && i !== cur.wrongStep,
+          'border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow cursor-pointer': !cur.guided && !solved && eaStepSelected !== i
+        }"
+        x-text="step"
+      ></button>
+    </template>
+  </div>
+
+  {# Correction input #}
+  <div class="flex items-center gap-3 mb-6">
+    <span class="text-sm font-bold text-content-subtle shrink-0">Correction :</span>
+    <input
+      type="text"
+      x-model="eaCorrection"
+      @keydown.enter="check()"
+      @input="eaCorrectionError = false"
+      :disabled="solved"
+      placeholder="La bonne réponse…"
+      aria-label="Correction"
+      class="flex-1 px-4 py-3 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-surface-subtle text-content-default"
+      :class="{'border-green-500 bg-green-50 dark:bg-green-900/20': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': eaCorrectionError && !solved, 'border-slate-200 dark:border-slate-700': !eaCorrectionError && !solved}"
+    />
+  </div>
+
+  {# Verify button — guided mode only needs correction filled; full mode needs step selected too #}
+  <button
+    type="button"
+    @click="check()"
+    :disabled="solved || (!cur.guided && eaStepSelected === null) || !eaCorrection.trim()"
+    class="w-full px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+  >
+    <span x-show="!solved">Vérifier</span>
+    <span x-show="solved">Bravo !</span>
+  </button>
+</div>

@@ -98,12 +98,13 @@ layout: base
               1 par type
             </button>
           {% endif %}
-          <button
-            type="button"
-            x-show="hasActiveFilter"
-            @click="resetFilters()"
-            class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all active:scale-90"
-            title="Réinitialiser les filtres">
+            <button
+              type="button"
+              x-show="hasActiveFilter"
+              @click="resetFilters()"
+              class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all active:scale-90"
+              aria-label="Réinitialiser les filtres"
+              title="Réinitialiser les filtres">
             <span class="text-xl leading-none">↶</span>
           </button>
         </div>

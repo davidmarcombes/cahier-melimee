@@ -39,7 +39,7 @@ isSeriesPage: true
 >
   {# Series header #}
   <div class="flex items-center justify-between mb-4 text-sm">
-    <a href="{{ '/fr/exercices/' | url }}" class="text-slate-400 hover:text-primary-500 transition-colors" aria-label="Retour aux exercices"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <a href="{{ '/fr/exercices/' | url }}" class="text-slate-400 hover:text-primary-500 transition-colors" aria-label="Retour au menu des exercices"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
     <span class="text-slate-400" x-text="(currentIndex + 1) + ' / ' + exercises.length"></span>
   </div>
 
@@ -68,6 +68,8 @@ isSeriesPage: true
   {% if 'compare' in usedTypes %}{% include "types/compare.njk" %}{% endif %}
   {% if 'compare-expressions' in usedTypes %}{% include "types/compare-expressions.njk" %}{% endif %}
   {% if 'estimation' in usedTypes %}{% include "types/estimation.njk" %}{% endif %}
+  {% if 'error-analysis' in usedTypes %}{% include "types/error-analysis.njk" %}{% endif %}
+  {% if 'compare-solutions' in usedTypes %}{% include "types/compare-solutions.njk" %}{% endif %}
   {% if 'multi-question' in usedTypes %}{% include "types/multi-question.njk" %}{% endif %}
   {% if 'mcq' in usedTypes %}{% include "types/mcq.njk" %}{% endif %}
   {% if 'clock' in usedTypes %}{% include "types/clock.njk" %}{% endif %}
@@ -227,6 +229,12 @@ isSeriesPage: true
     {% endif %}
     {% if 'inverse-problem' in usedTypes %}
     <span x-show="cur.type === 'inverse-problem'">Cette réponse n'est pas correcte. Essaie encore !</span>
+    {% endif %}
+    {% if 'error-analysis' in usedTypes %}
+    <span x-show="cur.type === 'error-analysis'">L'étape ou la correction n'est pas correcte. Essaie encore !</span>
+    {% endif %}
+    {% if 'compare-solutions' in usedTypes %}
+    <span x-show="cur.type === 'compare-solutions'">Ce n'est pas la bonne solution. Essaie encore !</span>
     {% endif %}
     {% if 'decimal-triple' in usedTypes %}
     <span x-show="cur.type === 'decimal-triple'">Certaines valeurs ne sont pas correctes. Essaie encore !</span>

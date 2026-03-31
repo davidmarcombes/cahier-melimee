@@ -46,6 +46,7 @@ needsPocketBase: true
             @click="selectPupil(pupil)"
             class="aspect-square flex items-center justify-center text-4xl border-2 rounded-xl hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all active:scale-90
               border-slate-200 dark:border-slate-700"
+            :aria-label="'Choisir le sticker ' + pupil.sticker_id"
             x-text="pupil.sticker_id"
           ></button>
         </template>
@@ -64,6 +65,7 @@ needsPocketBase: true
             class="w-14 h-14 border-2 border-dashed rounded-xl flex items-center justify-center text-2xl transition-all cursor-pointer"
             :class="passwordSequence[i-1] ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 scale-110' : 'border-slate-300 dark:border-slate-600'"
             x-text="passwordSequence[i-1] || '?'"
+            :aria-label="passwordSequence[i-1] ? 'Retirer ' + passwordSequence[i-1] : 'Emplacement vide'"
             @click="removeLastIcon(i-1)"
           ></div>
         </template>
@@ -76,6 +78,7 @@ needsPocketBase: true
             @click="addIcon(icon)"
             :disabled="passwordSequence.length >= 3"
             class="aspect-square flex items-center justify-center text-2xl border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-90"
+            :aria-label="'Ajouter ' + icon"
             x-text="icon"
           ></button>
         </template>

@@ -59,6 +59,14 @@
         "light": "#475569",
         "dark": "#94a3b8"
       }
+    },
+    "b10": {
+      "h":  { "light": "#bfdbfe", "dark": "#93c5fd" },
+      "hs": { "light": "#3b82f6", "dark": "#60a5fa" },
+      "t":  { "light": "#60a5fa", "dark": "#3b82f6" },
+      "ts": { "light": "#2563eb", "dark": "#93c5fd" },
+      "u":  { "light": "#1d4ed8", "dark": "#1d4ed8" },
+      "us": { "light": "#ffffff", "dark": "#0f172a" }
     }
   },
   "typography": {

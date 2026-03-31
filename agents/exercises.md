@@ -69,6 +69,7 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `fraction` | `types/fraction.njk` | Visual fraction representation — shade a shape. Fields: `shape` (`circle`/`rect`), `numerator`, `denominator`, `answer`. |
 | `fraction-check` | `types/fraction-check.njk` | Stacked fraction input (numerator/denominator boxes). Fields: `answers[]` (two strings: numerator, denominator). Supports `cur.operation` and `cur.svg`. |
 | `base-10` | `types/base-10.njk` | Base-10 blocks visual — decompose a number into hundreds/tens/ones. Fields: `answer`, plus either `number` or `hundreds`+`tens`+`ones`. |
+| `error-analysis` | `types/error-analysis.njk` | Find the mistake — click the wrong step in a worked calculation, then type the correction. Fields: `steps[]` (strings), `wrongStep` (0-indexed), `correction` (correct value as string). |
 | `clock` | `types/clock.njk` | Analog clock — read or set the time. Fields: `hour`, `minute`, `answer`. |
 | `click-blocks` | `types/click-blocks.njk` | Click cells to fill columns from the bottom up (place-value blocks). Fields: `columns[]` (each with `label`, `value`, `color`, `answer`, `max`). Supports generators. |
 | `number-line` | `types/number-line.njk` | Number line — read a labeled point or click to place one. SVG via `nlSvg` getter. Supports generators. |

@@ -190,7 +190,30 @@
       "Bash(awk:*)",
       "Bash(sed -i \"s/title: ''Représentation de fractions \\($\\\\\\\\frac{1}{10}$\\)''/title: ''Représentation de fractions \\(1\\\\/10\\)''/\" \"e:/Code/cahier-melimee/src/fr/exercices/cm1/maths/fractions/repr-fraction-decimale-01/02-repr-fraction-decimale-01.md\")",
       "Bash(__NEW_LINE_62652e233283effc__ sed:*)",
-      "Bash(grep -o \"seriesPlayer\\(\\\\[.\\\\{0,2000\\\\}\" e:/Code/cahier-melimee/_site/fr/exercices/cbe5b194/index.html)"
+      "Bash(grep -o \"seriesPlayer\\(\\\\[.\\\\{0,2000\\\\}\" e:/Code/cahier-melimee/_site/fr/exercices/cbe5b194/index.html)",
+      "WebFetch(domain:irem.univ-grenoble-alpes.fr)",
+      "WebFetch(domain:iris.peabody.vanderbilt.edu)",
+      "WebFetch(domain:teachingwithamountainview.com)",
+      "WebFetch(domain:www.taalecole.ca)",
+      "WebFetch(domain:jenniferfindley.com)",
+      "WebFetch(domain:mathematiques.tips)",
+      "WebFetch(domain:www.education.gouv.qc.ca)",
+      "WebFetch(domain:www.amq.math.ca)",
+      "WebFetch(domain:mathsansbosse.fr)",
+      "WebFetch(domain:mathwithmsmatherson.com)",
+      "WebFetch(domain:sites.google.com)",
+      "WebFetch(domain:forums-enseignants-du-primaire.com)",
+      "WebFetch(domain:chiffroscope.blogs.laclasse.com)",
+      "WebFetch(domain:eduscol.education.fr)",
+      "WebFetch(domain:www.persee.fr)",
+      "WebFetch(domain:eduscol.education.gouv.fr)",
+      "WebFetch(domain:www.methodemaths.fr)",
+      "WebFetch(domain:www.maths-et-tiques.fr)",
+      "WebFetch(domain:funexpectedapps.com)",
+      "WebFetch(domain:www.academia.edu)",
+      "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
+      "WebFetch(domain:www.whenmathhappens.com)",
+      "WebFetch(domain:www.edutopia.org)"
     ]
   }
 }

@@ -89,6 +89,11 @@ export function seriesPlayer(exercises, seriesId) {
     estInput: '',       // estimation: estimate field input
     estError: false,    // estimation: estimate input is wrong
     exactError: false,  // estimation: exact input is wrong
+    csSelected: null,     // compare-solutions: index of selected solution
+    eaStepSelected: null, // error-analysis: index of clicked step
+    eaStepError: false,   // error-analysis: clicked step was wrong
+    eaCorrection: '',     // error-analysis: correction input
+    eaCorrectionError: false, // error-analysis: correction input is wrong
 
     /* Helpers */
     get cur() {
@@ -201,7 +206,12 @@ export function seriesPlayer(exercises, seriesId) {
         }
         const count = ex._gen.count || 1;
         for (let i = 0; i < count; i++) {
-          expanded.push({ ...ex, ...gen.generate(ex._gen.params || {}) });
+          try {
+            expanded.push({ ...ex, ...gen.generate(ex._gen.params || {}) });
+          } catch (e) {
+            console.error(`Generator error [${ex._gen.name}]:`, e);
+            expanded.push({ ...ex, body: `<div class="p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl">⚠️ Erreur de génération (${ex._gen.name})</div>` });
+          }
         }
       }
       this.exercises = expanded;
@@ -385,6 +395,13 @@ export function seriesPlayer(exercises, seriesId) {
       this.estInput = '';
       this.estError = false;
       this.exactError = false;
+
+      this.csSelected = null;
+
+      this.eaStepSelected = null;
+      this.eaStepError = false;
+      this.eaCorrection = '';
+      this.eaCorrectionError = false;
 
       this.dtInputs = _e.type === 'decimal-triple'
         ? { fracNum: '', fracDen: '', decimal: '', dizaines: '', unites: '', dixiemes: '', centiemes: '', milliemes: '' }
@@ -1113,6 +1130,37 @@ export function seriesPlayer(exercises, seriesId) {
         
         if (isCorrect) this._markSolvedAndAdvance();
         else this._flashError();
+        return;
+      }
+
+      if (_e.type === 'compare-solutions') {
+        if (this.csSelected === null) { this._flashError(); return; }
+        if (this.csSelected === _e.correctSolution) {
+          this._markSolvedAndAdvance();
+        } else {
+          this._flashError(() => { this.csSelected = null; });
+        }
+        return;
+      }
+
+      if (_e.type === 'error-analysis') {
+        if (!_e.guided && this.eaStepSelected === null) { this._flashError(); return; }
+        if (!this.eaCorrection.trim()) { this._flashError(); return; }
+        const stepOk = _e.guided || this.eaStepSelected === _e.wrongStep;
+        const corrRaw = normalizeAnswer(this.eaCorrection).replace(/^=+/, '');
+        const corrOk = corrRaw === normalizeAnswer(String(_e.correction));
+        this.eaStepError = !stepOk;
+        this.eaCorrectionError = !corrOk;
+        if (stepOk && corrOk) {
+          this.eaStepError = false;
+          this.eaCorrectionError = false;
+          this._markSolvedAndAdvance();
+        } else {
+          this._flashError(() => {
+            if (!stepOk) { this.eaStepError = false; this.eaStepSelected = null; }
+            this.eaCorrectionError = false;
+          });
+        }
         return;
       }
 
