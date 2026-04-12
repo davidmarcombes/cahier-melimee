@@ -1,9 +1,9 @@
 ---
 type: compare-groups
-title: "Autant, plus ou moins ?"
+title: "Comparer des groupes"
 generator: comparerGroupes
-repeat: 8
+repeat: 10
 params:
-  min: 4
-  max: 8
+  min: 2
+  max: 6
 ---

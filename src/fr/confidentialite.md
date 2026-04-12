@@ -26,7 +26,7 @@ Les seules données stockées sont liées à la progression pédagogique :
 - **Identifiant anonyme** : un nom triple généré (ex : *petit-renard-roux*) associé à un sticker et une clé visuelle. Ces identifiants ne sont liés à aucune personne physique.
 - **Progression** : scores et exercices complétés, uniquement pour adapter le parcours pédagogique.
 
-Ces données sont stockées sur notre serveur PocketBase et ne sont partagées avec aucun tiers.
+Ces données sont stockées localement sur votre appareil (localStorage) et ne sont partagées avec aucun tiers.
 
 ## Base légale (RGPD)
 
@@ -34,7 +34,7 @@ Notre traitement repose sur l'**intérêt légitime** (article 6.1.f du RGPD) : 
 
 ## Droits des utilisateurs
 
-Étant donné qu'aucune donnée personnelle n'est collectée, il n'est techniquement pas possible d'exercer un droit d'accès, de rectification ou de suppression sur des données nominatives. Toutefois, l'utilisateur peut à tout moment cesser d'utiliser le service ; ses données de progression ne seront liées à aucune identité réelle. S'il le désire l'utilisateur peut supprimer son compte.
+Étant donné qu'aucune donnée personnelle n'est collectée, il n'est techniquement pas possible d'exercer un droit d'accès, de rectification ou de suppression sur des données nominatives. L'utilisateur peut à tout moment effacer ses données de progression en vidant le stockage local de son navigateur.
 
 ## Sous-traitants et transferts
 
@@ -50,4 +50,4 @@ Pour toute question relative à cette politique, vous pouvez nous contacter à :
 
 ## Mise à jour
 
-Cette politique peut être mise à jour. La date de dernière modification est le 29 mars 2026.
+Cette politique peut être mise à jour. La date de dernière modification est le 9 avril 2026.

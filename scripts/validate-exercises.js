@@ -47,6 +47,10 @@ const TYPE_SCHEMAS = {
   estimation: { required: [], requireOneOf: [['estimate', 'answer'], ['estimates', 'answer']] },
   'error-analysis': { required: ['steps', 'wrongStep', 'correction'], arrays: ['steps'] },
   'compare-solutions': { required: ['solutions', 'correctSolution'], arrays: ['solutions'] },
+  'guided-problem': { required: ['story', 'steps'], arrays: ['steps'] },
+  'think-board': { required: ['expression'], requireOneOf: [['answer'], ['answers']] },
+  'fact-family': { required: ['numbers', 'operation'], arrays: ['numbers'] },
+  'bar-model': { required: ['bm', 'answer'] },
 };
 
 const COLORS = {

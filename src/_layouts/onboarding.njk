@@ -1,6 +1,5 @@
 ---
 layout: base
-needsPocketBase: true
 ---
 
 <div class="py-12">
@@ -21,6 +20,9 @@ needsPocketBase: true
       class="flex-grow flex flex-col"
     >
       <h2 class="text-2xl font-bold mb-6 text-center">Choisis ton identité</h2>
+      <div x-show="identities.length === 0" class="flex justify-center py-8">
+        <div class="w-8 h-8 border-4 border-primary-300 border-t-primary-600 rounded-full animate-spin"></div>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
         <template x-for="identity in identities" :key="identity.name">
           <button
@@ -110,11 +112,10 @@ needsPocketBase: true
         <button type="button" @click="prevStep()" class="px-6 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-surface-subtle transition-colors">Retour</button>
         <button
           type="button"
-          @click="submitOnboarding()" 
-          :disabled="passwordSequence.length < 3 || isSubmitting"
-          class="px-8 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          @click="submitOnboarding()"
+          :disabled="passwordSequence.length < 3"
+          class="px-8 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span x-show="isSubmitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
           Finaliser
         </button>
       </div>
@@ -143,16 +144,12 @@ needsPocketBase: true
 
 <script>
 function onboardingWizard() {
-  const pb = new PocketBase('{{ pocketbase.url }}');
+  const STICKERS = ['🌻', '🍬', '🌵', '🎈', '🎨', '🚀', '⭐', '⛄', '🧩', '🎸', '⚽', '🎒', '🎃', '⏰', '🎻', '🎩', '🚲', '🛹', '🛸', '🪁'];
 
   return {
     step: 1,
-    demoMode: false,
-    isSubmitting: false,
     identities: [],
-    stickers: ['🌻', '🍬', '🌵', '🎈', '🎨', '🚀', '⭐', '⛄', '🧩', '🎸', '⚽', '🎒', '🎃', '⏰', '🎻', '🎩', '🚲', '🛹', '🛸', '🪁'],
     passwordIcons: ['🍎', '🍌', '🍒', '🍓', '🍇', '🍍', '🍑', '🍐', '🍉', '🍋'],
-    
     selectedIdentity: null,
     assignedSticker: null,
     passwordSequence: [],
@@ -160,7 +157,6 @@ function onboardingWizard() {
     recentlyCopied: false,
 
     get fullId() {
-      // Don't repeat the sticker in the display string
       return this.selectedIdentity ? this.selectedIdentity.name : '';
     },
 
@@ -170,140 +166,34 @@ function onboardingWizard() {
     },
 
     async init() {
-      console.log('Onboarding Wizard: Initializing diverse identity fetch...');
-      const live = await window.__pbAvailable();
-      if (!live) this.demoMode = true;
+      const pick = (pool) => pool.slice().sort(() => Math.random() - 0.5).slice(0, 3).map(name => ({ name }));
       try {
-        if (this.demoMode) throw new Error('demo mode');
-
-        // Step 1: Get total counts for each gender (very fast)
-        const [mCountRes, fCountRes] = await Promise.all([
-          pb.collection('identities').getList(1, 1, {
-            filter: 'usage_count < max_usage && gender = "M"',
-            requestKey: 'count-males'
-          }),
-          pb.collection('identities').getList(1, 1, {
-            filter: 'usage_count < max_usage && gender = "F"',
-            requestKey: 'count-females'
-          })
-        ]);
-
-        const totalM = mCountRes.totalItems;
-        const totalF = fCountRes.totalItems;
-        console.log('Available Identities:', { totalM, totalF });
-
-        // Step 2: Fetch 3 individual records from truly random offsets
-        const fetchDiverse = async (gender, total, count) => {
-          if (total === 0) return [];
-          const results = [];
-          const usedOffsets = new Set();
-          
-          for (let i = 0; i < count; i++) {
-            // Pick a random offset that hasn't been used in this batch
-            let randomPage;
-            let attempts = 0;
-            do {
-              randomPage = Math.floor(Math.random() * total) + 1;
-              attempts++;
-            } while (usedOffsets.has(randomPage) && attempts < 10);
-            
-            usedOffsets.add(randomPage);
-
-            try {
-              const res = await pb.collection('identities').getList(randomPage, 1, {
-                filter: `usage_count < max_usage && gender = "${gender}"`,
-                requestKey: `fetch-${gender}-${i}`
-              });
-              if (res.items.length > 0) results.push(res.items[0]);
-            } catch (e) {
-              console.warn(`Failed to fetch ${gender} at page ${randomPage}`, e);
-            }
-          }
-          return results;
-        };
-
-        const [mItems, fItems] = await Promise.all([
-          fetchDiverse('M', totalM, 3),
-          fetchDiverse('F', totalF, 3)
-        ]);
-
-        console.log('Fetch results:', { males: mItems.length, females: fItems.length });
-
-        let finalM = mItems;
-        let finalF = fItems;
-
-        // Fallbacks if DB is empty or fetch fails
-        if (finalM.length < 3) {
-          finalM = [...finalM, { name: 'petit-renard-roux' }, { name: 'vieux-lion-sage' }, { name: 'vif-dauphin-bleu' }].slice(0, 3);
-        }
-        if (finalF.length < 3) {
-          finalF = [...finalF, { name: 'grande-chouette-bleue' }, { name: 'petite-souris-verte' }, { name: 'vive-loutre-brillante' }].slice(0, 3);
-        }
-
-        // Shuffle final set
-        this.identities = [...finalM, ...finalF]
-          .sort(() => Math.random() - 0.5);
-
-      } catch (err) {
-        console.error('Failed to fetch identities (demo mode):', err);
-        this.demoMode = true;
-        // Fallback names (3M, 3F)
+        const res = await fetch((window.__pathPrefix || '/') + 'assets/identities.json');
+        const data = await res.json();
+        this.identities = [...pick(data.M || []), ...pick(data.F || [])].sort(() => Math.random() - 0.5);
+      } catch {
+        // Fallback if file unavailable
         this.identities = [
-          { name: 'petit-renard-roux' },
-          { name: 'vieux-lion-sage' },
-          { name: 'vif-dauphin-bleu' },
-          { name: 'grande-chouette-bleue' },
-          { name: 'petite-souris-verte' },
-          { name: 'vive-loutre-brillante' }
+          { name: 'petit-renard-roux' }, { name: 'vieux-lion-sage' }, { name: 'vif-dauphin-bleu' },
+          { name: 'grande-chouette-bleue' }, { name: 'petite-souris-verte' }, { name: 'vive-loutre-brillante' }
         ].sort(() => Math.random() - 0.5);
       }
     },
 
-    async selectIdentity(identity) {
+    selectIdentity(identity) {
       this.selectedIdentity = identity;
-      
-      try {
-        // Fetch pupils with this username to see which stickers are taken
-        const usedStickers = await pb.collection('pupils').getFullList({
-          filter: `username = "${identity.name}"`,
-          fields: 'sticker_id'
-        });
-        
-        const taken = usedStickers.map(p => p.sticker_id);
-        const available = this.stickers.filter(s => !taken.includes(s));
-        
-        if (available.length > 0) {
-          // Pick a random available sticker
-          this.assignedSticker = available[Math.floor(Math.random() * available.length)];
-        } else {
-          // If no stickers are left for this name (should be rare if max_usage is set right)
-          this.assignedSticker = this.stickers[Math.floor(Math.random() * this.stickers.length)];
-          console.warn('No unique stickers left for this identity');
-        }
-      } catch (err) {
-        console.error('Failed to check sticker uniqueness:', err);
-        // Fallback to purely random
-        this.assignedSticker = this.stickers[Math.floor(Math.random() * this.stickers.length)];
-      }
-
-      // Generate slug using the sticker itself (URL encoded or represented as index)
-      // To keep URLs clean, we'll use the index of the sticker in our master list
-      const stickerIndex = this.stickers.indexOf(this.assignedSticker);
-      this.slug = `${identity.name}-${stickerIndex}`;
-      
+      const stickerIndex = Math.floor(Math.random() * STICKERS.length);
+      this.assignedSticker = STICKERS[stickerIndex];
+      this.slug = identity.name + '-' + stickerIndex;
       this.nextStep();
     },
 
     addPasswordIcon(icon) {
-      if (this.passwordSequence.length < 3) {
-        this.passwordSequence.push(icon);
-      }
+      if (this.passwordSequence.length < 3) this.passwordSequence.push(icon);
     },
 
     removeLastIcon(index) {
-        if (index === this.passwordSequence.length - 1) {
-            this.passwordSequence.pop();
-        }
+      if (index === this.passwordSequence.length - 1) this.passwordSequence.pop();
     },
 
     nextStep() {
@@ -319,39 +209,18 @@ function onboardingWizard() {
         await navigator.clipboard.writeText(this.workspaceUrl);
         this.recentlyCopied = true;
         setTimeout(() => this.recentlyCopied = false, 2000);
-      } catch (err) {
-        console.error('Failed to copy:', err);
-      }
+      } catch {}
     },
 
-    async submitOnboarding() {
-      this.isSubmitting = true;
+    submitOnboarding() {
       const data = {
         username: this.selectedIdentity.name,
         sticker_id: this.assignedSticker,
         visual_key: this.passwordSequence.join('-'),
         slug: this.slug
       };
-      try {
-        if (!this.demoMode) {
-          await pb.collection('pupils').create(data);
-          if (this.selectedIdentity.id) {
-            await pb.collection('identities').update(this.selectedIdentity.id, {
-              'usage_count+': 1
-            });
-          }
-        }
-        localStore.setUser(data);
-        this.nextStep();
-      } catch (error) {
-        console.error('Submission failed:', error);
-        // Gracefully proceed even if PocketBase failed — still save locally
-        this.demoMode = true;
-        localStore.setUser(data);
-        this.nextStep();
-      } finally {
-        this.isSubmitting = false;
-      }
+      localStore.setUser(data);
+      this.nextStep();
     }
   };
 }

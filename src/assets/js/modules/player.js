@@ -95,6 +95,18 @@ export function seriesPlayer(exercises, seriesId) {
     eaCorrection: '',     // error-analysis: correction input
     eaCorrectionError: false, // error-analysis: correction input is wrong
 
+    gpStep: 0,        // guided-problem: current step index
+    gpPicked: [],     // guided-problem: token strings picked in current tap step
+    gpChoice: null,   // guided-problem: selected choice (operation / question-type)
+    gpInput: '',      // guided-problem: text input (convert / calculate)
+
+    tbStory: '',      // think-board: story quadrant text
+    tbStoryError: false, // think-board: story keyword mismatch
+    _tbDrawing: false,   // think-board: canvas pointer down
+
+    ffInputs: [],     // fact-family: one input per equation (4 total)
+    ffErrors: [],     // fact-family: indices of wrong equations
+
     /* Helpers */
     get cur() {
       return this.exercises[this.currentIndex] || {};
@@ -402,6 +414,21 @@ export function seriesPlayer(exercises, seriesId) {
       this.eaStepError = false;
       this.eaCorrection = '';
       this.eaCorrectionError = false;
+
+      this.gpStep = 0;
+      this.gpPicked = [];
+      this.gpChoice = null;
+      this.gpInput = '';
+      // Activate token spans for first step after DOM updates
+      if (_e.type === 'guided-problem') this.$nextTick(() => this._gpActivateTokens());
+
+      this.tbStory = '';
+      this.tbStoryError = false;
+      this._tbDrawing = false;
+      if (_e.type === 'think-board') this.$nextTick(() => this._tbInitCanvas());
+
+      this.ffInputs = _e.ffEquations ? _e.ffEquations.map(() => '') : [];
+      this.ffErrors = [];
 
       this.dtInputs = _e.type === 'decimal-triple'
         ? { fracNum: '', fracDen: '', decimal: '', dizaines: '', unites: '', dixiemes: '', centiemes: '', milliemes: '' }
@@ -1180,6 +1207,40 @@ export function seriesPlayer(exercises, seriesId) {
         return;
       }
 
+      if (_e.type === 'fact-family') {
+        if (this.ffInputs.some(v => !v.trim())) { this._flashError(); return; }
+        const wrong = (_e.ffEquations || [])
+          .map((eq, i) => normalizeAnswer(this.ffInputs[i]) !== normalizeAnswer(eq.answer) ? i : -1)
+          .filter(i => i !== -1);
+        if (wrong.length === 0) {
+          this.ffErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.ffErrors = wrong;
+          this._flashError(() => {
+            wrong.forEach(i => { this.ffInputs[i] = ''; });
+            this.ffErrors = [];
+          });
+        }
+        return;
+      }
+
+      if (_e.type === 'think-board') {
+        if (!this.userInput.trim()) { this._flashError(); return; }
+        const symbolOk = (_e.answers || []).some(a => normalizeAnswer(a) === normalizeAnswer(this.userInput));
+        // Check story keyword if tbStoryKeyword is set
+        const storyOk = !_e.tbStoryKeyword ||
+          this.tbStory.toLowerCase().includes(_e.tbStoryKeyword.toLowerCase());
+        this.tbStoryError = !storyOk;
+        if (symbolOk && storyOk) {
+          this.tbStoryError = false;
+          this._markSolvedAndAdvance();
+        } else {
+          this._flashError(() => { this.tbStoryError = false; });
+        }
+        return;
+      }
+
       if (!this.userInput.trim()) return;
       const u = normalizeAnswer(this.userInput);
       if ((_e.answers || []).some((a) => normalizeAnswer(a) === u)) this._markSolvedAndAdvance();
@@ -1366,6 +1427,167 @@ export function seriesPlayer(exercises, seriesId) {
     syncFromHash() {
       const h = parseInt(window.location.hash.replace('#', ''), 10);
       if (h >= 1 && h <= this.exercises.length) this.currentIndex = h - 1;
+    },
+
+    /* ── Guided problem ──────────────────────────────────────────────────── */
+
+    get gpCurrentStep() {
+      return this.cur.gpSteps?.[this.gpStep] ?? null;
+    },
+
+    // Token tap (keywords / numbers steps): no feedback on wrong tap
+    gpTapToken(event) {
+      if (this.solved) return;
+      const step = this.gpCurrentStep;
+      if (!step || !['keywords', 'numbers'].includes(step.kind)) return;
+      const token = event.target.closest('[data-gp]')?.dataset?.gp;
+      if (!token || !step.tokens?.includes(token)) return;
+      if (this.gpPicked.includes(token)) return;
+      this.gpPicked = [...this.gpPicked, token];
+      // Visual: mark the span immediately in the DOM
+      const cls = step.kind === 'keywords' ? 'gp-kw' : 'gp-num';
+      event.target.closest('[data-gp]')?.classList.add(cls);
+      if (this.gpPicked.length === step.tokens.length) {
+        setTimeout(() => this.gpAdvance(), 350);
+      }
+    },
+
+    // Choice tap (operation / question-type steps)
+    gpPickChoice(choice) {
+      if (this.solved) return;
+      const step = this.gpCurrentStep;
+      if (!step || !step.answers?.length) return;
+      this.gpChoice = choice;
+      if (normalizeAnswer(choice) === normalizeAnswer(step.answers[0])) {
+        setTimeout(() => this.gpAdvance(), 350);
+      }
+    },
+
+    // Input check (convert / calculate steps)
+    gpCheckInput() {
+      if (this.solved) return;
+      const step = this.gpCurrentStep;
+      if (!step || !step.answers?.length) return;
+      const val = normalizeAnswer(this.gpInput);
+      if (step.answers.some(a => normalizeAnswer(a) === val)) {
+        this.gpAdvance();
+      } else {
+        this._flashError();
+      }
+    },
+
+    gpAdvance() {
+      this.gpChoice = null;
+      this.gpPicked = [];
+      this.gpInput  = '';
+      const nextStep = this.gpStep + 1;
+      if (nextStep >= (this.cur.gpSteps?.length ?? 0)) {
+        this._markSolvedAndAdvance();
+      } else {
+        this.gpStep = nextStep;
+        // Activate token spans in the DOM for the next tap step
+        this._gpActivateTokens();
+      }
+    },
+
+    // Mark spans for the current tap step as active (drives CSS cursor/underline)
+    _gpActivateTokens() {
+      const step = this.gpCurrentStep;
+      const storyEl = this.$el?.querySelector?.('.gp-story');
+      if (!storyEl) return;
+      // Remove previous active state
+      storyEl.removeAttribute('data-gp-active');
+      if (step && ['keywords', 'numbers'].includes(step.kind)) {
+        storyEl.setAttribute('data-gp-active', step.kind);
+      }
+    },
+
+    // ── Think Board ──────────────────────────────────────────────────────────
+
+    // Dot groups for the manipulation quadrant, derived from tbExpression
+    // Supports: a × b, a + b, a - b, a ÷ b
+    get tbDotGroups() {
+      const expr = this.cur.tbExpression || '';
+      const mul = expr.match(/^(\d+)\s*[×x\*]\s*(\d+)$/);
+      if (mul) {
+        const groups = parseInt(mul[1], 10);
+        const size = parseInt(mul[2], 10);
+        if (groups > 0 && size > 0 && groups * size <= 100) return Array(groups).fill(size);
+      }
+      const div = expr.match(/^(\d+)\s*[÷\/]\s*(\d+)$/);
+      if (div) {
+        const total = parseInt(div[1], 10);
+        const parts = parseInt(div[2], 10);
+        if (parts > 0 && total > 0 && total <= 100) {
+          const sz = Math.floor(total / parts);
+          return Array(parts).fill(sz);
+        }
+      }
+      const add = expr.match(/^(\d+)\s*\+\s*(\d+)$/);
+      if (add) {
+        const a = parseInt(add[1], 10), b = parseInt(add[2], 10);
+        if (a + b <= 50) return [a, b];
+      }
+      const sub = expr.match(/^(\d+)\s*[−\-]\s*(\d+)$/);
+      if (sub) {
+        const a = parseInt(sub[1], 10), b = parseInt(sub[2], 10);
+        if (a <= 30) return [b, a - b]; // whole then remainder
+      }
+      return [];
+    },
+
+    _tbInitCanvas() {
+      const canvas = this.$refs.tbCanvas;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    },
+
+    tbDrawStart(e) {
+      if (this.solved) return;
+      this._tbDrawing = true;
+      const canvas = this.$refs.tbCanvas;
+      if (!canvas) return;
+      canvas.setPointerCapture(e.pointerId);
+      const { x, y } = this._tbPos(e, canvas);
+      const ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.strokeStyle = document.documentElement.classList.contains('dark') ? '#93c5fd' : '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+    },
+
+    tbDrawMove(e) {
+      if (!this._tbDrawing || this.solved) return;
+      const canvas = this.$refs.tbCanvas;
+      if (!canvas) return;
+      const { x, y } = this._tbPos(e, canvas);
+      const ctx = canvas.getContext('2d');
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    },
+
+    tbDrawEnd() {
+      this._tbDrawing = false;
+    },
+
+    tbClearCanvas() {
+      const canvas = this.$refs.tbCanvas;
+      if (!canvas) return;
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    },
+
+    _tbPos(e, canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY,
+      };
     },
   };
 }

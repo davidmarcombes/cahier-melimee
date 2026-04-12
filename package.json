@@ -21,11 +21,11 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
-    "build": "npm run test && npm run validate:exercises && npm run generate:tokens && eleventy --quiet && npm run build:css && npm run validate:html",
+    "build": "npm run test && npm run validate:exercises && npm run generate:tokens && eleventy --quiet && npm run build:css && npm run validate:html && npm run generate:sw",
     "build:css": "tailwindcss -i src/css/input.css -o _site/css/styles.css --minify",
     "build:compress": "node scripts/compress.js",
     "build:slides": "npx @marp-team/marp-cli docs/slides.md --pdf --theme docs/marp_melimee.css -o docs/slides.pdf",
-    "build:e2e": "npm run generate:tokens && eleventy && npm run build:css",
+    "build:e2e": "npm run generate:tokens && eleventy && npm run build:css && npm run generate:sw",
     "generate:tokens": "node scripts/generate-tailwind-from-tokens.js",
     "generate:names": "node scripts/generate-names.js",
     "generate:ids": "node scripts/generate-ids.js",
@@ -64,7 +64,8 @@
     "serve:sim": "node scripts/sim-server.js",
     "db:start": "./pocketbase/pocketbase serve",
     "db:admin": "echo 'Go to http://127.0.0.1:8090/_/'",
-    "init": "node scripts/init-project.js"
+    "init": "node scripts/init-project.js",
+    "generate:sw": "node scripts/generate-sw.js"
   },
   "keywords": [
     "eleventy",

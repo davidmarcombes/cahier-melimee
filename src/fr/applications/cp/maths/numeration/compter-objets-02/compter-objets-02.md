@@ -1,9 +1,9 @@
 ---
 type: count-objects
-title: "Combien y en a-t-il ?"
+title: "Compter des objets"
 generator: compterObjets
 repeat: 10
 params:
-  min: 6
-  max: 15
+  min: 3
+  max: 9
 ---

@@ -26,6 +26,87 @@ function renderShorthands(str) {
   });
 }
 
+// ── Bar Model SVG generator ──────────────────────────────────────────────────
+function genBarModelSvg(bm) {
+  const W = 360, PX = 20, BAR_H = 42, GAP = 12;
+  const F = 'font-family="system-ui,sans-serif"';
+  const ans = String(bm.answer ?? '');
+
+  if (bm.mode === 'part-whole') {
+    const wholeIsUnk = String(bm.whole) === '?';
+    const wholeNum = wholeIsUnk ? parseFloat(ans) : parseFloat(String(bm.whole));
+    const parts = (bm.parts || []).map(p => ({
+      isUnk: String(p) === '?',
+      val: String(p) === '?' ? parseFloat(ans) : parseFloat(String(p)),
+      label: String(p),
+    }));
+    const hasPartLabels = bm.partLabels && bm.partLabels.length;
+    const PY = 26;
+    const SVG_H = PY + BAR_H + GAP + BAR_H + (hasPartLabels ? 22 : 10) + PY;
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W + PX * 2} ${SVG_H}" role="img">`;
+    if (bm.wholeLabel) s += `<text x="${PX}" y="14" font-size="11" fill="var(--cs)" ${F}>${bm.wholeLabel}</text>`;
+    // Whole bar
+    s += `<rect x="${PX}" y="${PY}" width="${W}" height="${BAR_H}" rx="5" fill="var(--p)" fill-opacity="0.2" stroke="var(--p)" stroke-width="2"/>`;
+    s += `<text x="${PX + W / 2}" y="${PY + BAR_H / 2 + 6}" text-anchor="middle" font-size="17" font-weight="700" fill="var(--p)" ${F}>${wholeIsUnk ? '?' : String(bm.whole)}</text>`;
+    // Parts
+    const y2 = PY + BAR_H + GAP;
+    const STROKES = ['var(--a)', 'var(--green)', 'var(--purple)'];
+    let x = PX;
+    for (let i = 0; i < parts.length; i++) {
+      const pw = Math.max(4, (parts[i].val / wholeNum) * W);
+      const stroke = parts[i].isUnk ? 'var(--cs)' : STROKES[i % STROKES.length];
+      const fill = parts[i].isUnk ? 'var(--sc)' : stroke;
+      const fillOp = parts[i].isUnk ? '1' : '0.2';
+      const dash = parts[i].isUnk ? ' stroke-dasharray="6,4"' : '';
+      s += `<rect x="${x + 1}" y="${y2}" width="${pw - 3}" height="${BAR_H}" rx="4" fill="${fill}" fill-opacity="${fillOp}" stroke="${stroke}" stroke-width="2"${dash}/>`;
+      const tSize = parts[i].isUnk ? 22 : 15;
+      s += `<text x="${x + 1 + (pw - 3) / 2}" y="${y2 + BAR_H / 2 + 6}" text-anchor="middle" font-size="${tSize}" font-weight="700" fill="${parts[i].isUnk ? 'var(--cs)' : stroke}" ${F}>${parts[i].label}</text>`;
+      if (hasPartLabels && bm.partLabels[i]) s += `<text x="${x + 1 + (pw - 3) / 2}" y="${y2 + BAR_H + 16}" text-anchor="middle" font-size="10" fill="var(--cs)" ${F}>${bm.partLabels[i]}</text>`;
+      x += pw;
+    }
+    s += '</svg>';
+    return s;
+  }
+
+  if (bm.mode === 'comparison') {
+    const refNum = parseFloat(String(bm.ref));
+    const compIsUnk = String(bm.compared) === '?';
+    const compNum = compIsUnk ? parseFloat(ans) : parseFloat(String(bm.compared));
+    const maxNum = Math.max(refNum, compNum);
+    const refW = (refNum / maxNum) * W;
+    const compW = (compNum / maxNum) * W;
+    const PY = 26;
+    const diffH = Math.abs(refW - compW) > 10 ? 26 : 0;
+    const SVG_H = PY + BAR_H + GAP + BAR_H + diffH + PY;
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W + PX * 2} ${SVG_H}" role="img">`;
+    const y1 = PY, y2 = PY + BAR_H + GAP;
+    if (bm.refLabel) s += `<text x="${PX}" y="${y1 - 6}" font-size="11" fill="var(--cs)" ${F}>${bm.refLabel}</text>`;
+    if (bm.compLabel) s += `<text x="${PX}" y="${y2 - 6}" font-size="11" fill="var(--cs)" ${F}>${bm.compLabel}</text>`;
+    // Ref bar
+    s += `<rect x="${PX}" y="${y1}" width="${refW}" height="${BAR_H}" rx="5" fill="var(--p)" fill-opacity="0.2" stroke="var(--p)" stroke-width="2"/>`;
+    s += `<text x="${PX + refW / 2}" y="${y1 + BAR_H / 2 + 6}" text-anchor="middle" font-size="16" font-weight="700" fill="var(--p)" ${F}>${bm.ref}</text>`;
+    // Compared bar
+    const cStroke = compIsUnk ? 'var(--cs)' : 'var(--a)';
+    const cFill = compIsUnk ? 'var(--sc)' : 'var(--a)';
+    const cDash = compIsUnk ? ' stroke-dasharray="6,4"' : '';
+    s += `<rect x="${PX}" y="${y2}" width="${compW}" height="${BAR_H}" rx="5" fill="${cFill}" fill-opacity="${compIsUnk ? '1' : '0.2'}" stroke="${cStroke}" stroke-width="2"${cDash}/>`;
+    s += `<text x="${PX + compW / 2}" y="${y2 + BAR_H / 2 + 6}" text-anchor="middle" font-size="${compIsUnk ? 22 : 16}" font-weight="700" fill="${cStroke}" ${F}>${bm.compared}</text>`;
+    // Difference bracket
+    if (diffH > 0) {
+      const minW = Math.min(refW, compW), maxW = Math.max(refW, compW);
+      const by = y2 + BAR_H + 6;
+      s += `<line x1="${PX + minW}" y1="${by}" x2="${PX + maxW}" y2="${by}" stroke="var(--cs)" stroke-width="1.5"/>`;
+      s += `<line x1="${PX + minW}" y1="${by - 4}" x2="${PX + minW}" y2="${by + 4}" stroke="var(--cs)" stroke-width="1.5"/>`;
+      s += `<line x1="${PX + maxW}" y1="${by - 4}" x2="${PX + maxW}" y2="${by + 4}" stroke="var(--cs)" stroke-width="1.5"/>`;
+      const dl = bm.diffLabel || (bm.diff !== undefined ? String(bm.diff) : '?');
+      s += `<text x="${PX + (minW + maxW) / 2}" y="${by + 16}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--cs)" ${F}>${dl}</text>`;
+    }
+    s += '</svg>';
+    return s;
+  }
+  return '';
+}
+
 module.exports = async function (eleventyConfig) {
   // LaTeX support using MathML (Zero-runtime JS/CSS on client)
   const mathPlugin = (await import('@peaceroad/markdown-it-math-tex-to-mathml')).default;
@@ -601,6 +682,80 @@ module.exports = async function (eleventyConfig) {
             ? (Array.isArray(ex.data.estimates) ? ex.data.estimates : [ex.data.estimates])
             : ex.data.estimate !== undefined ? [ex.data.estimate] : [];
           item.estAnswers = estVals.map(v => String(v).trim().toLowerCase());
+        }
+
+        if (ex.data.type === 'think-board') {
+          item.tbExpression = String(ex.data.expression || '');
+          item.tbManipLabel = ex.data.manipLabel ? String(ex.data.manipLabel) : '';
+          item.tbUnit = ex.data.unit ? String(ex.data.unit) : '';
+          item.tbStoryHint = ex.data.storyHint ? String(ex.data.storyHint) : '';
+          item.tbStoryKeyword = ex.data.storyKeyword ? String(ex.data.storyKeyword).toLowerCase() : '';
+        }
+
+        if (ex.data.type === 'fact-family' && Array.isArray(ex.data.numbers)) {
+          const [a, b, c] = ex.data.numbers.map(Number);
+          item.ffNumbers = [a, b, c];
+          const op = String(ex.data.operation || 'mul');
+          if (op === 'add') {
+            item.ffEquations = [
+              { expr: `${a} + ${b} =`, answer: String(c) },
+              { expr: `${b} + ${a} =`, answer: String(c) },
+              { expr: `${c} − ${a} =`, answer: String(b) },
+              { expr: `${c} − ${b} =`, answer: String(a) },
+            ];
+          } else {
+            item.ffEquations = [
+              { expr: `${a} × ${b} =`, answer: String(c) },
+              { expr: `${b} × ${a} =`, answer: String(c) },
+              { expr: `${c} ÷ ${a} =`, answer: String(b) },
+              { expr: `${c} ÷ ${b} =`, answer: String(a) },
+            ];
+          }
+        }
+
+        if (ex.data.type === 'bar-model' && ex.data.bm) {
+          const bm = { ...ex.data.bm, answer: String(ex.data.answer ?? '') };
+          item.bmSvg = genBarModelSvg(bm);
+          if (ex.data.unit) item.unit = String(ex.data.unit);
+        }
+
+        if (ex.data.type === 'guided-problem' && ex.data.story && ex.data.steps) {
+          // Collect all tap-target tokens from keywords/numbers steps
+          const allTokens = [];
+          for (const step of ex.data.steps) {
+            if ((step.kind === 'keywords' || step.kind === 'numbers') && Array.isArray(step.tokens)) {
+              allTokens.push(...step.tokens.map(String));
+            }
+          }
+          // Render story markdown (strip outer <p> if single paragraph)
+          let storyHtml = md.render(interpolate(String(ex.data.story))).trim();
+          storyHtml = storyHtml.replace(/^<p>([\s\S]*)<\/p>$/, '$1');
+          // Wrap tokens — longest first to avoid partial overlaps
+          const sorted = [...new Set(allTokens)].sort((a, b) => b.length - a.length);
+          for (const tok of sorted) {
+            const esc = tok.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const attr = tok.replace(/"/g, '&quot;');
+            storyHtml = storyHtml.replace(
+              new RegExp(`(?<![\\w"])${esc}(?![\\w])`, 'g'),
+              `<span class="gp-token" data-gp="${attr}">${tok}</span>`
+            );
+          }
+          item.gpStory = storyHtml;
+          // Map steps
+          item.gpSteps = ex.data.steps.map(step => {
+            const s = { kind: step.kind };
+            if (Array.isArray(step.tokens))  s.tokens  = step.tokens.map(String);
+            if (step.hint)                   s.hint    = md.renderInline(interpolate(String(step.hint)));
+            if (step.question)               s.question = md.renderInline(interpolate(String(step.question)));
+            if (Array.isArray(step.choices)) s.choices = step.choices.map(String);
+            if (step.unit)                   s.unit    = String(step.unit);
+            // answers: normalise to array, lower-cased for comparison
+            const raw = step.answers
+              ? step.answers.map(a => String(a).trim().toLowerCase())
+              : step.answer != null ? [String(step.answer).trim().toLowerCase()] : [];
+            if (raw.length) s.answers = raw;
+            return s;
+          });
         }
 
         if (ex.data.type === 'fraction-paint') {

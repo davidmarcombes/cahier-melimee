@@ -211,3 +211,29 @@
 body {
   @apply font-sans bg-surface-default text-content-default;
 }
+
+/* ── Guided problem — token highlighting in story text ── */
+.gp-token {
+  border-radius: 3px;
+  padding: 1px 3px;
+  transition: background 0.15s, color 0.15s;
+}
+/* Tokens become tappable when their step is active */
+.gp-story[data-gp-active] .gp-token {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 3px;
+}
+/* Keyword tokens picked (yellow) */
+.gp-token.gp-kw {
+  background-color: #fef08a;
+  color: #713f12;
+}
+/* Number tokens picked (blue) */
+.gp-token.gp-num {
+  background-color: #bfdbfe;
+  color: #1e3a5f;
+}
+.dark .gp-token.gp-kw  { background-color: #713f12; color: #fef9c3; }
+.dark .gp-token.gp-num { background-color: #1e3a5f; color: #dbeafe; }

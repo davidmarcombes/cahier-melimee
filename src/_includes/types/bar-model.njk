@@ -1,0 +1,39 @@
+{# Bar Model — visual part-whole or comparison diagram (Singapore/UK) #}
+<div x-show="cur.type === 'bar-model'" class="space-y-4">
+
+  {# ── Bar diagram ── #}
+  <div x-html="cur.bmSvg" class="w-full"></div>
+
+  {# ── Optional question text ── #}
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle"></div>
+
+  {# ── Answer input ── #}
+  <div class="flex items-center justify-center gap-3">
+    <input
+      type="text"
+      inputmode="numeric"
+      x-ref="input"
+      x-model="userInput"
+      @keydown.enter="check()"
+      :disabled="solved"
+      placeholder="?"
+      class="w-28 px-4 py-3 text-2xl font-extrabold text-center border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-surface-subtle text-content-default"
+      :class="{
+        'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+        'border-red-400 bg-red-50 dark:bg-red-900/20': showError && !solved,
+        'border-primary-300 dark:border-primary-600': !solved && !showError
+      }"
+    />
+    <template x-if="cur.unit">
+      <span class="text-base font-semibold text-content-subtle" x-text="cur.unit"></span>
+    </template>
+    <button
+      type="button"
+      @click="check()"
+      x-show="!solved"
+      :disabled="!userInput.trim()"
+      class="px-5 py-3 font-bold rounded-2xl bg-primary-500 text-white hover:bg-primary-600 shadow-md transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    >Vérifier</button>
+  </div>
+
+</div>

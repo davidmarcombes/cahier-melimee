@@ -1,0 +1,58 @@
+{# Fact Family — 4 related equations from a number triplet (US/German) #}
+<div x-show="cur.type === 'fact-family'" class="space-y-4">
+
+  {# ── Triplet display ── #}
+  <div class="flex justify-center gap-4 py-2">
+    <template x-for="(n, i) in (cur.ffNumbers || [])" :key="i">
+      <div
+        class="flex items-center justify-center w-14 h-14 rounded-2xl text-2xl font-extrabold shadow-sm"
+        :class="i === 2
+          ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-2 border-primary-300 dark:border-primary-600'
+          : 'bg-slate-100 dark:bg-slate-800 text-content-default border-2 border-slate-200 dark:border-slate-700'"
+        x-text="n"
+      ></div>
+    </template>
+  </div>
+
+  {# ── 4 equation rows ── #}
+  <div class="space-y-2">
+    <template x-for="(eq, i) in (cur.ffEquations || [])" :key="i">
+      <div
+        class="flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-colors"
+        :class="{
+          'border-green-400 bg-green-50 dark:bg-green-900/15': solved,
+          'border-red-400 bg-red-50 dark:bg-red-900/15': ffErrors.includes(i) && !solved,
+          'border-slate-200 dark:border-slate-700 bg-surface-subtle': !solved && !ffErrors.includes(i)
+        }"
+      >
+        <span class="text-lg font-bold text-content-default font-mono" x-text="eq.expr"></span>
+        <input
+          type="text"
+          inputmode="numeric"
+          :x-ref="'ffInput' + i"
+          x-model="ffInputs[i]"
+          @keydown.enter="$nextTick(() => { const nx = $el.closest('.space-y-2').querySelectorAll('input')[i+1]; if(nx) nx.focus(); else check(); })"
+          :disabled="solved"
+          placeholder="?"
+          class="w-20 px-3 py-1.5 text-lg font-bold text-center border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-white dark:bg-slate-800 text-content-default"
+          :class="{
+            'border-green-500': solved,
+            'border-red-400': ffErrors.includes(i) && !solved,
+            'border-primary-300 dark:border-primary-600': !solved && !ffErrors.includes(i)
+          }"
+        />
+      </div>
+    </template>
+  </div>
+
+  {# ── Verify ── #}
+  <div x-show="!solved" class="flex justify-center pt-1">
+    <button
+      type="button"
+      @click="check()"
+      :disabled="ffInputs.some(v => !v.trim())"
+      class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    >Vérifier</button>
+  </div>
+
+</div>

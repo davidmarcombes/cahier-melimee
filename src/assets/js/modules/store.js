@@ -1,7 +1,6 @@
 /* ─────────────────────────────────────────────────────────────
-   Local progress store — primary persistence layer.
+   Local progress store — sole persistence layer.
    Key: 'melimee_v1'  { user: {...}, progress: { [seriesId]: {...} } }
-   Works fully offline; PocketBase sync will be layered on top later.
    ───────────────────────────────────────────────────────────── */
 export const localStore = (() => {
   const KEY = 'melimee_v1';

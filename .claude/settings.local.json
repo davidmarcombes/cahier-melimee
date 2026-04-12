@@ -213,7 +213,8 @@
       "WebFetch(domain:www.academia.edu)",
       "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
       "WebFetch(domain:www.whenmathhappens.com)",
-      "WebFetch(domain:www.edutopia.org)"
+      "WebFetch(domain:www.edutopia.org)",
+      "Bash(du -sh */)"
     ]
   }
 }

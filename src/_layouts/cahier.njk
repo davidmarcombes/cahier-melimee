@@ -1,15 +1,8 @@
 ---
 layout: base
-needsPocketBase: true
 ---
 
 <div x-data="cahierPage()" x-init="init()" x-cloak class="max-w-2xl mx-auto py-12 px-4">
-
-  {# Loading #}
-  <div x-show="state === 'loading'" class="text-center py-24 text-content-subtle">
-    <div class="inline-block w-8 h-8 border-4 border-primary-300 border-t-primary-600 rounded-full animate-spin mb-4"></div>
-    <p>Chargement de ton cahier…</p>
-  </div>
 
   {# Not found / no user param #}
   <div x-show="state === 'notfound'" class="text-center py-16">
@@ -101,8 +94,6 @@ needsPocketBase: true
 
 <script>
 function cahierPage() {
-  const pb = new PocketBase(window.__pbUrl);
-
   return {
     state: 'loading',   // 'loading' | 'ready' | 'notfound'
     pupil: null,
@@ -114,13 +105,12 @@ function cahierPage() {
       return window.location.origin + prefix + 'fr/cahier/?user=' + (this.pupil?.slug || '');
     },
 
-    async init() {
+    init() {
       const params = new URLSearchParams(window.location.search);
       const slug = params.get('user');
 
       if (!slug) { this.state = 'notfound'; return; }
 
-      // 1. Try localStorage first — instant, works fully offline
       const cached = localStore.getUser();
       if (cached && cached.slug === slug) {
         this.pupil = cached;
@@ -129,28 +119,7 @@ function cahierPage() {
         return;
       }
 
-      // 2. Fall back to PocketBase
-      const live = await window.__pbAvailable();
-      if (!live) {
-        // Still offline but no cache — reconstruct from slug
-        const parts = slug.split('-');
-        this.pupil = { username: parts.slice(0, -1).join('-'), sticker_id: '🎈', slug };
-        this._loadProgress();
-        this.state = 'ready';
-        return;
-      }
-
-      try {
-        const results = await pb.collection('pupils').getFullList({ filter: `slug = "${slug}"` });
-        if (results.length === 0) { this.state = 'notfound'; return; }
-        this.pupil = results[0];
-        localStore.setUser(this.pupil);  // cache for next visit
-        this._loadProgress();
-        this.state = 'ready';
-      } catch (err) {
-        console.error('Cahier load error:', err);
-        this.state = 'notfound';
-      }
+      this.state = 'notfound';
     },
 
     _loadProgress() {
@@ -171,7 +140,7 @@ function cahierPage() {
 
     logout() {
       localStore.clearUser();
-      window.location.href = (window.__pathPrefix || '/') + 'fr/connexion/';
+      window.location.href = (window.__pathPrefix || '/') + 'fr/onboarding/';
     }
   };
 }

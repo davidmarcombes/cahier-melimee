@@ -1,0 +1,166 @@
+{# Guided problem — story always visible; steps unlock one by one #}
+<div x-show="cur.type === 'guided-problem'" class="space-y-5">
+
+  {# ── Story (always visible) ── #}
+  <div
+    class="gp-story prose dark:prose-invert text-lg leading-relaxed p-5 bg-surface-subtle rounded-2xl border border-slate-200 dark:border-slate-700 max-w-none"
+    @click="gpTapToken($event)"
+    x-html="cur.gpStory"
+  ></div>
+
+  {# ── Step progress pills ── #}
+  <div class="flex justify-center flex-wrap gap-2" x-show="cur.gpSteps?.length > 1">
+    <template x-for="(step, i) in (cur.gpSteps || [])" :key="i">
+      <div
+        class="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border transition-all"
+        :class="{
+          'bg-green-100 dark:bg-green-900/30 border-green-400 text-green-700 dark:text-green-300': i < gpStep,
+          'bg-primary-100 dark:bg-primary-900/30 border-primary-400 text-primary-700 dark:text-primary-300 scale-105': i === gpStep && !solved,
+          'border-slate-200 dark:border-slate-700 text-content-subtle': i > gpStep
+        }"
+      >
+        <span x-show="i < gpStep">✓</span>
+        <span x-text="{
+          keywords: 'Mots-clés',
+          numbers: 'Nombres',
+          'question-type': 'Type',
+          convert: 'Convertir',
+          operation: 'Opération',
+          calculate: 'Calculer'
+        }[step.kind] ?? step.kind"></span>
+      </div>
+    </template>
+  </div>
+
+  {# ── Step panels ── #}
+
+  {# keywords / numbers: tap tokens in story #}
+  <div
+    x-show="!solved && (gpCurrentStep?.kind === 'keywords' || gpCurrentStep?.kind === 'numbers')"
+    class="text-center space-y-3"
+  >
+    <p class="text-sm font-semibold text-content-subtle">
+      <span x-show="gpCurrentStep?.kind === 'keywords'">Touche les <strong>mots importants</strong> dans le texte.</span>
+      <span x-show="gpCurrentStep?.kind === 'numbers'">Touche les <strong>nombres</strong> dans le texte.</span>
+    </p>
+    <p class="text-xs text-content-subtle">
+      <span x-text="gpPicked.length"></span> / <span x-text="gpCurrentStep?.tokens?.length ?? 0"></span>
+    </p>
+    <template x-if="gpCurrentStep?.hint">
+      <p class="text-xs italic text-content-subtle px-4" x-html="gpCurrentStep.hint"></p>
+    </template>
+  </div>
+
+  {# question-type: choose the problem category #}
+  <div x-show="!solved && gpCurrentStep?.kind === 'question-type'" class="space-y-3">
+    <p class="text-center text-sm font-semibold text-content-subtle">Quel type de problème est-ce ?</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <template x-for="choice in (gpCurrentStep?.choices ?? [])" :key="choice">
+        <button
+          type="button"
+          @click="gpPickChoice(choice)"
+          class="px-5 py-2.5 rounded-xl border-2 font-bold text-sm transition-all active:scale-95"
+          :class="{
+            'border-green-500 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300':
+              gpChoice === choice && gpCurrentStep?.answers?.includes(choice.toLowerCase()),
+            'border-red-400 bg-red-50 dark:bg-red-900/20 text-red-500':
+              gpChoice === choice && !gpCurrentStep?.answers?.includes(choice.toLowerCase()),
+            'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-content-default hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20':
+              gpChoice !== choice
+          }"
+          x-text="choice"
+        ></button>
+      </template>
+    </div>
+    <template x-if="gpCurrentStep?.hint">
+      <p class="text-center text-xs italic text-content-subtle" x-html="gpCurrentStep.hint"></p>
+    </template>
+  </div>
+
+  {# convert: fill in the converted value #}
+  <div x-show="!solved && gpCurrentStep?.kind === 'convert'" class="space-y-3">
+    <p class="text-center font-semibold text-content-default" x-html="gpCurrentStep?.question"></p>
+    <div class="flex items-center justify-center gap-3">
+      <input
+        type="text"
+        inputmode="numeric"
+        x-model="gpInput"
+        @keydown.enter="gpCheckInput()"
+        placeholder="?"
+        class="w-28 px-4 py-3 text-2xl font-bold text-center border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-surface-subtle text-content-default"
+        :class="{
+          'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
+          'border-primary-300 dark:border-primary-600': !showError
+        }"
+      />
+      <button
+        type="button"
+        @click="gpCheckInput()"
+        :disabled="!gpInput.trim()"
+        class="px-5 py-3 font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 shadow-md transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+      >Vérifier</button>
+    </div>
+    <template x-if="gpCurrentStep?.hint">
+      <p class="text-center text-xs italic text-content-subtle" x-html="gpCurrentStep.hint"></p>
+    </template>
+  </div>
+
+  {# operation: pick +, −, ×, ÷ (or custom list) #}
+  <div x-show="!solved && gpCurrentStep?.kind === 'operation'" class="space-y-3">
+    <p class="text-center text-sm font-semibold text-content-subtle">Quelle opération faut-il faire ?</p>
+    <div class="flex justify-center gap-3 flex-wrap">
+      <template x-for="choice in (gpCurrentStep?.choices ?? ['+', '−', '×', '÷'])" :key="choice">
+        <button
+          type="button"
+          @click="gpPickChoice(choice)"
+          class="w-16 h-16 text-3xl font-bold rounded-2xl border-2 transition-all active:scale-95"
+          :class="{
+            'border-green-500 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300':
+              gpChoice === choice && gpCurrentStep?.answers?.includes(choice.toLowerCase()),
+            'border-red-400 bg-red-50 dark:bg-red-900/20 text-red-500 animate-bounce':
+              gpChoice === choice && !gpCurrentStep?.answers?.includes(choice.toLowerCase()),
+            'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-content-default hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20':
+              gpChoice !== choice
+          }"
+          x-text="choice"
+        ></button>
+      </template>
+    </div>
+    <template x-if="gpCurrentStep?.hint">
+      <p class="text-center text-xs italic text-content-subtle" x-html="gpCurrentStep.hint"></p>
+    </template>
+  </div>
+
+  {# calculate: type the final answer #}
+  <div x-show="!solved && gpCurrentStep?.kind === 'calculate'" class="space-y-3">
+    <p class="text-center text-sm font-semibold text-content-subtle">Calcule le résultat.</p>
+    <div class="flex items-center justify-center gap-3">
+      <input
+        type="text"
+        inputmode="numeric"
+        x-model="gpInput"
+        @keydown.enter="gpCheckInput()"
+        :disabled="solved"
+        placeholder="?"
+        class="w-28 px-4 py-4 text-3xl font-extrabold text-center border-2 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-surface-subtle text-content-default"
+        :class="{
+          'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+          'border-red-400 bg-red-50 dark:bg-red-900/20': showError,
+          'border-primary-300 dark:border-primary-600': !solved && !showError
+        }"
+      />
+      <span
+        x-show="gpCurrentStep?.unit"
+        class="text-lg font-semibold text-content-subtle"
+        x-text="gpCurrentStep?.unit"
+      ></span>
+      <button
+        type="button"
+        @click="gpCheckInput()"
+        :disabled="!gpInput.trim()"
+        class="shrink-0 px-6 py-4 text-lg font-bold rounded-2xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed bg-primary-500 text-white hover:bg-primary-600 shadow-md"
+      >Vérifier</button>
+    </div>
+  </div>
+
+</div>

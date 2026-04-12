@@ -1,0 +1,30 @@
+---
+permalink: /manifest.json
+eleventyExcludeFromCollections: true
+---
+{
+  "name": "{{ site.title }}",
+  "short_name": "Mélimée",
+  "description": "{{ site.description }}",
+  "start_url": "{{ '/' | url }}",
+  "scope": "{{ '/' | url }}",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#2a85bf",
+  "lang": "fr",
+  "categories": ["education"],
+  "icons": [
+    {
+      "src": "{{ '/assets/images/apple-touch-icon.png' | url }}",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "{{ '/assets/images/icon.png' | url }}",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
