@@ -576,6 +576,191 @@ test.describe('maze — labyrinthe-pairs CE2', () => {
   });
 });
 
+// ─── futoshiki ────────────────────────────────────────────────────────────────
+// Series: futoshiki-4x4 CE2 (a3f7c2e1) — generated 4×4 puzzle
+test.describe('futoshiki — futoshiki-4x4 CE2', () => {
+  test('grid renders with inputs and Vérifier button', async ({ page }) => {
+    await page.goto('/fr/applications/a3f7c2e1/');
+    await waitForAlpine(page);
+    // Wait for futoshiki section to be visible
+    const section = page.locator('[x-show="cur.type === \'futoshiki\'"]');
+    await expect(section).toBeVisible();
+    // Vérifier button present
+    await expect(page.getByRole('button', { name: 'Vérifier' })).toBeVisible();
+    // Blank input cells exist (not all cells are givens)
+    const inputs = section.locator('input[inputmode="numeric"]');
+    await expect(inputs.first()).toBeVisible();
+  });
+
+  test('filling correct solution marks exercise solved', async ({ page }) => {
+    await page.goto('/fr/applications/a3f7c2e1/');
+    await waitForAlpine(page);
+    await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      const data = Alpine.$data(el);
+      const sol = data.cur._solution;
+      const size = data.cur.futoshiki.size;
+      const inputs = Array(size * size).fill('');
+      for (let r = 0; r < size; r++)
+        for (let c = 0; c < size; c++)
+          inputs[r * size + c] = String(sol[r][c]);
+      data.futoInputs = inputs;
+    });
+    await page.getByRole('button', { name: 'Vérifier' }).click();
+    await expect(page.locator('text=Bonne réponse !')).toBeVisible();
+  });
+
+  test('wrong fill triggers error state', async ({ page }) => {
+    await page.goto('/fr/applications/a3f7c2e1/');
+    await waitForAlpine(page);
+    await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      const data = Alpine.$data(el);
+      const size = data.cur.futoshiki.size;
+      data.futoInputs = Array(size * size).fill('1');
+    });
+    await page.getByRole('button', { name: 'Vérifier' }).click();
+    // futoErrors should have entries
+    const hasErrors = await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      return Alpine.$data(el).futoErrors.length > 0;
+    });
+    expect(hasErrors).toBe(true);
+  });
+});
+
+// ─── kenken ───────────────────────────────────────────────────────────────────
+// Series: kenken-3x3 CE2 (d1f5e8c4) — generated 3×3 puzzle
+test.describe('kenken — kenken-3x3 CE2', () => {
+  test('grid renders with cage labels and Vérifier button', async ({ page }) => {
+    await page.goto('/fr/applications/d1f5e8c4/');
+    await waitForAlpine(page);
+    const section = page.locator('[x-show="cur.type === \'kenken\'"]');
+    await expect(section).toBeVisible();
+    // Vérifier button visible
+    await expect(page.getByRole('button', { name: 'Vérifier' })).toBeVisible();
+    // Grid renders: at least one input cell is visible inside the kenken section
+    const inputs = section.locator('input[inputmode="numeric"]');
+    await expect(inputs.first()).toBeVisible();
+  });
+
+  test('filling correct solution marks exercise solved', async ({ page }) => {
+    await page.goto('/fr/applications/d1f5e8c4/');
+    await waitForAlpine(page);
+    // Fill all inputs with the correct solution via Alpine
+    await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      const data = Alpine.$data(el);
+      const sol = data.cur._solution;
+      const size = data.cur.kenken.size;
+      data.kkInputs = sol.flat().map(String);
+    });
+    await page.getByRole('button', { name: 'Vérifier' }).click();
+    await expect(page.locator('text=Bonne réponse !')).toBeVisible();
+  });
+
+  test('wrong solution triggers error highlighting', async ({ page }) => {
+    await page.goto('/fr/applications/d1f5e8c4/');
+    await waitForAlpine(page);
+    // Fill all cells with '1' (definitely wrong for size 3 with latin square constraint)
+    await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      const data = Alpine.$data(el);
+      const size = data.cur.kenken.size;
+      data.kkInputs = Array(size * size).fill('1');
+    });
+    await page.getByRole('button', { name: 'Vérifier' }).click();
+    // Error state: kkErrors should have entries
+    const hasErrors = await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      return Alpine.$data(el).kkErrors.length > 0;
+    });
+    expect(hasErrors).toBe(true);
+  });
+});
+
+// ─── numberlink ───────────────────────────────────────────────────────────────
+// Series: numberlink-4x4 CE2 (b5c3e7f2) — generated 4×4 puzzle
+test.describe('numberlink — numberlink-4x4 CE2', () => {
+  test('grid renders with numbered endpoints and reset button', async ({ page }) => {
+    await page.goto('/fr/applications/b5c3e7f2/');
+    await waitForAlpine(page);
+    const section = page.locator('[x-show="cur.type === \'numberlink\'"]');
+    await expect(section).toBeVisible();
+    // Grid buttons visible (size × size)
+    const size = await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      return Alpine.$data(el).cur.numberlink.size;
+    });
+    const cells = page.locator('.inline-grid button');
+    await expect(cells).toHaveCount(size * size);
+    await expect(page.getByRole('button', { name: 'Effacer' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Vérifier' })).toBeVisible();
+  });
+
+  test('tapping an endpoint starts a path', async ({ page }) => {
+    await page.goto('/fr/applications/b5c3e7f2/');
+    await waitForAlpine(page);
+    // Find first endpoint cell index via Alpine data
+    const endpointIdx = await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      const { cur } = Alpine.$data(el);
+      const rows = cur.numberlink.rows;
+      for (let r = 0; r < rows.length; r++) {
+        for (let c = 0; c < rows[r].length; c++) {
+          if (rows[r][c] > 0) return r * rows[r].length + c;
+        }
+      }
+      return 0;
+    });
+    await page.locator('.inline-grid button').nth(endpointIdx).click();
+    // After tapping an endpoint, nlkActive should be set
+    const active = await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      return Alpine.$data(el).nlkActive;
+    });
+    expect(active).not.toBeNull();
+  });
+
+  test('reset button clears all paths', async ({ page }) => {
+    await page.goto('/fr/applications/b5c3e7f2/');
+    await waitForAlpine(page);
+    // Find and tap first endpoint to start a path
+    const endpointIdx = await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      const { cur } = Alpine.$data(el);
+      const rows = cur.numberlink.rows;
+      for (let r = 0; r < rows.length; r++) {
+        for (let c = 0; c < rows[r].length; c++) {
+          if (rows[r][c] > 0) return r * rows[r].length + c;
+        }
+      }
+      return 0;
+    });
+    await page.locator('.inline-grid button').nth(endpointIdx).click();
+    // Reset
+    await page.getByRole('button', { name: 'Effacer' }).click();
+    // nlkActive should be null
+    const active = await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      return Alpine.$data(el).nlkActive;
+    });
+    expect(active).toBeNull();
+  });
+
+  test('colour legend shows one swatch per pair', async ({ page }) => {
+    await page.goto('/fr/applications/b5c3e7f2/');
+    await waitForAlpine(page);
+    const pairCount = await page.evaluate(() => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      return Alpine.$data(el).cur.numberlink.pairs.length;
+    });
+    // Each pair has a swatch div in the legend
+    const swatches = page.locator('.flex.gap-3 .rounded.border-2');
+    await expect(swatches).toHaveCount(pairCount);
+  });
+});
+
 // ─── venn ────────────────────────────────────────────────────────────────────
 // Series: venn-emojis CE2 (585d15f8) — generated: classify emojis
 test.describe('venn — venn-emojis CE2', () => {

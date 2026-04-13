@@ -1,0 +1,92 @@
+{# Futoshiki — N×N latin square with inequality constraints #}
+<div x-show="cur.type === 'futoshiki'" class="space-y-4">
+
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle"></div>
+
+  <template x-if="cur.futoshiki">
+    <div class="flex flex-col items-center gap-0">
+
+      <template x-for="(row, r) in (cur.futoshiki.rows || [])" :key="r">
+        <div class="flex flex-col items-center">
+
+          {# Cell row #}
+          <div class="flex items-center">
+            <template x-for="(cell, c) in row.cells" :key="r+'-'+c">
+              <div class="flex items-center">
+
+                {# Cell — given (read-only) or input #}
+                <template x-if="cell.given !== null && cell.given !== undefined">
+                  <div
+                    class="w-11 h-11 flex items-center justify-center text-xl font-black rounded-lg
+                           bg-slate-100 dark:bg-slate-700 text-content-default border-2 border-slate-400 dark:border-slate-500">
+                    <span x-text="cell.given"></span>
+                  </div>
+                </template>
+                <template x-if="cell.given === null || cell.given === undefined">
+                  <input
+                    type="text" inputmode="numeric" maxlength="1"
+                    :value="futoInputs[cell.idx] ?? ''"
+                    @input="futoInputs = futoInputs.map((v,i) => i===cell.idx ? $event.target.value.replace(/[^1-9]/g,'').slice(-1) : v); futoErrors=[]"
+                    @keydown.enter="check()"
+                    :disabled="solved"
+                    class="w-11 h-11 text-center text-xl font-bold rounded-lg border-2 transition-colors
+                           focus:outline-none focus:ring-2 focus:ring-primary-400
+                           bg-white dark:bg-slate-800 text-content-default"
+                    :class="{
+                      'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+                      'border-red-400 bg-red-50 dark:bg-red-900/20 animate-shake': futoErrors.includes(cell.idx),
+                      'border-slate-300 dark:border-slate-600': !solved && !futoErrors.includes(cell.idx)
+                    }"
+                  />
+                </template>
+
+                {# Horizontal constraint — shown after each cell except the last #}
+                <template x-if="c < row.hCons.length">
+                  <div class="w-8 flex items-center justify-center text-base font-bold select-none"
+                    :class="row.hCons[c] ? 'text-primary-600 dark:text-primary-400' : 'text-transparent'"
+                    x-text="row.hCons[c] || '·'">
+                  </div>
+                </template>
+
+              </div>
+            </template>
+          </div>
+
+          {# Vertical constraint row (between this row and the next) #}
+          <template x-if="row.vCons">
+            <div class="flex items-center" style="height:1.5rem">
+              <template x-for="(vcon, c) in row.vCons" :key="'v'+r+'-'+c">
+                <div class="flex items-center">
+                  <div class="w-11 flex items-center justify-center text-sm font-bold select-none"
+                    :class="vcon ? 'text-primary-600 dark:text-primary-400' : 'text-transparent'"
+                    x-text="vcon === '<' ? '∧' : vcon === '>' ? '∨' : '·'">
+                  </div>
+                  <template x-if="c < row.vCons.length - 1">
+                    <div class="w-8"></div>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </template>
+
+        </div>
+      </template>
+
+      {# Legend #}
+      <div class="mt-3 text-xs text-content-subtle flex gap-4 flex-wrap justify-center">
+        <span>A <strong>&lt;</strong> B : A est plus petit que B</span>
+        <span>A <strong>&gt;</strong> B : A est plus grand que B</span>
+      </div>
+
+      {# Verify button #}
+      <button type="button" @click="check()"
+        :disabled="solved || futoInputs.some((v,i) => (!cur.futoshiki || cur.futoshiki.given[i] != null) ? false : !v)"
+        class="mt-4 px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+        :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+        <span x-show="!solved">Vérifier</span>
+        <span x-show="solved">Bravo !</span>
+      </button>
+
+    </div>
+  </template>
+</div>

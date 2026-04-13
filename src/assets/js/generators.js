@@ -4141,7 +4141,12 @@ const generators = {
       const size = params.size || 4;
       const rulesDefs = {
         mult3: { label: 'Passe uniquement par les multiples de 3', rule: 'mult', param: 3, check: n => n % 3 === 0, pool: () => rand(1, 15) * 3, bad: () => { let n; do { n = rand(1, 50); } while (n % 3 === 0); return n; } },
+        mult4: { label: 'Passe uniquement par les multiples de 4', rule: 'mult', param: 4, check: n => n % 4 === 0, pool: () => rand(1, 12) * 4, bad: () => { let n; do { n = rand(1, 50); } while (n % 4 === 0); return n; } },
         mult5: { label: 'Passe uniquement par les multiples de 5', rule: 'mult', param: 5, check: n => n % 5 === 0, pool: () => rand(1, 10) * 5, bad: () => { let n; do { n = rand(1, 50); } while (n % 5 === 0); return n; } },
+        mult6: { label: 'Passe uniquement par les multiples de 6', rule: 'mult', param: 6, check: n => n % 6 === 0, pool: () => rand(1, 8) * 6, bad: () => { let n; do { n = rand(1, 50); } while (n % 6 === 0); return n; } },
+        mult7: { label: 'Passe uniquement par les multiples de 7', rule: 'mult', param: 7, check: n => n % 7 === 0, pool: () => rand(1, 7) * 7, bad: () => { let n; do { n = rand(1, 50); } while (n % 7 === 0); return n; } },
+        mult8: { label: 'Passe uniquement par les multiples de 8', rule: 'mult', param: 8, check: n => n % 8 === 0, pool: () => rand(1, 6) * 8, bad: () => { let n; do { n = rand(1, 50); } while (n % 8 === 0); return n; } },
+        mult9: { label: 'Passe uniquement par les multiples de 9', rule: 'mult', param: 9, check: n => n % 9 === 0, pool: () => rand(1, 6) * 9, bad: () => { let n; do { n = rand(1, 50); } while (n % 9 === 0); return n; } },
         even: { label: 'Passe uniquement par les nombres pairs', rule: 'even', param: 2, check: n => n % 2 === 0, pool: () => rand(1, 25) * 2, bad: () => rand(0, 24) * 2 + 1 },
         odd: { label: 'Passe uniquement par les nombres impairs', rule: 'odd', param: undefined, check: n => n % 2 !== 0, pool: () => rand(0, 24) * 2 + 1, bad: () => rand(1, 25) * 2 },
       };
@@ -4191,6 +4196,159 @@ const generators = {
           ruleParam: r.param,
           ruleLabel: r.label,
         },
+      };
+    },
+  },
+
+  /* ── Futoshiki ──────────────────────────────────────────────────── */
+  futoshikiPuzzle: {
+    generate(params = {}) {
+      const size = params.size || 4;
+      // Build a valid latin square by shuffling rows/cols of the canonical solution
+      const canonical = Array.from({ length: size }, (_, r) =>
+        Array.from({ length: size }, (_, c) => ((r + c) % size) + 1)
+      );
+      const rowOrder = shuffle(Array.from({ length: size }, (_, i) => i));
+      const colOrder = shuffle(Array.from({ length: size }, (_, i) => i));
+      const solution = rowOrder.map(r => colOrder.map(c => canonical[r][c]));
+
+      // Generate inequality constraints (random subset of adjacent pairs)
+      const hConsRaw = [], vConsRaw = [];
+      for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size - 1; c++) {
+          if (Math.random() < 0.45)
+            hConsRaw.push({ r, c, sign: solution[r][c] < solution[r][c + 1] ? '<' : '>' });
+        }
+        if (r < size - 1) {
+          for (let c = 0; c < size; c++) {
+            if (Math.random() < 0.45)
+              vConsRaw.push({ r, c, sign: solution[r][c] < solution[r + 1][c] ? '<' : '>' });
+          }
+        }
+      }
+
+      // Reveal ~40% of cells as givens
+      const givenCount = Math.max(2, Math.round(size * size * 0.38));
+      const positions = shuffle(Array.from({ length: size * size }, (_, i) => i)).slice(0, givenCount);
+      // Flat given array (null = blank, number = pre-filled) — same shape as eleventy processing block
+      const given = Array(size * size).fill(null);
+      positions.forEach(idx => { given[idx] = solution[Math.floor(idx / size)][idx % size]; });
+
+      // Build rows structure for the template (same as eleventy block produces)
+      const rows = [];
+      for (let r = 0; r < size; r++) {
+        const cells = Array.from({ length: size }, (_, c) => ({ given: given[r * size + c], idx: r * size + c }));
+        const hCons = Array(size - 1).fill(null);
+        hConsRaw.filter(h => h.r === r).forEach(h => { hCons[h.c] = h.sign; });
+        const vCons = r < size - 1 ? Array(size).fill(null) : null;
+        if (vCons) vConsRaw.filter(v => v.r === r).forEach(v => { vCons[v.c] = v.sign; });
+        rows.push({ cells, hCons, vCons });
+      }
+
+      return {
+        type: 'futoshiki',
+        futoshiki: { size, given, rows, hCons: hConsRaw, vCons: vConsRaw },
+        _solution: solution,
+      };
+    },
+  },
+
+  /* ── KenKen ─────────────────────────────────────────────────────── */
+  kenkenPuzzle: {
+    generate(params = {}) {
+      const size = params.size || 3;
+      // Build valid latin square
+      const canonical = Array.from({ length: size }, (_, r) =>
+        Array.from({ length: size }, (_, c) => ((r + c) % size) + 1)
+      );
+      const rowOrder = shuffle(Array.from({ length: size }, (_, i) => i));
+      const colOrder = shuffle(Array.from({ length: size }, (_, i) => i));
+      const sol = rowOrder.map(r => colOrder.map(c => canonical[r][c]));
+
+      // Partition all cells into cages (dominoes + singles)
+      const assigned = Array.from({ length: size }, () => Array(size).fill(-1));
+      const cages = [];
+      const allCells = shuffle(Array.from({ length: size * size }, (_, i) => [Math.floor(i / size), i % size]));
+
+      for (const [r, c] of allCells) {
+        if (assigned[r][c] >= 0) continue;
+        const neighbours = [[r, c + 1], [r + 1, c]].filter(([nr, nc]) =>
+          nr >= 0 && nr < size && nc >= 0 && nc < size && assigned[nr][nc] < 0
+        );
+        if (neighbours.length && Math.random() < 0.8) {
+          const [nr, nc] = randItem(neighbours);
+          const v1 = sol[r][c], v2 = sol[nr][nc];
+          const ops = [
+            { op: '+', target: v1 + v2 },
+            { op: '-', target: Math.abs(v1 - v2) },
+            { op: '×', target: v1 * v2 },
+          ];
+          if (v2 !== 0 && v1 % v2 === 0) ops.push({ op: '÷', target: v1 / v2 });
+          if (v1 !== 0 && v2 % v1 === 0) ops.push({ op: '÷', target: v2 / v1 });
+          const chosen = randItem(ops);
+          const cageId = cages.length;
+          cages.push({ op: chosen.op, target: chosen.target, cells: [[r, c], [nr, nc]], label: `${chosen.target}${chosen.op}` });
+          assigned[r][c] = cageId;
+          assigned[nr][nc] = cageId;
+        } else {
+          const cageId = cages.length;
+          cages.push({ op: '', target: sol[r][c], cells: [[r, c]], label: String(sol[r][c]) });
+          assigned[r][c] = cageId;
+        }
+      }
+
+      // Build cells 2D grid with cageId + label (same as eleventy block produces)
+      const labelGrid = Array.from({ length: size }, () => Array(size).fill(''));
+      cages.forEach((cage, ci) => {
+        // top-left = min row then min col
+        const tl = cage.cells.reduce((best, cur) =>
+          cur[0] < best[0] || (cur[0] === best[0] && cur[1] < best[1]) ? cur : best
+        );
+        labelGrid[tl[0]][tl[1]] = cage.label;
+        cage.cells.forEach(([cr, cc]) => { assigned[cr][cc] = ci; }); // reuse assigned for cageId
+      });
+      const cells = Array.from({ length: size }, (_, r) =>
+        Array.from({ length: size }, (_, c) => ({ cageId: assigned[r][c], label: labelGrid[r][c] }))
+      );
+
+      return {
+        type: 'kenken',
+        kenken: { size, cells, cages },
+        _solution: sol,
+      };
+    },
+  },
+
+  /* ── Numberlink ──────────────────────────────────────────────────── */
+  numberlinkPuzzle: {
+    generate(params = {}) {
+      const size = params.size || 5;
+      const numPairs = params.pairs;
+      // Pre-defined small puzzles to guarantee solvability
+      const puzzles4 = [
+        { pairs: [[[0,0],[3,3]], [[0,3],[3,0]], [[1,1],[2,2]]] },
+        { pairs: [[[0,0],[2,3]], [[0,2],[3,1]], [[1,0],[3,3]]] },
+        { pairs: [[[0,1],[3,2]], [[0,3],[2,0]], [[1,1],[3,3]]] },
+      ];
+      const puzzles5 = [
+        { pairs: [[[0,0],[4,4]], [[0,2],[3,0]], [[0,4],[4,0]], [[2,2],[4,2]]] },
+        { pairs: [[[0,0],[2,4]], [[0,3],[4,2]], [[1,1],[4,4]], [[2,0],[4,1]]] },
+        { pairs: [[[0,1],[4,3]], [[0,4],[3,0]], [[1,2],[3,4]], [[2,1],[4,0]]] },
+      ];
+      const pool = size <= 4 ? puzzles4 : puzzles5;
+      const chosen = randItem(pool);
+      const actualPairs = chosen.pairs.slice(0, numPairs || chosen.pairs.length);
+
+      // Build rows grid (same as eleventy block produces): 0 = empty, N = pair number
+      const rows = Array.from({ length: size }, () => Array(size).fill(0));
+      actualPairs.forEach((pair, pi) => {
+        rows[pair[0][0]][pair[0][1]] = pi + 1;
+        rows[pair[1][0]][pair[1][1]] = pi + 1;
+      });
+
+      return {
+        type: 'numberlink',
+        numberlink: { size, rows, pairs: actualPairs },
       };
     },
   },
@@ -4373,7 +4531,6 @@ const generators = {
         paralelo: { char: '▱', quadri: true,  allEqual: false, rightAngle: false, parallel: true  },
         trapeze:  { char: '⏢', quadri: true,  allEqual: false, rightAngle: false, parallel: false },
         triEqui:  { char: '△', quadri: false, allEqual: true,  rightAngle: false, parallel: false },
-        triRect:  { char: '▷', quadri: false, allEqual: false, rightAngle: true,  parallel: false },
         triQqque: { char: '▲', quadri: false, allEqual: false, rightAngle: false, parallel: false },
         cercle:   { char: '●', quadri: false, allEqual: false, rightAngle: false, parallel: false },
         hexagone: { char: '⬡', quadri: false, allEqual: true,  rightAngle: false, parallel: false },
@@ -4386,18 +4543,8 @@ const generators = {
             predA: s => s.quadri, predB: s => s.allEqual,
             pool: ['carre', 'rect', 'losange', 'paralelo', 'triEqui', 'triQqque', 'cercle'],
           },
-          {
-            labelA: 'A 4 côtés', labelB: 'A un angle droit',
-            predA: s => s.quadri, predB: s => s.rightAngle,
-            pool: ['carre', 'rect', 'losange', 'paralelo', 'triRect', 'triQqque', 'cercle'],
-          },
         ],
         CM1: [
-          {
-            labelA: 'Est un quadrilatère', labelB: 'A des angles droits',
-            predA: s => s.quadri, predB: s => s.rightAngle,
-            pool: ['carre', 'rect', 'losange', 'paralelo', 'trapeze', 'triRect', 'triQqque', 'cercle'],
-          },
           {
             labelA: 'A deux paires de côtés parallèles', labelB: 'A tous les côtés égaux',
             predA: s => s.parallel, predB: s => s.allEqual,
@@ -4411,19 +4558,14 @@ const generators = {
         ],
         CM2: [
           {
-            labelA: 'A deux paires de côtés parallèles', labelB: 'A des angles droits',
-            predA: s => s.parallel, predB: s => s.rightAngle,
-            pool: ['carre', 'rect', 'losange', 'paralelo', 'triRect', 'triQqque', 'cercle'],
-          },
-          {
-            labelA: 'Est un quadrilatère', labelB: 'A deux paires de côtés parallèles',
-            predA: s => s.quadri, predB: s => s.parallel,
-            pool: ['carre', 'rect', 'losange', 'paralelo', 'trapeze', 'triRect', 'triQqque', 'cercle'],
-          },
-          {
             labelA: 'A tous les côtés égaux', labelB: 'A des angles droits',
             predA: s => s.allEqual, predB: s => s.rightAngle,
-            pool: ['carre', 'rect', 'losange', 'paralelo', 'triEqui', 'triRect', 'triQqque', 'cercle', 'hexagone'],
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'triEqui', 'triQqque', 'cercle', 'hexagone'],
+          },
+          {
+            labelA: 'Est un quadrilatère', labelB: 'A tous les côtés égaux',
+            predA: s => s.quadri, predB: s => s.allEqual,
+            pool: ['carre', 'rect', 'losange', 'paralelo', 'trapeze', 'triEqui', 'triQqque', 'cercle', 'hexagone'],
           },
         ],
       };

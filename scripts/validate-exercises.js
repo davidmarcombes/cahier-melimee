@@ -51,6 +51,9 @@ const TYPE_SCHEMAS = {
   'think-board': { required: ['expression'], requireOneOf: [['answer'], ['answers']] },
   'fact-family': { required: ['numbers', 'operation'], arrays: ['numbers'] },
   'bar-model': { required: ['bm', 'answer'] },
+  'futoshiki': { required: [], requireOneOf: [['futoshiki'], ['generator']] },
+  'kenken': { required: [], requireOneOf: [['kenken'], ['generator']] },
+  'numberlink': { required: [], requireOneOf: [['numberlink'], ['generator']] },
 };
 
 const COLORS = {

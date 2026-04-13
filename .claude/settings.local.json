@@ -214,7 +214,9 @@
       "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
       "WebFetch(domain:www.whenmathhappens.com)",
       "WebFetch(domain:www.edutopia.org)",
-      "Bash(du -sh */)"
+      "Bash(du -sh */)",
+      "Bash(curl -s http://localhost:4173/fr/applications/d1f5e8c4/)",
+      "Bash(curl -v http://localhost:4173/fr/applications/d1f5e8c4/)"
     ]
   }
 }

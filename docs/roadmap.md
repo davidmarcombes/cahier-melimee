@@ -401,6 +401,42 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 
 ---
 
+## Jeux internationaux — formats à implémenter
+
+> Recensement effectué le 2026-04-12. Sources : KenKen, Nikoli (Japon), NRICH (UK), Singapore Math, recherche comparative internationale.
+
+### En cours / Priorité haute
+
+| Type | Origine | Mécanique | Compétence | Niveaux | État |
+|------|---------|-----------|-----------|---------|------|
+| ~~**`kenken`**~~ | ~~Japon~~ | ~~Grille N×N : chaque cage a une cible arithmétique et une opération ; pas de répétition en ligne/colonne~~ | ~~Opérations, déduction~~ | ~~CE2→CM2~~ | ✅ Implémenté. Générateur `kenkenPuzzle`. Séries CE2 3×3/4×4, CM1 4×4/5×5. |
+| ~~**`futoshiki`**~~ | ~~Japon~~ | ~~Grille N×N : remplir 1→N, respecter les signes `<`/`>` entre cases adjacentes~~ | ~~Comparaison, logique~~ | ~~CE2→CM2~~ | ✅ Implémenté. Générateur `futoshikiPuzzle`. Séries CE2 4×4, CM1 4×4/5×5. |
+| ~~**`numberlink`**~~ | ~~Japon (Nikoli)~~ | ~~Relier des paires de nombres identiques par des chemins continus non croisés~~ | ~~Raisonnement spatial~~ | ~~CE2→CM2~~ | ✅ Implémenté. Générateur `numberlinkPuzzle`. Séries CE2 4×4, CM1 5×5. |
+
+### Priorité moyenne
+
+| Type | Origine | Mécanique | Compétence | Niveaux | Notes |
+|------|---------|-----------|-----------|---------|-------|
+| **`kakuro`** | Japon | Grille de mots croisés numériques : combinaisons sans répétition pour atteindre des sommes cibles | Addition, déduction | CM1→CM2 | Proche de KenKen mais plus complexe |
+| **`shut-the-box`** | Traditionnel (FR/UK) | Lancer des dés, couvrir des tuiles dont la somme égale le total du dé | Addition mentale, probabilité | CP→CE2 | Très ludique, idéal CP/CE1 |
+| **`memory`** | Universel | Retourner des paires de cartes équivalentes (entier ↔ décomposition, fraction ↔ dessin, heure analogique ↔ numérique) | Équivalences | CP→CM2 | Format très connu |
+| **`broken-calc`** | FR (Sésamath) | Atteindre un nombre cible avec certaines touches de calculatrice désactivées | Décomposition, équivalences | CE1→CM2 | Classique pédagogique français |
+| **`domino`** | Traditionnel | Chaîne de dominos : chaque carte a une réponse d'un côté, une question de l'autre | Tables, équivalences | CE1→CM1 | Idéal pour tables et fractions |
+
+### Basse priorité / Niche
+
+| Type | Origine | Notes |
+|------|---------|-------|
+| **`nim`** | Mathématique | Retirer des objets, forcer l'adversaire à prendre le dernier — stratégie, patterns |
+| **`dots-and-boxes`** | FR (Édouard Lucas) | Connecter des points pour réclamer des carrés |
+| **`battleship-math`** | Variante coordonnées | Résoudre des problèmes aux coordonnées pour trouver des navires |
+| **`soroban`** | Japon | Abaque virtuel → visualisation mentale ; très impressionnant visuellement |
+| **`compte-est-bon`** | FR (Mathador) | Combiner N nombres avec +/−/×/÷ pour atteindre une cible — expression builder |
+| **`tangrams`** | Chine | Assembler 7 pièces géométriques en silhouettes — géométrie, décomposition |
+| **`subitizing-war`** | US/UK | Comparer des cartes à points, cadres de dix, dés — reconnaissance rapide |
+
+---
+
 ## Recommandations prioritaires
 
 ### 🔥 Haute priorité

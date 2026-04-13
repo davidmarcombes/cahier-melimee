@@ -1,0 +1,83 @@
+{# KenKen — N×N arithmetic cage puzzle #}
+<div x-show="cur.type === 'kenken'" class="space-y-4">
+
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle"></div>
+
+  <template x-if="cur.kenken">
+    <div class="flex flex-col items-center gap-4">
+
+      {# Grid — inline-grid, each cell is a positioned div #}
+      <div class="relative inline-block"
+        :style="`width:${cur.kenken.size * 3.25}rem; height:${cur.kenken.size * 3.25}rem`">
+
+        <template x-for="(rowCells, r) in (cur.kenken.cells || [])" :key="r">
+          <template x-for="(cell, c) in rowCells" :key="r+'-'+c">
+            <div
+              class="absolute flex flex-col items-start justify-between p-0.5 transition-colors"
+              :style="`
+                left:${c * 3.25}rem; top:${r * 3.25}rem;
+                width:3.125rem; height:3.125rem;
+                border-top: ${r===0 || cur.kenken.cells[r-1][c].cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cage-border);
+                border-left: ${c===0 || rowCells[c-1].cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cage-border);
+                border-right: ${c===cur.kenken.size-1 || rowCells[c+1]?.cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cage-border);
+                border-bottom: ${r===cur.kenken.size-1 || cur.kenken.cells[r+1]?.[c]?.cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cage-border);
+              `"
+              :class="{
+                'bg-red-50 dark:bg-red-900/20': !solved && kkErrors.includes(r * cur.kenken.size + c),
+                'bg-green-50 dark:bg-green-900/20': solved,
+                'bg-white dark:bg-slate-800': !solved && !kkErrors.includes(r * cur.kenken.size + c)
+              }"
+              style="--cage-border: rgb(100 116 139)">
+
+              {# Cage label (top-left cell of each cage) #}
+              <span x-show="cell.label"
+                class="text-xs font-bold leading-none text-slate-500 dark:text-slate-400 select-none"
+                x-text="cell.label">
+              </span>
+              <span x-show="!cell.label" class="text-xs leading-none">&nbsp;</span>
+
+              {# Input #}
+              <input
+                type="text" inputmode="numeric" maxlength="1"
+                :value="kkInputs[r * cur.kenken.size + c] ?? ''"
+                @input="kkSetCell(r, c, $event.target.value.replace(/[^1-9]/g,'').slice(-1))"
+                @keydown.enter="check()"
+                :disabled="solved"
+                class="w-full text-center text-lg font-bold bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-primary-400 rounded text-content-default"
+                :class="{ 'opacity-0': solved }"
+              />
+            </div>
+          </template>
+        </template>
+
+        {# Solved overlay #}
+        <template x-if="solved">
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="grid gap-0"
+              :style="`display:grid; grid-template-columns: repeat(${cur.kenken.size}, 3.125rem)`">
+              <template x-for="(rowCells, r) in (cur.kenken.cells || [])" :key="'s'+r">
+                <template x-for="(cell, c) in rowCells" :key="'s'+r+'-'+c">
+                  <div class="w-12.5 h-12.5 flex items-end justify-center pb-1 text-lg font-bold text-green-700 dark:text-green-300"
+                    style="width:3.125rem;height:3.125rem"
+                    x-text="kkInputs[r * cur.kenken.size + c]">
+                  </div>
+                </template>
+              </template>
+            </div>
+          </div>
+        </template>
+
+      </div>
+
+      {# Verify button #}
+      <button type="button" @click="check()"
+        :disabled="solved || kkInputs.some(v => !v)"
+        class="px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+        :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+        <span x-show="!solved">Vérifier</span>
+        <span x-show="solved">Bravo !</span>
+      </button>
+
+    </div>
+  </template>
+</div>

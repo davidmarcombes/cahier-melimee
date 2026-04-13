@@ -1,0 +1,61 @@
+{# Numberlink — connect matching number pairs with non-crossing paths #}
+<div x-show="cur.type === 'numberlink'" class="space-y-4">
+
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle"></div>
+
+  <template x-if="cur.numberlink">
+    <div class="flex flex-col items-center gap-4">
+
+      {# Rule label #}
+      <div class="text-center text-sm text-content-subtle px-4 text-balance">
+        Relie chaque paire de nombres identiques avec un chemin continu. Les chemins ne doivent pas se croiser et toutes les cases doivent être utilisées.
+      </div>
+
+      {# Grid #}
+      <div class="inline-grid gap-1"
+        :style="`grid-template-columns: repeat(${cur.numberlink.size}, minmax(0, 1fr))`">
+        <template x-for="(row, r) in (cur.numberlink.rows || [])" :key="r">
+          <template x-for="(cell, c) in row" :key="r+'-'+c">
+            <button type="button"
+              @click="nlkTap(r, c)"
+              :disabled="solved"
+              class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl border-2 text-lg font-bold transition-all flex items-center justify-center select-none"
+              :class="nlkCellClass(r, c, cell)"
+              :style="nlkCellStyle(r, c, cell)">
+              <span x-show="cell > 0" x-text="cell" class="text-white font-black drop-shadow"></span>
+            </button>
+          </template>
+        </template>
+      </div>
+
+      {# Pair color legend #}
+      <div class="flex gap-3 flex-wrap justify-center">
+        <template x-for="(pair, pi) in (cur.numberlink.pairs || [])" :key="pi">
+          <div class="flex items-center gap-1.5 text-sm">
+            <div class="w-5 h-5 rounded border-2 border-white dark:border-slate-600 shadow-sm"
+              :style="`background: ${nlkColors[pi+1] || '#888'}`"></div>
+            <span class="font-bold text-content-default" x-text="pi+1"></span>
+          </div>
+        </template>
+      </div>
+
+      {# Reset + Verify buttons #}
+      <div class="flex gap-3 justify-center">
+        <button type="button" @click="nlkReset()"
+          :disabled="solved"
+          class="px-4 py-2 text-sm font-bold rounded-xl border-2 border-slate-300 dark:border-slate-600
+                 text-content-subtle hover:border-slate-400 transition-all disabled:opacity-40">
+          Effacer
+        </button>
+        <button type="button" @click="check()"
+          :disabled="solved || !nlkAllConnected()"
+          class="px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+          <span x-show="!solved">Vérifier</span>
+          <span x-show="solved">Bravo !</span>
+        </button>
+      </div>
+
+    </div>
+  </template>
+</div>

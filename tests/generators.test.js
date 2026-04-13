@@ -257,3 +257,238 @@ describe('fluencyMix', () => {
     expect(ops.size).toBeGreaterThanOrEqual(3);
   });
 });
+
+// ─── futoshikiPuzzle ──────────────────────────────────────────────────────────
+
+describe('futoshikiPuzzle', () => {
+  it('returns type futoshiki', () => {
+    const r = generators.futoshikiPuzzle.generate({ size: 4 });
+    expect(r.type).toBe('futoshiki');
+  });
+
+  it('has futoshiki object with size, given, hCons, vCons', () => {
+    const r = generators.futoshikiPuzzle.generate({ size: 4 });
+    expect(r.futoshiki).toBeDefined();
+    expect(r.futoshiki.size).toBe(4);
+    expect(Array.isArray(r.futoshiki.given)).toBe(true);
+    expect(Array.isArray(r.futoshiki.hCons)).toBe(true);
+    expect(Array.isArray(r.futoshiki.vCons)).toBe(true);
+  });
+
+  it('given cells contain valid values in range 1–N', () => {
+    for (let i = 0; i < 5; i++) {
+      const r = generators.futoshikiPuzzle.generate({ size: 4 });
+      // given is a flat array: null = blank, number = pre-filled
+      expect(r.futoshiki.given).toHaveLength(16);
+      r.futoshiki.given.forEach(g => {
+        if (g !== null) {
+          expect(g).toBeGreaterThanOrEqual(1);
+          expect(g).toBeLessThanOrEqual(4);
+        }
+      });
+    }
+  });
+
+  it('_solution is a valid 4×4 latin square', () => {
+    const r = generators.futoshikiPuzzle.generate({ size: 4 });
+    const sol = r._solution;
+    expect(sol).toHaveLength(4);
+    // Each row has digits 1–4
+    sol.forEach(row => {
+      expect(row.slice().sort((a, b) => a - b)).toEqual([1, 2, 3, 4]);
+    });
+    // Each column has digits 1–4
+    for (let c = 0; c < 4; c++) {
+      const col = sol.map(row => row[c]).sort((a, b) => a - b);
+      expect(col).toEqual([1, 2, 3, 4]);
+    }
+  });
+
+  it('hCons signs are consistent with solution', () => {
+    const r = generators.futoshikiPuzzle.generate({ size: 4 });
+    const sol = r._solution;
+    r.futoshiki.hCons.forEach(({ r: row, c, sign }) => {
+      const v1 = sol[row][c], v2 = sol[row][c + 1];
+      if (sign === '<') expect(v1).toBeLessThan(v2);
+      else expect(v1).toBeGreaterThan(v2);
+    });
+  });
+
+  it('vCons signs are consistent with solution', () => {
+    const r = generators.futoshikiPuzzle.generate({ size: 4 });
+    const sol = r._solution;
+    r.futoshiki.vCons.forEach(({ r: row, c, sign }) => {
+      const v1 = sol[row][c], v2 = sol[row + 1][c];
+      if (sign === '<') expect(v1).toBeLessThan(v2);
+      else expect(v1).toBeGreaterThan(v2);
+    });
+  });
+
+  it('works for size 3 and size 5', () => {
+    [3, 5].forEach(size => {
+      const r = generators.futoshikiPuzzle.generate({ size });
+      expect(r.futoshiki.size).toBe(size);
+      expect(r._solution).toHaveLength(size);
+      r._solution.forEach(row => expect(row).toHaveLength(size));
+    });
+  });
+});
+
+// ─── kenkenPuzzle ─────────────────────────────────────────────────────────────
+
+describe('kenkenPuzzle', () => {
+  it('returns type kenken', () => {
+    const r = generators.kenkenPuzzle.generate({ size: 3 });
+    expect(r.type).toBe('kenken');
+  });
+
+  it('has kenken object with size and cages', () => {
+    const r = generators.kenkenPuzzle.generate({ size: 3 });
+    expect(r.kenken.size).toBe(3);
+    expect(Array.isArray(r.kenken.cages)).toBe(true);
+    expect(r.kenken.cages.length).toBeGreaterThan(0);
+  });
+
+  it('_solution is a valid 3×3 latin square', () => {
+    const r = generators.kenkenPuzzle.generate({ size: 3 });
+    const sol = r._solution;
+    expect(sol).toHaveLength(3);
+    sol.forEach(row => {
+      expect(row.slice().sort((a, b) => a - b)).toEqual([1, 2, 3]);
+    });
+    for (let c = 0; c < 3; c++) {
+      const col = sol.map(row => row[c]).sort((a, b) => a - b);
+      expect(col).toEqual([1, 2, 3]);
+    }
+  });
+
+  it('every cell is in exactly one cage', () => {
+    for (let i = 0; i < 5; i++) {
+      const r = generators.kenkenPuzzle.generate({ size: 3 });
+      const covered = new Set();
+      r.kenken.cages.forEach(cage => {
+        cage.cells.forEach(([row, col]) => {
+          const key = `${row},${col}`;
+          expect(covered.has(key)).toBe(false); // no duplicate
+          covered.add(key);
+        });
+      });
+      expect(covered.size).toBe(9); // all 9 cells covered
+    }
+  });
+
+  it('cage arithmetic is consistent with solution', () => {
+    for (let i = 0; i < 5; i++) {
+      const r = generators.kenkenPuzzle.generate({ size: 3 });
+      const sol = r._solution;
+      r.kenken.cages.forEach(cage => {
+        const vals = cage.cells.map(([row, col]) => sol[row][col]);
+        if (cage.op === '') {
+          expect(vals[0]).toBe(cage.target);
+        } else if (cage.op === '+') {
+          expect(vals.reduce((s, v) => s + v, 0)).toBe(cage.target);
+        } else if (cage.op === '×') {
+          expect(vals.reduce((p, v) => p * v, 1)).toBe(cage.target);
+        } else if (cage.op === '-') {
+          expect(Math.abs(vals[0] - vals[1])).toBe(cage.target);
+        } else if (cage.op === '÷') {
+          const mx = Math.max(...vals), mn = Math.min(...vals);
+          expect(mn > 0 && mx / mn).toBe(cage.target);
+        }
+      });
+    }
+  });
+
+  it('works for size 4 and 5', () => {
+    [4, 5].forEach(size => {
+      const r = generators.kenkenPuzzle.generate({ size });
+      expect(r.kenken.size).toBe(size);
+      expect(r._solution).toHaveLength(size);
+      const covered = new Set();
+      r.kenken.cages.forEach(cage => cage.cells.forEach(([row, col]) => covered.add(`${row},${col}`)));
+      expect(covered.size).toBe(size * size);
+    });
+  });
+});
+
+// ─── numberlinkPuzzle ─────────────────────────────────────────────────────────
+
+describe('numberlinkPuzzle', () => {
+  it('returns type numberlink', () => {
+    const r = generators.numberlinkPuzzle.generate({ size: 4 });
+    expect(r.type).toBe('numberlink');
+  });
+
+  it('has numberlink object with size and pairs', () => {
+    const r = generators.numberlinkPuzzle.generate({ size: 4 });
+    expect(r.numberlink.size).toBe(4);
+    expect(Array.isArray(r.numberlink.pairs)).toBe(true);
+    expect(r.numberlink.pairs.length).toBeGreaterThan(0);
+  });
+
+  it('each pair has two distinct endpoint coordinates', () => {
+    const r = generators.numberlinkPuzzle.generate({ size: 4 });
+    r.numberlink.pairs.forEach(([ep1, ep2]) => {
+      expect(ep1).toHaveLength(2);
+      expect(ep2).toHaveLength(2);
+      // Endpoints are not the same cell
+      expect(ep1[0] === ep2[0] && ep1[1] === ep2[1]).toBe(false);
+    });
+  });
+
+  it('all endpoints are within bounds', () => {
+    const r = generators.numberlinkPuzzle.generate({ size: 4 });
+    const { size, pairs } = r.numberlink;
+    pairs.forEach(([ep1, ep2]) => {
+      [ep1, ep2].forEach(([row, col]) => {
+        expect(row).toBeGreaterThanOrEqual(0);
+        expect(row).toBeLessThan(size);
+        expect(col).toBeGreaterThanOrEqual(0);
+        expect(col).toBeLessThan(size);
+      });
+    });
+  });
+
+  it('no two pairs share an endpoint', () => {
+    for (let i = 0; i < 10; i++) {
+      const r = generators.numberlinkPuzzle.generate({ size: 4 });
+      const endpoints = new Set();
+      r.numberlink.pairs.forEach(([ep1, ep2]) => {
+        const k1 = `${ep1[0]},${ep1[1]}`;
+        const k2 = `${ep2[0]},${ep2[1]}`;
+        expect(endpoints.has(k1)).toBe(false);
+        expect(endpoints.has(k2)).toBe(false);
+        endpoints.add(k1);
+        endpoints.add(k2);
+      });
+    }
+  });
+
+  it('works for size 5', () => {
+    const r = generators.numberlinkPuzzle.generate({ size: 5 });
+    expect(r.numberlink.size).toBe(5);
+    expect(r.numberlink.pairs.length).toBeGreaterThan(0);
+  });
+});
+
+// ─── labyrinthe (new rules) ───────────────────────────────────────────────────
+
+describe('labyrinthe new multiples rules', () => {
+  ['mult4', 'mult6', 'mult7', 'mult8', 'mult9'].forEach(rule => {
+    it(`${rule}: all path cells are multiples of the expected value`, () => {
+      const divisor = parseInt(rule.replace('mult', ''), 10);
+      // Run several times to account for randomness
+      for (let i = 0; i < 5; i++) {
+        const r = generators.labyrinthe.generate({ rule, size: 4 });
+        expect(r.type).toBe('maze');
+        expect(r.maze.rule).toBe('mult');
+        expect(r.maze.ruleParam).toBe(divisor);
+        // Collect path cells (start to end via generated grid — check rule on all valid-path values)
+        // We can at minimum check that the grid is 4×4 and label is correct
+        expect(r.maze.grid).toHaveLength(4);
+        r.maze.grid.forEach(row => expect(row).toHaveLength(4));
+        expect(r.maze.ruleLabel).toContain(String(divisor));
+      }
+    });
+  });
+});

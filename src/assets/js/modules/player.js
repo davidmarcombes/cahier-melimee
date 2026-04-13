@@ -107,6 +107,17 @@ export function seriesPlayer(exercises, seriesId) {
     ffInputs: [],     // fact-family: one input per equation (4 total)
     ffErrors: [],     // fact-family: indices of wrong equations
 
+    futoInputs: [],   // futoshiki: flat N*N array of input strings
+    futoErrors: [],   // futoshiki: flat indices of invalid cells
+
+    kkInputs: [],     // kenken: flat N*N array of input strings
+    kkErrors: [],     // kenken: flat indices of invalid cells
+
+    nlkPaths: {},     // numberlink: { pairNum: [[r,c],...] }
+    nlkActive: null,  // numberlink: pair number currently being drawn
+    nlkErrors: [],    // numberlink: [[r,c],...] error cells
+    nlkColors: ['', '#ef4444', '#3b82f6', '#22c55e', '#f97316', '#8b5cf6', '#ec4899'],
+
     /* Helpers */
     get cur() {
       return this.exercises[this.currentIndex] || {};
@@ -429,6 +440,21 @@ export function seriesPlayer(exercises, seriesId) {
 
       this.ffInputs = _e.ffEquations ? _e.ffEquations.map(() => '') : [];
       this.ffErrors = [];
+
+      if (_e.futoshiki) {
+        const n2 = _e.futoshiki.size * _e.futoshiki.size;
+        this.futoInputs = Array(n2).fill('');
+        // Pre-fill given cells
+        (_e.futoshiki.given || []).forEach((v, i) => { if (v != null) this.futoInputs[i] = String(v); });
+      } else { this.futoInputs = []; }
+      this.futoErrors = [];
+
+      this.kkInputs = _e.kenken ? Array(_e.kenken.size * _e.kenken.size).fill('') : [];
+      this.kkErrors = [];
+
+      this.nlkPaths = {};
+      this.nlkActive = null;
+      this.nlkErrors = [];
 
       this.dtInputs = _e.type === 'decimal-triple'
         ? { fracNum: '', fracDen: '', decimal: '', dizaines: '', unites: '', dixiemes: '', centiemes: '', milliemes: '' }
@@ -893,6 +919,136 @@ export function seriesPlayer(exercises, seriesId) {
         return;
       }
 
+      if (_e.type === 'futoshiki' && _e.futoshiki) {
+        const { size, rows } = _e.futoshiki;
+        const vals = this.futoInputs.map(v => parseInt(v, 10));
+        if (vals.some(v => isNaN(v) || v < 1 || v > size)) { this._flashError(); return; }
+        const errors = new Set();
+        // Check each row: no repeats
+        for (let r = 0; r < size; r++) {
+          const seen = new Map();
+          for (let c = 0; c < size; c++) {
+            const v = vals[r * size + c];
+            if (seen.has(v)) { errors.add(r * size + c); errors.add(seen.get(v)); }
+            else seen.set(v, r * size + c);
+          }
+        }
+        // Check each column: no repeats
+        for (let c = 0; c < size; c++) {
+          const seen = new Map();
+          for (let r = 0; r < size; r++) {
+            const v = vals[r * size + c];
+            if (seen.has(v)) { errors.add(r * size + c); errors.add(seen.get(v)); }
+            else seen.set(v, r * size + c);
+          }
+        }
+        // Check inequality constraints
+        for (let r = 0; r < size; r++) {
+          const row = rows[r];
+          for (let c = 0; c < (row.hCons || []).length; c++) {
+            const sign = row.hCons[c];
+            if (!sign) continue;
+            const v1 = vals[r * size + c], v2 = vals[r * size + c + 1];
+            if (sign === '<' ? v1 >= v2 : v1 <= v2) { errors.add(r * size + c); errors.add(r * size + c + 1); }
+          }
+          for (let c = 0; c < (row.vCons || []).length; c++) {
+            const sign = row.vCons[c];
+            if (!sign) continue;
+            const v1 = vals[r * size + c], v2 = vals[(r + 1) * size + c];
+            if (sign === '<' ? v1 >= v2 : v1 <= v2) { errors.add(r * size + c); errors.add((r + 1) * size + c); }
+          }
+        }
+        if (errors.size === 0) {
+          this.futoErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.futoErrors = [...errors];
+          this._flashError(() => { this.futoErrors = []; });
+        }
+        return;
+      }
+
+      if (_e.type === 'kenken' && _e.kenken) {
+        const { size, cages } = _e.kenken;
+        const vals = this.kkInputs.map(v => parseInt(v, 10));
+        if (vals.some(v => isNaN(v) || v < 1 || v > size)) { this._flashError(); return; }
+        const errors = new Set();
+        // Check rows
+        for (let r = 0; r < size; r++) {
+          const seen = new Map();
+          for (let c = 0; c < size; c++) {
+            const v = vals[r * size + c];
+            if (seen.has(v)) { errors.add(r * size + c); errors.add(seen.get(v)); }
+            else seen.set(v, r * size + c);
+          }
+        }
+        // Check columns
+        for (let c = 0; c < size; c++) {
+          const seen = new Map();
+          for (let r = 0; r < size; r++) {
+            const v = vals[r * size + c];
+            if (seen.has(v)) { errors.add(r * size + c); errors.add(seen.get(v)); }
+            else seen.set(v, r * size + c);
+          }
+        }
+        // Check cage arithmetic
+        for (const cage of (cages || [])) {
+          const cageVals = cage.cells.map(([r, c]) => vals[r * size + c]);
+          let ok = false;
+          if (cage.op === '') { ok = cageVals[0] === cage.target; }
+          else if (cage.op === '+') { ok = cageVals.reduce((s, v) => s + v, 0) === cage.target; }
+          else if (cage.op === '×') { ok = cageVals.reduce((p, v) => p * v, 1) === cage.target; }
+          else if (cage.op === '-') { ok = Math.abs(cageVals[0] - cageVals[1]) === cage.target; }
+          else if (cage.op === '÷') { const mx = Math.max(...cageVals), mn = Math.min(...cageVals); ok = mn > 0 && mx / mn === cage.target; }
+          if (!ok) cage.cells.forEach(([r, c]) => errors.add(r * size + c));
+        }
+        if (errors.size === 0) {
+          this.kkErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.kkErrors = [...errors];
+          this._flashError(() => { this.kkErrors = []; });
+        }
+        return;
+      }
+
+      if (_e.type === 'numberlink' && _e.numberlink) {
+        const { size, pairs } = _e.numberlink;
+        const errors = [];
+        const covered = new Set();
+        // Check each pair path
+        for (let pi = 0; pi < pairs.length; pi++) {
+          const path = this.nlkPaths[pi + 1] || [];
+          const [ep1, ep2] = pairs[pi];
+          if (path.length < 2) { errors.push(...(path.length ? path : [ep1, ep2])); continue; }
+          const start = path[0], end = path[path.length - 1];
+          const connectsOk = (start[0] === ep1[0] && start[1] === ep1[1] && end[0] === ep2[0] && end[1] === ep2[1]) ||
+                             (start[0] === ep2[0] && start[1] === ep2[1] && end[0] === ep1[0] && end[1] === ep1[1]);
+          // Check continuity
+          let contOk = true;
+          for (let i = 1; i < path.length; i++) {
+            const dr = Math.abs(path[i][0] - path[i-1][0]), dc = Math.abs(path[i][1] - path[i-1][1]);
+            if (dr + dc !== 1) { contOk = false; break; }
+          }
+          if (!connectsOk || !contOk) path.forEach(([r, c]) => errors.push([r, c]));
+          else path.forEach(([r, c]) => covered.add(`${r},${c}`));
+        }
+        // Check all cells covered
+        const totalCells = size * size;
+        const allCovered = covered.size === totalCells;
+        if (errors.length === 0 && allCovered) {
+          this.nlkErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          if (!allCovered && errors.length === 0) this._flashError();
+          else {
+            this.nlkErrors = errors;
+            this._flashError(() => { this.nlkErrors = []; });
+          }
+        }
+        return;
+      }
+
       if (_e.type === 'magic-color') {
         const cells = _e.magicColor?.cells || [];
         const wrong = cells.map((c, i) => this.mcColors[i] !== c.colorIdx ? i : -1).filter(i => i !== -1);
@@ -1258,6 +1414,120 @@ export function seriesPlayer(exercises, seriesId) {
         case 'gt': return n => n > (param || 50);
         default: return () => true;
       }
+    },
+
+    /* KenKen helpers */
+    kkSetCell(r, c, val) {
+      const updated = [...this.kkInputs];
+      updated[r * this.cur.kenken.size + c] = val;
+      this.kkInputs = updated;
+      this.kkErrors = [];
+    },
+
+    /* Numberlink helpers */
+    nlkTap(r, c) {
+      if (this.solved) return;
+      const nl = this.cur.numberlink;
+      if (!nl) return;
+      this.nlkErrors = [];
+      const cellNum = nl.rows[r][c]; // > 0 if endpoint, 0 if empty
+
+      if (this.nlkActive === null) {
+        // Start: must tap an endpoint
+        if (cellNum <= 0) return;
+        const updated = { ...this.nlkPaths };
+        updated[cellNum] = [[r, c]];
+        this.nlkPaths = updated;
+        this.nlkActive = cellNum;
+        return;
+      }
+
+      // Currently drawing pairNum = nlkActive
+      const pairNum = this.nlkActive;
+      const path = this.nlkPaths[pairNum] || [];
+      const last = path[path.length - 1];
+
+      // Tapping the last cell: undo
+      if (last && last[0] === r && last[1] === c) {
+        if (path.length > 1) {
+          const updated = { ...this.nlkPaths };
+          updated[pairNum] = path.slice(0, -1);
+          this.nlkPaths = updated;
+        } else {
+          this.nlkActive = null;
+        }
+        return;
+      }
+
+      // Must be adjacent
+      const dr = Math.abs(r - last[0]), dc = Math.abs(c - last[1]);
+      if (dr + dc !== 1) return;
+
+      // Must not be already in any path (except the other endpoint of this pair)
+      const pairs = nl.pairs;
+      const [ep1, ep2] = pairs[pairNum - 1];
+      const isOtherEndpoint = (r === ep1[0] && c === ep1[1]) || (r === ep2[0] && c === ep2[1]);
+      if (!isOtherEndpoint) {
+        for (const p of Object.values(this.nlkPaths)) {
+          if (p.some(([pr, pc]) => pr === r && pc === c)) return; // occupied
+        }
+      }
+
+      const updated = { ...this.nlkPaths };
+      updated[pairNum] = [...path, [r, c]];
+      this.nlkPaths = updated;
+
+      // Reached the other endpoint → complete this pair, stop drawing
+      if (isOtherEndpoint && cellNum === pairNum) {
+        this.nlkActive = null;
+      }
+    },
+
+    nlkReset() {
+      this.nlkPaths = {};
+      this.nlkActive = null;
+      this.nlkErrors = [];
+    },
+
+    nlkAllConnected() {
+      const nl = this.cur.numberlink;
+      if (!nl) return false;
+      return nl.pairs.every((pair, pi) => {
+        const path = this.nlkPaths[pi + 1] || [];
+        if (path.length < 2) return false;
+        const [ep1, ep2] = pair;
+        const start = path[0], end = path[path.length - 1];
+        return (start[0] === ep1[0] && start[1] === ep1[1] && end[0] === ep2[0] && end[1] === ep2[1]) ||
+               (start[0] === ep2[0] && start[1] === ep2[1] && end[0] === ep1[0] && end[1] === ep1[1]);
+      });
+    },
+
+    nlkCellClass(r, c, cellNum) {
+      const nl = this.cur.numberlink;
+      if (!nl) return '';
+      const active = this.nlkActive;
+      // Find which pair owns this cell
+      let owner = null;
+      for (const [pNum, path] of Object.entries(this.nlkPaths)) {
+        if (path.some(([pr, pc]) => pr === r && pc === c)) { owner = Number(pNum); break; }
+      }
+      const isError = this.nlkErrors.some(([er, ec]) => er === r && ec === c);
+      const isEndpoint = cellNum > 0;
+      if (this.solved && owner) return 'border-green-500 ring-2 ring-green-300';
+      if (isError) return 'border-red-400 bg-red-50 dark:bg-red-900/20 animate-shake';
+      if (owner && isEndpoint) return 'border-white dark:border-slate-200 ring-2 ring-white/50 shadow-lg';
+      if (owner) return 'border-transparent opacity-80';
+      if (active && cellNum === active) return 'border-white ring-2 ring-white/80';
+      return 'border-slate-200 dark:border-slate-700 bg-surface-subtle text-content-default hover:border-slate-300 dark:hover:border-slate-500';
+    },
+
+    nlkCellStyle(r, c) {
+      let owner = null;
+      for (const [k, path] of Object.entries(this.nlkPaths)) {
+        if (path.some(([pr, pc]) => pr === r && pc === c)) { owner = Number(k); break; }
+      }
+      if (owner) return `background: ${this.nlkColors[owner] || '#888'}; color: white`;
+      return '';
     },
 
     _markSolvedAndAdvance() {

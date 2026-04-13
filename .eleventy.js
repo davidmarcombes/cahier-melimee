@@ -989,6 +989,74 @@ module.exports = async function (eleventyConfig) {
           };
         }
 
+        if (ex.data.type === 'futoshiki' && ex.data.futoshiki) {
+          const f = ex.data.futoshiki;
+          const size = Number(f.size || 4);
+          // Build flat given array (null = blank, number = pre-filled)
+          const given = Array(size * size).fill(null);
+          (f.given || []).forEach(g => { given[g.r * size + g.c] = Number(g.v); });
+          // Build rows structure for template: cells + hCons + vCons
+          const rows = [];
+          for (let r = 0; r < size; r++) {
+            const cells = [];
+            let blankIdx = 0;
+            let totalBlanks = 0;
+            // Count blanks before this row to get correct flat index
+            for (let ri = 0; ri < r; ri++) {
+              for (let ci = 0; ci < size; ci++) {
+                if (given[ri * size + ci] === null) totalBlanks++;
+              }
+            }
+            for (let c = 0; c < size; c++) {
+              const flatIdx = r * size + c;
+              cells.push({ given: given[flatIdx], idx: flatIdx });
+            }
+            const hCons = (f.hCons || []).filter(h => h.r === r).reduce((acc, h) => { acc[h.c] = h.sign; return acc; }, Array(size - 1).fill(null));
+            const vCons = (f.vCons || []).filter(v => v.r === r).reduce((acc, v) => { acc[v.c] = v.sign; return acc; }, Array(size).fill(null));
+            rows.push({ cells, hCons, vCons: r < size - 1 ? vCons : null });
+          }
+          item.futoshiki = { size, given, rows };
+        }
+
+        if (ex.data.type === 'kenken' && ex.data.kenken) {
+          const k = ex.data.kenken;
+          const size = Number(k.size || 3);
+          // cages: array of { op, target, cells: [[r,c],...], label }
+          const cages = (k.cages || []).map(cage => ({
+            op: String(cage.op || ''),
+            target: Number(cage.target),
+            cells: cage.cells.map(([r, c]) => [Number(r), Number(c)]),
+            label: cage.op ? `${cage.target}${cage.op}` : String(cage.target),
+          }));
+          // Build cells grid with cage id + label for top-left of each cage
+          const cageGrid = Array.from({ length: size }, () => Array(size).fill(null));
+          const labelGrid = Array.from({ length: size }, () => Array(size).fill(''));
+          cages.forEach((cage, ci) => {
+            cage.cells.forEach(([r, c]) => { cageGrid[r][c] = ci; });
+            // top-left = min row then min col
+            const tl = cage.cells.reduce((best, cur) => cur[0] < best[0] || (cur[0] === best[0] && cur[1] < best[1]) ? cur : best);
+            labelGrid[tl[0]][tl[1]] = cage.label;
+          });
+          const cells = Array.from({ length: size }, (_, r) =>
+            Array.from({ length: size }, (_, c) => ({ cageId: cageGrid[r][c], label: labelGrid[r][c] }))
+          );
+          item.kenken = { size, cells, cages };
+        }
+
+        if (ex.data.type === 'numberlink' && ex.data.numberlink) {
+          const nl = ex.data.numberlink;
+          const size = Number(nl.size);
+          // pairs: [[r1,c1],[r2,c2]] for each numbered pair
+          const pairs = (nl.pairs || []).map(p => [[Number(p[0][0]), Number(p[0][1])], [Number(p[1][0]), Number(p[1][1])]]);
+          // Build rows grid: 0 = empty, N = endpoint for pair N
+          const rows = Array.from({ length: size }, () => Array(size).fill(0));
+          pairs.forEach((pair, pi) => {
+            rows[pair[0][0]][pair[0][1]] = pi + 1;
+            rows[pair[1][0]][pair[1][1]] = pi + 1;
+          });
+          item.numberlink = { size, rows, pairs };
+        }
+
         if (ex.data.type === 'venn' && ex.data.venn) {
           const v = ex.data.venn;
           const items = (v.items || []).map(it => ({
@@ -1059,7 +1127,7 @@ module.exports = async function (eleventyConfig) {
     // Canonical lookup tables — kept in sync with CSV_TYPES / CSV_CLASSES in app.js
     // Add new entries at the END to preserve existing indices; never reorder.
     // Multi-type series all map to "multi" — no composite entries.
-    const CSV_TYPES = ["","bar-chart","base-10","bounding","calc-chain","checkbox","click-blocks","clock","column-op","compare","compare-groups","convert","coordinate-grid","count-objects","decimal-triple","decomp","drag-sort","fill-table","fraction","fraction-check","fraction-paint","function-machine","inverse-problem","logic-grid","magic-color","matching","maze","mcq","multi","multi-question","number-check","number-hunt","number-line","problem","pyramid","ruler","select","sequence","sort","svg-tiles","thermometer","tile-select","tri-arith","true-false","venn","defi","compare-expressions","estimation","error-analysis","compare-solutions"];
+    const CSV_TYPES = ["","bar-chart","base-10","bounding","calc-chain","checkbox","click-blocks","clock","column-op","compare","compare-groups","convert","coordinate-grid","count-objects","decimal-triple","decomp","drag-sort","fill-table","fraction","fraction-check","fraction-paint","function-machine","inverse-problem","logic-grid","magic-color","matching","maze","mcq","multi","multi-question","number-check","number-hunt","number-line","problem","pyramid","ruler","select","sequence","sort","svg-tiles","thermometer","tile-select","tri-arith","true-false","venn","defi","compare-expressions","estimation","error-analysis","compare-solutions","futoshiki","kenken","numberlink"];
     const CSV_CLASSES = ["A1.1","A1.2","A2.1","A2.2","A2.3","A2.4","A3.1","A3.2","A3.3","A4.1","A4.2","D1.1.1","I1.1.1","I1.1.2","M1.1","M1.2","M1.3","M1.4","M2.1","M2.2","M2.3","M3.1","M3.2","M3.3","N4.2","S1.1.1","S1.1.2","S1.1.3","S1.2.1","S1.2.2","S1.2.3","S1.3.1","S2.1.1","S2.1.2","S2.1.3","S2.1.4","S2.2.1","S2.2.2","S3.1.1","S3.1.2","S3.2.1","S3.2.2","S3.2.3","S4.1.2","S3.1.3"];
 
     const lines = ['id,l,s,t,title,d,f,ty,cl'];
