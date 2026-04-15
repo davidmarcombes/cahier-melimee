@@ -9,10 +9,6 @@ Site: {{ site.title  }}
 Description: {{ site.description }} 
 URL: {{ site.url }}
 Author: {{ site.author }} <{{ site.email }}>
-Social:
-  - Twitter: {{ site.social.twitter }} 
-  - LinkedIn: {{ site.social.linkedin }} 
-  - Facebook:   {{ site.social.facebook }} 
 Navigation:
   {%- if navigation and (navigation[lang] is defined) -%}
     {%- set nav = navigation[lang] -%}

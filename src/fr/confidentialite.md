@@ -46,8 +46,8 @@ Ce site n'utilise **aucun cookie**. Un stockage local est utilisé uniquement po
 
 ## Contact
 
-Pour toute question relative à cette politique, vous pouvez nous contacter à : [À compléter]
+Pour toute question relative à cette politique, vous pouvez nous contacter à : contact@melimee.fr
 
 ## Mise à jour
 
-Cette politique peut être mise à jour. La date de dernière modification est le 9 avril 2026.
+Cette politique peut être mise à jour. La date de dernière modification est le 14 avril 2026.

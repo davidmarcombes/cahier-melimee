@@ -216,7 +216,13 @@
       "WebFetch(domain:www.edutopia.org)",
       "Bash(du -sh */)",
       "Bash(curl -s http://localhost:4173/fr/applications/d1f5e8c4/)",
-      "Bash(curl -v http://localhost:4173/fr/applications/d1f5e8c4/)"
+      "Bash(curl -v http://localhost:4173/fr/applications/d1f5e8c4/)",
+      "Bash(cat e:/Code/cahier-melimee/src/fr/applications/cm1/maths/fractions/decompo-fraction-centieme/*.md)",
+      "Bash(cat e:/Code/cahier-melimee/src/fr/applications/cm1/maths/numeration/convertir-decimaux/*.md)",
+      "Bash(mv src/fr/applications/cm1/maths/fractions/fraction-vrai-faux src/fr/exercices/cm1/maths/fractions/fraction-vrai-faux)",
+      "Bash(mv src/fr/applications/cm1/maths/fractions/fraction-decimale-vrais-faux src/fr/exercices/cm1/maths/fractions/fraction-decimale-vrais-faux)",
+      "Bash(du -sh e:/Code/cahier-melimee/_site/*)",
+      "Bash(bc)"
     ]
   }
 }

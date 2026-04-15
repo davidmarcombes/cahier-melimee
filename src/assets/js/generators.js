@@ -4586,6 +4586,133 @@ const generators = {
       };
     },
   },
+
+  /* ── Fractions décimales ↔ écriture décimale ───────────────────── */
+  fractionDecimale: {
+    generate(params = {}) {
+      const mode = params.mode || 'frac-to-dec'; // 'frac-to-dec' | 'dec-to-frac' | 'mixed'
+
+      const actualMode = mode === 'mixed'
+        ? (Math.random() < 0.5 ? 'frac-to-dec' : 'dec-to-frac')
+        : mode;
+
+      // Pool: [numerator, denominator] — denominators 10 or 100 only
+      // Avoid trivial cases (0) and ensure no leading zeros confusion beyond CM1 scope
+      const pool10  = Array.from({ length: 9 }, (_, i) => [i + 1, 10]);   // 1/10 … 9/10
+      const pool100 = [
+        // multiples of 10 in hundredths (= tenths written differently) — good for confusion
+        [10,100],[20,100],[30,100],[40,100],[50,100],[60,100],[70,100],[80,100],[90,100],
+        // non-round hundredths
+        [1,100],[2,100],[3,100],[4,100],[5,100],[6,100],[7,100],[8,100],[9,100],
+        [11,100],[12,100],[15,100],[20,100],[25,100],[34,100],[47,100],[63,100],[75,100],[99,100],
+      ];
+      const level = params.level || 'dixiemes'; // 'dixiemes' | 'centiemes' | 'mixed'
+      let pair;
+      if (level === 'dixiemes') {
+        pair = randItem(pool10);
+      } else if (level === 'centiemes') {
+        pair = randItem(pool100);
+      } else {
+        pair = Math.random() < 0.5 ? randItem(pool10) : randItem(pool100);
+      }
+      const [num, den] = pair;
+
+      // Format decimal: 3/10 → "0,3" | 7/100 → "0,07" (keep leading zeros, strip trailing)
+      const decVal = num / den;
+      const decimals = den === 10 ? 1 : 2;
+      // Always use fixed precision to preserve leading zeros (e.g. 0,07), then strip trailing zeros
+      // but keep at least one decimal digit to avoid "0," edge case
+      const decFixed = decVal.toFixed(decimals).replace('.', ',');
+      // Strip trailing zeros only after a comma, keeping at least one decimal digit
+      const decStr = decFixed.replace(/,(\d*[1-9])0+$/, ',$1').replace(/,0+$/, ',0');
+
+      const fracSpan = `<span class="frac font-bold" style="font-size:1.3em;vertical-align:middle">`
+        + `<span class="fn">${num}</span><span class="fd">${den}</span></span>`;
+      const denLabel = den === 10 ? 'dixièmes' : 'centièmes';
+
+      if (actualMode === 'frac-to-dec') {
+        return {
+          type: 'number-check',
+          operation: `&frac(${num},${den})`,
+          body: `<p class="text-base text-content-subtle">Écris cette fraction en écriture décimale (utilise une virgule).</p>`,
+          answers: [decStr],
+        };
+      } else {
+        // dec-to-frac: give decimal, ask for numerator over fixed denominator
+        return {
+          type: 'number-check',
+          operation: `${decStr} = ? / ${den}`,
+          body: `<p class="text-base text-content-subtle">Complète : ${decStr} = <strong>?</strong> ${denLabel}</p>`,
+          answers: [String(num)],
+        };
+      }
+    },
+  },
+
+  /* ── Fraction d'une quantité ─────────────────────────────────────── */
+  fractionQuantite: {
+    generate(params = {}) {
+      const mode = params.mode || 'find-part'; // 'find-part' | 'find-total' | 'mixed'
+
+      const contexts = [
+        { noun: 'élèves',  verb: 'portent des lunettes',       question: 'd\'élèves portent des lunettes' },
+        { noun: 'élèves',  verb: 'ont un animal de compagnie', question: 'd\'élèves ont un animal' },
+        { noun: 'bonbons', verb: 'sont rouges',                question: 'de bonbons sont rouges' },
+        { noun: 'billes',  verb: 'sont bleues',                question: 'de billes sont bleues' },
+        { noun: 'livres',  verb: 'sont illustrés',             question: 'de livres sont illustrés' },
+        { noun: 'fleurs',  verb: 'sont jaunes',                question: 'de fleurs sont jaunes' },
+        { noun: 'gâteaux', verb: 'sont au chocolat',           question: 'de gâteaux sont au chocolat' },
+        { noun: 'stylos',  verb: 'sont rouges',                question: 'de stylos sont rouges' },
+        { noun: 'fruits',  verb: 'sont des pommes',            question: 'de fruits sont des pommes' },
+        { noun: 'élèves',  verb: 'aiment les maths',           question: 'd\'élèves aiment les maths' },
+      ];
+
+      // [num, den, possible totals]
+      const fracs = [
+        [1, 2, [10, 12, 14, 16, 18, 20, 24]],
+        [1, 3, [9, 12, 15, 18, 21, 24]],
+        [1, 4, [8, 12, 16, 20, 24, 28]],
+        [1, 5, [10, 15, 20, 25, 30]],
+        [3, 4, [8, 12, 16, 20, 24]],
+        [2, 3, [9, 12, 15, 18, 21, 24]],
+        [2, 5, [10, 15, 20, 25]],
+        [3, 5, [10, 15, 20, 25]],
+      ];
+
+      const [num, den, totals] = randItem(fracs);
+      const total = randItem(totals);
+      const part = (total / den) * num;
+      const ctx = randItem(contexts);
+
+      const actualMode = mode === 'mixed'
+        ? (Math.random() < 0.5 ? 'find-part' : 'find-total')
+        : mode;
+
+      // Inline fraction HTML using the global .frac/.fn/.fd CSS classes
+      const fracSpan = `<span class="frac font-bold" style="font-size:1.4em;vertical-align:middle">`
+        + `<span class="fn">${num}</span><span class="fd">${den}</span></span>`;
+
+      if (actualMode === 'find-part') {
+        const body = `<p>Dans un groupe de <strong>${total} ${ctx.noun}</strong>, `
+          + `${fracSpan} ${ctx.verb}.</p>`
+          + `<p class="mt-2 text-base text-content-subtle">Combien ${ctx.question} ?</p>`;
+        return {
+          type: 'number-check',
+          body,
+          operation: `&frac(${num},${den}) de ${total}`,
+          answers: [String(part)],
+        };
+      } else {
+        const body = `<p>${fracSpan} des <strong>${ctx.noun}</strong> ${ctx.verb}. Il y en a <strong>${part}</strong>.</p>`
+          + `<p class="mt-2 text-base text-content-subtle">Combien y a-t-il de ${ctx.noun} en tout ?</p>`;
+        return {
+          type: 'number-check',
+          body,
+          answers: [String(total)],
+        };
+      }
+    },
+  },
 };
 
 // Returns the palette color index that the number n belongs to for a given rule.

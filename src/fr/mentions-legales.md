@@ -9,9 +9,9 @@ locale: fr-FR
 
 **Le cahier de Mélimée** est un projet open source à but éducatif.
 
-- **Responsable de publication :** [À compléter]
-- **Hébergement :** [À compléter]
-- **Contact :** [À compléter]
+- **Responsable de publication :** David Marcombes
+- **Hébergement :** LWS (LWS SARL, 4 place Louis Armand, 75012 Paris) — [lws.fr](https://www.lws.fr)
+- **Contact :** contact@melimee.fr
 
 ## Propriété intellectuelle
 
@@ -27,7 +27,7 @@ Ce site ne collecte **aucune donnée personnelle** au sens du RGPD. Aucun email,
 
 ## Cookies
 
-Ce site n'utilise aucun cookie publicitaire ni cookie de suivi. Seul un stockage local (localStorage) est utilisé pour mémoriser les préférences d'affichage (et la progresssion de l'utilisateur.
+Ce site n'utilise aucun cookie publicitaire ni cookie de suivi. Seul un stockage local (localStorage) est utilisé pour mémoriser les préférences d'affichage (et la progression de l'utilisateur).
 
 ## Droit applicable
 

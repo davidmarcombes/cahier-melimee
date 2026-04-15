@@ -5,10 +5,6 @@ module.exports = {
   devMode: process.env.ELEVENTY_RUN_MODE === 'serve',
   repo: 'https://github.com/davidmarcombes/cahier-melimee',
   author: 'Mélimée, Salto et la communauté',
-  email: 'contact@example.com',
-  social: {
-    twitter: '@handle',
-    linkedin: 'company-name',
-    facebook: 'company-name',
-  },
+  email: 'contact@melimee.fr',
+  social: {},
 };
