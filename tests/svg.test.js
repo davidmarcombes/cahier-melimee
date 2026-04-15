@@ -14,11 +14,26 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const appSrc = readFileSync(resolve(__dirname, '../src/assets/js/svg.js'), 'utf8');
 
 const {
-  circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg,
-  equilateralTriangleSvg, isoscelesTriangleSvg, rhombusSvg, parallelogramSvg, trapezoidSvg, regularPolygonSvg,
-  cuboidSvg, triangularPrismSvg, squarePyramidSvg, tetrahedronSvg,
+  circleSvg,
+  slicedPieSvg,
+  mathGridSvg,
+  rectangleSvg,
+  squareSvg,
+  triangleSvg,
+  fractionShapesSvg,
+  equilateralTriangleSvg,
+  isoscelesTriangleSvg,
+  rhombusSvg,
+  parallelogramSvg,
+  trapezoidSvg,
+  regularPolygonSvg,
+  cuboidSvg,
+  triangularPrismSvg,
+  squarePyramidSvg,
+  tetrahedronSvg,
 } = new Function(
-  appSrc + '\nreturn { circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg, equilateralTriangleSvg, isoscelesTriangleSvg, rhombusSvg, parallelogramSvg, trapezoidSvg, regularPolygonSvg, cuboidSvg, triangularPrismSvg, squarePyramidSvg, tetrahedronSvg };'
+  appSrc +
+    '\nreturn { circleSvg, slicedPieSvg, mathGridSvg, rectangleSvg, squareSvg, triangleSvg, fractionShapesSvg, equilateralTriangleSvg, isoscelesTriangleSvg, rhombusSvg, parallelogramSvg, trapezoidSvg, regularPolygonSvg, cuboidSvg, triangularPrismSvg, squarePyramidSvg, tetrahedronSvg };'
 )();
 
 // ─── DOM validation utility ───────────────────────────────────────────────────
@@ -39,11 +54,11 @@ function validateXml(xmlStr) {
 // ─── Smoke test: every SVG function produces valid XML ────────────────────────
 // Extracts all functions ending in 'Svg' and tries to call them with dummy args.
 const allSvgFns = new Function(
-  appSrc + 
-  '\nconst m = arguments[0].match(/function\\s+(\\w+Svg)/g);' +
-  '\nconst names = m.map(x => x.split(/\\s+/)[1]);' +
-  '\nconst res = {}; names.forEach(n => { res[n] = eval(n); });' +
-  '\nreturn res;'
+  appSrc +
+    '\nconst m = arguments[0].match(/function\\s+(\\w+Svg)/g);' +
+    '\nconst names = m.map(x => x.split(/\\s+/)[1]);' +
+    '\nconst res = {}; names.forEach(n => { res[n] = eval(n); });' +
+    '\nreturn res;'
 )(appSrc);
 
 describe('all SVG generators produce valid XML', () => {
@@ -52,11 +67,11 @@ describe('all SVG generators produce valid XML', () => {
       let output;
       try {
         // Try to call with sensible defaults (10) instead of 0 to avoid infinite loops in range-based SVGs.
-        output = fn(10, 10, 10, 10, 10); 
+        output = fn(10, 10, 10, 10, 10);
       } catch (e) {
-        return; 
+        return;
       }
-      
+
       if (typeof output === 'string' && output.startsWith('<svg')) {
         const { valid, error } = validateXml(output);
         expect(valid, `${name} produced invalid XML: ${error}`).toBe(true);
@@ -237,8 +252,12 @@ describe('isoscelesTriangleSvg', () => {
   });
   it('apex x is centred on the base', () => {
     const doc = new DOMParser().parseFromString(isoscelesTriangleSvg(80, 70), 'text/xml');
-    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/)
-      .map(p => parseFloat(p.split(',')[0]));
+    const pts = doc
+      .querySelector('polygon')
+      .getAttribute('points')
+      .trim()
+      .split(/\s+/)
+      .map((p) => parseFloat(p.split(',')[0]));
     const [x0, x1, x2] = pts; // BL, BR, apex
     expect(x2).toBeCloseTo((x0 + x1) / 2, 1);
   });
@@ -272,8 +291,12 @@ describe('parallelogramSvg', () => {
   });
   it('top edge is shifted right by skew', () => {
     const doc = new DOMParser().parseFromString(parallelogramSvg(100, 60, 30), 'text/xml');
-    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/)
-      .map(p => p.split(',').map(Number));
+    const pts = doc
+      .querySelector('polygon')
+      .getAttribute('points')
+      .trim()
+      .split(/\s+/)
+      .map((p) => p.split(',').map(Number));
     // pts: BL, BR, TR, TL — bottom y > top y, TL.x > BL.x
     const [BL, , , TL] = pts;
     expect(TL[0]).toBeGreaterThan(BL[0]);
@@ -292,8 +315,12 @@ describe('trapezoidSvg', () => {
   });
   it('top edge is narrower than bottom edge', () => {
     const doc = new DOMParser().parseFromString(trapezoidSvg(60, 100, 60), 'text/xml');
-    const pts = doc.querySelector('polygon').getAttribute('points').trim().split(/\s+/)
-      .map(p => p.split(',').map(Number));
+    const pts = doc
+      .querySelector('polygon')
+      .getAttribute('points')
+      .trim()
+      .split(/\s+/)
+      .map((p) => p.split(',').map(Number));
     const [BL, BR, TR, TL] = pts;
     const botWidth = BR[0] - BL[0];
     const topWidth = TR[0] - TL[0];

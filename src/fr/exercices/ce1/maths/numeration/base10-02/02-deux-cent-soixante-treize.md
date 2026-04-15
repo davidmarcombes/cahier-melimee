@@ -1,5 +1,5 @@
 ---
-title: "Deux cent soixante-treize"
+title: "Centaines, dizaines et unités"
 type: "base-10"
 number: 273
 answer: "273"

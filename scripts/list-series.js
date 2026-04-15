@@ -24,10 +24,10 @@ function getArg(flag) {
   const i = args.indexOf(flag);
   return i !== -1 ? args[i + 1] : null;
 }
-const filterLevel    = getArg('--level');
-const filterType     = getArg('--type');
-const filterCat      = getArg('--cat');
-const showMissing    = args.includes('--missing');
+const filterLevel = getArg('--level');
+const filterType = getArg('--type');
+const filterCat = getArg('--cat');
+const showMissing = args.includes('--missing');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -64,7 +64,9 @@ function getTypesFromDir(seriesDir) {
         if (m) types.add(m[1]);
       }
     }
-  } catch (_) { /* unreadable file — skip */ }
+  } catch (_) {
+    /* unreadable file — skip */
+  }
   return [...types];
 }
 
@@ -79,15 +81,15 @@ for (const indexPath of indexFiles) {
   const parts = rel.split('/');
   if (parts.length < 4) continue;
 
-  const level    = parts[0];
+  const level = parts[0];
   const category = parts[2];
-  const slug     = parts[3];
+  const slug = parts[3];
 
   const content = fs.readFileSync(indexPath, 'utf8');
-  const meta    = parseYamlSimple(content);
-  const id      = meta.id || '(no id)';
-  const title   = meta.title || '(untitled)';
-  const diff    = meta.difficulty  || '—';
+  const meta = parseYamlSimple(content);
+  const id = meta.id || '(no id)';
+  const title = meta.title || '(untitled)';
+  const diff = meta.difficulty || '—';
 
   const seriesDir = path.dirname(indexPath);
   const types = getTypesFromDir(seriesDir);
@@ -99,22 +101,52 @@ for (const indexPath of indexFiles) {
 
 if (showMissing) {
   const ALL_TYPES = [
-    'number-check','problem','matching','pyramid','sequence','bounding','convert',
-    'logic-grid','true-false','compare','multi-question','mcq','fraction','base-10',
-    'clock','sort','drag-sort','fill-table','checkbox','select','svg-tiles',
-    'tile-select','fraction-check','ruler','click-blocks','number-line',
-    'coordinate-grid','bar-chart','calc-chain','number-hunt','compare-groups','count-objects',
+    'number-check',
+    'problem',
+    'matching',
+    'pyramid',
+    'sequence',
+    'bounding',
+    'convert',
+    'logic-grid',
+    'true-false',
+    'compare',
+    'multi-question',
+    'mcq',
+    'fraction',
+    'base-10',
+    'clock',
+    'sort',
+    'drag-sort',
+    'fill-table',
+    'checkbox',
+    'select',
+    'svg-tiles',
+    'tile-select',
+    'fraction-check',
+    'ruler',
+    'click-blocks',
+    'number-line',
+    'coordinate-grid',
+    'bar-chart',
+    'calc-chain',
+    'number-hunt',
+    'compare-groups',
+    'count-objects',
   ];
-  const usedTypes = new Set(series.flatMap(s => s.types));
-  const missing = ALL_TYPES.filter(t => !usedTypes.has(t));
+  const usedTypes = new Set(series.flatMap((s) => s.types));
+  const missing = ALL_TYPES.filter((t) => !usedTypes.has(t));
   console.log(`\nTypes with NO exercises (${missing.length}):\n`);
-  missing.forEach(t => console.log(`  ❌ ${t}`));
+  missing.forEach((t) => console.log(`  ❌ ${t}`));
   console.log('');
 
   console.log('Types by usage count:\n');
   const counts = {};
   for (const t of ALL_TYPES) counts[t] = 0;
-  for (const s of series) s.types.forEach(t => { if (counts[t] !== undefined) counts[t]++; });
+  for (const s of series)
+    s.types.forEach((t) => {
+      if (counts[t] !== undefined) counts[t]++;
+    });
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   for (const [t, n] of sorted) {
     const bar = '█'.repeat(Math.min(n, 40));
@@ -127,13 +159,13 @@ if (showMissing) {
 // ── Filter ────────────────────────────────────────────────────────────────────
 
 let filtered = series;
-if (filterLevel) filtered = filtered.filter(s => s.level === filterLevel);
-if (filterType)  filtered = filtered.filter(s => s.types.includes(filterType));
-if (filterCat)   filtered = filtered.filter(s => s.category === filterCat);
+if (filterLevel) filtered = filtered.filter((s) => s.level === filterLevel);
+if (filterType) filtered = filtered.filter((s) => s.types.includes(filterType));
+if (filterCat) filtered = filtered.filter((s) => s.category === filterCat);
 
 // ── Sort: level, category, slug ───────────────────────────────────────────────
 
-const LEVEL_ORDER = ['cp','ce1','ce2','cm1','cm2','6e'];
+const LEVEL_ORDER = ['cp', 'ce1', 'ce2', 'cm1', 'cm2', '6e'];
 filtered.sort((a, b) => {
   const li = LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level);
   if (li !== 0) return li;
@@ -158,14 +190,17 @@ function header() {
 }
 
 console.log(`\n${header()}`);
-console.log('─'.repeat(Object.values(colW).reduce((a,b)=>a+b,0) + 6));
+console.log('─'.repeat(Object.values(colW).reduce((a, b) => a + b, 0) + 6));
 
 for (const s of filtered) {
   const row = [
     s.level.padEnd(colW.level),
     s.category.slice(0, colW.cat - 1).padEnd(colW.cat),
     s.slug.slice(0, colW.slug - 1).padEnd(colW.slug),
-    s.types.join(',').slice(0, colW.type - 1).padEnd(colW.type),
+    s.types
+      .join(',')
+      .slice(0, colW.type - 1)
+      .padEnd(colW.type),
     s.title.slice(0, colW.title - 1).padEnd(colW.title),
     s.id,
   ].join(' ');
@@ -174,7 +209,13 @@ for (const s of filtered) {
 
 console.log(`\nTotal: ${filtered.length} series`);
 if (filterLevel || filterType || filterCat) {
-  const filters = [filterLevel && `--level ${filterLevel}`, filterType && `--type ${filterType}`, filterCat && `--cat ${filterCat}`].filter(Boolean).join(' ');
+  const filters = [
+    filterLevel && `--level ${filterLevel}`,
+    filterType && `--type ${filterType}`,
+    filterCat && `--cat ${filterCat}`,
+  ]
+    .filter(Boolean)
+    .join(' ');
   console.log(`Filters: ${filters}`);
 }
 console.log('');

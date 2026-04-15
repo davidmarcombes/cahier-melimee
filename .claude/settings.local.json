@@ -222,7 +222,12 @@
       "Bash(mv src/fr/applications/cm1/maths/fractions/fraction-vrai-faux src/fr/exercices/cm1/maths/fractions/fraction-vrai-faux)",
       "Bash(mv src/fr/applications/cm1/maths/fractions/fraction-decimale-vrais-faux src/fr/exercices/cm1/maths/fractions/fraction-decimale-vrais-faux)",
       "Bash(du -sh e:/Code/cahier-melimee/_site/*)",
-      "Bash(bc)"
+      "Bash(bc)",
+      "Bash(sed -n '82,87p' /e/Code/cahier-melimee/scripts/generate-report.js)",
+      "Bash(sed -n '68,73p' /e/Code/cahier-melimee/scripts/migrate-class-to-yaml.js)",
+      "Bash(sed -n '20,25p' /e/Code/cahier-melimee/scripts/check-build-urls.js)",
+      "Bash(sed -n '1352,1357p' /e/Code/cahier-melimee/.eleventy.js)",
+      "Bash(npx prettier:*)"
     ]
   }
 }

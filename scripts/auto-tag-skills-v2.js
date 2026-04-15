@@ -9,7 +9,16 @@ const SKILL_KEYWORDS = {
   'S1.2.1': ['posee', 'colonne', 'column-op', 'technique-operatoire'],
   'S1.2.2': ['chaine', 'pyramide', 'calc-chain', 'flux'],
   'S2.1.1': ['compter', 'denombrer', 'objet', 'fruits', 'points', 'jetons', 'cubes', 'collections'],
-  'S2.1.2': ['base-10', 'boulier', 'abaque', 'valeur-position', 'numeration-tableau', 'chiffre', 'position-chiffre', 'tableau-numeration'],
+  'S2.1.2': [
+    'base-10',
+    'boulier',
+    'abaque',
+    'valeur-position',
+    'numeration-tableau',
+    'chiffre',
+    'position-chiffre',
+    'tableau-numeration',
+  ],
   'S2.1.3': ['fraction', 'decimal', 'partage', 'unite'],
   'S2.1.4': ['lettres', 'noms', 'orthographe', 'mots', 'vocabulaire'],
   'S2.2.1': ['structure-additive', 'familles-faits', 'somme', 'difference'],
@@ -28,24 +37,24 @@ const SKILL_KEYWORDS = {
 };
 
 const TYPE_DEFAULTS = {
-  'clock': 'I1.1.1',
-  'ruler': 'I1.1.2',
-  'pyramid': 'S1.2.2',
-  'sequence': 'S3.2.1',
+  clock: 'I1.1.1',
+  ruler: 'I1.1.2',
+  pyramid: 'S1.2.2',
+  sequence: 'S3.2.1',
   'logic-grid': 'S3.2.2',
   'calc-chain': 'S1.2.2',
   'bar-chart': 'D1.1.1',
-  'fraction': 'S2.1.3',
+  fraction: 'S2.1.3',
   'base-10': 'S2.1.2',
   'inverse-problem': 'S2.2.2',
-  'true-false': 'S3.2.3'
+  'true-false': 'S3.2.3',
 };
 
 const ROOT = 'e:\\Code\\cahier-melimee';
 const DIRS = [
-  path.join(ROOT, 'src/fr/exercices'), 
-  path.join(ROOT, 'src/fr/applications'), 
-  path.join(ROOT, 'src/fr/defis')
+  path.join(ROOT, 'src/fr/exercices'),
+  path.join(ROOT, 'src/fr/applications'),
+  path.join(ROOT, 'src/fr/defis'),
 ];
 
 function processFiles(dir) {
@@ -70,14 +79,16 @@ function tagSkill(filePath) {
     let fm;
     try {
       fm = yaml.load(fmMatch[1]);
-    } catch (e) { return; }
+    } catch (e) {
+      return;
+    }
 
     const type = fm.type || 'number-check';
     if (type === 'problem') return;
 
     // Use absolute path relative to ROOT to find keywords
     const rel = path.relative(ROOT, filePath).toLowerCase().replace(/\\/g, '/');
-    
+
     let bestSkill = null;
     let maxMatch = 0;
 
@@ -87,8 +98,8 @@ function tagSkill(filePath) {
         if (rel.includes(k)) matches++;
       }
       if (matches > maxMatch) {
-         maxMatch = matches;
-         bestSkill = skill;
+        maxMatch = matches;
+        bestSkill = skill;
       }
     }
 
@@ -98,7 +109,7 @@ function tagSkill(filePath) {
 
     // Special cases based on mode
     if (fm.mode === 'place' && bestSkill.startsWith('I1.1')) {
-       bestSkill = 'I1.2.1';
+      bestSkill = 'I1.2.1';
     }
 
     // Update class: if it exists, replace it. If not, append it.

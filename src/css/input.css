@@ -15,13 +15,13 @@
 }
 
 /* Base-10 block colors — mapped from design tokens */
-.b10 { 
-  --b10-h: var(--b10h); 
-  --b10-hs: var(--b10hs); 
-  --b10-t: var(--b10t); 
-  --b10-ts: var(--b10ts); 
-  --b10-u: var(--b10u); 
-  --b10-us: var(--b10us); 
+.b10 {
+  --b10-h: var(--b10h);
+  --b10-hs: var(--b10hs);
+  --b10-t: var(--b10t);
+  --b10-ts: var(--b10ts);
+  --b10-u: var(--b10u);
+  --b10-us: var(--b10us);
 }
 
 /* BEGIN:design-tokens */
@@ -216,7 +216,9 @@ body {
 .gp-token {
   border-radius: 3px;
   padding: 1px 3px;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 /* Tokens become tappable when their step is active */
 .gp-story[data-gp-active] .gp-token {
@@ -235,5 +237,11 @@ body {
   background-color: #bfdbfe;
   color: #1e3a5f;
 }
-.dark .gp-token.gp-kw  { background-color: #713f12; color: #fef9c3; }
-.dark .gp-token.gp-num { background-color: #1e3a5f; color: #dbeafe; }
+.dark .gp-token.gp-kw {
+  background-color: #713f12;
+  color: #fef9c3;
+}
+.dark .gp-token.gp-num {
+  background-color: #1e3a5f;
+  color: #dbeafe;
+}

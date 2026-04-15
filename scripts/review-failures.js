@@ -80,8 +80,12 @@ function getSeriesUrl(mdPath, seriesId) {
 // ─── Colour helpers ───────────────────────────────────────────────────────────
 
 const C = {
-  bold: '\x1b[1m', dim: '\x1b[2m',
-  cyan: '\x1b[36m', yellow: '\x1b[33m', green: '\x1b[32m', red: '\x1b[31m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  cyan: '\x1b[36m',
+  yellow: '\x1b[33m',
+  green: '\x1b[32m',
+  red: '\x1b[31m',
   reset: '\x1b[0m',
 };
 
@@ -94,18 +98,14 @@ async function main() {
   }
 
   const { headers, rows } = parseCSV(fs.readFileSync(CACHE_PATH, 'utf8'));
-  const modelCols = FILTER_MODEL
-    ? [FILTER_MODEL].filter((m) => headers.includes(m))
-    : getModelCols(headers);
+  const modelCols = FILTER_MODEL ? [FILTER_MODEL].filter((m) => headers.includes(m)) : getModelCols(headers);
 
   if (FILTER_MODEL && !headers.includes(FILTER_MODEL)) {
     console.error(`Model "${FILTER_MODEL}" not found in cache. Available: ${getModelCols(headers).join(', ')}`);
     process.exit(1);
   }
 
-  const failed = rows.filter(
-    (r) => r.manual !== 'ok' && modelCols.some((m) => r[m] === 'fail')
-  );
+  const failed = rows.filter((r) => r.manual !== 'ok' && modelCols.some((m) => r[m] === 'fail'));
 
   if (!failed.length) {
     console.log(`\n${C.green}No failures to review.${C.reset}\n`);

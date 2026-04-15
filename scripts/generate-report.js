@@ -81,7 +81,9 @@ for (const { dir: scanRoot, kind } of SCAN) {
     let meta = {};
     try {
       meta = yaml.load(fs.readFileSync(indexPath, 'utf8')) || {};
-    } catch {}
+    } catch {
+      /* missing or invalid YAML — skip series */
+    }
 
     // Relative path from ROOT/src — e.g. "fr/exercices/cm1/maths/numeration/calcul-mental-01"
     const relPath = path.relative(path.join(ROOT, 'src'), seriesDir).replace(/\\/g, '/');
@@ -117,8 +119,7 @@ for (const { dir: scanRoot, kind } of SCAN) {
     // class lives in index.yaml only (since migration)
     const seriesClass = meta.class ? String(meta.class).trim() : '';
 
-    const lengthFlag =
-      repeatTotal < 2 ? 'too-short' : repeatTotal > 12 ? 'too-long' : '';
+    const lengthFlag = repeatTotal < 2 ? 'too-short' : repeatTotal > 12 ? 'too-long' : '';
 
     rows.push({
       kind,
@@ -226,24 +227,50 @@ for (const r of rows) {
   if (r.class) byClass[r.class] = (byClass[r.class] || 0) + 1;
 }
 const VERGNAUD_CODES = [
-  'A1.1','A1.2',
-  'A2.1','A2.2','A2.3','A2.4',
-  'A3.1','A3.2','A3.3',
-  'A4.1','A4.2',
-  'M1.1','M1.2','M1.3',
-  'M2.1','M2.2',
-  'M3.1','M3.2','M3.3','M3.4',
+  'A1.1',
+  'A1.2',
+  'A2.1',
+  'A2.2',
+  'A2.3',
+  'A2.4',
+  'A3.1',
+  'A3.2',
+  'A3.3',
+  'A4.1',
+  'A4.2',
+  'M1.1',
+  'M1.2',
+  'M1.3',
+  'M2.1',
+  'M2.2',
+  'M3.1',
+  'M3.2',
+  'M3.3',
+  'M3.4',
 ];
 const SKILL_CODES = [
-  'S1.1.1','S1.1.2','S1.1.3',
-  'S1.2.1','S1.2.2',
-  'S2.1.1','S2.1.2','S2.1.3','S2.1.4',
-  'S2.2.1','S2.2.2',
-  'S3.1.1','S3.1.2','S3.1.3',
-  'S3.2.1','S3.2.2','S3.2.3',
-  'I1.1.1','I1.1.2',
+  'S1.1.1',
+  'S1.1.2',
+  'S1.1.3',
+  'S1.2.1',
+  'S1.2.2',
+  'S2.1.1',
+  'S2.1.2',
+  'S2.1.3',
+  'S2.1.4',
+  'S2.2.1',
+  'S2.2.2',
+  'S3.1.1',
+  'S3.1.2',
+  'S3.1.3',
+  'S3.2.1',
+  'S3.2.2',
+  'S3.2.3',
+  'I1.1.1',
+  'I1.1.2',
   'I1.2.1',
-  'D1.1.1','D1.1.2',
+  'D1.1.1',
+  'D1.1.2',
 ];
 console.log(`\n${C.cyan}Vergnaud class coverage (series count):${C.reset}`);
 for (const code of VERGNAUD_CODES) {

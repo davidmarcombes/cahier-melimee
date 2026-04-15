@@ -28,14 +28,17 @@ function renderShorthands(str) {
 
 // ── Bar Model SVG generator ──────────────────────────────────────────────────
 function genBarModelSvg(bm) {
-  const W = 360, PX = 20, BAR_H = 42, GAP = 12;
+  const W = 360,
+    PX = 20,
+    BAR_H = 42,
+    GAP = 12;
   const F = 'font-family="system-ui,sans-serif"';
   const ans = String(bm.answer ?? '');
 
   if (bm.mode === 'part-whole') {
     const wholeIsUnk = String(bm.whole) === '?';
     const wholeNum = wholeIsUnk ? parseFloat(ans) : parseFloat(String(bm.whole));
-    const parts = (bm.parts || []).map(p => ({
+    const parts = (bm.parts || []).map((p) => ({
       isUnk: String(p) === '?',
       val: String(p) === '?' ? parseFloat(ans) : parseFloat(String(p)),
       label: String(p),
@@ -61,7 +64,8 @@ function genBarModelSvg(bm) {
       s += `<rect x="${x + 1}" y="${y2}" width="${pw - 3}" height="${BAR_H}" rx="4" fill="${fill}" fill-opacity="${fillOp}" stroke="${stroke}" stroke-width="2"${dash}/>`;
       const tSize = parts[i].isUnk ? 22 : 15;
       s += `<text x="${x + 1 + (pw - 3) / 2}" y="${y2 + BAR_H / 2 + 6}" text-anchor="middle" font-size="${tSize}" font-weight="700" fill="${parts[i].isUnk ? 'var(--cs)' : stroke}" ${F}>${parts[i].label}</text>`;
-      if (hasPartLabels && bm.partLabels[i]) s += `<text x="${x + 1 + (pw - 3) / 2}" y="${y2 + BAR_H + 16}" text-anchor="middle" font-size="10" fill="var(--cs)" ${F}>${bm.partLabels[i]}</text>`;
+      if (hasPartLabels && bm.partLabels[i])
+        s += `<text x="${x + 1 + (pw - 3) / 2}" y="${y2 + BAR_H + 16}" text-anchor="middle" font-size="10" fill="var(--cs)" ${F}>${bm.partLabels[i]}</text>`;
       x += pw;
     }
     s += '</svg>';
@@ -79,7 +83,8 @@ function genBarModelSvg(bm) {
     const diffH = Math.abs(refW - compW) > 10 ? 26 : 0;
     const SVG_H = PY + BAR_H + GAP + BAR_H + diffH + PY;
     let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W + PX * 2} ${SVG_H}" role="img">`;
-    const y1 = PY, y2 = PY + BAR_H + GAP;
+    const y1 = PY,
+      y2 = PY + BAR_H + GAP;
     if (bm.refLabel) s += `<text x="${PX}" y="${y1 - 6}" font-size="11" fill="var(--cs)" ${F}>${bm.refLabel}</text>`;
     if (bm.compLabel) s += `<text x="${PX}" y="${y2 - 6}" font-size="11" fill="var(--cs)" ${F}>${bm.compLabel}</text>`;
     // Ref bar
@@ -93,7 +98,8 @@ function genBarModelSvg(bm) {
     s += `<text x="${PX + compW / 2}" y="${y2 + BAR_H / 2 + 6}" text-anchor="middle" font-size="${compIsUnk ? 22 : 16}" font-weight="700" fill="${cStroke}" ${F}>${bm.compared}</text>`;
     // Difference bracket
     if (diffH > 0) {
-      const minW = Math.min(refW, compW), maxW = Math.max(refW, compW);
+      const minW = Math.min(refW, compW),
+        maxW = Math.max(refW, compW);
       const by = y2 + BAR_H + 6;
       s += `<line x1="${PX + minW}" y1="${by}" x2="${PX + maxW}" y2="${by}" stroke="var(--cs)" stroke-width="1.5"/>`;
       s += `<line x1="${PX + minW}" y1="${by - 4}" x2="${PX + minW}" y2="${by + 4}" stroke="var(--cs)" stroke-width="1.5"/>`;
@@ -234,15 +240,15 @@ module.exports = async function (eleventyConfig) {
       const relPath = path.relative(dir, seriesDir).replace(/\\/g, '/');
       const parts = relPath.split('/');
       result.push({
-        series:      relPath,
-        id:          meta.id,
+        series: relPath,
+        id: meta.id,
         title: meta.title || path.basename(seriesDir),
-        level:       (parts[0] || '').toUpperCase(),
-        topic:       parts[1] || '',
-        subtopic:    parts[2] || '',
-        difficulty:  meta.difficulty || '',
-        duration:    meta.duration   ?? 60,
-        folder:      'defis',
+        level: (parts[0] || '').toUpperCase(),
+        topic: parts[1] || '',
+        subtopic: parts[2] || '',
+        difficulty: meta.difficulty || '',
+        duration: meta.duration ?? 60,
+        folder: 'defis',
         usedClasses: meta.class ? [String(meta.class).trim()] : [],
       });
     }
@@ -586,12 +592,16 @@ module.exports = async function (eleventyConfig) {
               const row = rawRows[r];
               for (let c = 1; c < row.length - 1; c++) {
                 if (row[c] !== null) continue;
-                const L = row[c - 1], R = row[c + 1];
+                const L = row[c - 1],
+                  R = row[c + 1];
                 if (L === null || R === null) continue;
                 const gp = rawRows[r + 2][c - 1];
                 if (gp === null) continue;
                 const x = (gp - L - R) / 2;
-                if (Number.isInteger(x)) { row[c] = x; changed = true; }
+                if (Number.isInteger(x)) {
+                  row[c] = x;
+                  changed = true;
+                }
               }
             }
           }
@@ -650,7 +660,8 @@ module.exports = async function (eleventyConfig) {
               answer = c.answer.trim();
             } else {
               try {
-                const evalExpr = (s) => Function('"use strict"; return (' + s.replace(/×/g, '*').replace(/÷/g, '/') + ')')();
+                const evalExpr = (s) =>
+                  Function('"use strict"; return (' + s.replace(/×/g, '*').replace(/÷/g, '/') + ')')();
                 const nl = evalExpr(l);
                 const nr = evalExpr(r);
                 answer = nl < nr ? '<' : nl > nr ? '>' : '=';
@@ -663,25 +674,31 @@ module.exports = async function (eleventyConfig) {
         }
 
         if (ex.data.type === 'compare-solutions' && ex.data.solutions) {
-          item.csSolutions = (ex.data.solutions || []).map(s => ({
+          item.csSolutions = (ex.data.solutions || []).map((s) => ({
             name: String(s.name || ''),
-            steps: (s.steps || []).map(st => String(st)),
+            steps: (s.steps || []).map((st) => String(st)),
           }));
           item.correctSolution = Number(ex.data.correctSolution ?? 0);
         }
 
         if (ex.data.type === 'error-analysis' && ex.data.steps) {
-          item.eaSteps = (ex.data.steps || []).map(s => String(s));
+          item.eaSteps = (ex.data.steps || []).map((s) => String(s));
           item.wrongStep = Number(ex.data.wrongStep ?? 0);
-          item.correction = String(ex.data.correction ?? '').trim().toLowerCase();
+          item.correction = String(ex.data.correction ?? '')
+            .trim()
+            .toLowerCase();
           item.guided = !!ex.data.guided;
         }
 
         if (ex.data.type === 'estimation') {
           const estVals = ex.data.estimates
-            ? (Array.isArray(ex.data.estimates) ? ex.data.estimates : [ex.data.estimates])
-            : ex.data.estimate !== undefined ? [ex.data.estimate] : [];
-          item.estAnswers = estVals.map(v => String(v).trim().toLowerCase());
+            ? Array.isArray(ex.data.estimates)
+              ? ex.data.estimates
+              : [ex.data.estimates]
+            : ex.data.estimate !== undefined
+              ? [ex.data.estimate]
+              : [];
+          item.estAnswers = estVals.map((v) => String(v).trim().toLowerCase());
         }
 
         if (ex.data.type === 'think-board') {
@@ -742,17 +759,19 @@ module.exports = async function (eleventyConfig) {
           }
           item.gpStory = storyHtml;
           // Map steps
-          item.gpSteps = ex.data.steps.map(step => {
+          item.gpSteps = ex.data.steps.map((step) => {
             const s = { kind: step.kind };
-            if (Array.isArray(step.tokens))  s.tokens  = step.tokens.map(String);
-            if (step.hint)                   s.hint    = md.renderInline(interpolate(String(step.hint)));
-            if (step.question)               s.question = md.renderInline(interpolate(String(step.question)));
+            if (Array.isArray(step.tokens)) s.tokens = step.tokens.map(String);
+            if (step.hint) s.hint = md.renderInline(interpolate(String(step.hint)));
+            if (step.question) s.question = md.renderInline(interpolate(String(step.question)));
             if (Array.isArray(step.choices)) s.choices = step.choices.map(String);
-            if (step.unit)                   s.unit    = String(step.unit);
+            if (step.unit) s.unit = String(step.unit);
             // answers: normalise to array, lower-cased for comparison
             const raw = step.answers
-              ? step.answers.map(a => String(a).trim().toLowerCase())
-              : step.answer != null ? [String(step.answer).trim().toLowerCase()] : [];
+              ? step.answers.map((a) => String(a).trim().toLowerCase())
+              : step.answer != null
+                ? [String(step.answer).trim().toLowerCase()]
+                : [];
             if (raw.length) s.answers = raw;
             return s;
           });
@@ -814,8 +833,9 @@ module.exports = async function (eleventyConfig) {
             cols: Number(ex.data.cols ?? 6),
             rows: Number(ex.data.rows ?? 6),
             placeLabel: String(ex.data.placeLabel || 'A'),
-            points: (ex.data.points || []).map(p => ({
-              x: Number(p.x), y: Number(p.y),
+            points: (ex.data.points || []).map((p) => ({
+              x: Number(p.x),
+              y: Number(p.y),
               label: p.label ? String(p.label) : '',
             })),
           };
@@ -829,7 +849,7 @@ module.exports = async function (eleventyConfig) {
             yMax: Number(ex.data.yMax ?? 10),
             yStep: Number(ex.data.yStep ?? 1),
             unit: String(ex.data.unit || ''),
-            questions: (ex.data.questions || []).map(q => ({
+            questions: (ex.data.questions || []).map((q) => ({
               text: String(q.text),
               answer: String(q.answer).trim().toLowerCase(),
             })),
@@ -855,13 +875,15 @@ module.exports = async function (eleventyConfig) {
               const n = Number(par.n),
                 d = Number(par.d),
                 size = Number(par.size) || 80;
-              const c = size / 2, r = size / 2 - 2;
-              const f = v => Math.round(v * 100) / 100;
-              let filled = '', empty = '';
+              const c = size / 2,
+                r = size / 2 - 2;
+              const f = (v) => Math.round(v * 100) / 100;
+              let filled = '',
+                empty = '';
               for (let i = 0; i < d; i++) {
                 const a0 = (i * 2 * Math.PI) / d - Math.PI / 2;
                 const a1 = ((i + 1) * 2 * Math.PI) / d - Math.PI / 2;
-                const p = `M${c},${c}L${f(c+r*Math.cos(a0))},${f(c+r*Math.sin(a0))}A${r},${r},0,0,1,${f(c+r*Math.cos(a1))},${f(c+r*Math.sin(a1))}Z`;
+                const p = `M${c},${c}L${f(c + r * Math.cos(a0))},${f(c + r * Math.sin(a0))}A${r},${r},0,0,1,${f(c + r * Math.cos(a1))},${f(c + r * Math.sin(a1))}Z`;
                 if (i < n) filled += `<path d="${p}" fill="var(--p)"/>`;
                 else empty += `<path d="${p}" fill="var(--sf)"/>`;
               }
@@ -919,14 +941,14 @@ module.exports = async function (eleventyConfig) {
 
         if (ex.data.type === 'column-op') {
           const clean = (s) => String(s).replace(/\s+/g, '');
-          const top    = clean(ex.data.top    || '');
+          const top = clean(ex.data.top || '');
           const bottom = ex.data.bottom != null ? clean(ex.data.bottom) : null;
           const result = clean(ex.data.result || '');
           const maxLen = Math.max(top.length, bottom ? bottom.length : 0, result.length);
           const pad = (s, n) => s.padStart(n, ' ');
           item.colOp = {
             operation: ex.data.operation || '+',
-            top:    pad(top,    maxLen).split(''),
+            top: pad(top, maxLen).split(''),
             bottom: bottom ? pad(bottom, maxLen).split('') : null,
             result: pad(result, maxLen).split(''),
           };
@@ -936,7 +958,7 @@ module.exports = async function (eleventyConfig) {
             // auto-compute answers for each '?' in result
             const topN = parseInt(top, 10);
             const botN = bottom ? parseInt(bottom, 10) : 0;
-            const op   = item.colOp.operation;
+            const op = item.colOp.operation;
             let resN = op === '+' ? topN + botN : op === '-' ? topN - botN : topN * botN;
             const resStr = String(Math.abs(resN)).padStart(result.length, '0');
             item.answers = [];
@@ -945,7 +967,6 @@ module.exports = async function (eleventyConfig) {
             }
           }
         }
-
 
         if (ex.data.type === 'calc-chain' && ex.data.chain) {
           item.chain = {
@@ -968,11 +989,11 @@ module.exports = async function (eleventyConfig) {
             item.machine.input = Number(interpolate(String(m.input)));
             item.machine.answer = Number(interpolate(String(m.answer)));
           } else if (m.mode === 'discover') {
-            item.machine.pairs = (m.pairs || []).map(p => ({
+            item.machine.pairs = (m.pairs || []).map((p) => ({
               in: Number(interpolate(String(p.in))),
               out: Number(interpolate(String(p.out))),
             }));
-            item.machine.choices = (m.choices || []).map(c => interpolate(String(c)));
+            item.machine.choices = (m.choices || []).map((c) => interpolate(String(c)));
             item.machine.answer = Number(m.answer);
           }
         }
@@ -994,7 +1015,9 @@ module.exports = async function (eleventyConfig) {
           const size = Number(f.size || 4);
           // Build flat given array (null = blank, number = pre-filled)
           const given = Array(size * size).fill(null);
-          (f.given || []).forEach(g => { given[g.r * size + g.c] = Number(g.v); });
+          (f.given || []).forEach((g) => {
+            given[g.r * size + g.c] = Number(g.v);
+          });
           // Build rows structure for template: cells + hCons + vCons
           const rows = [];
           for (let r = 0; r < size; r++) {
@@ -1011,8 +1034,21 @@ module.exports = async function (eleventyConfig) {
               const flatIdx = r * size + c;
               cells.push({ given: given[flatIdx], idx: flatIdx });
             }
-            const hCons = (f.hCons || []).filter(h => h.r === r).reduce((acc, h) => { acc[h.c] = h.sign; return acc; }, Array(size - 1).fill(null));
-            const vCons = (f.vCons || []).filter(v => v.r === r).reduce((acc, v) => { acc[v.c] = v.sign; return acc; }, Array(size).fill(null));
+            const hCons = (f.hCons || [])
+              .filter((h) => h.r === r)
+              .reduce(
+                (acc, h) => {
+                  acc[h.c] = h.sign;
+                  return acc;
+                },
+                Array(size - 1).fill(null)
+              );
+            const vCons = (f.vCons || [])
+              .filter((v) => v.r === r)
+              .reduce((acc, v) => {
+                acc[v.c] = v.sign;
+                return acc;
+              }, Array(size).fill(null));
             rows.push({ cells, hCons, vCons: r < size - 1 ? vCons : null });
           }
           item.futoshiki = { size, given, rows };
@@ -1022,7 +1058,7 @@ module.exports = async function (eleventyConfig) {
           const k = ex.data.kenken;
           const size = Number(k.size || 3);
           // cages: array of { op, target, cells: [[r,c],...], label }
-          const cages = (k.cages || []).map(cage => ({
+          const cages = (k.cages || []).map((cage) => ({
             op: String(cage.op || ''),
             target: Number(cage.target),
             cells: cage.cells.map(([r, c]) => [Number(r), Number(c)]),
@@ -1032,9 +1068,13 @@ module.exports = async function (eleventyConfig) {
           const cageGrid = Array.from({ length: size }, () => Array(size).fill(null));
           const labelGrid = Array.from({ length: size }, () => Array(size).fill(''));
           cages.forEach((cage, ci) => {
-            cage.cells.forEach(([r, c]) => { cageGrid[r][c] = ci; });
+            cage.cells.forEach(([r, c]) => {
+              cageGrid[r][c] = ci;
+            });
             // top-left = min row then min col
-            const tl = cage.cells.reduce((best, cur) => cur[0] < best[0] || (cur[0] === best[0] && cur[1] < best[1]) ? cur : best);
+            const tl = cage.cells.reduce((best, cur) =>
+              cur[0] < best[0] || (cur[0] === best[0] && cur[1] < best[1]) ? cur : best
+            );
             labelGrid[tl[0]][tl[1]] = cage.label;
           });
           const cells = Array.from({ length: size }, (_, r) =>
@@ -1047,7 +1087,10 @@ module.exports = async function (eleventyConfig) {
           const nl = ex.data.numberlink;
           const size = Number(nl.size);
           // pairs: [[r1,c1],[r2,c2]] for each numbered pair
-          const pairs = (nl.pairs || []).map(p => [[Number(p[0][0]), Number(p[0][1])], [Number(p[1][0]), Number(p[1][1])]]);
+          const pairs = (nl.pairs || []).map((p) => [
+            [Number(p[0][0]), Number(p[0][1])],
+            [Number(p[1][0]), Number(p[1][1])],
+          ]);
           // Build rows grid: 0 = empty, N = endpoint for pair N
           const rows = Array.from({ length: size }, () => Array(size).fill(0));
           pairs.forEach((pair, pi) => {
@@ -1059,7 +1102,7 @@ module.exports = async function (eleventyConfig) {
 
         if (ex.data.type === 'venn' && ex.data.venn) {
           const v = ex.data.venn;
-          const items = (v.items || []).map(it => ({
+          const items = (v.items || []).map((it) => ({
             char: it.char,
             zone: it.zone,
           }));
@@ -1100,8 +1143,26 @@ module.exports = async function (eleventyConfig) {
   const LEVEL_CODES = { CP: '1', CE1: '2', CE2: '3', CM1: '4', CM2: '5' };
   const DIFF_CODES = { facile: '1', moyen: '2', difficile: '3' };
   const DISAMBIG_EMOJIS = [
-    '🐶','🐱','🐭','🐰','🦊','🐻','🐼','🐨','🐯','🦁',
-    '🐮','🐷','🐸','🐵','🐧','🦆','🦉','🦋','🐢','🐬',
+    '🐶',
+    '🐱',
+    '🐭',
+    '🐰',
+    '🦊',
+    '🐻',
+    '🐼',
+    '🐨',
+    '🐯',
+    '🦁',
+    '🐮',
+    '🐷',
+    '🐸',
+    '🐵',
+    '🐧',
+    '🦆',
+    '🦉',
+    '🦋',
+    '🐢',
+    '🐬',
   ];
   const csvWarnings = [];
 
@@ -1127,8 +1188,119 @@ module.exports = async function (eleventyConfig) {
     // Canonical lookup tables — kept in sync with CSV_TYPES / CSV_CLASSES in app.js
     // Add new entries at the END to preserve existing indices; never reorder.
     // Multi-type series all map to "multi" — no composite entries.
-    const CSV_TYPES = ["","bar-chart","base-10","bounding","calc-chain","checkbox","click-blocks","clock","column-op","compare","compare-groups","convert","coordinate-grid","count-objects","decimal-triple","decomp","drag-sort","fill-table","fraction","fraction-check","fraction-paint","function-machine","inverse-problem","logic-grid","magic-color","matching","maze","mcq","multi","multi-question","number-check","number-hunt","number-line","problem","pyramid","ruler","select","sequence","sort","svg-tiles","thermometer","tile-select","tri-arith","true-false","venn","defi","compare-expressions","estimation","error-analysis","compare-solutions","futoshiki","kenken","numberlink"];
-    const CSV_CLASSES = ["A1.1","A1.2","A2.1","A2.2","A2.3","A2.4","A3.1","A3.2","A3.3","A4.1","A4.2","D1.1.1","I1.1.1","I1.1.2","M1.1","M1.2","M1.3","M1.4","M2.1","M2.2","M2.3","M3.1","M3.2","M3.3","N4.2","S1.1.1","S1.1.2","S1.1.3","S1.2.1","S1.2.2","S1.2.3","S1.3.1","S2.1.1","S2.1.2","S2.1.3","S2.1.4","S2.2.1","S2.2.2","S3.1.1","S3.1.2","S3.2.1","S3.2.2","S3.2.3","S4.1.2","S3.1.3"];
+    const CSV_TYPES = [
+      '',
+      'bar-chart',
+      'base-10',
+      'bounding',
+      'calc-chain',
+      'checkbox',
+      'click-blocks',
+      'clock',
+      'column-op',
+      'compare',
+      'compare-groups',
+      'convert',
+      'coordinate-grid',
+      'count-objects',
+      'decimal-triple',
+      'decomp',
+      'drag-sort',
+      'fill-table',
+      'fraction',
+      'fraction-check',
+      'fraction-paint',
+      'function-machine',
+      'inverse-problem',
+      'logic-grid',
+      'magic-color',
+      'matching',
+      'maze',
+      'mcq',
+      'multi',
+      'multi-question',
+      'number-check',
+      'number-hunt',
+      'number-line',
+      'problem',
+      'pyramid',
+      'ruler',
+      'select',
+      'sequence',
+      'sort',
+      'svg-tiles',
+      'thermometer',
+      'tile-select',
+      'tri-arith',
+      'true-false',
+      'venn',
+      'defi',
+      'compare-expressions',
+      'estimation',
+      'error-analysis',
+      'compare-solutions',
+      'futoshiki',
+      'kenken',
+      'numberlink',
+      'think-board',
+      'guided-problem',
+      'bar-model',
+      'fact-family',
+    ];
+    const CSV_CLASSES = [
+      'A1.1',
+      'A1.2',
+      'A2.1',
+      'A2.2',
+      'A2.3',
+      'A2.4',
+      'A3.1',
+      'A3.2',
+      'A3.3',
+      'A4.1',
+      'A4.2',
+      'D1.1.1',
+      'I1.1.1',
+      'I1.1.2',
+      'M1.1',
+      'M1.2',
+      'M1.3',
+      'M1.4',
+      'M2.1',
+      'M2.2',
+      'M2.3',
+      'M3.1',
+      'M3.2',
+      'M3.3',
+      'N4.2',
+      'S1.1.1',
+      'S1.1.2',
+      'S1.1.3',
+      'S1.2.1',
+      'S1.2.2',
+      'S1.2.3',
+      'S1.3.1',
+      'S2.1.1',
+      'S2.1.2',
+      'S2.1.3',
+      'S2.1.4',
+      'S2.2.1',
+      'S2.2.2',
+      'S3.1.1',
+      'S3.1.2',
+      'S3.2.1',
+      'S3.2.2',
+      'S3.2.3',
+      'S4.1.2',
+      'S3.1.3',
+      'A1',
+      'A2',
+      'A3',
+      'A4',
+      'M1',
+      'M2',
+      'M3',
+    ];
 
     const lines = ['id,l,s,t,title,d,f,ty,cl'];
     for (const s of allMeta) {
@@ -1146,7 +1318,8 @@ module.exports = async function (eleventyConfig) {
       if (t.length > 12) csvWarnings.push(`topic > 12 chars: "${t}" in ${s.series}`);
       if (title.includes(',')) csvWarnings.push(`title had comma (replaced): "${s.title}" in ${s.series}`);
       if (tyIdx < 0) csvWarnings.push(`unknown type sig "${typeSig}" in ${s.series} — add to CSV_TYPES`);
-      if (clIdx < 0 && (s.usedClasses || []).length) csvWarnings.push(`unknown class "${s.usedClasses[0]}" in ${s.series} — add to CSV_CLASSES`);
+      if (clIdx < 0 && (s.usedClasses || []).length)
+        csvWarnings.push(`unknown class "${s.usedClasses[0]}" in ${s.series} — add to CSV_CLASSES`);
       const line = `${s.id},${l},${subj},${t},${title},${d},${f},${tyIdx >= 0 ? tyIdx : ''},${clIdx >= 0 ? clIdx : ''}`;
       lines.push(line);
     }
@@ -1312,8 +1485,9 @@ module.exports = async function (eleventyConfig) {
 
   // Dev-only: POST /api/human-validate → appends to reports/human-validate.csv
   const HUMAN_CSV = path.join(__dirname, 'reports/human-validate.csv');
-  const ALL_EXERCISE_ROOTS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis']
-    .map((r) => path.join(__dirname, r));
+  const ALL_EXERCISE_ROOTS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis'].map((r) =>
+    path.join(__dirname, r)
+  );
   const crypto = require('crypto');
 
   function getAllSeriesIds() {
@@ -1351,7 +1525,9 @@ module.exports = async function (eleventyConfig) {
       try {
         const result = scan(root);
         if (result) return result;
-      } catch (_) {}
+      } catch {
+        /* unreadable directory — skip */
+      }
     }
     return null;
   }
@@ -1362,18 +1538,29 @@ module.exports = async function (eleventyConfig) {
 
   function readHumanCsv() {
     if (!fs.existsSync(HUMAN_CSV)) return new Map();
-    const lines = fs.readFileSync(HUMAN_CSV, 'utf8').split('\n').filter((l) => l.trim());
+    const lines = fs
+      .readFileSync(HUMAN_CSV, 'utf8')
+      .split('\n')
+      .filter((l) => l.trim());
     const map = new Map();
     for (const line of lines.slice(1)) {
       const parts = line.split(',');
-      map.set(parts[0], { path: parts[0], seriesId: parts[1] || '', hash: parts[2] || '', validatedAt: parts[3] || '' });
+      map.set(parts[0], {
+        path: parts[0],
+        seriesId: parts[1] || '',
+        hash: parts[2] || '',
+        validatedAt: parts[3] || '',
+      });
     }
     return map;
   }
 
   function writeHumanCsv(map) {
     const rows = [...map.values()].sort((a, b) => a.path.localeCompare(b.path));
-    const lines = ['path,seriesId,hash,validatedAt', ...rows.map((r) => `${r.path},${r.seriesId},${r.hash},${r.validatedAt}`)];
+    const lines = [
+      'path,seriesId,hash,validatedAt',
+      ...rows.map((r) => `${r.path},${r.seriesId},${r.hash},${r.validatedAt}`),
+    ];
     fs.writeFileSync(HUMAN_CSV, lines.join('\n') + '\n', 'utf8');
   }
 
@@ -1399,11 +1586,17 @@ module.exports = async function (eleventyConfig) {
           const currentPos = allIds.indexOf(currentId);
           let next = null;
           for (let i = currentPos + 1; i < allIds.length; i++) {
-            if (!validatedSet.has(allIds[i])) { next = allIds[i]; break; }
+            if (!validatedSet.has(allIds[i])) {
+              next = allIds[i];
+              break;
+            }
           }
           if (!next) {
             for (let i = 0; i < currentPos; i++) {
-              if (!validatedSet.has(allIds[i])) { next = allIds[i]; break; }
+              if (!validatedSet.has(allIds[i])) {
+                next = allIds[i];
+                break;
+              }
             }
           }
           const prefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
@@ -1431,7 +1624,9 @@ module.exports = async function (eleventyConfig) {
 
         if (req.method !== 'POST' || req.url !== '/api/human-validate') return next();
         let body = '';
-        req.on('data', (chunk) => { body += chunk; });
+        req.on('data', (chunk) => {
+          body += chunk;
+        });
         req.on('end', () => {
           try {
             const { seriesId, url } = JSON.parse(body);
@@ -1439,7 +1634,10 @@ module.exports = async function (eleventyConfig) {
             const map = readHumanCsv();
             const ts = new Date().toISOString();
             if (seriesDir) {
-              const mdFiles = fs.readdirSync(seriesDir).filter((f) => f.endsWith('.md')).sort();
+              const mdFiles = fs
+                .readdirSync(seriesDir)
+                .filter((f) => f.endsWith('.md'))
+                .sort();
               for (const f of mdFiles) {
                 const absPath = path.join(seriesDir, f);
                 const relPath = path.relative(__dirname, absPath).replace(/\\/g, '/');

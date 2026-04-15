@@ -3,17 +3,8 @@
   "language": "en,fr",
   "import": ["@cspell/dict-fr-fr/cspell-ext.json"],
   "dictionaries": ["en_US", "fr-fr"],
-  "ignorePaths": [
-    "node_modules",
-    "_site",
-    ".git"
-  ],
-  "ignoreRegExpList": [
-    "/^---[\\s\\S]*?^---/m",
-    "\\b\\d+[/:,.]\\d+\\b",
-    "\\b[0-9]+\\b",
-    "\\b[A-Z]{2,}\\b"
-  ],
+  "ignorePaths": ["node_modules", "_site", ".git"],
+  "ignoreRegExpList": ["/^---[\\s\\S]*?^---/m", "\\b\\d+[/:,.]\\d+\\b", "\\b[0-9]+\\b", "\\b[A-Z]{2,}\\b"],
   "words": [
     "Mélimée",
     "melimee",

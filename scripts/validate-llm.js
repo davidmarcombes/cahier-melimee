@@ -22,17 +22,17 @@
  */
 'use strict';
 
-const fs     = require('fs');
-const path   = require('path');
+const fs = require('fs');
+const path = require('path');
 const crypto = require('crypto');
-const yaml   = require('js-yaml');
+const yaml = require('js-yaml');
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
-const ROOT        = path.join(__dirname, '..');
-const CACHE_PATH  = path.join(ROOT, 'reports/validate-llm-cache.csv');
+const ROOT = path.join(__dirname, '..');
+const CACHE_PATH = path.join(ROOT, 'reports/validate-llm-cache.csv');
 const ERRORS_PATH = path.join(ROOT, '.scratch/validate-llm-errors.md');
-const SRC_DIRS   = [
+const SRC_DIRS = [
   path.join(ROOT, 'src/fr/exercices'),
   path.join(ROOT, 'src/fr/applications'),
   path.join(ROOT, 'src/fr/defis'),
@@ -47,37 +47,56 @@ for (const arg of process.argv.slice(2)) {
   flags[k] = v !== undefined ? v : true;
 }
 
-const MODEL          = flags.model          || process.env.LLM_MODEL || 'qwen2.5:7b';
-const CONCURRENCY    = parseInt(flags.concurrency    || '3', 10);
-const FORCE          = flags.force          === true;
-const FILTER_DIR     = flags.dir            ? path.resolve(flags.dir) : null;
-const FILTER_TYPE    = flags.type           || null;
-const FAILURES_ONLY  = flags['failures-only'] === true;
-const COUNT          = flags.one === true ? 1 : (flags.count ? parseInt(flags.count, 10) : 0); // 0 = no limit
-const VERBOSE        = flags.verbose === true || COUNT === 1; // print prompts + raw responses
+const MODEL = flags.model || process.env.LLM_MODEL || 'qwen2.5:7b';
+const CONCURRENCY = parseInt(flags.concurrency || '3', 10);
+const FORCE = flags.force === true;
+const FILTER_DIR = flags.dir ? path.resolve(flags.dir) : null;
+const FILTER_TYPE = flags.type || null;
+const FAILURES_ONLY = flags['failures-only'] === true;
+const COUNT = flags.one === true ? 1 : flags.count ? parseInt(flags.count, 10) : 0; // 0 = no limit
+const VERBOSE = flags.verbose === true || COUNT === 1; // print prompts + raw responses
 
 // Types where LLM can meaningfully verify correctness.
 // Purely visual types (ruler, click-blocks, svg-tiles, compare-groups,
 // count-objects, number-hunt) are handled as SKIP inside buildPrompt.
 const LLM_TYPES = new Set([
-  'problem', 'number-check', 'true-false', 'mcq', 'multi-question',
-  'compare', 'sequence', 'bounding', 'column-op', 'convert',
-  'matching', 'pyramid', 'fill-table', 'select', 'checkbox',
-  'sort', 'drag-sort', 'clock', 'fraction', 'fraction-check',
-  'number-line', 'coordinate-grid', 'base-10', 'logic-grid',
+  'problem',
+  'number-check',
+  'true-false',
+  'mcq',
+  'multi-question',
+  'compare',
+  'sequence',
+  'bounding',
+  'column-op',
+  'convert',
+  'matching',
+  'pyramid',
+  'fill-table',
+  'select',
+  'checkbox',
+  'sort',
+  'drag-sort',
+  'clock',
+  'fraction',
+  'fraction-check',
+  'number-line',
+  'coordinate-grid',
+  'base-10',
+  'logic-grid',
   'ruler',
 ]);
 
 // ─── ANSI colours ────────────────────────────────────────────────────────────
 
 const C = {
-  reset:  '\x1b[0m',
-  bold:   '\x1b[1m',
-  red:    '\x1b[31m',
-  green:  '\x1b[32m',
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
   yellow: '\x1b[33m',
-  cyan:   '\x1b[36m',
-  grey:   '\x1b[90m',
+  cyan: '\x1b[36m',
+  grey: '\x1b[90m',
 };
 
 // ─── Cache ───────────────────────────────────────────────────────────────────
@@ -105,7 +124,10 @@ function getSeriesId(absPath) {
 function loadCache() {
   const map = new Map();
   if (!fs.existsSync(CACHE_PATH)) return map;
-  const lines = fs.readFileSync(CACHE_PATH, 'utf8').split('\n').filter(l => l.trim());
+  const lines = fs
+    .readFileSync(CACHE_PATH, 'utf8')
+    .split('\n')
+    .filter((l) => l.trim());
   if (lines.length === 0) return map;
 
   const header = lines[0].split(',');
@@ -114,20 +136,22 @@ function loadCache() {
   //   v2: path,seriesId,hash,models...
   //   v3: path,seriesId,hash,manual,models...  ← current
   const hasSeriesId = header[1] === 'seriesId';
-  const hasManual   = hasSeriesId && header[3] === 'manual';
-  const dataOffset  = hasManual ? 4 : hasSeriesId ? 3 : 2;
-  const modelCols   = header.slice(dataOffset);
+  const hasManual = hasSeriesId && header[3] === 'manual';
+  const dataOffset = hasManual ? 4 : hasSeriesId ? 3 : 2;
+  const modelCols = header.slice(dataOffset);
 
   for (const line of lines.slice(1)) {
     const parts = line.split(',');
     if (!parts[0]) continue;
-    const p        = parts[0];
-    const seriesId = hasSeriesId ? (parts[1] || '') : '';
-    const hash     = hasSeriesId ? (parts[2] || '') : (parts[1] || '');
-    const manual   = hasManual   ? (parts[3] || '') : '';
+    const p = parts[0];
+    const seriesId = hasSeriesId ? parts[1] || '' : '';
+    const hash = hasSeriesId ? parts[2] || '' : parts[1] || '';
+    const manual = hasManual ? parts[3] || '' : '';
     const verdicts = parts.slice(dataOffset);
     const models = new Map();
-    modelCols.forEach((m, i) => { if (verdicts[i]) models.set(m, verdicts[i]); });
+    modelCols.forEach((m, i) => {
+      if (verdicts[i]) models.set(m, verdicts[i]);
+    });
     map.set(p, { seriesId, hash, manual, models });
   }
   return map;
@@ -146,7 +170,9 @@ function saveCache(map) {
   const header = ['path', 'seriesId', 'hash', 'manual', ...cols].join(',');
   const rows = [...map.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([p, e]) => [p, e.seriesId || '', e.hash, e.manual || '', ...cols.map(m => e.models.get(m) || '')].join(','));
+    .map(([p, e]) =>
+      [p, e.seriesId || '', e.hash, e.manual || '', ...cols.map((m) => e.models.get(m) || '')].join(',')
+    );
   fs.writeFileSync(CACHE_PATH, [header, ...rows].join('\n') + '\n');
 }
 
@@ -198,12 +224,16 @@ function parseExercises(filePath) {
   for (let i = 0; i + 1 < delims.length; i += 2) {
     const yamlText = content.slice(delims[i].end, delims[i + 1].start);
     let data;
-    try { data = yaml.load(yamlText); } catch { continue; }
+    try {
+      data = yaml.load(yamlText);
+    } catch {
+      continue;
+    }
     if (!data || typeof data !== 'object') continue;
 
     const bodyStart = delims[i + 1].end;
-    const bodyEnd   = delims[i + 2] ? delims[i + 2].start : content.length;
-    const body      = content.slice(bodyStart, bodyEnd).trim();
+    const bodyEnd = delims[i + 2] ? delims[i + 2].start : content.length;
+    const body = content.slice(bodyStart, bodyEnd).trim();
 
     results.push({ data, body });
   }
@@ -217,7 +247,11 @@ let _generators = null;
 function getGenerators() {
   if (_generators) return _generators;
   global.clockSvg = () => ''; // only SVG call inside generators.js
-  try { _generators = require(path.join(ROOT, 'src/assets/js/generators.js')); } catch { /* */ }
+  try {
+    _generators = require(path.join(ROOT, 'src/assets/js/generators.js'));
+  } catch {
+    /* */
+  }
   return _generators;
 }
 
@@ -231,7 +265,9 @@ function generateSamples(generatorName, params, body) {
     try {
       const item = gens[generatorName].generate(params || {});
       if (item && item.type) out.push({ data: item, body, generatorName });
-    } catch { /* skip bad sample */ }
+    } catch {
+      /* skip bad sample */
+    }
   }
   return out;
 }
@@ -241,10 +277,10 @@ function generateSamples(generatorName, params, body) {
 function strip(text) {
   if (!text) return '';
   return text
-    .replace(/<[^>]+>/g, ' ')          // HTML tags
-    .replace(/\*\*(.*?)\*\*/g, '$1')   // bold
-    .replace(/\*(.*?)\*/g, '$1')       // italic
-    .replace(/`([^`]+)`/g, '$1')       // inline code
+    .replace(/<[^>]+>/g, ' ') // HTML tags
+    .replace(/\*\*(.*?)\*\*/g, '$1') // bold
+    .replace(/\*(.*?)\*/g, '$1') // italic
+    .replace(/`([^`]+)`/g, '$1') // inline code
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links
     .replace(/\s+/g, ' ')
     .trim();
@@ -280,10 +316,9 @@ function buildPrompt({ data, body }) {
   const title = strip(data.title || body || '');
 
   // Helper: format a value for display
-  const fmt = (v) => (v === null || v === undefined) ? '?' : String(v);
+  const fmt = (v) => (v === null || v === undefined ? '?' : String(v));
 
   switch (type) {
-
     case 'problem':
     case 'number-check': {
       const bodyText = strip(data.body || body || '');
@@ -297,7 +332,9 @@ function buildPrompt({ data, body }) {
         operationText && `Calcul: ${operationText}`,
         bodyText && bodyText !== instruction && `Contexte: ${bodyText}`,
         `Réponse proposée: ${answers}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'true-false': {
@@ -313,13 +350,15 @@ function buildPrompt({ data, body }) {
         context && `Contexte: ${context}`,
         data.generator && `(figure générée: ${data.generator})`,
         ...lines,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'mcq': {
       const bodyText = strip(data.body || body || '');
       const question = bodyText || title;
-      const choices = (data.choices || []).map(c => `- ${strip(String(c))}`).join('\n');
+      const choices = (data.choices || []).map((c) => `- ${strip(String(c))}`).join('\n');
       const ans = fmt(data.answer);
       return [
         `Type: QCM (Question à Choix Multiples)`,
@@ -327,28 +366,28 @@ function buildPrompt({ data, body }) {
         data.generator && `(figure générée: ${data.generator})`,
         `Choix proposés:\n${choices}`,
         `Réponse proposée comme étant la bonne : ${ans}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'multi-question': {
       if (!Array.isArray(data.questions)) return null;
       const context = strip(data.body || body || title || '');
-      const lines = data.questions.map((q, i) =>
-        `${i + 1}. ${strip(q.text)} → ${fmt(q.answer)}`
-      );
+      const lines = data.questions.map((q, i) => `${i + 1}. ${strip(q.text)} → ${fmt(q.answer)}`);
       return [
         `Type: questions multiples`,
         context && `Contexte: ${context}`,
         data.generator && `(figure générée: ${data.generator})`,
         ...lines,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'compare': {
       if (!Array.isArray(data.comparisons)) return null;
-      const lines = data.comparisons.map(c =>
-        `${strip(String(c.left))} ${c.answer} ${strip(String(c.right))}`
-      );
+      const lines = data.comparisons.map((c) => `${strip(String(c.left))} ${c.answer} ${strip(String(c.right))}`);
       return `Type: comparaison\n${lines.join('\n')}`;
     }
 
@@ -360,7 +399,9 @@ function buildPrompt({ data, body }) {
         title && `Contexte: ${title}`,
         `Termes donnés: ${given}`,
         `Réponse proposée: ${answers}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'bounding': {
@@ -369,7 +410,9 @@ function buildPrompt({ data, body }) {
         title && `Contexte: ${title}`,
         `Nombre: ${fmt(data.number)}`,
         `Encadrement proposé: ${(data.answers || []).join(' ≤ nombre ≤ ')}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'column-op': {
@@ -379,14 +422,14 @@ function buildPrompt({ data, body }) {
         `  ${fmt(data.top)}`,
         `${data.operation} ${fmt(data.bottom)}`,
         `= ${fmt(data.result)}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'convert': {
       if (!Array.isArray(data.items)) return null;
-      const lines = data.items.map(it =>
-        `${strip(String(it.prompt))} = ${fmt(it.answer)} ${it.unit || ''}`
-      );
+      const lines = data.items.map((it) => `${strip(String(it.prompt))} = ${fmt(it.answer)} ${it.unit || ''}`);
       return `Type: conversion\n${title && `Contexte: ${title}\n`}${lines.join('\n')}`;
     }
 
@@ -402,13 +445,15 @@ function buildPrompt({ data, body }) {
 
     case 'pyramid': {
       if (!Array.isArray(data.pyramid)) return null;
-      const rows = data.pyramid.map(r => Array.isArray(r) ? r.join('  ') : r);
+      const rows = data.pyramid.map((r) => (Array.isArray(r) ? r.join('  ') : r));
       return [
         `Type: pyramide d'additions (chaque case est la somme des deux cases en dessous)`,
         title && `Contexte: ${title}`,
         `Pyramide (du haut vers le bas) :\n${rows.join('\n')}`,
         `Vérifie si toutes les sommes sont exactes.`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'fill-table': {
@@ -423,18 +468,16 @@ function buildPrompt({ data, body }) {
 
     case 'select': {
       if (!Array.isArray(data.statements)) return null;
-      const choices = (data.choices || []).map(c => `- ${strip(String(c))}`).join('\n');
-      const lines = data.statements.map(s =>
-        `${strip(s.template || s.text || '')} → ${fmt(s.answer)}`
-      );
+      const choices = (data.choices || []).map((c) => `- ${strip(String(c))}`).join('\n');
+      const lines = data.statements.map((s) => `${strip(s.template || s.text || '')} → ${fmt(s.answer)}`);
       return `Type: sélection\nChoix disponibles:\n${choices}\n${lines.join('\n')}`;
     }
 
     case 'checkbox': {
       if (!Array.isArray(data.statements)) return null;
       const checked = new Set(data.checkedAnswers || []);
-      const lines = data.statements.map((s, i) =>
-        `[${checked.has(i) || checked.has(String(s)) ? '✓' : ' '}] ${strip(String(s))}`
+      const lines = data.statements.map(
+        (s, i) => `[${checked.has(i) || checked.has(String(s)) ? '✓' : ' '}] ${strip(String(s))}`
       );
       return `Type: cases à cocher\n${title && `Contexte: ${title}\n`}${lines.join('\n')}`;
     }
@@ -445,39 +488,46 @@ function buildPrompt({ data, body }) {
       return [
         `Type: trier dans l'ordre`,
         title && `Contexte: ${title}`,
-        `Ordre proposé: ${items.map(i => strip(String(i))).join(' < ')}`,
-      ].filter(Boolean).join('\n');
+        `Ordre proposé: ${items.map((i) => strip(String(i))).join(' < ')}`,
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'clock': {
-      const h = fmt(data.hour), m = fmt(data.minute);
+      const h = fmt(data.hour),
+        m = fmt(data.minute);
       const ans = data.answers ? data.answers.join(' ou ') : fmt(data.answer);
       const bodyText = strip(body || '');
       return [
         `Type: lire l'heure`,
         bodyText && `Contexte: ${bodyText}`,
-        `Heure affichée: ${h}h${m.padStart(2,'0')}`,
+        `Heure affichée: ${h}h${m.padStart(2, '0')}`,
         `Réponse proposée: ${ans} (formats acceptés : Xh30, XhXX, X:XX, XX:XX)`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'fraction': {
-      const n = fmt(data.numerator), d = fmt(data.denominator), ans = fmt(data.answer);
+      const n = fmt(data.numerator),
+        d = fmt(data.denominator),
+        ans = fmt(data.answer);
       return [
         `Type: fraction (forme ${data.shape || '?'})`,
         title && `Contexte: ${title}`,
         `Fraction: ${n}/${d}`,
         `Réponse proposée: ${ans}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'fraction-check': {
       const answers = data.answers ? data.answers.join(' ou ') : fmt(data.answer);
-      return [
-        `Type: vérifier une fraction`,
-        title && `Contexte: ${title}`,
-        `Réponse proposée: ${answers}`,
-      ].filter(Boolean).join('\n');
+      return [`Type: vérifier une fraction`, title && `Contexte: ${title}`, `Réponse proposée: ${answers}`]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'number-line': {
@@ -488,11 +538,13 @@ function buildPrompt({ data, body }) {
         `Graduation: de ${fmt(data.min)} à ${fmt(data.max)}, pas de ${fmt(data.step || 1)}`,
         data.value != null && `Position du point ${data.label || 'A'}: ${data.value}`,
         `Réponse proposée: ${fmt(data.answer)}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'coordinate-grid': {
-      const pts = (data.points || []).map(p => `${p.label || 'A'}(${p.x} ; ${p.y})`).join(', ');
+      const pts = (data.points || []).map((p) => `${p.label || 'A'}(${p.x} ; ${p.y})`).join(', ');
       // answer format is "x,y" (comma-separated integers) — reformat as (x ; y) to avoid
       // confusion with French decimal notation where comma means decimal point
       const ansCoord = fmt(data.answer).replace(',', ' ; ');
@@ -502,30 +554,38 @@ function buildPrompt({ data, body }) {
         `Grille: ${data.cols || 6}×${data.rows || 6}`,
         pts && `Points affichés: ${pts}`,
         `Réponse proposée: (${ansCoord})`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'base-10': {
-      const h = data.hundreds || 0, t = data.tens || 0, o = data.ones || 0;
-      const nombre = data.number ?? (h * 100 + t * 10 + o);
+      const h = data.hundreds || 0,
+        t = data.tens || 0,
+        o = data.ones || 0;
+      const nombre = data.number ?? h * 100 + t * 10 + o;
       return [
         `Type: décomposition base 10`,
         title && `Contexte: ${title}`,
         data.hundreds != null && `${h} centaine(s) + ${t} dizaine(s) + ${o} unité(s)`,
         `Nombre: ${nombre}`,
         `Réponse proposée: ${fmt(data.answer)}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'ruler': {
-      const markers = (data.markers || []).map(m => `${m.label || 'point'} à ${m.value}`).join(', ');
+      const markers = (data.markers || []).map((m) => `${m.label || 'point'} à ${m.value}`).join(', ');
       return [
         `Type: lecture de règle graduée`,
         title && `Instruction: ${title}`,
         `Graduations de ${data.min ?? 0} à ${data.max ?? 10}.`,
         markers && `Éléments sur la règle : ${markers}`,
         `Réponse proposée : ${fmt(data.answer)}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'logic-grid': {
@@ -533,7 +593,7 @@ function buildPrompt({ data, body }) {
       if (!data.solution) return null;
       const bodyText = strip(data.body || body || '');
       const sol = Array.isArray(data.solution)
-        ? data.solution.map(r => Array.isArray(r) ? r.join(', ') : r).join('\n')
+        ? data.solution.map((r) => (Array.isArray(r) ? r.join(', ') : r)).join('\n')
         : JSON.stringify(data.solution);
       return [
         `Type: grille logique (logigramme)`,
@@ -542,7 +602,9 @@ function buildPrompt({ data, body }) {
         `Colonnes : ${(data.columns || []).join(', ')}`,
         `Lignes : ${(data.rows || []).join(', ')}`,
         `Solution proposée à vérifier par rapport aux indices :\n${sol}`,
-      ].filter(Boolean).join('\n');
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     default:
@@ -556,7 +618,9 @@ async function checkOllama() {
   try {
     const r = await fetch(`${OLLAMA_URL}/api/tags`, { signal: AbortSignal.timeout(3000) });
     return r.ok;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 async function askLLM(userPrompt) {
@@ -572,10 +636,10 @@ async function askLLM(userPrompt) {
     model: MODEL,
     messages: [
       { role: 'system', content: SYSTEM },
-      { role: 'user',   content: userPrompt },
+      { role: 'user', content: userPrompt },
     ],
     stream: false,
-    think: false,          // disable thinking mode for deepseek-r1/qwen3; ignored by other models
+    think: false, // disable thinking mode for deepseek-r1/qwen3; ignored by other models
     options: { temperature: 0, num_predict: 512 },
   });
 
@@ -596,7 +660,10 @@ async function askLLM(userPrompt) {
   let response = (data.message?.content || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
   if (!response && data.message?.thinking) {
     // Extract the last verdict-like line from the thinking block as a fallback.
-    const thinkLines = data.message.thinking.trim().split(/\r?\n/).filter(l => l.trim());
+    const thinkLines = data.message.thinking
+      .trim()
+      .split(/\r?\n/)
+      .filter((l) => l.trim());
     for (let i = thinkLines.length - 1; i >= 0; i--) {
       const upper = thinkLines[i].trim().toUpperCase();
       if (upper.startsWith('CORRECT') || upper.startsWith('INCORRECT') || upper.startsWith('SKIP')) {
@@ -621,7 +688,10 @@ async function askLLM(userPrompt) {
 function parseVerdict(response) {
   if (!response) return { verdict: 'skip', reason: 'Réponse vide' };
 
-  const lines = response.trim().split(/\r?\n/).filter(l => l.trim());
+  const lines = response
+    .trim()
+    .split(/\r?\n/)
+    .filter((l) => l.trim());
   if (lines.length === 0) return { verdict: 'skip', reason: 'Réponse vide' };
 
   // Scan from bottom to top for the verdict
@@ -641,14 +711,20 @@ function parseVerdict(response) {
   }
 
   // Fallback for per-statement lists (VRAI/FAUX)
-  const perLine = lines.map(l => l.toUpperCase().trimStart());
-  const hasKeywords = perLine.some(l => /^(VRAI|FAUX|CORRECT|INCORRECT|V|F|SKIP)/.test(l));
+  const perLine = lines.map((l) => l.toUpperCase().trimStart());
+  const hasKeywords = perLine.some((l) => /^(VRAI|FAUX|CORRECT|INCORRECT|V|F|SKIP)/.test(l));
   if (hasKeywords && lines.length > 1) {
-    const hasFail = perLine.some(l => l.startsWith('INCORRECT') || l.startsWith('FAUX'));
-    const isSkip  = perLine.every(l => l.startsWith('SKIP')) || perLine.length < 2 && perLine[0].startsWith('SKIP');
+    const hasFail = perLine.some((l) => l.startsWith('INCORRECT') || l.startsWith('FAUX'));
+    const isSkip = perLine.every((l) => l.startsWith('SKIP')) || (perLine.length < 2 && perLine[0].startsWith('SKIP'));
     if (isSkip) return { verdict: 'skip', reason: 'Skipped by model' };
     return hasFail
-      ? { verdict: 'fail', reason: lines.filter(l => /^(INCORRECT|FAUX)/i.test(l.trimStart())).map(l => l.trim()).join('; ') }
+      ? {
+          verdict: 'fail',
+          reason: lines
+            .filter((l) => /^(INCORRECT|FAUX)/i.test(l.trimStart()))
+            .map((l) => l.trim())
+            .join('; '),
+        }
       : { verdict: 'ok', reason: '' };
   }
 
@@ -658,8 +734,8 @@ function parseVerdict(response) {
   for (let i = lines.length - 1; i >= 0; i--) {
     const upper = lines[i].trim().toUpperCase();
     if (/\bINCORRECT\b/.test(upper)) return { verdict: 'fail', reason: '' };
-    if (/\bCORRECT\b/.test(upper))   return { verdict: 'ok',   reason: '' };
-    if (/\bSKIP\b/.test(upper))      return { verdict: 'skip', reason: '' };
+    if (/\bCORRECT\b/.test(upper)) return { verdict: 'ok', reason: '' };
+    if (/\bSKIP\b/.test(upper)) return { verdict: 'skip', reason: '' };
   }
 
   return { verdict: 'skip', reason: `Format inconnu dans la réponse (tronqué ?)` };
@@ -683,10 +759,12 @@ async function pool(tasks, concurrency, fn) {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log(`\n${C.bold}LLM exercise validator${C.reset}  model: ${C.cyan}${MODEL}${C.reset}  concurrency: ${CONCURRENCY}\n`);
+  console.log(
+    `\n${C.bold}LLM exercise validator${C.reset}  model: ${C.cyan}${MODEL}${C.reset}  concurrency: ${CONCURRENCY}\n`
+  );
 
   // 1. Check Ollama
-  if (!await checkOllama()) {
+  if (!(await checkOllama())) {
     console.error(`${C.red}Ollama not reachable at ${OLLAMA_URL}${C.reset}`);
     console.error('Start it with: ollama serve');
     process.exit(1);
@@ -697,22 +775,23 @@ async function main() {
 
   // 3. Collect all .md files
   let allFiles = SRC_DIRS.flatMap(walkMdFiles);
-  if (FILTER_DIR)  allFiles = allFiles.filter(f => f.startsWith(FILTER_DIR));
+  if (FILTER_DIR) allFiles = allFiles.filter((f) => f.startsWith(FILTER_DIR));
 
   // 4. Build task list: files that need (re-)validation
   const tasks = [];
   let cacheHits = 0;
 
   for (const absPath of allFiles) {
-    const relPath  = path.relative(ROOT, absPath).replace(/\\/g, '/');
-    const hash     = fileHash(absPath);
+    const relPath = path.relative(ROOT, absPath).replace(/\\/g, '/');
+    const hash = fileHash(absPath);
     const seriesId = getSeriesId(absPath);
-    const entry    = cache.get(relPath);
+    const entry = cache.get(relPath);
 
     // Ensure every file appears in the cache as a manifest entry (no verdict yet = unvalidated)
     if (!entry || entry.hash !== hash) {
       // Preserve verdicts if only line endings changed (CRLF→LF normalization, not real edit)
-      const isLineEndingChange = entry && (entry.hash === fileHashRaw(absPath) || entry.hash === fileHashForceCRLF(absPath));
+      const isLineEndingChange =
+        entry && (entry.hash === fileHashRaw(absPath) || entry.hash === fileHashForceCRLF(absPath));
       const keepModels = isLineEndingChange ? entry.models : new Map();
       cache.set(relPath, { seriesId, hash, manual: entry?.manual || '', models: keepModels });
     } else if (!entry.seriesId) {
@@ -769,7 +848,9 @@ async function main() {
   // --count / --one: trim task list
   if (COUNT > 0) tasks.splice(COUNT);
 
-  console.log(`Files: ${allFiles.length} total, ${C.green}${cacheHits} cached${C.reset}, ${C.yellow}${tasks.length} to validate${C.reset}\n`);
+  console.log(
+    `Files: ${allFiles.length} total, ${C.green}${cacheHits} cached${C.reset}, ${C.yellow}${tasks.length} to validate${C.reset}\n`
+  );
 
   if (tasks.length === 0) {
     console.log(`${C.green}All up to date.${C.reset}\n`);
@@ -778,15 +859,17 @@ async function main() {
   }
 
   // 5. Validate
-  let ok = 0, fail = 0, skip = 0;
-  const failures = [];   // verdict=fail
-  const llmSkips = [];   // verdict=skip WITH a reason from the LLM (not auto-skip)
+  let ok = 0,
+    fail = 0,
+    skip = 0;
+  const failures = []; // verdict=fail
+  const llmSkips = []; // verdict=skip WITH a reason from the LLM (not auto-skip)
 
   await pool(tasks, CONCURRENCY, async ({ relPath, seriesId, hash, exercises }, i) => {
     const fileResults = [];
 
     for (const ex of exercises) {
-      const type   = ex.data.type || 'number-check';
+      const type = ex.data.type || 'number-check';
       const prompt = buildPrompt(ex);
 
       if (!prompt) {
@@ -800,28 +883,41 @@ async function main() {
         ({ verdict, reason } = parseVerdict(rawResponse));
       } catch (err) {
         verdict = 'skip';
-        reason  = err.message;
+        reason = err.message;
       }
 
       if (VERBOSE) {
-        const icon = verdict === 'ok' ? `${C.green}✓ CORRECT${C.reset}`
-          : verdict === 'fail'        ? `${C.red}✗ INCORRECT${C.reset}`
-          :                             `${C.grey}– SKIP${C.reset}`;
+        const icon =
+          verdict === 'ok'
+            ? `${C.green}✓ CORRECT${C.reset}`
+            : verdict === 'fail'
+              ? `${C.red}✗ INCORRECT${C.reset}`
+              : `${C.grey}– SKIP${C.reset}`;
         console.log(`\n${C.bold}VERDICT:${C.reset} ${icon}${reason ? `  ${C.yellow}${reason}${C.reset}` : ''}`);
         console.log(`${C.bold}${'─'.repeat(60)}${C.reset}\n`);
       }
 
       const label = ex.generatorName ? `[gen:${ex.generatorName}] ` : '';
-      fileResults.push({ verdict, reason, rawResponse, type, title: (label + strip(ex.data.title || ex.body || '')).slice(0, 70) });
+      fileResults.push({
+        verdict,
+        reason,
+        rawResponse,
+        type,
+        title: (label + strip(ex.data.title || ex.body || '')).slice(0, 70),
+      });
     }
 
     // Aggregate file verdict: fail if any fail, skip if all skip, ok otherwise
-    const fileVerdict = fileResults.some(r => r.verdict === 'fail') ? 'fail'
-      : fileResults.every(r => r.verdict === 'skip') ? 'skip' : 'ok';
+    const fileVerdict = fileResults.some((r) => r.verdict === 'fail')
+      ? 'fail'
+      : fileResults.every((r) => r.verdict === 'skip')
+        ? 'skip'
+        : 'ok';
 
     // Update cache — preserve other models' verdicts, only set this model's column
     const existing = cache.get(relPath);
-    const cacheEntry = (existing?.hash === hash) ? existing : { seriesId, hash, manual: existing?.manual || '', models: new Map() };
+    const cacheEntry =
+      existing?.hash === hash ? existing : { seriesId, hash, manual: existing?.manual || '', models: new Map() };
     if (existing?.hash !== hash) cacheEntry.models.clear(); // file changed, stale verdicts gone
     cacheEntry.seriesId = seriesId;
     cacheEntry.models.set(MODEL, fileVerdict);
@@ -843,11 +939,17 @@ async function main() {
       }
     }
 
-    const fileHasLlmSkip = fileResults.some(r => r.verdict === 'skip' && r.reason && r.reason !== 'no prompt for type');
-    const icon = fileVerdict === 'ok' ? `${C.green}✓${C.reset}`
-      : fileVerdict === 'fail'        ? `${C.red}✗${C.reset}`
-      : fileHasLlmSkip                ? `${C.yellow}–${C.reset}`
-      :                                 `${C.grey}–${C.reset}`;
+    const fileHasLlmSkip = fileResults.some(
+      (r) => r.verdict === 'skip' && r.reason && r.reason !== 'no prompt for type'
+    );
+    const icon =
+      fileVerdict === 'ok'
+        ? `${C.green}✓${C.reset}`
+        : fileVerdict === 'fail'
+          ? `${C.red}✗${C.reset}`
+          : fileHasLlmSkip
+            ? `${C.yellow}–${C.reset}`
+            : `${C.grey}–${C.reset}`;
 
     if (!FAILURES_ONLY || fileVerdict === 'fail' || fileHasLlmSkip) {
       process.stdout.write(`  ${icon}  ${relPath}\n`);
@@ -870,9 +972,11 @@ async function main() {
   saveCache(cache);
 
   // 7. Report
-  const manualOkCount = [...cache.values()].filter(e => e.manual === 'ok').length;
+  const manualOkCount = [...cache.values()].filter((e) => e.manual === 'ok').length;
   console.log(`\n${'─'.repeat(60)}`);
-  console.log(`${C.bold}Results:${C.reset}  ${C.green}${ok} correct${C.reset}  ${C.red}${fail} incorrect${C.reset}  ${C.grey}${skip} skipped${C.reset}${llmSkips.length ? `  ${C.yellow}${llmSkips.length} needs review${C.reset}` : ''}${manualOkCount ? `  ${C.yellow}${manualOkCount} manual ok${C.reset}` : ''}`);
+  console.log(
+    `${C.bold}Results:${C.reset}  ${C.green}${ok} correct${C.reset}  ${C.red}${fail} incorrect${C.reset}  ${C.grey}${skip} skipped${C.reset}${llmSkips.length ? `  ${C.yellow}${llmSkips.length} needs review${C.reset}` : ''}${manualOkCount ? `  ${C.yellow}${manualOkCount} manual ok${C.reset}` : ''}`
+  );
 
   // Write error report (always, so the file reflects the current run)
   if (failures.length > 0 || llmSkips.length > 0) {
@@ -903,7 +1007,7 @@ async function main() {
             lines.push(`  <details><summary>Réponse brute du modèle</summary>`);
             lines.push('');
             lines.push('  ```');
-            lines.push(...f.rawResponse.split('\n').map(l => '  ' + l));
+            lines.push(...f.rawResponse.split('\n').map((l) => '  ' + l));
             lines.push('  ```');
             lines.push('');
             lines.push('  </details>');
@@ -932,7 +1036,7 @@ async function main() {
             lines.push(`  <details><summary>Réponse brute du modèle</summary>`);
             lines.push('');
             lines.push('  ```');
-            lines.push(...f.rawResponse.split('\n').map(l => '  ' + l));
+            lines.push(...f.rawResponse.split('\n').map((l) => '  ' + l));
             lines.push('  ```');
             lines.push('');
             lines.push('  </details>');
@@ -972,7 +1076,9 @@ async function main() {
   return 0;
 }
 
-main().then(code => process.exit(code)).catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+main()
+  .then((code) => process.exit(code))
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });

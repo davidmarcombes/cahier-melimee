@@ -30,7 +30,9 @@ document.addEventListener('alpine:init', () => {
             const { url } = await res.json();
             this.nextUnvalidatedUrl = url || null;
           }
-        } catch (_) {}
+        } catch {
+          /* ignore fetch errors in dev panel */
+        }
       },
       async humanValidate() {
         this.humanValidating = true;
@@ -71,7 +73,9 @@ function debugPanel() {
     get _meta() {
       try {
         return JSON.parse(document.getElementById('series-meta')?.textContent || '{}');
-      } catch (_) { return {}; }
+      } catch (_) {
+        return {};
+      }
     },
 
     get _ex() {
@@ -80,7 +84,9 @@ function debugPanel() {
         if (!el) return null;
         const d = Alpine.$data(el);
         return { index: d.currentIndex, total: d.exercises.length, cur: d.cur };
-      } catch (_) { return null; }
+      } catch (_) {
+        return null;
+      }
     },
 
     get panelSubtitle() {
@@ -126,14 +132,18 @@ function debugPanel() {
         'Diagnostic commands:',
         `  node scripts/show-type.js ${type}`,
         '  npm run validate:exercises',
-      ].filter((l) => l !== null).join('\n');
+      ]
+        .filter((l) => l !== null)
+        .join('\n');
     },
 
     async copy() {
       try {
         await navigator.clipboard.writeText(this.prompt);
         this.copied = true;
-        setTimeout(() => { this.copied = false; }, 2000);
+        setTimeout(() => {
+          this.copied = false;
+        }, 2000);
       } catch (err) {
         console.warn('Clipboard write failed:', err);
       }

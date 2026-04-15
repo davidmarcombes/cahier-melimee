@@ -14,10 +14,13 @@ import { test, expect } from '@playwright/test';
 async function waitForAlpine(page) {
   // Wait for the main player container to be ready and visible
   await page.waitForSelector('[x-data*="seriesPlayer"]', { timeout: 8000 });
-  await page.waitForFunction(() => {
-    const el = document.querySelector('[x-data*="seriesPlayer"]');
-    return el && typeof Alpine !== 'undefined' && Alpine.$data(el)._ready;
-  }, { timeout: 4000 });
+  await page.waitForFunction(
+    () => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      return el && typeof Alpine !== 'undefined' && Alpine.$data(el)._ready;
+    },
+    { timeout: 4000 }
+  );
 }
 
 // ─── clock ────────────────────────────────────────────────────────────────────
@@ -261,7 +264,11 @@ test.describe('sort — ordonner-01 CE2', () => {
     await waitForAlpine(page);
     // Click tiles in the expected order (matches cur.items YAML order: 124, 241, 412, 214)
     for (const n of ['124', '241', '412', '214']) {
-      await page.locator('button').filter({ hasText: new RegExp(`^\\s*${n}\\s*$`) }).first().click();
+      await page
+        .locator('button')
+        .filter({ hasText: new RegExp(`^\\s*${n}\\s*$`) })
+        .first()
+        .click();
     }
     await page.getByRole('button', { name: 'Vérifier' }).click();
     await expect(page.locator('text=Bonne réponse !')).toBeVisible();
@@ -347,11 +354,13 @@ test.describe('compare — fractions-comparer-01 CE2', () => {
     const cmpSection = page.locator('[x-show="cur.type === \'compare\'"]');
     const cmpBtns = cmpSection.locator('button').filter({ hasText: /^[?><= ]+$/ });
     // answers: >, <, <, >, >
-    await cmpBtns.nth(0).click();                    // → >
-    await cmpBtns.nth(1).click(); await cmpBtns.nth(1).click(); // → <
-    await cmpBtns.nth(2).click(); await cmpBtns.nth(2).click(); // → <
-    await cmpBtns.nth(3).click();                    // → >
-    await cmpBtns.nth(4).click();                    // → >
+    await cmpBtns.nth(0).click(); // → >
+    await cmpBtns.nth(1).click();
+    await cmpBtns.nth(1).click(); // → <
+    await cmpBtns.nth(2).click();
+    await cmpBtns.nth(2).click(); // → <
+    await cmpBtns.nth(3).click(); // → >
+    await cmpBtns.nth(4).click(); // → >
     await page.getByRole('button', { name: 'Vérifier' }).click();
     await expect(page.locator('text=Bonne réponse !')).toBeVisible();
   });
@@ -407,7 +416,7 @@ test.describe('decodage-emojis — CP', () => {
       // Parse code table: "emoji = N" badges
       const badges = document.querySelectorAll('h1 .inline-block');
       const code = {};
-      badges.forEach(b => {
+      badges.forEach((b) => {
         const m = b.textContent.match(/(.+)\s*=\s*(\d+)/);
         if (m) code[m[1].trim()] = Number(m[2]);
       });
@@ -419,7 +428,11 @@ test.describe('decodage-emojis — CP', () => {
       }
       // Clean up and evaluate: "5 + 3 = ?" → eval("5 + 3")
       opText = opText.replace(/[=?]/g, '').replace(/×/g, '*').replace(/−/g, '-').trim();
-      try { return String(eval(opText)); } catch { return null; }
+      try {
+        return String(eval(opText));
+      } catch {
+        return null;
+      }
     });
     await page.locator('input[placeholder="?"]:visible').fill(answer);
     await page.keyboard.press('Enter');
@@ -456,7 +469,7 @@ test.describe('decodage-monstres — CE2 (2-digit)', () => {
     const answer = await page.evaluate(() => {
       const badges = document.querySelectorAll('h1 .inline-block');
       const code = {};
-      badges.forEach(b => {
+      badges.forEach((b) => {
         const m = b.textContent.match(/(.+)\s*=\s*(\d+)/);
         if (m) code[m[1].trim()] = m[2];
       });
@@ -467,7 +480,11 @@ test.describe('decodage-monstres — CE2 (2-digit)', () => {
         opText = opText.split(emoji).join(digit);
       }
       opText = opText.replace(/[=?]/g, '').replace(/×/g, '*').replace(/−/g, '-').trim();
-      try { return String(eval(opText)); } catch { return null; }
+      try {
+        return String(eval(opText));
+      } catch {
+        return null;
+      }
     });
     await page.locator('input[placeholder="?"]:visible').fill(answer);
     await page.keyboard.press('Enter');
@@ -601,9 +618,7 @@ test.describe('futoshiki — futoshiki-4x4 CE2', () => {
       const sol = data.cur._solution;
       const size = data.cur.futoshiki.size;
       const inputs = Array(size * size).fill('');
-      for (let r = 0; r < size; r++)
-        for (let c = 0; c < size; c++)
-          inputs[r * size + c] = String(sol[r][c]);
+      for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) inputs[r * size + c] = String(sol[r][c]);
       data.futoInputs = inputs;
     });
     await page.getByRole('button', { name: 'Vérifier' }).click();
@@ -775,7 +790,7 @@ test.describe('venn — venn-emojis CE2', () => {
     const count = await bank.count();
     expect(count).toBeGreaterThanOrEqual(1); // Some items might be generated
     // Outside zone text
-    await expect(page.getByText('Ni l\'un ni l\'autre')).toBeVisible();
+    await expect(page.getByText("Ni l'un ni l'autre")).toBeVisible();
   });
 
   test('selecting and placing an emoji works', async ({ page }) => {

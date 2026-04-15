@@ -145,11 +145,8 @@ async function main() {
       results.push({ url, label, errors, warnings });
 
       const errorStr =
-        errors.length > 0
-          ? `${COLORS.red}${errors.length} error(s)${COLORS.reset}`
-          : `${COLORS.green}✓${COLORS.reset}`;
-      const warnStr =
-        warnings.length > 0 ? `  ${COLORS.yellow}${warnings.length} warning(s)${COLORS.reset}` : '';
+        errors.length > 0 ? `${COLORS.red}${errors.length} error(s)${COLORS.reset}` : `${COLORS.green}✓${COLORS.reset}`;
+      const warnStr = warnings.length > 0 ? `  ${COLORS.yellow}${warnings.length} warning(s)${COLORS.reset}` : '';
       console.log(`${errorStr}${warnStr}`);
     } catch (err) {
       console.log(`${COLORS.red}FAILED: ${err.message}${COLORS.reset}`);
@@ -189,9 +186,7 @@ async function main() {
     process.exit(1);
   } else {
     const warnNote =
-      totalWarnings > 0
-        ? ` ${COLORS.yellow}(${totalWarnings} warning(s) — review recommended)${COLORS.reset}`
-        : '';
+      totalWarnings > 0 ? ` ${COLORS.yellow}(${totalWarnings} warning(s) — review recommended)${COLORS.reset}` : '';
     console.log(
       `\n${COLORS.green}${COLORS.bold}  ✓ ${urls.length} pages tested — no WCAG2AA errors${COLORS.reset}${warnNote}\n`
     );

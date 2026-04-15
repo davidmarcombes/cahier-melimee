@@ -34,8 +34,12 @@ describe('Modules Utilities', () => {
     });
 
     it('should render &frac(numerator,denominator)', () => {
-      expect(renderOpShorthands('Fraction &frac(1,2)')).toBe('Fraction <span class="frac"><span class="fn">1</span><span class="fd">2</span></span>');
-      expect(renderOpShorthands('Mixed &frac(3 , 4)')).toBe('Mixed <span class="frac"><span class="fn">3</span><span class="fd">4</span></span>');
+      expect(renderOpShorthands('Fraction &frac(1,2)')).toBe(
+        'Fraction <span class="frac"><span class="fn">1</span><span class="fd">2</span></span>'
+      );
+      expect(renderOpShorthands('Mixed &frac(3 , 4)')).toBe(
+        'Mixed <span class="frac"><span class="fn">3</span><span class="fd">4</span></span>'
+      );
     });
 
     it('should handle empty or null strings', () => {
@@ -73,12 +77,12 @@ describe('seriesPlayer Logic', () => {
     it('should parse simple operation with ?', () => {
       const p = seriesPlayer(mockExercises, 'test-series');
       Object.defineProperty(p, 'cur', { get: () => mockExercises[0] });
-      
+
       const parts = p.trouParts;
       // "10", " = 6 + ", "?"
       expect(parts.length).toBeGreaterThanOrEqual(2);
-      expect(parts.some(p => p.t === 'i')).toBe(true);
-      expect(parts.find(p => p.t === 'i')).toMatchObject({ idx: 0 });
+      expect(parts.some((p) => p.t === 'i')).toBe(true);
+      expect(parts.find((p) => p.t === 'i')).toMatchObject({ idx: 0 });
     });
 
     it('should parse fractional parts with ?', () => {
@@ -90,15 +94,15 @@ describe('seriesPlayer Logic', () => {
       // "?/4", " ", "=", " ", "1/4", " ", "+", " ", "2/4"
       expect(parts[0]).toMatchObject({ t: 'fi', idx: 0, d: '4' });
     });
-    
+
     it('should correctly tokenize text and fractions', () => {
-        const ex = { operation: 'Calculate 1/2 + 1/4 = ?' };
-        const p = seriesPlayer([ex], 'test-msg');
-        Object.defineProperty(p, 'cur', { get: () => ex });
-        
-        const parts = p.trouParts;
-        expect(parts.some(p => p.t === 'f' && p.n === '1' && p.d === '2')).toBe(true);
-        expect(parts.some(p => p.t === 'x' && p.v.includes('Calculate'))).toBe(true);
+      const ex = { operation: 'Calculate 1/2 + 1/4 = ?' };
+      const p = seriesPlayer([ex], 'test-msg');
+      Object.defineProperty(p, 'cur', { get: () => ex });
+
+      const parts = p.trouParts;
+      expect(parts.some((p) => p.t === 'f' && p.n === '1' && p.d === '2')).toBe(true);
+      expect(parts.some((p) => p.t === 'x' && p.v.includes('Calculate'))).toBe(true);
     });
   });
 });
@@ -110,7 +114,7 @@ describe('localStore Persistence', () => {
     const user = { slug: 'lucas', username: 'Lucas', sticker_id: '1' };
     localStore.setUser(user);
     expect(localStore.getUser()).toMatchObject(user);
-    
+
     localStore.clearUser();
     expect(localStore.getUser()).toBeNull();
   });
@@ -127,11 +131,8 @@ describe('Magic-Color Logic', () => {
   const mockEx = {
     type: 'magic-color',
     magicColor: {
-      cells: [
-        { colorIdx: 0 },
-        { colorIdx: 1 },
-      ]
-    }
+      cells: [{ colorIdx: 0 }, { colorIdx: 1 }],
+    },
   };
 
   it('mcPaint should set and toggle color (erasing)', () => {
@@ -139,7 +140,7 @@ describe('Magic-Color Logic', () => {
     p.mcActiveColor = 0;
     p.mcPaint(0);
     expect(p.mcColors[0]).toBe(0);
-    
+
     // Toggle again with same color -> erase (null)
     p.mcPaint(0);
     expect(p.mcColors[0]).toBeNull();
@@ -149,7 +150,7 @@ describe('Magic-Color Logic', () => {
     const p = seriesPlayer([mockEx], 'mc-2');
     Object.defineProperty(p, 'cur', { get: () => mockEx });
     p.mcActiveColor = 1;
-    
+
     expect(p.mcAllColored()).toBe(false);
     p.mcPaint(0);
     expect(p.mcAllColored()).toBe(false);
@@ -162,13 +163,13 @@ describe('Magic-Color Logic', () => {
     Object.defineProperty(p, 'cur', { get: () => mockEx });
     p._flashError = vi.fn();
     p._markSolvedAndAdvance = vi.fn();
-    
+
     // Wrong colors
     p.mcColors = [1, 0];
     p.check();
     expect(p.mcErrors).toEqual([0, 1]);
     expect(p._flashError).toHaveBeenCalled();
-    
+
     // Correct colors
     p._flashError.mockClear();
     p.mcColors = [0, 1];
@@ -185,11 +186,17 @@ describe('Futoshiki Logic', () => {
   const size = 3;
   const mkEx = (given = [], hCons = [], vCons = []) => ({
     type: 'futoshiki',
-    futoshiki: { size, given, hCons, vCons, rows: Array.from({ length: size }, (_, r) => ({
-      cells: Array.from({ length: size }, (_, c) => ({ given: null, idx: r * size + c })),
-      hCons: Array(size - 1).fill(null),
-      vCons: r < size - 1 ? Array(size).fill(null) : null,
-    })) },
+    futoshiki: {
+      size,
+      given,
+      hCons,
+      vCons,
+      rows: Array.from({ length: size }, (_, r) => ({
+        cells: Array.from({ length: size }, (_, c) => ({ given: null, idx: r * size + c })),
+        hCons: Array(size - 1).fill(null),
+        vCons: r < size - 1 ? Array(size).fill(null) : null,
+      })),
+    },
   });
 
   it('_setupCurrentExercise initialises futoInputs to empty strings', () => {
@@ -198,7 +205,7 @@ describe('Futoshiki Logic', () => {
     Object.defineProperty(p, 'cur', { get: () => ex });
     p._setupCurrentExercise();
     expect(p.futoInputs).toHaveLength(size * size);
-    expect(p.futoInputs.every(v => v === '')).toBe(true);
+    expect(p.futoInputs.every((v) => v === '')).toBe(true);
   });
 
   it('correct latin square passes check()', () => {
@@ -208,7 +215,7 @@ describe('Futoshiki Logic', () => {
     p._markSolvedAndAdvance = vi.fn();
     p._flashError = vi.fn();
     // Valid 3×3 latin square: rows [1,2,3],[2,3,1],[3,1,2]
-    p.futoInputs = ['1','2','3','2','3','1','3','1','2'];
+    p.futoInputs = ['1', '2', '3', '2', '3', '1', '3', '1', '2'];
     p.check();
     expect(p._markSolvedAndAdvance).toHaveBeenCalled();
     expect(p.futoErrors).toEqual([]);
@@ -221,7 +228,7 @@ describe('Futoshiki Logic', () => {
     p._markSolvedAndAdvance = vi.fn();
     p._flashError = vi.fn();
     // Row 0 has [1,1,3] — duplicate
-    p.futoInputs = ['1','1','3','2','3','1','3','2','2'];
+    p.futoInputs = ['1', '1', '3', '2', '3', '1', '3', '2', '2'];
     p.check();
     expect(p.futoErrors).toContain(0);
     expect(p.futoErrors).toContain(1);
@@ -235,7 +242,7 @@ describe('Futoshiki Logic', () => {
     p._markSolvedAndAdvance = vi.fn();
     p._flashError = vi.fn();
     // Col 0 has [1,1,3] — duplicate
-    p.futoInputs = ['1','2','3','1','3','2','3','1','2'];
+    p.futoInputs = ['1', '2', '3', '1', '3', '2', '3', '1', '2'];
     p.check();
     expect(p.futoErrors).toContain(0); // row0,col0
     expect(p.futoErrors).toContain(3); // row1,col0
@@ -251,7 +258,7 @@ describe('Futoshiki Logic', () => {
     p._markSolvedAndAdvance = vi.fn();
     p._flashError = vi.fn();
     // Violate: [0,0]=3, [0,1]=2 → 3 < 2 is false
-    p.futoInputs = ['3','2','1','1','3','2','2','1','3'];
+    p.futoInputs = ['3', '2', '1', '1', '3', '2', '2', '1', '3'];
     p.check();
     expect(p.futoErrors).toContain(0);
     expect(p.futoErrors).toContain(1);
@@ -274,7 +281,7 @@ describe('KenKen Logic', () => {
     Object.defineProperty(p, 'cur', { get: () => ex });
     p._setupCurrentExercise();
     expect(p.kkInputs).toHaveLength(size * size);
-    expect(p.kkInputs.every(v => v === '')).toBe(true);
+    expect(p.kkInputs.every((v) => v === '')).toBe(true);
   });
 
   it('kkSetCell updates kkInputs and clears errors', () => {
@@ -292,31 +299,63 @@ describe('KenKen Logic', () => {
     // Solution: [1,2,3],[2,3,1],[3,1,2]
     // Two single cages + one + cage covering row0
     const cages = [
-      { op: '+', target: 6, cells: [[0,0],[0,1],[0,2]] },
-      { op: '', target: 2, cells: [[1,0]] },
-      { op: '+', target: 4, cells: [[1,1],[1,2]] },
-      { op: '+', target: 4, cells: [[2,0],[2,1]] },
-      { op: '', target: 2, cells: [[2,2]] },
+      {
+        op: '+',
+        target: 6,
+        cells: [
+          [0, 0],
+          [0, 1],
+          [0, 2],
+        ],
+      },
+      { op: '', target: 2, cells: [[1, 0]] },
+      {
+        op: '+',
+        target: 4,
+        cells: [
+          [1, 1],
+          [1, 2],
+        ],
+      },
+      {
+        op: '+',
+        target: 4,
+        cells: [
+          [2, 0],
+          [2, 1],
+        ],
+      },
+      { op: '', target: 2, cells: [[2, 2]] },
     ];
     const ex = mkKKEx(cages);
     const p = seriesPlayer([ex], 'kk-3');
     Object.defineProperty(p, 'cur', { get: () => ex });
     p._markSolvedAndAdvance = vi.fn();
     p._flashError = vi.fn();
-    p.kkInputs = ['1','2','3','2','3','1','3','1','2'];
+    p.kkInputs = ['1', '2', '3', '2', '3', '1', '3', '1', '2'];
     p.check();
     expect(p._markSolvedAndAdvance).toHaveBeenCalled();
     expect(p.kkErrors).toEqual([]);
   });
 
   it('wrong cage arithmetic triggers kkErrors', () => {
-    const cages = [{ op: '+', target: 10, cells: [[0,0],[0,1],[0,2]] }]; // 1+2+3=6≠10
+    const cages = [
+      {
+        op: '+',
+        target: 10,
+        cells: [
+          [0, 0],
+          [0, 1],
+          [0, 2],
+        ],
+      },
+    ]; // 1+2+3=6≠10
     const ex = mkKKEx(cages);
     const p = seriesPlayer([ex], 'kk-4');
     Object.defineProperty(p, 'cur', { get: () => ex });
     p._markSolvedAndAdvance = vi.fn();
     p._flashError = vi.fn();
-    p.kkInputs = ['1','2','3','2','3','1','3','1','2'];
+    p.kkInputs = ['1', '2', '3', '2', '3', '1', '3', '1', '2'];
     p.check();
     expect(p.kkErrors).toContain(0);
     expect(p.kkErrors).toContain(1);
@@ -325,14 +364,24 @@ describe('KenKen Logic', () => {
   });
 
   it('row duplicate triggers kkErrors', () => {
-    const cages = [{ op: '+', target: 6, cells: [[0,0],[0,1],[0,2]] }];
+    const cages = [
+      {
+        op: '+',
+        target: 6,
+        cells: [
+          [0, 0],
+          [0, 1],
+          [0, 2],
+        ],
+      },
+    ];
     const ex = mkKKEx(cages);
     const p = seriesPlayer([ex], 'kk-5');
     Object.defineProperty(p, 'cur', { get: () => ex });
     p._markSolvedAndAdvance = vi.fn();
     p._flashError = vi.fn();
     // Row 0: [1,1,1] — all same
-    p.kkInputs = ['1','1','1','2','3','1','3','2','2'];
+    p.kkInputs = ['1', '1', '1', '2', '3', '1', '3', '2', '2'];
     p.check();
     expect(p.kkErrors.length).toBeGreaterThan(0);
     expect(p._flashError).toHaveBeenCalled();
@@ -347,12 +396,21 @@ describe('Numberlink Logic', () => {
     type: 'numberlink',
     numberlink: {
       size: 4,
-      pairs: [[[0,0],[3,3]], [[0,3],[3,0]]],
+      pairs: [
+        [
+          [0, 0],
+          [3, 3],
+        ],
+        [
+          [0, 3],
+          [3, 0],
+        ],
+      ],
       rows: [
-        [1,0,0,2],
-        [0,0,0,0],
-        [0,0,0,0],
-        [2,0,0,1],
+        [1, 0, 0, 2],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [2, 0, 0, 1],
       ],
     },
   });
@@ -361,9 +419,9 @@ describe('Numberlink Logic', () => {
     const ex = mkNLEx();
     const p = seriesPlayer([ex], 'nl-1');
     Object.defineProperty(p, 'cur', { get: () => ex });
-    p.nlkPaths = { 1: [[0,0]] };
+    p.nlkPaths = { 1: [[0, 0]] };
     p.nlkActive = 1;
-    p.nlkErrors = [[0,0]];
+    p.nlkErrors = [[0, 0]];
     p._setupCurrentExercise();
     expect(p.nlkPaths).toEqual({});
     expect(p.nlkActive).toBeNull();
@@ -377,7 +435,7 @@ describe('Numberlink Logic', () => {
     p.nlkPaths = {};
     p.nlkActive = null;
     p.nlkTap(0, 0); // endpoint for pair 1
-    expect(p.nlkPaths[1]).toEqual([[0,0]]);
+    expect(p.nlkPaths[1]).toEqual([[0, 0]]);
     expect(p.nlkActive).toBe(1);
   });
 
@@ -396,37 +454,51 @@ describe('Numberlink Logic', () => {
     const ex = mkNLEx();
     const p = seriesPlayer([ex], 'nl-4');
     Object.defineProperty(p, 'cur', { get: () => ex });
-    p.nlkPaths = { 1: [[0,0]] };
+    p.nlkPaths = { 1: [[0, 0]] };
     p.nlkActive = 1;
     p.nlkTap(0, 1);
-    expect(p.nlkPaths[1]).toEqual([[0,0],[0,1]]);
+    expect(p.nlkPaths[1]).toEqual([
+      [0, 0],
+      [0, 1],
+    ]);
   });
 
   it('nlkTap ignores non-adjacent cell', () => {
     const ex = mkNLEx();
     const p = seriesPlayer([ex], 'nl-5');
     Object.defineProperty(p, 'cur', { get: () => ex });
-    p.nlkPaths = { 1: [[0,0]] };
+    p.nlkPaths = { 1: [[0, 0]] };
     p.nlkActive = 1;
     p.nlkTap(2, 2); // diagonal — not adjacent
-    expect(p.nlkPaths[1]).toEqual([[0,0]]);
+    expect(p.nlkPaths[1]).toEqual([[0, 0]]);
   });
 
   it('nlkTap retracts last cell when tapping it again', () => {
     const ex = mkNLEx();
     const p = seriesPlayer([ex], 'nl-6');
     Object.defineProperty(p, 'cur', { get: () => ex });
-    p.nlkPaths = { 1: [[0,0],[0,1]] };
+    p.nlkPaths = {
+      1: [
+        [0, 0],
+        [0, 1],
+      ],
+    };
     p.nlkActive = 1;
     p.nlkTap(0, 1);
-    expect(p.nlkPaths[1]).toEqual([[0,0]]);
+    expect(p.nlkPaths[1]).toEqual([[0, 0]]);
   });
 
   it('nlkReset clears all paths', () => {
     const ex = mkNLEx();
     const p = seriesPlayer([ex], 'nl-7');
     Object.defineProperty(p, 'cur', { get: () => ex });
-    p.nlkPaths = { 1: [[0,0],[0,1]], 2: [[0,3]] };
+    p.nlkPaths = {
+      1: [
+        [0, 0],
+        [0, 1],
+      ],
+      2: [[0, 3]],
+    };
     p.nlkActive = 2;
     p.nlkReset();
     expect(p.nlkPaths).toEqual({});
@@ -446,11 +518,32 @@ describe('Numberlink Logic', () => {
     const p = seriesPlayer([ex], 'nl-9');
     Object.defineProperty(p, 'cur', { get: () => ex });
     p.nlkPaths = {
-      1: [[0,0],[1,0],[2,0],[3,0],[3,1],[3,2],[3,3]],
-      2: [[0,3],[1,3],[2,3],[3,3]], // won't work — shares endpoint, but logic check only cares about endpoints
+      1: [
+        [0, 0],
+        [1, 0],
+        [2, 0],
+        [3, 0],
+        [3, 1],
+        [3, 2],
+        [3, 3],
+      ],
+      2: [
+        [0, 3],
+        [1, 3],
+        [2, 3],
+        [3, 3],
+      ], // won't work — shares endpoint, but logic check only cares about endpoints
     };
     // Override paths so pair 2 ends at [3,0]
-    p.nlkPaths[2] = [[0,3],[0,2],[0,1],[1,1],[2,1],[3,1],[3,0]];
+    p.nlkPaths[2] = [
+      [0, 3],
+      [0, 2],
+      [0, 1],
+      [1, 1],
+      [2, 1],
+      [3, 1],
+      [3, 0],
+    ];
     expect(p.nlkAllConnected()).toBe(true);
   });
 });

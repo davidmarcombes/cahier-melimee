@@ -10,12 +10,12 @@ export function timedPlayer(rawExercises, seriesId, opts = {}) {
   return {
     allEx: rawExercises,
     ex: [],
-    phase: 'ready',       // 'ready' | 'playing' | 'done'
+    phase: 'ready', // 'ready' | 'playing' | 'done'
     curIdx: 0,
     userInput: '',
     correct: 0,
     attempted: 0,
-    flashState: null,     // null | 'ok' | 'err'
+    flashState: null, // null | 'ok' | 'err'
     timeLeft: opts.duration ?? 60,
     totalTime: opts.duration ?? 60,
     _timerId: null,
@@ -32,7 +32,8 @@ export function timedPlayer(rawExercises, seriesId, opts = {}) {
         const g = window.AppGenerators?.[e._gen.name];
         if (!g) return [];
         return Array.from({ length: e._gen.count }, () => ({
-          ...e, ...g.generate(e._gen.params),
+          ...e,
+          ...g.generate(e._gen.params),
         }));
       });
     },
@@ -53,7 +54,9 @@ export function timedPlayer(rawExercises, seriesId, opts = {}) {
       return renderOpShorthands(op.includes('?') ? op : op + ' = ?');
     },
 
-    get timerPct() { return (this.timeLeft / this.totalTime) * 100; },
+    get timerPct() {
+      return (this.timeLeft / this.totalTime) * 100;
+    },
 
     get timerClass() {
       if (this.timerPct > 50) return 'bg-primary-500';
@@ -98,15 +101,18 @@ export function timedPlayer(rawExercises, seriesId, opts = {}) {
       if (ok) this.correct++;
       this.userInput = '';
       this.flashState = ok ? 'ok' : 'err';
-      setTimeout(() => {
-        this.flashState = null;
-        this.curIdx++;
-        if (this.curIdx >= this.ex.length) {
-          this.curIdx = 0;
-          this._shuffle();
-        }
-        this.$nextTick(() => this.$refs.input?.focus());
-      }, ok ? SETTINGS.FAST_ADVANCE_DELAY : SETTINGS.TIMED_WRONG_DELAY);
+      setTimeout(
+        () => {
+          this.flashState = null;
+          this.curIdx++;
+          if (this.curIdx >= this.ex.length) {
+            this.curIdx = 0;
+            this._shuffle();
+          }
+          this.$nextTick(() => this.$refs.input?.focus());
+        },
+        ok ? SETTINGS.FAST_ADVANCE_DELAY : SETTINGS.TIMED_WRONG_DELAY
+      );
     },
 
     _finish() {

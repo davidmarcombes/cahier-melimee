@@ -1,212 +1,352 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Style Review — All Template Types</title>
-  <style>
-    body { font-family: sans-serif; max-width: 920px; margin: 2rem auto; padding: 0 1rem; background: #f8fafc; color: #1e293b; }
-    h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
-    p.note { color: #64748b; font-size: 0.85rem; margin-bottom: 2rem; }
-    h2 { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.07em; margin: 2rem 0 0.5rem; border-top: 1px solid #e2e8f0; padding-top: 1rem; }
-    ul { list-style: none; padding: 0; margin: 0 0 0.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.4rem; }
-    li a { display: block; padding: 0.55rem 0.85rem; background: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; text-decoration: none; color: #1e293b; font-size: 0.875rem; }
-    li a:hover { border-color: #3b82f6; color: #3b82f6; }
-    li a .type { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 1px 6px; border-radius: 9999px; background: #e0f2fe; color: #0369a1; margin-right: 5px; font-family: monospace; }
-    li a .url { display: block; font-size: 0.7rem; color: #94a3b8; margin-top: 0.1rem; font-family: monospace; }
-    .missing a { opacity: 0.4; cursor: default; }
-    .missing a .type { background: #f1f5f9; color: #94a3b8; }
-  </style>
-</head>
-<body>
-  <h1>Style Review — All Template Types</h1>
-  <p class="note">Dev server: <strong>http://localhost:8080</strong> — click any link to open.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Style Review — All Template Types</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 920px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        background: #f8fafc;
+        color: #1e293b;
+      }
+      h1 {
+        font-size: 1.4rem;
+        margin-bottom: 0.25rem;
+      }
+      p.note {
+        color: #64748b;
+        font-size: 0.85rem;
+        margin-bottom: 2rem;
+      }
+      h2 {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin: 2rem 0 0.5rem;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 1rem;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 0.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.4rem;
+      }
+      li a {
+        display: block;
+        padding: 0.55rem 0.85rem;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        color: #1e293b;
+        font-size: 0.875rem;
+      }
+      li a:hover {
+        border-color: #3b82f6;
+        color: #3b82f6;
+      }
+      li a .type {
+        display: inline-block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 9999px;
+        background: #e0f2fe;
+        color: #0369a1;
+        margin-right: 5px;
+        font-family: monospace;
+      }
+      li a .url {
+        display: block;
+        font-size: 0.7rem;
+        color: #94a3b8;
+        margin-top: 0.1rem;
+        font-family: monospace;
+      }
+      .missing a {
+        opacity: 0.4;
+        cursor: default;
+      }
+      .missing a .type {
+        background: #f1f5f9;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Style Review — All Template Types</h1>
+    <p class="note">Dev server: <strong>http://localhost:8080</strong> — click any link to open.</p>
 
-  <h2>Input / Réponse libre</h2>
-  <ul>
-    <li><a href="http://localhost:8080/fr/applications/c4305c95/" target="_blank">
-      <span class="type">number-check</span>Arrondir à la centaine
-      <span class="url">/fr/applications/c4305c95/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/8c066810/" target="_blank">
-      <span class="type">multi-question</span>Lire un calendrier
-      <span class="url">/fr/exercices/8c066810/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/be0e466f/" target="_blank">
-      <span class="type">clock</span>Lire l'heure
-      <span class="url">/fr/applications/be0e466f/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/41c73e82/" target="_blank">
-      <span class="type">base-10</span>Les blocs de base 10
-      <span class="url">/fr/exercices/41c73e82/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/a3f1d920/" target="_blank">
-      <span class="type">fraction</span>Lire des fractions
-      <span class="url">/fr/exercices/a3f1d920/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/b138801a/" target="_blank">
-      <span class="type">calc-chain</span>Chaînes de calcul (2 étapes)
-      <span class="url">/fr/exercices/b138801a/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/0a97fa45/" target="_blank">
-      <span class="type">inverse-problem</span>Problèmes inverses
-      <span class="url">/fr/exercices/0a97fa45/</span>
-    </a></li>
-  </ul>
+    <h2>Input / Réponse libre</h2>
+    <ul>
+      <li>
+        <a href="http://localhost:8080/fr/applications/c4305c95/" target="_blank">
+          <span class="type">number-check</span>Arrondir à la centaine
+          <span class="url">/fr/applications/c4305c95/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/8c066810/" target="_blank">
+          <span class="type">multi-question</span>Lire un calendrier
+          <span class="url">/fr/exercices/8c066810/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/be0e466f/" target="_blank">
+          <span class="type">clock</span>Lire l'heure
+          <span class="url">/fr/applications/be0e466f/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/41c73e82/" target="_blank">
+          <span class="type">base-10</span>Les blocs de base 10
+          <span class="url">/fr/exercices/41c73e82/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/a3f1d920/" target="_blank">
+          <span class="type">fraction</span>Lire des fractions
+          <span class="url">/fr/exercices/a3f1d920/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/b138801a/" target="_blank">
+          <span class="type">calc-chain</span>Chaînes de calcul (2 étapes)
+          <span class="url">/fr/exercices/b138801a/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/0a97fa45/" target="_blank">
+          <span class="type">inverse-problem</span>Problèmes inverses
+          <span class="url">/fr/exercices/0a97fa45/</span>
+        </a>
+      </li>
+    </ul>
 
-  <h2>Choix multiples</h2>
-  <ul>
-    <li><a href="http://localhost:8080/fr/applications/7ef6eb3b/" target="_blank">
-      <span class="type">mcq</span>Estimer une somme (compact)
-      <span class="url">/fr/applications/7ef6eb3b/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/8439c90b/" target="_blank">
-      <span class="type">true-false</span>Vrai ou faux (+, -)
-      <span class="url">/fr/applications/8439c90b/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/e5f6a7b8/" target="_blank">
-      <span class="type">checkbox</span>Familles de faits (+, -)
-      <span class="url">/fr/applications/e5f6a7b8/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/d2a8f103/" target="_blank">
-      <span class="type">select</span>Propriétés des figures
-      <span class="url">/fr/exercices/d2a8f103/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/b8c9d0e1/" target="_blank">
-      <span class="type">compare</span>Comparer sans calculer
-      <span class="url">/fr/applications/b8c9d0e1/</span>
-    </a></li>
-  </ul>
+    <h2>Choix multiples</h2>
+    <ul>
+      <li>
+        <a href="http://localhost:8080/fr/applications/7ef6eb3b/" target="_blank">
+          <span class="type">mcq</span>Estimer une somme (compact)
+          <span class="url">/fr/applications/7ef6eb3b/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/8439c90b/" target="_blank">
+          <span class="type">true-false</span>Vrai ou faux (+, -)
+          <span class="url">/fr/applications/8439c90b/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/e5f6a7b8/" target="_blank">
+          <span class="type">checkbox</span>Familles de faits (+, -)
+          <span class="url">/fr/applications/e5f6a7b8/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/d2a8f103/" target="_blank">
+          <span class="type">select</span>Propriétés des figures
+          <span class="url">/fr/exercices/d2a8f103/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/b8c9d0e1/" target="_blank">
+          <span class="type">compare</span>Comparer sans calculer
+          <span class="url">/fr/applications/b8c9d0e1/</span>
+        </a>
+      </li>
+    </ul>
 
-  <h2>Tri / Ordonnancement</h2>
-  <ul>
-    <li><a href="http://localhost:8080/fr/applications/cb798ab0/" target="_blank">
-      <span class="type">sort</span>Trier des fractions
-      <span class="url">/fr/applications/cb798ab0/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/f3447a61/" target="_blank">
-      <span class="type">drag-sort</span>Trier trois nombres
-      <span class="url">/fr/applications/f3447a61/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/488ac8c6/" target="_blank">
-      <span class="type">sequence</span>Suites de nombres
-      <span class="url">/fr/applications/488ac8c6/</span>
-    </a></li>
-  </ul>
+    <h2>Tri / Ordonnancement</h2>
+    <ul>
+      <li>
+        <a href="http://localhost:8080/fr/applications/cb798ab0/" target="_blank">
+          <span class="type">sort</span>Trier des fractions
+          <span class="url">/fr/applications/cb798ab0/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/f3447a61/" target="_blank">
+          <span class="type">drag-sort</span>Trier trois nombres
+          <span class="url">/fr/applications/f3447a61/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/488ac8c6/" target="_blank">
+          <span class="type">sequence</span>Suites de nombres
+          <span class="url">/fr/applications/488ac8c6/</span>
+        </a>
+      </li>
+    </ul>
 
-  <h2>Tableaux / Grilles</h2>
-  <ul>
-    <li><a href="http://localhost:8080/fr/applications/16f31c46/" target="_blank">
-      <span class="type">fill-table</span>Tableau de numération
-      <span class="url">/fr/applications/16f31c46/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/13f0385a/" target="_blank">
-      <span class="type">logic-grid</span>Grilles logiques
-      <span class="url">/fr/exercices/13f0385a/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/11138055/" target="_blank">
-      <span class="type">bar-chart</span>Diagramme en barres
-      <span class="url">/fr/exercices/11138055/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/bc37e1f0/" target="_blank">
-      <span class="type">decimal-triple</span>Trois représentations décimales
-      <span class="url">/fr/applications/bc37e1f0/</span>
-    </a></li>
-  </ul>
+    <h2>Tableaux / Grilles</h2>
+    <ul>
+      <li>
+        <a href="http://localhost:8080/fr/applications/16f31c46/" target="_blank">
+          <span class="type">fill-table</span>Tableau de numération
+          <span class="url">/fr/applications/16f31c46/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/13f0385a/" target="_blank">
+          <span class="type">logic-grid</span>Grilles logiques
+          <span class="url">/fr/exercices/13f0385a/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/11138055/" target="_blank">
+          <span class="type">bar-chart</span>Diagramme en barres
+          <span class="url">/fr/exercices/11138055/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/bc37e1f0/" target="_blank">
+          <span class="type">decimal-triple</span>Trois représentations décimales
+          <span class="url">/fr/applications/bc37e1f0/</span>
+        </a>
+      </li>
+    </ul>
 
-  <h2>Sélection de tuiles</h2>
-  <ul>
-    <li><a href="http://localhost:8080/fr/applications/1aca14c0/" target="_blank">
-      <span class="type">tile-select</span>Comparer des nombres jusqu'à 1 000
-      <span class="url">/fr/applications/1aca14c0/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/d2d61ad6/" target="_blank">
-      <span class="type">compare-groups</span>Autant plus ou moins ?
-      <span class="url">/fr/applications/d2d61ad6/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/a2e9f310/" target="_blank">
-      <span class="type">click-blocks</span>Valeur de position — dizaines/unités
-      <span class="url">/fr/applications/a2e9f310/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/f5b2d847/" target="_blank">
-      <span class="type">number-hunt</span>Chasse aux nombres (1 → 15)
-      <span class="url">/fr/applications/f5b2d847/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/646e7b5a/" target="_blank">
-      <span class="type">magic-color</span>Coloriage magique — araignée
-      <span class="url">/fr/exercices/646e7b5a/</span>
-    </a></li>
-  </ul>
+    <h2>Sélection de tuiles</h2>
+    <ul>
+      <li>
+        <a href="http://localhost:8080/fr/applications/1aca14c0/" target="_blank">
+          <span class="type">tile-select</span>Comparer des nombres jusqu'à 1 000
+          <span class="url">/fr/applications/1aca14c0/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/d2d61ad6/" target="_blank">
+          <span class="type">compare-groups</span>Autant plus ou moins ?
+          <span class="url">/fr/applications/d2d61ad6/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/a2e9f310/" target="_blank">
+          <span class="type">click-blocks</span>Valeur de position — dizaines/unités
+          <span class="url">/fr/applications/a2e9f310/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/f5b2d847/" target="_blank">
+          <span class="type">number-hunt</span>Chasse aux nombres (1 → 15)
+          <span class="url">/fr/applications/f5b2d847/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/646e7b5a/" target="_blank">
+          <span class="type">magic-color</span>Coloriage magique — araignée
+          <span class="url">/fr/exercices/646e7b5a/</span>
+        </a>
+      </li>
+    </ul>
 
-  <h2>Visuels SVG</h2>
-  <ul>
-    <li><a href="http://localhost:8080/fr/applications/d226ef83/" target="_blank">
-      <span class="type">ruler</span>Lecture sur la règle graduée
-      <span class="url">/fr/applications/d226ef83/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/b76399b4/" target="_blank">
-      <span class="type">number-line</span>Lire la droite graduée
-      <span class="url">/fr/exercices/b76399b4/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/6de7f04b/" target="_blank">
-      <span class="type">coordinate-grid</span>Lire les coordonnées d'un point
-      <span class="url">/fr/exercices/6de7f04b/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/46662d3a/" target="_blank">
-      <span class="type">bounding</span>Encadrement de nombres
-      <span class="url">/fr/exercices/46662d3a/</span>
-    </a></li>
-  </ul>
+    <h2>Visuels SVG</h2>
+    <ul>
+      <li>
+        <a href="http://localhost:8080/fr/applications/d226ef83/" target="_blank">
+          <span class="type">ruler</span>Lecture sur la règle graduée
+          <span class="url">/fr/applications/d226ef83/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/b76399b4/" target="_blank">
+          <span class="type">number-line</span>Lire la droite graduée
+          <span class="url">/fr/exercices/b76399b4/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/6de7f04b/" target="_blank">
+          <span class="type">coordinate-grid</span>Lire les coordonnées d'un point
+          <span class="url">/fr/exercices/6de7f04b/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/46662d3a/" target="_blank">
+          <span class="type">bounding</span>Encadrement de nombres
+          <span class="url">/fr/exercices/46662d3a/</span>
+        </a>
+      </li>
+    </ul>
 
-  <h2>Problèmes / Texte</h2>
-  <ul>
-    <li><a href="http://localhost:8080/fr/exercices/b4c89751/" target="_blank">
-      <span class="type">problem</span>La monnaie
-      <span class="url">/fr/exercices/b4c89751/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/75220261/" target="_blank">
-      <span class="type">convert</span>Les durées
-      <span class="url">/fr/exercices/75220261/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/exercices/1c382e0b/" target="_blank">
-      <span class="type">matching</span>Les solides
-      <span class="url">/fr/exercices/1c382e0b/</span>
-    </a></li>
-  </ul>
+    <h2>Problèmes / Texte</h2>
+    <ul>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/b4c89751/" target="_blank">
+          <span class="type">problem</span>La monnaie
+          <span class="url">/fr/exercices/b4c89751/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/75220261/" target="_blank">
+          <span class="type">convert</span>Les durées
+          <span class="url">/fr/exercices/75220261/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/1c382e0b/" target="_blank">
+          <span class="type">matching</span>Les solides
+          <span class="url">/fr/exercices/1c382e0b/</span>
+        </a>
+      </li>
+    </ul>
 
-  <h2>Opérations / Calcul</h2>
-  <ul>
-    <li><a href="http://localhost:8080/fr/exercices/c3d4e5f6/" target="_blank">
-      <span class="type">column-op</span>Additions posées
-      <span class="url">/fr/exercices/c3d4e5f6/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/48742bae/" target="_blank">
-      <span class="type">pyramid</span>Pyramides d'additions
-      <span class="url">/fr/applications/48742bae/</span>
-    </a></li>
-    <li><a href="http://localhost:8080/fr/applications/2063551c/" target="_blank">
-      <span class="type">count-objects</span>Compléter jusqu'à 10
-      <span class="url">/fr/applications/2063551c/</span>
-    </a></li>
-  </ul>
+    <h2>Opérations / Calcul</h2>
+    <ul>
+      <li>
+        <a href="http://localhost:8080/fr/exercices/c3d4e5f6/" target="_blank">
+          <span class="type">column-op</span>Additions posées
+          <span class="url">/fr/exercices/c3d4e5f6/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/48742bae/" target="_blank">
+          <span class="type">pyramid</span>Pyramides d'additions
+          <span class="url">/fr/applications/48742bae/</span>
+        </a>
+      </li>
+      <li>
+        <a href="http://localhost:8080/fr/applications/2063551c/" target="_blank">
+          <span class="type">count-objects</span>Compléter jusqu'à 10
+          <span class="url">/fr/applications/2063551c/</span>
+        </a>
+      </li>
+    </ul>
 
-  <h2>Types sans exercice construit</h2>
-  <ul class="missing">
-    <li><a>
-      <span class="type">svg-tiles</span>—
-      <span class="url">template existe, aucun exercice source</span>
-    </a></li>
-    <li><a>
-      <span class="type">seq-verify</span>—
-      <span class="url">template existe, aucun exercice source</span>
-    </a></li>
-    <li><a>
-      <span class="type">fraction-paint</span>—
-      <span class="url">template existe, aucun exercice source</span>
-    </a></li>
-    <li><a>
-      <span class="type">tri-arith</span>—
-      <span class="url">exercices source OK, série non construite dans _site</span>
-    </a></li>
-  </ul>
-</body>
+    <h2>Types sans exercice construit</h2>
+    <ul class="missing">
+      <li>
+        <a>
+          <span class="type">svg-tiles</span>—
+          <span class="url">template existe, aucun exercice source</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span class="type">seq-verify</span>—
+          <span class="url">template existe, aucun exercice source</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span class="type">fraction-paint</span>—
+          <span class="url">template existe, aucun exercice source</span>
+        </a>
+      </li>
+      <li>
+        <a>
+          <span class="type">tri-arith</span>—
+          <span class="url">exercices source OK, série non construite dans _site</span>
+        </a>
+      </li>
+    </ul>
+  </body>
 </html>

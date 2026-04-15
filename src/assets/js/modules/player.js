@@ -69,53 +69,53 @@ export function seriesPlayer(exercises, seriesId) {
     bcSolved: [],
     ccInputs: [],
     ccErrors: [],
-    mcColors: [],       // palette index per cell (null = unpainted)
-    mcActiveColor: 0,   // currently selected paint color
-    mcErrors: [],       // indices of wrong cells after failed verify
-    ipInputs: [],       // inputs for base + inverses
-    ipSolved: [],       // solved flags for base + inverses
-    ipErrors: [],       // error flags for base + inverses
-    dtInputs: {},       // inputs for decimal-triple: fracNum, fracDen, decimal, dizaines, unites, dixiemes, centiemes, milliemes
-    dtErrors: [],       // field keys with wrong answers
-    decompInputs: [],   // inputs for decomp type (one per non-comma part)
-    decompErrors: [],   // indices of wrong decomp inputs
-    fmInput: '',        // function-machine compute mode output
-    fmChoice: null,     // function-machine discover mode selected choice
-    mazePath: [],       // maze path as [[r,c], ...]
-    mazeErrors: [],     // maze cells that failed validation
+    mcColors: [], // palette index per cell (null = unpainted)
+    mcActiveColor: 0, // currently selected paint color
+    mcErrors: [], // indices of wrong cells after failed verify
+    ipInputs: [], // inputs for base + inverses
+    ipSolved: [], // solved flags for base + inverses
+    ipErrors: [], // error flags for base + inverses
+    dtInputs: {}, // inputs for decimal-triple: fracNum, fracDen, decimal, dizaines, unites, dixiemes, centiemes, milliemes
+    dtErrors: [], // field keys with wrong answers
+    decompInputs: [], // inputs for decomp type (one per non-comma part)
+    decompErrors: [], // indices of wrong decomp inputs
+    fmInput: '', // function-machine compute mode output
+    fmChoice: null, // function-machine discover mode selected choice
+    mazePath: [], // maze path as [[r,c], ...]
+    mazeErrors: [], // maze cells that failed validation
     vennPlacements: {}, // venn: itemIdx → zone ('a','b','ab','out')
     vennSelected: null, // venn: currently selected item index
-    vennErrors: [],     // venn: item indices with wrong placement
-    estInput: '',       // estimation: estimate field input
-    estError: false,    // estimation: estimate input is wrong
-    exactError: false,  // estimation: exact input is wrong
-    csSelected: null,     // compare-solutions: index of selected solution
+    vennErrors: [], // venn: item indices with wrong placement
+    estInput: '', // estimation: estimate field input
+    estError: false, // estimation: estimate input is wrong
+    exactError: false, // estimation: exact input is wrong
+    csSelected: null, // compare-solutions: index of selected solution
     eaStepSelected: null, // error-analysis: index of clicked step
-    eaStepError: false,   // error-analysis: clicked step was wrong
-    eaCorrection: '',     // error-analysis: correction input
+    eaStepError: false, // error-analysis: clicked step was wrong
+    eaCorrection: '', // error-analysis: correction input
     eaCorrectionError: false, // error-analysis: correction input is wrong
 
-    gpStep: 0,        // guided-problem: current step index
-    gpPicked: [],     // guided-problem: token strings picked in current tap step
-    gpChoice: null,   // guided-problem: selected choice (operation / question-type)
-    gpInput: '',      // guided-problem: text input (convert / calculate)
+    gpStep: 0, // guided-problem: current step index
+    gpPicked: [], // guided-problem: token strings picked in current tap step
+    gpChoice: null, // guided-problem: selected choice (operation / question-type)
+    gpInput: '', // guided-problem: text input (convert / calculate)
 
-    tbStory: '',      // think-board: story quadrant text
+    tbStory: '', // think-board: story quadrant text
     tbStoryError: false, // think-board: story keyword mismatch
-    _tbDrawing: false,   // think-board: canvas pointer down
+    _tbDrawing: false, // think-board: canvas pointer down
 
-    ffInputs: [],     // fact-family: one input per equation (4 total)
-    ffErrors: [],     // fact-family: indices of wrong equations
+    ffInputs: [], // fact-family: one input per equation (4 total)
+    ffErrors: [], // fact-family: indices of wrong equations
 
-    futoInputs: [],   // futoshiki: flat N*N array of input strings
-    futoErrors: [],   // futoshiki: flat indices of invalid cells
+    futoInputs: [], // futoshiki: flat N*N array of input strings
+    futoErrors: [], // futoshiki: flat indices of invalid cells
 
-    kkInputs: [],     // kenken: flat N*N array of input strings
-    kkErrors: [],     // kenken: flat indices of invalid cells
+    kkInputs: [], // kenken: flat N*N array of input strings
+    kkErrors: [], // kenken: flat indices of invalid cells
 
-    nlkPaths: {},     // numberlink: { pairNum: [[r,c],...] }
-    nlkActive: null,  // numberlink: pair number currently being drawn
-    nlkErrors: [],    // numberlink: [[r,c],...] error cells
+    nlkPaths: {}, // numberlink: { pairNum: [[r,c],...] }
+    nlkActive: null, // numberlink: pair number currently being drawn
+    nlkErrors: [], // numberlink: [[r,c],...] error cells
     nlkColors: ['', '#ef4444', '#3b82f6', '#22c55e', '#f97316', '#8b5cf6', '#ec4899'],
 
     /* Helpers */
@@ -176,13 +176,17 @@ export function seriesPlayer(exercises, seriesId) {
     get cgMarkerSvg() {
       if (!this.cur.cg || this.cgPoint === null) return '';
       const { cols = 6, rows = 6 } = this.cur.cg;
-      const PL = 40, PT = 38;
-      const cw = 360 / cols, ch = 360 / rows;
+      const PL = 40,
+        PT = 38;
+      const cw = 360 / cols,
+        ch = 360 / rows;
       const px = PL + this.cgPoint.x * cw;
       const py = PT + (rows - this.cgPoint.y) * ch;
       const lbl = this.cur.cg.placeLabel || 'A';
-      return `<circle cx="${px}" cy="${py}" r="6" class="fill-primary-500"/>` +
-        `<text x="${px + 9}" y="${py - 6}" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${lbl}</text>`;
+      return (
+        `<circle cx="${px}" cy="${py}" r="6" class="fill-primary-500"/>` +
+        `<text x="${px + 9}" y="${py - 6}" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${lbl}</text>`
+      );
     },
 
     /* Number-line SVG */
@@ -205,18 +209,22 @@ export function seriesPlayer(exercises, seriesId) {
       const { min = 0, max = 10 } = this.cur.nl;
       const range = max - min;
       if (range <= 0) return '';
-      const PAD = 40, W = 420, LY = 58;
+      const PAD = 40,
+        W = 420,
+        LY = 58;
       const mx = PAD + (this.nlVal - min) * (W / range);
       const lbl = String(this.nlVal);
-      return `<circle cx="${mx}" cy="${LY}" r="6" class="fill-primary-500"/>` +
+      return (
+        `<circle cx="${mx}" cy="${LY}" r="6" class="fill-primary-500"/>` +
         `<line x1="${mx}" y1="${LY - 6}" x2="${mx}" y2="${LY - 15}" stroke-width="2" class="stroke-primary-500"/>` +
-        `<text x="${mx}" y="${LY - 19}" text-anchor="middle" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${lbl}</text>`;
+        `<text x="${mx}" y="${LY - 19}" text-anchor="middle" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${lbl}</text>`
+      );
     },
 
     regenerateAll() {
       if (!window.AppGenerators) return;
       const expanded = [];
-      const source = this.exercises.length > 0 ? this.exercises : (exercises || []);
+      const source = this.exercises.length > 0 ? this.exercises : exercises || [];
       for (const ex of source) {
         if (!ex._gen) {
           expanded.push(ex);
@@ -233,7 +241,10 @@ export function seriesPlayer(exercises, seriesId) {
             expanded.push({ ...ex, ...gen.generate(ex._gen.params || {}) });
           } catch (e) {
             console.error(`Generator error [${ex._gen.name}]:`, e);
-            expanded.push({ ...ex, body: `<div class="p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl">⚠️ Erreur de génération (${ex._gen.name})</div>` });
+            expanded.push({
+              ...ex,
+              body: `<div class="p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl">⚠️ Erreur de génération (${ex._gen.name})</div>`,
+            });
           }
         }
       }
@@ -245,11 +256,12 @@ export function seriesPlayer(exercises, seriesId) {
       this.regenerateAll();
       this.syncFromHash();
       this._setupCurrentExercise();
-      
+
       const _focusFirst = () => {
         let ref;
         if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum;
-        else if (this.cur.type === 'coordinate-grid' && this.cur.cg && this.cur.cg.mode !== 'place') ref = this.$refs.cgX;
+        else if (this.cur.type === 'coordinate-grid' && this.cur.cg && this.cur.cg.mode !== 'place')
+          ref = this.$refs.cgX;
         else if (this.trouInputs.length > 0)
           ref = Array.from(this.$el.querySelectorAll('.js-trou input')).find((el) => el.offsetHeight > 0);
         else if (this.seqInputs.length > 0)
@@ -259,7 +271,7 @@ export function seriesPlayer(exercises, seriesId) {
         else ref = this.$refs.input;
         if (ref && !ref.disabled) ref.focus();
       };
-      
+
       this._ready = true;
       requestAnimationFrame(_focusFirst);
       this.$watch('currentIndex', () => {
@@ -274,20 +286,25 @@ export function seriesPlayer(exercises, seriesId) {
     _setupCurrentExercise() {
       const _e = this.cur;
       const _blanks = String(_e.operation ?? '').split('?').length - 1;
-      const _colOpBlanks = _e.colOp ? (_e.colOp.result || []).filter(d => d === '?').length : 0;
-      this.trouInputs = (_blanks + _colOpBlanks) > 0 ? Array(_blanks + _colOpBlanks).fill('') : [];
-      
+      const _colOpBlanks = _e.colOp ? (_e.colOp.result || []).filter((d) => d === '?').length : 0;
+      this.trouInputs = _blanks + _colOpBlanks > 0 ? Array(_blanks + _colOpBlanks).fill('') : [];
+
       const _ia = _e.sequence || _e.bounding || _e.convert;
       if (_ia) {
-        this.seqInputs = _ia.items ? _ia.items.filter(it => it.blank).map(() => '') : _ia.answers.map(() => '');
-      } else { this.seqInputs = []; }
+        this.seqInputs = _ia.items ? _ia.items.filter((it) => it.blank).map(() => '') : _ia.answers.map(() => '');
+      } else {
+        this.seqInputs = [];
+      }
       this.seqErrors = [];
 
-      this.gridCells = (_e.grid && _e.grid.rows) ? new Array(_e.grid.rows.length * _e.grid.columns.length).fill(0) : [];
+      this.gridCells = _e.grid && _e.grid.rows ? new Array(_e.grid.rows.length * _e.grid.columns.length).fill(0) : [];
       this.gridErrors = [];
 
       if (_e.pyramid) this._initPyramid(_e.pyramid);
-      else { this.pyramidInputs = []; this.pyramidErrors = []; }
+      else {
+        this.pyramidInputs = [];
+        this.pyramidErrors = [];
+      }
 
       this.triInputs = _e.triangle ? new Array(6).fill('') : [];
       this.triErrors = [];
@@ -339,7 +356,7 @@ export function seriesPlayer(exercises, seriesId) {
       this.clickBlockLevels = _e.columns ? _e.columns.map(() => 0) : [];
       this.clickBlockErrors = [];
 
-      this.paintCells = (_e.type === 'fraction-paint' && _e.denominator) ? Array(_e.denominator).fill(false) : [];
+      this.paintCells = _e.type === 'fraction-paint' && _e.denominator ? Array(_e.denominator).fill(false) : [];
       this.paintDragging = false;
 
       if (_e.bc) {
@@ -399,7 +416,7 @@ export function seriesPlayer(exercises, seriesId) {
       this.ipErrors = [];
 
       if (_e.decomp) {
-        this.decompInputs = (_e.decomp.parts || []).filter(p => !p.comma).map(() => '');
+        this.decompInputs = (_e.decomp.parts || []).filter((p) => !p.comma).map(() => '');
       } else {
         this.decompInputs = [];
       }
@@ -445,8 +462,12 @@ export function seriesPlayer(exercises, seriesId) {
         const n2 = _e.futoshiki.size * _e.futoshiki.size;
         this.futoInputs = Array(n2).fill('');
         // Pre-fill given cells
-        (_e.futoshiki.given || []).forEach((v, i) => { if (v != null) this.futoInputs[i] = String(v); });
-      } else { this.futoInputs = []; }
+        (_e.futoshiki.given || []).forEach((v, i) => {
+          if (v != null) this.futoInputs[i] = String(v);
+        });
+      } else {
+        this.futoInputs = [];
+      }
       this.futoErrors = [];
 
       this.kkInputs = _e.kenken ? Array(_e.kenken.size * _e.kenken.size).fill('') : [];
@@ -456,9 +477,19 @@ export function seriesPlayer(exercises, seriesId) {
       this.nlkActive = null;
       this.nlkErrors = [];
 
-      this.dtInputs = _e.type === 'decimal-triple'
-        ? { fracNum: '', fracDen: '', decimal: '', dizaines: '', unites: '', dixiemes: '', centiemes: '', milliemes: '' }
-        : {};
+      this.dtInputs =
+        _e.type === 'decimal-triple'
+          ? {
+              fracNum: '',
+              fracDen: '',
+              decimal: '',
+              dizaines: '',
+              unites: '',
+              dixiemes: '',
+              centiemes: '',
+              milliemes: '',
+            }
+          : {};
       this.dtErrors = [];
 
       if (this._dragErrTimer) {
@@ -487,6 +518,7 @@ export function seriesPlayer(exercises, seriesId) {
       });
       const parts = [];
       let ii = 0;
+      // eslint-disable-next-line no-control-regex
       const re = /(\d+\/\d+|\?\/\d+|\?|[^?\d\x00]+(?:\d+(?!\/\d))?[^?\d\x00]*|\x00\d+\x00|\d+(?!\/\d))/g;
       let m;
       while ((m = re.exec(safe)) !== null) {
@@ -499,6 +531,7 @@ export function seriesPlayer(exercises, seriesId) {
         } else if (t === '?') {
           parts.push({ t: 'i', idx: ii++ });
         } else {
+          // eslint-disable-next-line no-control-regex
           const v = t.replace(/\x00(\d+)\x00/g, (_, i) => stash[+i]);
           // Boundary spaces collapse inside inline-block; promote to non-breaking.
           parts.push({ t: 'x', v: v.replace(/^ +| +$/g, (s) => '\u00A0'.repeat(s.length)) });
@@ -532,7 +565,9 @@ export function seriesPlayer(exercises, seriesId) {
       const v = (this.cur.grid || [])[i];
       if (v !== this.huntNext) {
         this.huntError = i;
-        setTimeout(() => { this.huntError = -1; }, 500);
+        setTimeout(() => {
+          this.huntError = -1;
+        }, 500);
         return;
       }
       this.huntClicked = [...this.huntClicked, i];
@@ -540,7 +575,7 @@ export function seriesPlayer(exercises, seriesId) {
       if (this.huntNext > this.cur.count) {
         this.solvedFlags[this.currentIndex] = true;
         if (this.currentIndex < this.exercises.length - 1) {
-          setTimeout(() => this.goTo(this.currentIndex + 1), 2000);
+          setTimeout(() => this.goTo(this.currentIndex + 1), SETTINGS.SUCCESS_ADVANCE_DELAY);
         }
       }
     },
@@ -552,7 +587,8 @@ export function seriesPlayer(exercises, seriesId) {
       const svgX = ratio * 500;
       const { min = 0, max = 10, step = 1, subdivisions = 0 } = this.cur.nl;
       const range = max - min;
-      const PAD = 40, W = 420;
+      const PAD = 40,
+        W = 420;
       const raw = min + (svgX - PAD) / (W / range);
       const clamped = Math.max(min, Math.min(max, raw));
       const snapStep = subdivisions > 0 ? step / subdivisions : step;
@@ -566,9 +602,9 @@ export function seriesPlayer(exercises, seriesId) {
       const answer = idx === 0 ? _e.ipBase.answer : _e.ipInverses[idx - 1].answer;
       if (normalizeAnswer(this.ipInputs[idx]) === normalizeAnswer(String(answer))) {
         this.ipSolved[idx] = true;
-        this.ipErrors = this.ipErrors.filter(i => i !== idx);
+        this.ipErrors = this.ipErrors.filter((i) => i !== idx);
         this.showError = false;
-        
+
         // If all sub-problems are solved, mark exercise as solved
         if (this.ipSolved.every(Boolean)) {
           this._markSolvedAndAdvance();
@@ -582,7 +618,7 @@ export function seriesPlayer(exercises, seriesId) {
       } else {
         this.ipErrors = Array.from(new Set([...this.ipErrors, idx]));
         this._flashError(() => {
-          this.ipErrors = this.ipErrors.filter(i => i !== idx);
+          this.ipErrors = this.ipErrors.filter((i) => i !== idx);
         });
       }
     },
@@ -592,27 +628,33 @@ export function seriesPlayer(exercises, seriesId) {
       const { step = 1, subdivisions = 0 } = this.cur.nl;
       const snapStep = subdivisions > 0 ? step / subdivisions : step;
       const tol = snapStep * 0.51;
-      const isCorrect = (this.cur.answers || []).some(a => Math.abs(Number(a) - this.nlVal) <= tol);
+      const isCorrect = (this.cur.answers || []).some((a) => Math.abs(Number(a) - this.nlVal) <= tol);
       if (isCorrect) {
         this.solvedFlags[this.currentIndex] = true;
         this.showError = false;
         if (this.currentIndex < this.exercises.length - 1) {
-          setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+          setTimeout(() => this.goTo(this.currentIndex + 1), SETTINGS.SUCCESS_ADVANCE_DELAY);
         }
       } else {
         this.showError = true;
-        setTimeout(() => { this.showError = false; }, 2000);
+        setTimeout(() => {
+          this.showError = false;
+        }, SETTINGS.ERROR_FLASH_DURATION);
       }
     },
 
     cgPlace(event) {
       if (this.solved || !this.cur.cg) return;
       const { cols = 6, rows = 6 } = this.cur.cg;
-      const VW = 420, VH = 410, PL = 40, PT = 20;
-      const GW = 360, GH = 360;
+      const VW = 420,
+        VH = 410,
+        PL = 40,
+        PT = 20;
+      const GW = 360,
+        GH = 360;
       const rect = event.currentTarget.getBoundingClientRect();
-      const svgX = (event.clientX - rect.left) / rect.width * VW;
-      const svgY = (event.clientY - rect.top) / rect.height * VH;
+      const svgX = ((event.clientX - rect.left) / rect.width) * VW;
+      const svgY = ((event.clientY - rect.top) / rect.height) * VH;
       const rawX = (svgX - PL) / (GW / cols);
       const rawY = rows - (svgY - PT) / (GH / rows);
       this.cgPoint = {
@@ -631,11 +673,13 @@ export function seriesPlayer(exercises, seriesId) {
         this.solvedFlags[this.currentIndex] = true;
         this.showError = false;
         if (this.currentIndex < this.exercises.length - 1) {
-          setTimeout(() => this.goTo(this.currentIndex + 1), 1500);
+          setTimeout(() => this.goTo(this.currentIndex + 1), SETTINGS.SUCCESS_ADVANCE_DELAY);
         }
       } else {
         this.showError = true;
-        setTimeout(() => { this.showError = false; }, 2000);
+        setTimeout(() => {
+          this.showError = false;
+        }, SETTINGS.ERROR_FLASH_DURATION);
       }
     },
 
@@ -698,7 +742,9 @@ export function seriesPlayer(exercises, seriesId) {
         this._markSolvedAndAdvance();
       } else {
         this.fmChoice = i;
-        setTimeout(() => { this.fmChoice = null; }, 1200);
+        setTimeout(() => {
+          this.fmChoice = null;
+        }, 1200);
       }
     },
 
@@ -729,11 +775,12 @@ export function seriesPlayer(exercises, seriesId) {
 
       // Must be adjacent to last cell (no diagonals)
       const last = path[path.length - 1];
-      const dr = Math.abs(r - last[0]), dc = Math.abs(c - last[1]);
-      if ((dr + dc) !== 1) return;
+      const dr = Math.abs(r - last[0]),
+        dc = Math.abs(c - last[1]);
+      if (dr + dc !== 1) return;
 
       // Must not already be in path
-      if (path.some(p => p[0] === r && p[1] === c)) return;
+      if (path.some((p) => p[0] === r && p[1] === c)) return;
 
       this.mazePath = [...path, [r, c]];
     },
@@ -761,7 +808,10 @@ export function seriesPlayer(exercises, seriesId) {
 
       if (_e.type === 'function-machine' && _e.machine) {
         if (_e.machine.mode === 'compute') {
-          if (!this.fmInput.trim()) { this._flashError(); return; }
+          if (!this.fmInput.trim()) {
+            this._flashError();
+            return;
+          }
           if (normalizeAnswer(this.fmInput) === normalizeAnswer(String(_e.machine.answer))) {
             this._markSolvedAndAdvance();
           } else {
@@ -789,7 +839,9 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.mazeErrors = errors;
-          this._flashError(() => { this.mazeErrors = []; });
+          this._flashError(() => {
+            this.mazeErrors = [];
+          });
         }
         return;
       }
@@ -800,9 +852,7 @@ export function seriesPlayer(exercises, seriesId) {
           this._flashError();
           return;
         }
-        const errors = items
-          .map((it, i) => this.vennPlacements[i] !== it.zone ? i : -1)
-          .filter(i => i !== -1);
+        const errors = items.map((it, i) => (this.vennPlacements[i] !== it.zone ? i : -1)).filter((i) => i !== -1);
         if (errors.length === 0) {
           this.vennErrors = [];
           this._markSolvedAndAdvance();
@@ -810,34 +860,41 @@ export function seriesPlayer(exercises, seriesId) {
           this.vennErrors = errors;
           // Move wrong items back to bank
           const updated = { ...this.vennPlacements };
-          errors.forEach(i => { delete updated[i]; });
+          errors.forEach((i) => {
+            delete updated[i];
+          });
           this.vennPlacements = updated;
-          this._flashError(() => { this.vennErrors = []; });
+          this._flashError(() => {
+            this.vennErrors = [];
+          });
         }
         return;
       }
 
       if (_e.type === 'bar-chart' && _e.bc && _e.bc.mode === 'build') {
-        const errors = _e.bc.values
-          .map((v, i) => (this.bcValues[i] !== v ? i : -1))
-          .filter(i => i >= 0);
+        const errors = _e.bc.values.map((v, i) => (this.bcValues[i] !== v ? i : -1)).filter((i) => i >= 0);
         if (errors.length === 0) {
           this._markSolvedAndAdvance();
         } else {
           this.bcErrors = errors;
-          this._flashError(() => { this.bcErrors = []; });
+          this._flashError(() => {
+            this.bcErrors = [];
+          });
         }
         return;
       }
 
       if (_e.type === 'drag-sort') {
-        if (this._dragErrTimer) { clearTimeout(this._dragErrTimer); this._dragErrTimer = null; }
+        if (this._dragErrTimer) {
+          clearTimeout(this._dragErrTimer);
+          this._dragErrTimer = null;
+        }
         // Derive correct permutation from tile values + direction
         const tiles = _e.tiles || [];
         const correctOrder = tiles
           .map((v, i) => ({ v: parseFloat(String(v).replace(',', '.')), i }))
-          .sort((a, b) => _e.direction === 'desc' ? b.v - a.v : a.v - b.v)
-          .map(x => x.i);
+          .sort((a, b) => (_e.direction === 'desc' ? b.v - a.v : a.v - b.v))
+          .map((x) => x.i);
         const errors = this.dragTilesOrder
           .map((origIdx, pos) => (Number(origIdx) !== correctOrder[pos] ? pos : -1))
           .filter((p) => p >= 0);
@@ -846,7 +903,9 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.dragErrors = errors;
-          this._flashError(() => { this.dragErrors = []; });
+          this._flashError(() => {
+            this.dragErrors = [];
+          });
         }
         return;
       }
@@ -868,13 +927,18 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.clickBlockErrors = errors;
-          this._flashError(() => { this.clickBlockErrors = []; });
+          this._flashError(() => {
+            this.clickBlockErrors = [];
+          });
         }
         return;
       }
 
       if (_e.type === 'fill-table') {
-        if (this.tableInputs.some((v) => !v.trim())) { this._flashError(); return; }
+        if (this.tableInputs.some((v) => !v.trim())) {
+          this._flashError();
+          return;
+        }
         const errors = [];
         (_e.table?.rows || []).forEach((row) =>
           row.forEach((cell) => {
@@ -888,7 +952,9 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.tableErrors = errors;
-          this._flashError(() => { this.tableErrors = []; });
+          this._flashError(() => {
+            this.tableErrors = [];
+          });
         }
         return;
       }
@@ -901,7 +967,9 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.tileErrors = this.tileSelected.filter((i) => !expected.includes(i));
-          this._flashError(() => { this.tileErrors = []; });
+          this._flashError(() => {
+            this.tileErrors = [];
+          });
         }
         return;
       }
@@ -914,23 +982,30 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.svgErrors = this.svgSelected.filter((i) => !expected.includes(i));
-          this._flashError(() => { this.svgErrors = []; });
+          this._flashError(() => {
+            this.svgErrors = [];
+          });
         }
         return;
       }
 
       if (_e.type === 'futoshiki' && _e.futoshiki) {
         const { size, rows } = _e.futoshiki;
-        const vals = this.futoInputs.map(v => parseInt(v, 10));
-        if (vals.some(v => isNaN(v) || v < 1 || v > size)) { this._flashError(); return; }
+        const vals = this.futoInputs.map((v) => parseInt(v, 10));
+        if (vals.some((v) => isNaN(v) || v < 1 || v > size)) {
+          this._flashError();
+          return;
+        }
         const errors = new Set();
         // Check each row: no repeats
         for (let r = 0; r < size; r++) {
           const seen = new Map();
           for (let c = 0; c < size; c++) {
             const v = vals[r * size + c];
-            if (seen.has(v)) { errors.add(r * size + c); errors.add(seen.get(v)); }
-            else seen.set(v, r * size + c);
+            if (seen.has(v)) {
+              errors.add(r * size + c);
+              errors.add(seen.get(v));
+            } else seen.set(v, r * size + c);
           }
         }
         // Check each column: no repeats
@@ -938,8 +1013,10 @@ export function seriesPlayer(exercises, seriesId) {
           const seen = new Map();
           for (let r = 0; r < size; r++) {
             const v = vals[r * size + c];
-            if (seen.has(v)) { errors.add(r * size + c); errors.add(seen.get(v)); }
-            else seen.set(v, r * size + c);
+            if (seen.has(v)) {
+              errors.add(r * size + c);
+              errors.add(seen.get(v));
+            } else seen.set(v, r * size + c);
           }
         }
         // Check inequality constraints
@@ -948,14 +1025,22 @@ export function seriesPlayer(exercises, seriesId) {
           for (let c = 0; c < (row.hCons || []).length; c++) {
             const sign = row.hCons[c];
             if (!sign) continue;
-            const v1 = vals[r * size + c], v2 = vals[r * size + c + 1];
-            if (sign === '<' ? v1 >= v2 : v1 <= v2) { errors.add(r * size + c); errors.add(r * size + c + 1); }
+            const v1 = vals[r * size + c],
+              v2 = vals[r * size + c + 1];
+            if (sign === '<' ? v1 >= v2 : v1 <= v2) {
+              errors.add(r * size + c);
+              errors.add(r * size + c + 1);
+            }
           }
           for (let c = 0; c < (row.vCons || []).length; c++) {
             const sign = row.vCons[c];
             if (!sign) continue;
-            const v1 = vals[r * size + c], v2 = vals[(r + 1) * size + c];
-            if (sign === '<' ? v1 >= v2 : v1 <= v2) { errors.add(r * size + c); errors.add((r + 1) * size + c); }
+            const v1 = vals[r * size + c],
+              v2 = vals[(r + 1) * size + c];
+            if (sign === '<' ? v1 >= v2 : v1 <= v2) {
+              errors.add(r * size + c);
+              errors.add((r + 1) * size + c);
+            }
           }
         }
         if (errors.size === 0) {
@@ -963,23 +1048,30 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.futoErrors = [...errors];
-          this._flashError(() => { this.futoErrors = []; });
+          this._flashError(() => {
+            this.futoErrors = [];
+          });
         }
         return;
       }
 
       if (_e.type === 'kenken' && _e.kenken) {
         const { size, cages } = _e.kenken;
-        const vals = this.kkInputs.map(v => parseInt(v, 10));
-        if (vals.some(v => isNaN(v) || v < 1 || v > size)) { this._flashError(); return; }
+        const vals = this.kkInputs.map((v) => parseInt(v, 10));
+        if (vals.some((v) => isNaN(v) || v < 1 || v > size)) {
+          this._flashError();
+          return;
+        }
         const errors = new Set();
         // Check rows
         for (let r = 0; r < size; r++) {
           const seen = new Map();
           for (let c = 0; c < size; c++) {
             const v = vals[r * size + c];
-            if (seen.has(v)) { errors.add(r * size + c); errors.add(seen.get(v)); }
-            else seen.set(v, r * size + c);
+            if (seen.has(v)) {
+              errors.add(r * size + c);
+              errors.add(seen.get(v));
+            } else seen.set(v, r * size + c);
           }
         }
         // Check columns
@@ -987,19 +1079,29 @@ export function seriesPlayer(exercises, seriesId) {
           const seen = new Map();
           for (let r = 0; r < size; r++) {
             const v = vals[r * size + c];
-            if (seen.has(v)) { errors.add(r * size + c); errors.add(seen.get(v)); }
-            else seen.set(v, r * size + c);
+            if (seen.has(v)) {
+              errors.add(r * size + c);
+              errors.add(seen.get(v));
+            } else seen.set(v, r * size + c);
           }
         }
         // Check cage arithmetic
-        for (const cage of (cages || [])) {
+        for (const cage of cages || []) {
           const cageVals = cage.cells.map(([r, c]) => vals[r * size + c]);
           let ok = false;
-          if (cage.op === '') { ok = cageVals[0] === cage.target; }
-          else if (cage.op === '+') { ok = cageVals.reduce((s, v) => s + v, 0) === cage.target; }
-          else if (cage.op === '×') { ok = cageVals.reduce((p, v) => p * v, 1) === cage.target; }
-          else if (cage.op === '-') { ok = Math.abs(cageVals[0] - cageVals[1]) === cage.target; }
-          else if (cage.op === '÷') { const mx = Math.max(...cageVals), mn = Math.min(...cageVals); ok = mn > 0 && mx / mn === cage.target; }
+          if (cage.op === '') {
+            ok = cageVals[0] === cage.target;
+          } else if (cage.op === '+') {
+            ok = cageVals.reduce((s, v) => s + v, 0) === cage.target;
+          } else if (cage.op === '×') {
+            ok = cageVals.reduce((p, v) => p * v, 1) === cage.target;
+          } else if (cage.op === '-') {
+            ok = Math.abs(cageVals[0] - cageVals[1]) === cage.target;
+          } else if (cage.op === '÷') {
+            const mx = Math.max(...cageVals),
+              mn = Math.min(...cageVals);
+            ok = mn > 0 && mx / mn === cage.target;
+          }
           if (!ok) cage.cells.forEach(([r, c]) => errors.add(r * size + c));
         }
         if (errors.size === 0) {
@@ -1007,7 +1109,9 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.kkErrors = [...errors];
-          this._flashError(() => { this.kkErrors = []; });
+          this._flashError(() => {
+            this.kkErrors = [];
+          });
         }
         return;
       }
@@ -1020,15 +1124,24 @@ export function seriesPlayer(exercises, seriesId) {
         for (let pi = 0; pi < pairs.length; pi++) {
           const path = this.nlkPaths[pi + 1] || [];
           const [ep1, ep2] = pairs[pi];
-          if (path.length < 2) { errors.push(...(path.length ? path : [ep1, ep2])); continue; }
-          const start = path[0], end = path[path.length - 1];
-          const connectsOk = (start[0] === ep1[0] && start[1] === ep1[1] && end[0] === ep2[0] && end[1] === ep2[1]) ||
-                             (start[0] === ep2[0] && start[1] === ep2[1] && end[0] === ep1[0] && end[1] === ep1[1]);
+          if (path.length < 2) {
+            errors.push(...(path.length ? path : [ep1, ep2]));
+            continue;
+          }
+          const start = path[0],
+            end = path[path.length - 1];
+          const connectsOk =
+            (start[0] === ep1[0] && start[1] === ep1[1] && end[0] === ep2[0] && end[1] === ep2[1]) ||
+            (start[0] === ep2[0] && start[1] === ep2[1] && end[0] === ep1[0] && end[1] === ep1[1]);
           // Check continuity
           let contOk = true;
           for (let i = 1; i < path.length; i++) {
-            const dr = Math.abs(path[i][0] - path[i-1][0]), dc = Math.abs(path[i][1] - path[i-1][1]);
-            if (dr + dc !== 1) { contOk = false; break; }
+            const dr = Math.abs(path[i][0] - path[i - 1][0]),
+              dc = Math.abs(path[i][1] - path[i - 1][1]);
+            if (dr + dc !== 1) {
+              contOk = false;
+              break;
+            }
           }
           if (!connectsOk || !contOk) path.forEach(([r, c]) => errors.push([r, c]));
           else path.forEach(([r, c]) => covered.add(`${r},${c}`));
@@ -1043,7 +1156,9 @@ export function seriesPlayer(exercises, seriesId) {
           if (!allCovered && errors.length === 0) this._flashError();
           else {
             this.nlkErrors = errors;
-            this._flashError(() => { this.nlkErrors = []; });
+            this._flashError(() => {
+              this.nlkErrors = [];
+            });
           }
         }
         return;
@@ -1051,13 +1166,15 @@ export function seriesPlayer(exercises, seriesId) {
 
       if (_e.type === 'magic-color') {
         const cells = _e.magicColor?.cells || [];
-        const wrong = cells.map((c, i) => this.mcColors[i] !== c.colorIdx ? i : -1).filter(i => i !== -1);
+        const wrong = cells.map((c, i) => (this.mcColors[i] !== c.colorIdx ? i : -1)).filter((i) => i !== -1);
         if (wrong.length === 0) {
           this.mcErrors = [];
           this._markSolvedAndAdvance();
         } else {
           this.mcErrors = wrong;
-          this._flashError(() => { this.mcErrors = []; });
+          this._flashError(() => {
+            this.mcErrors = [];
+          });
         }
         return;
       }
@@ -1070,23 +1187,30 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.checkErrors = this.checkSelected.filter((i) => !exp.includes(i));
-          this._flashError(() => { this.checkErrors = []; });
+          this._flashError(() => {
+            this.checkErrors = [];
+          });
         }
         return;
       }
 
       if (_e.type === 'select') {
         const stmts = _e.selectStatements || [];
-        if (this.selectAnswers.some((v) => !v)) { this._flashError(); return; }
+        if (this.selectAnswers.some((v) => !v)) {
+          this._flashError();
+          return;
+        }
         const errors = stmts
-          .map((s, i) => normalizeAnswer(this.selectAnswers[i]) !== normalizeAnswer(s.answer) ? i : -1)
+          .map((s, i) => (normalizeAnswer(this.selectAnswers[i]) !== normalizeAnswer(s.answer) ? i : -1))
           .filter((i) => i !== -1);
         if (errors.length === 0) {
           this.selectErrors = [];
           this._markSolvedAndAdvance();
         } else {
           this.selectErrors = errors;
-          this._flashError(() => { this.selectErrors = []; });
+          this._flashError(() => {
+            this.selectErrors = [];
+          });
         }
         return;
       }
@@ -1100,16 +1224,25 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this.sortErrors = wrong;
-          this._flashError(() => { this.sortErrors = []; this.sortPicked = []; });
+          this._flashError(() => {
+            this.sortErrors = [];
+            this.sortPicked = [];
+          });
         }
         return;
       }
 
       if (_e.type === 'fraction-check') {
-        if (!this.rfInputs[0].trim() || !this.rfInputs[1].trim()) { this._flashError(); return; }
+        if (!this.rfInputs[0].trim() || !this.rfInputs[1].trim()) {
+          this._flashError();
+          return;
+        }
         const isCorrect = (_e.answers || []).some((a) => {
           const p = a.split('/');
-          return normalizeAnswer(this.rfInputs[0]) === normalizeAnswer(p[0]) && normalizeAnswer(this.rfInputs[1]) === normalizeAnswer(p[1]);
+          return (
+            normalizeAnswer(this.rfInputs[0]) === normalizeAnswer(p[0]) &&
+            normalizeAnswer(this.rfInputs[1]) === normalizeAnswer(p[1])
+          );
         });
         if (isCorrect) this._markSolvedAndAdvance();
         else this._flashError();
@@ -1119,7 +1252,10 @@ export function seriesPlayer(exercises, seriesId) {
       if (_e.type === 'coordinate-grid' && _e.cg && _e.cg.mode !== 'place') {
         const xi = this.cgInputs[0].trim();
         const yi = this.cgInputs[1].trim();
-        if (!xi || !yi) { this._flashError(); return; }
+        if (!xi || !yi) {
+          this._flashError();
+          return;
+        }
         const isCorrect = (_e.answers || []).some((a) => {
           const parts = a.split(',');
           return normalizeAnswer(xi) === normalizeAnswer(parts[0]) && normalizeAnswer(yi) === normalizeAnswer(parts[1]);
@@ -1132,8 +1268,11 @@ export function seriesPlayer(exercises, seriesId) {
       if (_e.type === 'matching') {
         const p = _e.pairs;
         if (!p) return;
-        if (this.matchConnections.length < p.left.length) { this._flashError(); return; }
-        const errs = this.matchConnections.filter(c => p.answers[c.left] !== c.right);
+        if (this.matchConnections.length < p.left.length) {
+          this._flashError();
+          return;
+        }
+        const errs = this.matchConnections.filter((c) => p.answers[c.left] !== c.right);
         if (errs.length === 0) {
           this.matchErrors = [];
           this.$nextTick(() => this.updateMatchLines());
@@ -1149,9 +1288,15 @@ export function seriesPlayer(exercises, seriesId) {
       if (_e.type === 'logic-grid') {
         const g = _e.grid;
         if (!g) return;
-        const nc = g.columns.length, nr = g.rows.length;
-        const checks = this.gridCells.map((v, i) => v === 2 ? { r: Math.floor(i / nc), c: i % nc, idx: i } : null).filter(Boolean);
-        if (checks.length < nr) { this._flashError(); return; }
+        const nc = g.columns.length,
+          nr = g.rows.length;
+        const checks = this.gridCells
+          .map((v, i) => (v === 2 ? { r: Math.floor(i / nc), c: i % nc, idx: i } : null))
+          .filter(Boolean);
+        if (checks.length < nr) {
+          this._flashError();
+          return;
+        }
         const errs = checks.filter(({ r, c }) => !g.solution[r][c]);
         if (errs.length === 0) {
           this.gridErrors = [];
@@ -1167,8 +1312,8 @@ export function seriesPlayer(exercises, seriesId) {
         const t = _e.triangle;
         if (!t) return;
         // vals[0..2] = vertices [A,B,C], vals[3..5] = edges [f,d,e]
-        const vals  = [...t.vertices, ...t.edges];
-        const given = [...t.givenV,   ...t.givenE];
+        const vals = [...t.vertices, ...t.edges];
+        const given = [...t.givenV, ...t.givenE];
         const wrong = [];
         let allFilled = true;
         vals.forEach((v, i) => {
@@ -1177,9 +1322,19 @@ export function seriesPlayer(exercises, seriesId) {
             else if (normalizeAnswer(this.triInputs[i]) !== normalizeAnswer(String(v))) wrong.push(i);
           }
         });
-        if (!allFilled) { this._flashError(); return; }
-        if (wrong.length === 0) { this.triErrors = []; this._markSolvedAndAdvance(); }
-        else { this.triErrors = wrong; this._flashError(() => { this.triErrors = []; }); }
+        if (!allFilled) {
+          this._flashError();
+          return;
+        }
+        if (wrong.length === 0) {
+          this.triErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.triErrors = wrong;
+          this._flashError(() => {
+            this.triErrors = [];
+          });
+        }
         return;
       }
 
@@ -1188,15 +1343,20 @@ export function seriesPlayer(exercises, seriesId) {
         if (!p) return;
         const wrong = [];
         let allFilled = true;
-        p.rows.forEach((row, r) => row.forEach((val, c) => {
-          if (!p.given[r][c]) {
-            const fi = this.pyramidFlatIdx(r, c);
-            const input = this.pyramidInputs[fi]?.trim();
-            if (!input) allFilled = false;
-            else if (normalizeAnswer(input) !== normalizeAnswer(String(val))) wrong.push(fi);
-          }
-        }));
-        if (!allFilled) { this._flashError(); return; }
+        p.rows.forEach((row, r) =>
+          row.forEach((val, c) => {
+            if (!p.given[r][c]) {
+              const fi = this.pyramidFlatIdx(r, c);
+              const input = this.pyramidInputs[fi]?.trim();
+              if (!input) allFilled = false;
+              else if (normalizeAnswer(input) !== normalizeAnswer(String(val))) wrong.push(fi);
+            }
+          })
+        );
+        if (!allFilled) {
+          this._flashError();
+          return;
+        }
         if (wrong.length === 0) {
           this.pyramidErrors = [];
           this._markSolvedAndAdvance();
@@ -1208,8 +1368,13 @@ export function seriesPlayer(exercises, seriesId) {
       }
 
       if (_e.type === 'true-false') {
-        if (this.tfInputs.some((v) => v === null)) { this._flashError(); return; }
-        const wrong = (_e.statements || []).map((s, i) => this.tfInputs[i] !== s.answer ? i : -1).filter(i => i !== -1);
+        if (this.tfInputs.some((v) => v === null)) {
+          this._flashError();
+          return;
+        }
+        const wrong = (_e.statements || [])
+          .map((s, i) => (this.tfInputs[i] !== s.answer ? i : -1))
+          .filter((i) => i !== -1);
         if (wrong.length === 0) {
           this.tfErrors = [];
           this._markSolvedAndAdvance();
@@ -1221,8 +1386,13 @@ export function seriesPlayer(exercises, seriesId) {
       }
 
       if (_e.type === 'compare' || _e.type === 'compare-expressions') {
-        if (this.cmpInputs.some((v) => v === null)) { this._flashError(); return; }
-        const wrong = (_e.comparisons || []).map((c, i) => this.cmpInputs[i] !== c.answer ? i : -1).filter(i => i !== -1);
+        if (this.cmpInputs.some((v) => v === null)) {
+          this._flashError();
+          return;
+        }
+        const wrong = (_e.comparisons || [])
+          .map((c, i) => (this.cmpInputs[i] !== c.answer ? i : -1))
+          .filter((i) => i !== -1);
         if (wrong.length === 0) {
           this.cmpErrors = [];
           this._markSolvedAndAdvance();
@@ -1236,9 +1406,14 @@ export function seriesPlayer(exercises, seriesId) {
       if (_e.type === 'sequence' || _e.type === 'bounding' || _e.type === 'convert') {
         const s = _e.sequence || _e.bounding || _e.convert;
         if (!s) return;
-        if (this.seqInputs.some((v) => !v.trim())) { this._flashError(); return; }
-        const _answers = s.items ? s.items.filter(it => it.blank).map(it => it.answer) : s.answers;
-        const wrong = _answers.map((a, i) => normalizeAnswer(this.seqInputs[i]) !== normalizeAnswer(a) ? i : -1).filter(i => i !== -1);
+        if (this.seqInputs.some((v) => !v.trim())) {
+          this._flashError();
+          return;
+        }
+        const _answers = s.items ? s.items.filter((it) => it.blank).map((it) => it.answer) : s.answers;
+        const wrong = _answers
+          .map((a, i) => (normalizeAnswer(this.seqInputs[i]) !== normalizeAnswer(a) ? i : -1))
+          .filter((i) => i !== -1);
         if (wrong.length === 0) {
           this.seqErrors = [];
           this._markSolvedAndAdvance();
@@ -1251,14 +1426,21 @@ export function seriesPlayer(exercises, seriesId) {
 
       if (_e.type === 'calc-chain') {
         const steps = (_e.chain || {}).steps || [];
-        if (this.ccInputs.some((v) => !v?.trim())) { this._flashError(); return; }
-        const errors = steps.map((step, i) => normalizeAnswer(this.ccInputs[i]) !== normalizeAnswer(step.answer) ? i : -1).filter(i => i >= 0);
+        if (this.ccInputs.some((v) => !v?.trim())) {
+          this._flashError();
+          return;
+        }
+        const errors = steps
+          .map((step, i) => (normalizeAnswer(this.ccInputs[i]) !== normalizeAnswer(step.answer) ? i : -1))
+          .filter((i) => i >= 0);
         if (errors.length === 0) {
           this.ccErrors = [];
           this._markSolvedAndAdvance();
         } else {
           this.ccErrors = errors;
-          this._flashError(() => { this.ccErrors = []; });
+          this._flashError(() => {
+            this.ccErrors = [];
+          });
         }
         return;
       }
@@ -1268,67 +1450,105 @@ export function seriesPlayer(exercises, seriesId) {
         const dtp = _e.dtPlaces || [null, null, null, null, null];
         const errors = [];
         if (_e.dtGiven !== 'fraction') {
-          if (!this.dtInputs.fracNum?.trim() || !this.dtInputs.fracDen?.trim()) { this._flashError(); return; }
+          if (!this.dtInputs.fracNum?.trim() || !this.dtInputs.fracDen?.trim()) {
+            this._flashError();
+            return;
+          }
           if (normalizeAnswer(this.dtInputs.fracNum) !== normalizeAnswer(String(_e.dtFrac.num))) errors.push('fracNum');
           if (normalizeAnswer(this.dtInputs.fracDen) !== normalizeAnswer(String(_e.dtFrac.den))) errors.push('fracDen');
         }
         if (_e.dtGiven !== 'decimal') {
-          if (!this.dtInputs.decimal?.trim()) { this._flashError(); return; }
+          if (!this.dtInputs.decimal?.trim()) {
+            this._flashError();
+            return;
+          }
           if (normalizeAnswer(this.dtInputs.decimal) !== normalizeAnswer(_e.dtDecimal)) errors.push('decimal');
         }
         if (_e.dtGiven !== 'places') {
           const active = KEYS.filter((_, i) => dtp[i] !== null);
-          if (active.some(k => !this.dtInputs[k]?.trim())) { this._flashError(); return; }
-          KEYS.forEach((key, i) => { if (dtp[i] !== null && normalizeAnswer(this.dtInputs[key]) !== normalizeAnswer(String(dtp[i]))) errors.push(key); });
+          if (active.some((k) => !this.dtInputs[k]?.trim())) {
+            this._flashError();
+            return;
+          }
+          KEYS.forEach((key, i) => {
+            if (dtp[i] !== null && normalizeAnswer(this.dtInputs[key]) !== normalizeAnswer(String(dtp[i])))
+              errors.push(key);
+          });
         }
-        if (errors.length === 0) { this.dtErrors = []; this._markSolvedAndAdvance(); }
-        else { this.dtErrors = errors; this._flashError(() => { this.dtErrors = []; }); }
+        if (errors.length === 0) {
+          this.dtErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.dtErrors = errors;
+          this._flashError(() => {
+            this.dtErrors = [];
+          });
+        }
         return;
       }
 
       if (_e.type === 'decomp') {
-        if (this.decompInputs.some(v => !v.trim())) { this._flashError(); return; }
-        const parts = (_e.decomp?.parts || []).filter(p => !p.comma);
+        if (this.decompInputs.some((v) => !v.trim())) {
+          this._flashError();
+          return;
+        }
+        const parts = (_e.decomp?.parts || []).filter((p) => !p.comma);
         const errors = parts
-          .map((p, i) => normalizeAnswer(this.decompInputs[i]) !== normalizeAnswer(String(p.answer)) ? i : -1)
-          .filter(i => i !== -1);
+          .map((p, i) => (normalizeAnswer(this.decompInputs[i]) !== normalizeAnswer(String(p.answer)) ? i : -1))
+          .filter((i) => i !== -1);
         if (errors.length === 0) {
           this.decompErrors = [];
           this._markSolvedAndAdvance();
         } else {
           this.decompErrors = errors;
-          this._flashError(() => { this.decompErrors = []; });
+          this._flashError(() => {
+            this.decompErrors = [];
+          });
         }
         return;
       }
 
       if (this.trouInputs.length > 0) {
-        if (this.trouInputs.some((v) => !v.trim())) { this._flashError(); return; }
+        if (this.trouInputs.some((v) => !v.trim())) {
+          this._flashError();
+          return;
+        }
         let isCorrect;
         if (this.trouInputs.length === 1) {
           isCorrect = (_e.answers || []).some((a) => normalizeAnswer(a) === normalizeAnswer(this.trouInputs[0]));
         } else {
           isCorrect = this.trouInputs.every((v, i) => normalizeAnswer(v) === normalizeAnswer(_e.answers[i] || ''));
         }
-        
+
         if (isCorrect) this._markSolvedAndAdvance();
         else this._flashError();
         return;
       }
 
       if (_e.type === 'compare-solutions') {
-        if (this.csSelected === null) { this._flashError(); return; }
+        if (this.csSelected === null) {
+          this._flashError();
+          return;
+        }
         if (this.csSelected === _e.correctSolution) {
           this._markSolvedAndAdvance();
         } else {
-          this._flashError(() => { this.csSelected = null; });
+          this._flashError(() => {
+            this.csSelected = null;
+          });
         }
         return;
       }
 
       if (_e.type === 'error-analysis') {
-        if (!_e.guided && this.eaStepSelected === null) { this._flashError(); return; }
-        if (!this.eaCorrection.trim()) { this._flashError(); return; }
+        if (!_e.guided && this.eaStepSelected === null) {
+          this._flashError();
+          return;
+        }
+        if (!this.eaCorrection.trim()) {
+          this._flashError();
+          return;
+        }
         const stepOk = _e.guided || this.eaStepSelected === _e.wrongStep;
         const corrRaw = normalizeAnswer(this.eaCorrection).replace(/^=+/, '');
         const corrOk = corrRaw === normalizeAnswer(String(_e.correction));
@@ -1340,7 +1560,10 @@ export function seriesPlayer(exercises, seriesId) {
           this._markSolvedAndAdvance();
         } else {
           this._flashError(() => {
-            if (!stepOk) { this.eaStepError = false; this.eaStepSelected = null; }
+            if (!stepOk) {
+              this.eaStepError = false;
+              this.eaStepSelected = null;
+            }
             this.eaCorrectionError = false;
           });
         }
@@ -1348,9 +1571,12 @@ export function seriesPlayer(exercises, seriesId) {
       }
 
       if (_e.type === 'estimation') {
-        if (!this.estInput.trim() || !this.userInput.trim()) { this._flashError(); return; }
-        const estOk = (_e.estAnswers || []).some(a => normalizeAnswer(a) === normalizeAnswer(this.estInput));
-        const exactOk = (_e.answers || []).some(a => normalizeAnswer(a) === normalizeAnswer(this.userInput));
+        if (!this.estInput.trim() || !this.userInput.trim()) {
+          this._flashError();
+          return;
+        }
+        const estOk = (_e.estAnswers || []).some((a) => normalizeAnswer(a) === normalizeAnswer(this.estInput));
+        const exactOk = (_e.answers || []).some((a) => normalizeAnswer(a) === normalizeAnswer(this.userInput));
         this.estError = !estOk;
         this.exactError = !exactOk;
         if (estOk && exactOk) {
@@ -1364,17 +1590,22 @@ export function seriesPlayer(exercises, seriesId) {
       }
 
       if (_e.type === 'fact-family') {
-        if (this.ffInputs.some(v => !v.trim())) { this._flashError(); return; }
+        if (this.ffInputs.some((v) => !v.trim())) {
+          this._flashError();
+          return;
+        }
         const wrong = (_e.ffEquations || [])
-          .map((eq, i) => normalizeAnswer(this.ffInputs[i]) !== normalizeAnswer(eq.answer) ? i : -1)
-          .filter(i => i !== -1);
+          .map((eq, i) => (normalizeAnswer(this.ffInputs[i]) !== normalizeAnswer(eq.answer) ? i : -1))
+          .filter((i) => i !== -1);
         if (wrong.length === 0) {
           this.ffErrors = [];
           this._markSolvedAndAdvance();
         } else {
           this.ffErrors = wrong;
           this._flashError(() => {
-            wrong.forEach(i => { this.ffInputs[i] = ''; });
+            wrong.forEach((i) => {
+              this.ffInputs[i] = '';
+            });
             this.ffErrors = [];
           });
         }
@@ -1382,17 +1613,21 @@ export function seriesPlayer(exercises, seriesId) {
       }
 
       if (_e.type === 'think-board') {
-        if (!this.userInput.trim()) { this._flashError(); return; }
-        const symbolOk = (_e.answers || []).some(a => normalizeAnswer(a) === normalizeAnswer(this.userInput));
+        if (!this.userInput.trim()) {
+          this._flashError();
+          return;
+        }
+        const symbolOk = (_e.answers || []).some((a) => normalizeAnswer(a) === normalizeAnswer(this.userInput));
         // Check story keyword if tbStoryKeyword is set
-        const storyOk = !_e.tbStoryKeyword ||
-          this.tbStory.toLowerCase().includes(_e.tbStoryKeyword.toLowerCase());
+        const storyOk = !_e.tbStoryKeyword || this.tbStory.toLowerCase().includes(_e.tbStoryKeyword.toLowerCase());
         this.tbStoryError = !storyOk;
         if (symbolOk && storyOk) {
           this.tbStoryError = false;
           this._markSolvedAndAdvance();
         } else {
-          this._flashError(() => { this.tbStoryError = false; });
+          this._flashError(() => {
+            this.tbStoryError = false;
+          });
         }
         return;
       }
@@ -1405,14 +1640,25 @@ export function seriesPlayer(exercises, seriesId) {
 
     _mazeRuleCheck(rule, param) {
       switch (rule) {
-        case 'mult': return n => n % (param || 3) === 0;
-        case 'even': return n => n % 2 === 0;
-        case 'odd': return n => n % 2 !== 0;
-        case 'digitSum': return n => String(n).split('').reduce((s, d) => s + Number(d), 0) === (param || 10);
-        case 'divisor': return n => (param || 24) % n === 0;
-        case 'lt': return n => n < (param || 50);
-        case 'gt': return n => n > (param || 50);
-        default: return () => true;
+        case 'mult':
+          return (n) => n % (param || 3) === 0;
+        case 'even':
+          return (n) => n % 2 === 0;
+        case 'odd':
+          return (n) => n % 2 !== 0;
+        case 'digitSum':
+          return (n) =>
+            String(n)
+              .split('')
+              .reduce((s, d) => s + Number(d), 0) === (param || 10);
+        case 'divisor':
+          return (n) => (param || 24) % n === 0;
+        case 'lt':
+          return (n) => n < (param || 50);
+        case 'gt':
+          return (n) => n > (param || 50);
+        default:
+          return () => true;
       }
     },
 
@@ -1460,7 +1706,8 @@ export function seriesPlayer(exercises, seriesId) {
       }
 
       // Must be adjacent
-      const dr = Math.abs(r - last[0]), dc = Math.abs(c - last[1]);
+      const dr = Math.abs(r - last[0]),
+        dc = Math.abs(c - last[1]);
       if (dr + dc !== 1) return;
 
       // Must not be already in any path (except the other endpoint of this pair)
@@ -1496,9 +1743,12 @@ export function seriesPlayer(exercises, seriesId) {
         const path = this.nlkPaths[pi + 1] || [];
         if (path.length < 2) return false;
         const [ep1, ep2] = pair;
-        const start = path[0], end = path[path.length - 1];
-        return (start[0] === ep1[0] && start[1] === ep1[1] && end[0] === ep2[0] && end[1] === ep2[1]) ||
-               (start[0] === ep2[0] && start[1] === ep2[1] && end[0] === ep1[0] && end[1] === ep1[1]);
+        const start = path[0],
+          end = path[path.length - 1];
+        return (
+          (start[0] === ep1[0] && start[1] === ep1[1] && end[0] === ep2[0] && end[1] === ep2[1]) ||
+          (start[0] === ep2[0] && start[1] === ep2[1] && end[0] === ep1[0] && end[1] === ep1[1])
+        );
       });
     },
 
@@ -1509,7 +1759,10 @@ export function seriesPlayer(exercises, seriesId) {
       // Find which pair owns this cell
       let owner = null;
       for (const [pNum, path] of Object.entries(this.nlkPaths)) {
-        if (path.some(([pr, pc]) => pr === r && pc === c)) { owner = Number(pNum); break; }
+        if (path.some(([pr, pc]) => pr === r && pc === c)) {
+          owner = Number(pNum);
+          break;
+        }
       }
       const isError = this.nlkErrors.some(([er, ec]) => er === r && ec === c);
       const isEndpoint = cellNum > 0;
@@ -1524,7 +1777,10 @@ export function seriesPlayer(exercises, seriesId) {
     nlkCellStyle(r, c) {
       let owner = null;
       for (const [k, path] of Object.entries(this.nlkPaths)) {
-        if (path.some(([pr, pc]) => pr === r && pc === c)) { owner = Number(k); break; }
+        if (path.some(([pr, pc]) => pr === r && pc === c)) {
+          owner = Number(k);
+          break;
+        }
       }
       if (owner) return `background: ${this.nlkColors[owner] || '#888'}; color: white`;
       return '';
@@ -1563,16 +1819,25 @@ export function seriesPlayer(exercises, seriesId) {
         });
       }
     },
-    matchLeftSelected(i) { return this.matchSelected === i; },
-    matchLeftConnected(i) { return this.matchConnections.some((c) => c.left === i); },
-    matchRightConnected(i) { return this.matchConnections.some((c) => c.right === i); },
-    matchIsError(side, i) { return this.matchErrors.some((c) => (side === 'left' ? c.left === i : c.right === i)); },
+    matchLeftSelected(i) {
+      return this.matchSelected === i;
+    },
+    matchLeftConnected(i) {
+      return this.matchConnections.some((c) => c.left === i);
+    },
+    matchRightConnected(i) {
+      return this.matchConnections.some((c) => c.right === i);
+    },
+    matchIsError(side, i) {
+      return this.matchErrors.some((c) => (side === 'left' ? c.left === i : c.right === i));
+    },
     matchGetCoords(side, i) {
       const container = this.$refs.matchContainer;
       if (!container) return null;
       const el = container.querySelector('[data-dot="' + side + i + '"]');
       if (!el) return null;
-      const er = el.getBoundingClientRect(), cr = container.getBoundingClientRect();
+      const er = el.getBoundingClientRect(),
+        cr = container.getBoundingClientRect();
       return { x: side === 'left' ? er.right - cr.left : er.left - cr.left, y: er.top + er.height / 2 - cr.top };
     },
 
@@ -1593,10 +1858,14 @@ export function seriesPlayer(exercises, seriesId) {
       this.gridErrors = [];
       if (cells.filter((v) => v === 2).length === g.rows.length) this.$nextTick(() => this.check());
     },
-    gridCellVal(r, c) { return this.gridCells[r * (this.cur.grid?.columns.length || 0) + c] || 0; },
-    gridIsError(r, c) { return this.gridErrors.includes(r * (this.cur.grid?.columns.length || 0) + c); },
+    gridCellVal(r, c) {
+      return this.gridCells[r * (this.cur.grid?.columns.length || 0) + c] || 0;
+    },
+    gridIsError(r, c) {
+      return this.gridErrors.includes(r * (this.cur.grid?.columns.length || 0) + c);
+    },
     _initPyramid(p) {
-      this.pyramidInputs = p.rows.flatMap((row, r) => row.map((v, c) => p.given[r][c] ? String(v) : ''));
+      this.pyramidInputs = p.rows.flatMap((row, r) => row.map((v, c) => (p.given[r][c] ? String(v) : '')));
       this.pyramidErrors = [];
     },
     pyramidFlatIdx(r, c) {
@@ -1606,7 +1875,9 @@ export function seriesPlayer(exercises, seriesId) {
       for (let ri = 0; ri < r; ri++) idx += p.rows[ri].length;
       return idx + c;
     },
-    pyramidIsError(r, c) { return this.pyramidErrors.includes(this.pyramidFlatIdx(r, c)); },
+    pyramidIsError(r, c) {
+      return this.pyramidErrors.includes(this.pyramidFlatIdx(r, c));
+    },
 
     groupsTap(i) {
       if (this.solved) return;
@@ -1615,7 +1886,9 @@ export function seriesPlayer(exercises, seriesId) {
         this._markSolvedAndAdvance();
       } else {
         this.cmpGroupWrong = i;
-        setTimeout(() => { this.cmpGroupWrong = null; }, SETTINGS.MCQ_WRONG_DELAY);
+        setTimeout(() => {
+          this.cmpGroupWrong = null;
+        }, SETTINGS.MCQ_WRONG_DELAY);
       }
     },
 
@@ -1628,7 +1901,9 @@ export function seriesPlayer(exercises, seriesId) {
       } else {
         this.mcqWrong = i;
         this.mcqSelected = null;
-        setTimeout(() => { this.mcqWrong = null; }, SETTINGS.SUCCESS_ADVANCE_DELAY);
+        setTimeout(() => {
+          this.mcqWrong = null;
+        }, SETTINGS.SUCCESS_ADVANCE_DELAY);
       }
     },
 
@@ -1642,20 +1917,26 @@ export function seriesPlayer(exercises, seriesId) {
         else {
           this.$nextTick(() => {
             for (let j = i + 1; j < q.length; j++) {
-              if (!this.mqSolved[j]) { const ref = this.$refs['mqInput' + j]; if (ref) ref.focus(); return; }
+              if (!this.mqSolved[j]) {
+                const ref = this.$refs['mqInput' + j];
+                if (ref) ref.focus();
+                return;
+              }
             }
           });
         }
       } else {
         this.mqErrors = [...this.mqErrors.filter((e) => e !== i), i];
-        setTimeout(() => { this.mqErrors = this.mqErrors.filter((e) => e !== i); }, SETTINGS.ERROR_FLASH_DURATION);
+        setTimeout(() => {
+          this.mqErrors = this.mqErrors.filter((e) => e !== i);
+        }, SETTINGS.ERROR_FLASH_DURATION);
       }
     },
 
     barChartSetValue(colIdx, val) {
       if (this.solved) return;
       this.bcValues[colIdx] = this.bcValues[colIdx] === val ? 0 : val;
-      this.bcErrors = this.bcErrors.filter(e => e !== colIdx);
+      this.bcErrors = this.bcErrors.filter((e) => e !== colIdx);
     },
 
     bcCheck(i) {
@@ -1663,31 +1944,53 @@ export function seriesPlayer(exercises, seriesId) {
       const q = this.cur.bc.questions[i];
       if (normalizeAnswer(this.bcInputs[i]) === normalizeAnswer(q.answer)) {
         this.bcSolved[i] = true;
-        this.bcErrors = this.bcErrors.filter(e => e !== i);
+        this.bcErrors = this.bcErrors.filter((e) => e !== i);
         if (this.bcSolved.every(Boolean)) this._markSolvedAndAdvance();
       } else {
         if (!this.bcErrors.includes(i)) this.bcErrors = [...this.bcErrors, i];
-        setTimeout(() => { this.bcErrors = this.bcErrors.filter(e => e !== i); }, SETTINGS.ERROR_FLASH_DURATION);
+        setTimeout(() => {
+          this.bcErrors = this.bcErrors.filter((e) => e !== i);
+        }, SETTINGS.ERROR_FLASH_DURATION);
       }
     },
 
     updateMatchLines() {
-      this._matchLinesSvg = this.matchConnections.map((c) => {
-        const from = this.matchGetCoords('left', c.left), to = this.matchGetCoords('right', c.right);
-        if (!from || !to) return '';
-        const color = this.matchErrors.some((e) => e.left === c.left) ? '#ef4444' : (this.solved ? '#22c55e' : 'var(--p)');
-        return `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" stroke="${color}" stroke-width="3" stroke-linecap="round"/>`;
-      }).join('');
+      this._matchLinesSvg = this.matchConnections
+        .map((c) => {
+          const from = this.matchGetCoords('left', c.left),
+            to = this.matchGetCoords('right', c.right);
+          if (!from || !to) return '';
+          const color = this.matchErrors.some((e) => e.left === c.left)
+            ? '#ef4444'
+            : this.solved
+              ? '#22c55e'
+              : 'var(--p)';
+          return `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" stroke="${color}" stroke-width="3" stroke-linecap="round"/>`;
+        })
+        .join('');
     },
 
-    sortTap(idx) { if (!this.solved && !this.sortPicked.includes(idx)) this.sortPicked.push(idx); },
-    sortUnpick(rank) { if (!this.solved) this.sortPicked = this.sortPicked.slice(0, rank); },
+    sortTap(idx) {
+      if (!this.solved && !this.sortPicked.includes(idx)) this.sortPicked.push(idx);
+    },
+    sortUnpick(rank) {
+      if (!this.solved) this.sortPicked = this.sortPicked.slice(0, rank);
+    },
 
     colOpColor(posFromRight) {
-      const p = ['bg-red-100 border-red-400 text-red-700 dark:bg-red-900/20 dark:border-red-500 dark:text-red-300','bg-green-100 border-green-400 text-green-700 dark:bg-green-900/20 dark:border-green-500 dark:text-green-300','bg-blue-100 border-blue-400 text-blue-700 dark:bg-blue-900/20 dark:border-blue-500 dark:text-blue-300','bg-orange-100 border-orange-400 text-orange-700 dark:bg-orange-900/20 dark:border-orange-500 dark:text-orange-300','bg-purple-100 border-purple-400 text-purple-700 dark:bg-purple-900/20 dark:border-purple-500 dark:text-purple-300','bg-sky-100 border-sky-400 text-sky-700 dark:bg-sky-900/20 dark:border-sky-500 dark:text-sky-300'];
+      const p = [
+        'bg-red-100 border-red-400 text-red-700 dark:bg-red-900/20 dark:border-red-500 dark:text-red-300',
+        'bg-green-100 border-green-400 text-green-700 dark:bg-green-900/20 dark:border-green-500 dark:text-green-300',
+        'bg-blue-100 border-blue-400 text-blue-700 dark:bg-blue-900/20 dark:border-blue-500 dark:text-blue-300',
+        'bg-orange-100 border-orange-400 text-orange-700 dark:bg-orange-900/20 dark:border-orange-500 dark:text-orange-300',
+        'bg-purple-100 border-purple-400 text-purple-700 dark:bg-purple-900/20 dark:border-purple-500 dark:text-purple-300',
+        'bg-sky-100 border-sky-400 text-sky-700 dark:bg-sky-900/20 dark:border-sky-500 dark:text-sky-300',
+      ];
       return p[posFromRight % p.length];
     },
-    colOpTrouIdx(i) { return (this.cur.colOp?.result || []).slice(0, i).filter(d => d === '?').length; },
+    colOpTrouIdx(i) {
+      return (this.cur.colOp?.result || []).slice(0, i).filter((d) => d === '?').length;
+    },
 
     goTo(idx) {
       this.currentIndex = idx;
@@ -1718,7 +2021,7 @@ export function seriesPlayer(exercises, seriesId) {
       const cls = step.kind === 'keywords' ? 'gp-kw' : 'gp-num';
       event.target.closest('[data-gp]')?.classList.add(cls);
       if (this.gpPicked.length === step.tokens.length) {
-        setTimeout(() => this.gpAdvance(), 350);
+        setTimeout(() => this.gpAdvance(), SETTINGS.GP_AUTO_ADVANCE_DELAY);
       }
     },
 
@@ -1729,7 +2032,7 @@ export function seriesPlayer(exercises, seriesId) {
       if (!step || !step.answers?.length) return;
       this.gpChoice = choice;
       if (normalizeAnswer(choice) === normalizeAnswer(step.answers[0])) {
-        setTimeout(() => this.gpAdvance(), 350);
+        setTimeout(() => this.gpAdvance(), SETTINGS.GP_AUTO_ADVANCE_DELAY);
       }
     },
 
@@ -1739,7 +2042,7 @@ export function seriesPlayer(exercises, seriesId) {
       const step = this.gpCurrentStep;
       if (!step || !step.answers?.length) return;
       const val = normalizeAnswer(this.gpInput);
-      if (step.answers.some(a => normalizeAnswer(a) === val)) {
+      if (step.answers.some((a) => normalizeAnswer(a) === val)) {
         this.gpAdvance();
       } else {
         this._flashError();
@@ -1749,7 +2052,7 @@ export function seriesPlayer(exercises, seriesId) {
     gpAdvance() {
       this.gpChoice = null;
       this.gpPicked = [];
-      this.gpInput  = '';
+      this.gpInput = '';
       const nextStep = this.gpStep + 1;
       if (nextStep >= (this.cur.gpSteps?.length ?? 0)) {
         this._markSolvedAndAdvance();
@@ -1778,13 +2081,13 @@ export function seriesPlayer(exercises, seriesId) {
     // Supports: a × b, a + b, a - b, a ÷ b
     get tbDotGroups() {
       const expr = this.cur.tbExpression || '';
-      const mul = expr.match(/^(\d+)\s*[×x\*]\s*(\d+)$/);
+      const mul = expr.match(/^(\d+)\s*[×x*]\s*(\d+)$/);
       if (mul) {
         const groups = parseInt(mul[1], 10);
         const size = parseInt(mul[2], 10);
         if (groups > 0 && size > 0 && groups * size <= 100) return Array(groups).fill(size);
       }
-      const div = expr.match(/^(\d+)\s*[÷\/]\s*(\d+)$/);
+      const div = expr.match(/^(\d+)\s*[÷/]\s*(\d+)$/);
       if (div) {
         const total = parseInt(div[1], 10);
         const parts = parseInt(div[2], 10);
@@ -1795,12 +2098,14 @@ export function seriesPlayer(exercises, seriesId) {
       }
       const add = expr.match(/^(\d+)\s*\+\s*(\d+)$/);
       if (add) {
-        const a = parseInt(add[1], 10), b = parseInt(add[2], 10);
+        const a = parseInt(add[1], 10),
+          b = parseInt(add[2], 10);
         if (a + b <= 50) return [a, b];
       }
-      const sub = expr.match(/^(\d+)\s*[−\-]\s*(\d+)$/);
+      const sub = expr.match(/^(\d+)\s*[−-]\s*(\d+)$/);
       if (sub) {
-        const a = parseInt(sub[1], 10), b = parseInt(sub[2], 10);
+        const a = parseInt(sub[1], 10),
+          b = parseInt(sub[2], 10);
         if (a <= 30) return [b, a - b]; // whole then remainder
       }
       return [];

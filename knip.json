@@ -11,12 +11,7 @@
     "pocketbase/pb_migrations/*.js",
     "marp.config.mjs"
   ],
-  "project": [
-    "**/*.{js,mjs,ts}"
-  ],
-  "ignoreDependencies": [
-    "svgo",
-    "@peaceroad/markdown-it-math-tex-to-mathml"
-  ],
+  "project": ["**/*.{js,mjs,ts}"],
+  "ignoreDependencies": ["svgo", "@peaceroad/markdown-it-math-tex-to-mathml"],
   "eleventy": false
 }

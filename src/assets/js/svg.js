@@ -8,7 +8,8 @@ const SVG = {
   uid: (p = 'id') => `${p}_${SVG._id++}`,
   f: (v) => Math.round(v * 10) / 10,
   font: 'system-ui,sans-serif',
-  tag: (w, h, content, attr = '') => `<svg width="${SVG.f(w)}" height="${SVG.f(h)}" viewBox="0 0 ${SVG.f(w)} ${SVG.f(h)}" xmlns="http://www.w3.org/2000/svg" ${attr}>${content}</svg>`,
+  tag: (w, h, content, attr = '') =>
+    `<svg width="${SVG.f(w)}" height="${SVG.f(h)}" viewBox="0 0 ${SVG.f(w)} ${SVG.f(h)}" xmlns="http://www.w3.org/2000/svg" ${attr}>${content}</svg>`,
 };
 
 function embedSvg(svg) {
@@ -16,20 +17,31 @@ function embedSvg(svg) {
 }
 
 function mathGridSvg(cols, rows, filled, color = 'var(--p)') {
-  const s = 20, g = 1;
+  const s = 20,
+    g = 1;
   let res = '';
   for (let i = 0; i < cols * rows; i++) {
-    const x = (i % cols) * s, y = Math.floor(i / cols) * s;
+    const x = (i % cols) * s,
+      y = Math.floor(i / cols) * s;
     res += `<rect x="${x}" y="${y}" width="${s - g}" height="${s - g}" fill="${i < filled ? color : 'var(--ss)'}" stroke="var(--cs)" stroke-width="0.5"/>`;
   }
-  return SVG.tag(cols * s, rows * s, res, `viewBox="0 -1 ${cols * s} ${rows * s + 1}" style="display:inline-block;margin:5px"`);
+  return SVG.tag(
+    cols * s,
+    rows * s,
+    res,
+    `viewBox="0 -1 ${cols * s} ${rows * s + 1}" style="display:inline-block;margin:5px"`
+  );
 }
 
 function slicedPieSvg(n, k, size = 100, color = 'var(--p)') {
-  const f = SVG.f, c = size / 2, r = size / 2 - 2;
-  let filled = '', empty = '';
+  const f = SVG.f,
+    c = size / 2,
+    r = size / 2 - 2;
+  let filled = '',
+    empty = '';
   for (let i = 0; i < n; i++) {
-    const a0 = (i * 2 * Math.PI) / n - Math.PI / 2, a1 = ((i + 1) * 2 * Math.PI) / n - Math.PI / 2;
+    const a0 = (i * 2 * Math.PI) / n - Math.PI / 2,
+      a1 = ((i + 1) * 2 * Math.PI) / n - Math.PI / 2;
     const d = `M${f(c)},${f(c)}L${f(c + r * Math.cos(a0))},${f(c + r * Math.sin(a0))}A${r},${r},0,0,1,${f(c + r * Math.cos(a1))},${f(c + r * Math.sin(a1))}Z`;
     if (i < k) filled += `<path d="${d}" fill="${color}"/>`;
     else empty += `<path d="${d}" fill="var(--sf)"/>`;
@@ -38,13 +50,25 @@ function slicedPieSvg(n, k, size = 100, color = 'var(--p)') {
 }
 
 function circleSvg(r, label = '', fillColor = 'var(--sf)') {
-  const f = SVG.f, pad = label ? 40 : 5, center = r + pad, size = center * 2;
-  const extra = label ? `<line x1="${center}" y1="${center}" x2="${f(center + r)}" y2="${center}" stroke="var(--ct)" stroke-dasharray="4"/><text x="${f(center + r / 2)}" y="${f(center - 10)}" text-anchor="middle" font-size="14" font-family="${SVG.font}" fill="var(--ct)">${label}</text>` : '';
-  return SVG.tag(size, size, `<circle cx="${center}" cy="${center}" r="${r}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>${extra}`);
+  const f = SVG.f,
+    pad = label ? 40 : 5,
+    center = r + pad,
+    size = center * 2;
+  const extra = label
+    ? `<line x1="${center}" y1="${center}" x2="${f(center + r)}" y2="${center}" stroke="var(--ct)" stroke-dasharray="4"/><text x="${f(center + r / 2)}" y="${f(center - 10)}" text-anchor="middle" font-size="14" font-family="${SVG.font}" fill="var(--ct)">${label}</text>`
+    : '';
+  return SVG.tag(
+    size,
+    size,
+    `<circle cx="${center}" cy="${center}" r="${r}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>${extra}`
+  );
 }
 
 function rectangleSvg(w, h, labelW = '', labelH = '', fillColor = 'var(--sf)') {
-  const f = SVG.f, p = labelW || labelH ? 35 : 5, tw = w + p * 2, th = h + p * 2;
+  const f = SVG.f,
+    p = labelW || labelH ? 35 : 5,
+    tw = w + p * 2,
+    th = h + p * 2;
   const res = `<rect x="${p}" y="${p}" width="${w}" height="${h}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
     ${labelW ? `<text x="${f(p + w / 2)}" y="${f(p + h + 25)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelW}</text>` : ''}
     ${labelH ? `<text x="${f(p - 10)}" y="${f(p + h / 2)}" text-anchor="end" dominant-baseline="middle" font-family="${SVG.font}" fill="var(--ct)">${labelH}</text>` : ''}`;
@@ -52,19 +76,26 @@ function rectangleSvg(w, h, labelW = '', labelH = '', fillColor = 'var(--sf)') {
 }
 
 function squareSvg(size, label = '', fillColor = 'var(--sf)') {
-  const f = SVG.f, p = 35, t = size + p * 2;
+  const f = SVG.f,
+    p = 35,
+    t = size + p * 2;
   const res = `<rect x="${p}" y="${p}" width="${size}" height="${size}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
     ${label ? `<text x="${f(p + size / 2)}" y="${f(p + size + 25)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${label}</text>` : ''}`;
   return SVG.tag(t, t, res);
 }
 
 function triangleSvg(pixA, pixB, labelA = '', labelB = '', labelC = '', fillColor = 'var(--sf)') {
-  const padX = 45, padTop = 15, padBot = 28;
+  const padX = 45,
+    padTop = 15,
+    padBot = 28;
   const totalW = pixA + padX * 2;
   const totalH = pixB + padTop + padBot;
-  const x0 = padX, y0 = padTop + pixB;
-  const x1 = padX + pixA, y1 = padTop + pixB;
-  const x2 = padX, y2 = padTop;
+  const x0 = padX,
+    y0 = padTop + pixB;
+  const x1 = padX + pixA,
+    y1 = padTop + pixB;
+  const x2 = padX,
+    y2 = padTop;
   const m = 10;
   const f = SVG.f;
   return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
@@ -85,8 +116,12 @@ function fractionPieSvg(n, d, size = 80) {
 // --- 3D Shapes ---
 
 function cubeSvg(size = 50, color = 'var(--p)', opacity = 1) {
-  const f = SVG.f, t = f(size * 0.4), w = f(size), h = f(size);
-  const totalW = f(w + t + 4), totalH = f(h + t + 4);
+  const f = SVG.f,
+    t = f(size * 0.4),
+    w = f(size),
+    h = f(size);
+  const totalW = f(w + t + 4),
+    totalH = f(h + t + 4);
   return `<svg width="${totalW}" height="${totalH}" viewBox="-2 -2 ${totalW} ${totalH}" style="opacity:${opacity};display:inline-block;margin:4px" xmlns="http://www.w3.org/2000/svg">
     <g stroke="var(--cs)" stroke-width="1.5" stroke-linejoin="round">
       <polygon points="${t},0 ${w + t},0 ${w},${t} 0,${t}" fill="${color}" />
@@ -99,7 +134,10 @@ function cubeSvg(size = 50, color = 'var(--p)', opacity = 1) {
 }
 
 function sphereSvg(r = 40, color = 'var(--p)', opacity = 1) {
-  const f = SVG.f, size = f(r * 2 + 10), c = f(size / 2), gid = SVG.uid('rg');
+  const f = SVG.f,
+    size = f(r * 2 + 10),
+    c = f(size / 2),
+    gid = SVG.uid('rg');
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="opacity:${opacity};display:inline-block;margin:4px" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <radialGradient id="${gid}" cx="35%" cy="35%" r="65%">
@@ -111,8 +149,14 @@ function sphereSvg(r = 40, color = 'var(--p)', opacity = 1) {
 }
 
 function cylinderSvg(w = 50, h = 80, color = 'var(--p)', opacity = 1) {
-  const f = SVG.f, rx = f(w / 2), ry = f(rx * 0.4), tw = f(w + 10), th = f(h + ry * 2 + 10);
-  const x0 = 5, y0 = f(5 + ry), gid = SVG.uid('lg');
+  const f = SVG.f,
+    rx = f(w / 2),
+    ry = f(rx * 0.4),
+    tw = f(w + 10),
+    th = f(h + ry * 2 + 10);
+  const x0 = 5,
+    y0 = f(5 + ry),
+    gid = SVG.uid('lg');
   return `<svg width="${tw}" height="${th}" viewBox="0 0 ${tw} ${th}" style="opacity:${opacity};display:inline-block;margin:4px" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -173,7 +217,8 @@ function decompoChipsHtml(chips) {
     if (value === 0) {
       dots = `<span style="color:var(--cs);font-size:11px;line-height:1">—</span>`;
     } else {
-      const r1 = Math.min(value, 5), r2 = value - r1;
+      const r1 = Math.min(value, 5),
+        r2 = value - r1;
       const s = `display:block;color:${c};font-size:11px;line-height:1.3;letter-spacing:1px`;
       dots = `<span style="${s}">${'●'.repeat(r1)}</span>${r2 ? `<span style="${s}">${'●'.repeat(r2)}</span>` : ''}`;
     }
@@ -184,17 +229,22 @@ function decompoChipsHtml(chips) {
       `</div>`
     );
   });
-  return `<div style="display:flex;gap:4px;width:100%">${parts.map(p => `<div style="flex:1;display:flex;justify-content:center">${p}</div>`).join('')}</div>`;
+  return `<div style="display:flex;gap:4px;width:100%">${parts.map((p) => `<div style="flex:1;display:flex;justify-content:center">${p}</div>`).join('')}</div>`;
 }
 
 // abacusSvg — boulier/abacus SVG
 // rows: [{ label, value }, ...] — value 0..beadsPerRow
 function abacusSvg(rows, beadsPerRow = 10) {
   const COLORS = ['var(--orange, #e0743c)', 'var(--p)', 'var(--green, #4daa60)'];
-  const R = 7, SLOT = 18, ROW_H = 26, V_PAD = 10, H_PAD = 10;
+  const R = 7,
+    SLOT = 18,
+    ROW_H = 26,
+    V_PAD = 10,
+    H_PAD = 10;
   const ROD_W = beadsPerRow * SLOT + 10;
   const FRAME_W = ROD_W + H_PAD * 2;
-  const LABEL_W = 76, GAP = 6;
+  const LABEL_W = 76,
+    GAP = 6;
   const TOTAL_W = LABEL_W + GAP + FRAME_W;
   const FRAME_H = rows.length * ROW_H + V_PAD * 2;
   const FX = LABEL_W + GAP;
@@ -205,7 +255,8 @@ function abacusSvg(rows, beadsPerRow = 10) {
   rows.forEach(({ label, value }, ri) => {
     const cy = V_PAD + ri * ROW_H + ROW_H / 2;
     const color = COLORS[ri % COLORS.length];
-    const x1 = FX + H_PAD, x2 = FX + H_PAD + ROD_W;
+    const x1 = FX + H_PAD,
+      x2 = FX + H_PAD + ROD_W;
 
     if (ri > 0)
       g += `<line x1="${FX + 1}" y1="${V_PAD + ri * ROW_H}" x2="${FX + FRAME_W - 1}" y2="${V_PAD + ri * ROW_H}" stroke="var(--cs)" stroke-width="0.5" opacity="0.4"/>`;
@@ -226,7 +277,15 @@ function abacusSvg(rows, beadsPerRow = 10) {
   return `<svg width="${TOTAL_W}" height="${FRAME_H}" viewBox="0 0 ${TOTAL_W} ${FRAME_H}" xmlns="http://www.w3.org/2000/svg">${g}</svg>`;
 }
 
-function rulerSvg(min = 0, max = 10, step = 1, minorStep = 0.1, customLabels = {}, markColor = 'var(--p)', width = 500) {
+function rulerSvg(
+  min = 0,
+  max = 10,
+  step = 1,
+  minorStep = 0.1,
+  customLabels = {},
+  markColor = 'var(--p)',
+  width = 500
+) {
   const height = 110;
   const pad = 40;
   const totalW = width + pad * 2;
@@ -317,7 +376,10 @@ function fractionShapesSvg(fraction) {
         }
       }
     }
-    shapes.push({ idx: sIdx, svg: `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm">${svgContent}</svg>` });
+    shapes.push({
+      idx: sIdx,
+      svg: `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm">${svgContent}</svg>`,
+    });
   }
   return shapes;
 }
@@ -325,16 +387,33 @@ function fractionShapesSvg(fraction) {
 // ─── 2D shapes (curriculum additions) ────────────────────────────────────────
 
 function equilateralTriangleSvg(size = 80, label = '', fillColor = 'var(--sf)') {
-  const f = SVG.f, h = f(size * Math.sqrt(3) / 2), pX = 10, pT = 10, pB = label ? 28 : 10;
-  const tw = size + pX * 2, th = h + pT + pB, x0 = pX, y0 = pT + h, x1 = pX + size, x2 = pX + size / 2;
+  const f = SVG.f,
+    h = f((size * Math.sqrt(3)) / 2),
+    pX = 10,
+    pT = 10,
+    pB = label ? 28 : 10;
+  const tw = size + pX * 2,
+    th = h + pT + pB,
+    x0 = pX,
+    y0 = pT + h,
+    x1 = pX + size,
+    x2 = pX + size / 2;
   const res = `<polygon points="${x0},${y0} ${x1},${y0} ${x2},${pT}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
     ${label ? `<text x="${f(tw / 2)}" y="${f(y0 + 20)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${label}</text>` : ''}`;
   return SVG.tag(tw, th, res);
 }
 
 function isoscelesTriangleSvg(base = 80, height = 70, labelBase = '', labelSide = '', fillColor = 'var(--sf)') {
-  const f = SVG.f, pX = labelSide ? 45 : 10, pT = 10, pB = labelBase ? 28 : 10;
-  const tw = base + pX * 2, th = height + pT + pB, x0 = pX, y0 = pT + height, x1 = pX + base, x2 = pX + base / 2;
+  const f = SVG.f,
+    pX = labelSide ? 45 : 10,
+    pT = 10,
+    pB = labelBase ? 28 : 10;
+  const tw = base + pX * 2,
+    th = height + pT + pB,
+    x0 = pX,
+    y0 = pT + height,
+    x1 = pX + base,
+    x2 = pX + base / 2;
   const res = `<polygon points="${x0},${y0} ${x1},${y0} ${x2},${pT}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
     ${labelBase ? `<text x="${f((x0 + x1) / 2)}" y="${f(y0 + 20)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelBase}</text>` : ''}
     ${labelSide ? `<text x="${f(x0 - 8)}" y="${f((y0 + pT) / 2)}" text-anchor="end" dominant-baseline="middle" font-family="${SVG.font}" fill="var(--ct)">${labelSide}</text>` : ''}`;
@@ -342,7 +421,13 @@ function isoscelesTriangleSvg(base = 80, height = 70, labelBase = '', labelSide 
 }
 
 function rhombusSvg(w = 80, h = 60, labelW = '', labelH = '', fillColor = 'var(--sf)') {
-  const f = SVG.f, pX = labelH ? 40 : 10, pY = labelW ? 30 : 10, tw = w + pX * 2, th = h + pY * 2, cx = tw / 2, cy = th / 2;
+  const f = SVG.f,
+    pX = labelH ? 40 : 10,
+    pY = labelW ? 30 : 10,
+    tw = w + pX * 2,
+    th = h + pY * 2,
+    cx = tw / 2,
+    cy = th / 2;
   const pts = `${f(cx)},${f(cy - h / 2)} ${f(cx + w / 2)},${f(cy)} ${f(cx)},${f(cy + h / 2)} ${f(cx - w / 2)},${f(cy)}`;
   const res = `<polygon points="${pts}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
     ${labelW ? `<text x="${f(cx)}" y="${f(cy + h / 2 + 20)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelW}</text>` : ''}
@@ -352,13 +437,18 @@ function rhombusSvg(w = 80, h = 60, labelW = '', labelH = '', fillColor = 'var(-
 
 // parallélogramme — skew is horizontal offset of the top edge (default w/4)
 function parallelogramSvg(w = 100, h = 60, skew = 25, labelW = '', labelH = '', fillColor = 'var(--sf)') {
-  const padX = labelH ? 40 : 10, padY = labelW ? 30 : 10;
+  const padX = labelH ? 40 : 10,
+    padY = labelW ? 30 : 10;
   const totalW = w + skew + padX * 2;
   const totalH = h + padY * 2;
-  const x0 = padX, y0 = padY + h;
-  const x1 = padX + w, y1 = padY + h;
-  const x2 = padX + w + skew, y2 = padY;
-  const x3 = padX + skew, y3 = padY;
+  const x0 = padX,
+    y0 = padY + h;
+  const x1 = padX + w,
+    y1 = padY + h;
+  const x2 = padX + w + skew,
+    y2 = padY;
+  const x3 = padX + skew,
+    y3 = padY;
   return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
     <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
     ${labelW ? `<text x="${(x0 + x1) / 2}" y="${y0 + 22}" text-anchor="middle" font-family="Arial" fill="var(--ct)">${labelW}</text>` : ''}
@@ -368,8 +458,15 @@ function parallelogramSvg(w = 100, h = 60, skew = 25, labelW = '', labelH = '', 
 
 // trapèze — topW < botW for standard trapezoid (wider base)
 function trapezoidSvg(tW = 60, bW = 100, h = 60, labelT = '', labelB = '', labelH = '', fillColor = 'var(--sf)') {
-  const f = SVG.f, pX = labelH ? 40 : 10, pT = labelT ? 28 : 10, pB = labelB ? 28 : 10;
-  const off = (bW - tW) / 2, tw = bW + pX * 2, th = h + pT + pB, x0 = pX, y0 = pT + h;
+  const f = SVG.f,
+    pX = labelH ? 40 : 10,
+    pT = labelT ? 28 : 10,
+    pB = labelB ? 28 : 10;
+  const off = (bW - tW) / 2,
+    tw = bW + pX * 2,
+    th = h + pT + pB,
+    x0 = pX,
+    y0 = pT + h;
   const res = `<polygon points="${x0},${y0} ${f(x0 + bW)},${y0} ${f(x0 + off + tW)},${pT} ${f(x0 + off)},${pT}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
     ${labelB ? `<text x="${f(x0 + bW / 2)}" y="${f(y0 + 20)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelB}</text>` : ''}
     ${labelT ? `<text x="${f(x0 + off + tW / 2)}" y="${f(pT - 8)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelT}</text>` : ''}
@@ -380,12 +477,14 @@ function trapezoidSvg(tW = 60, bW = 100, h = 60, labelT = '', labelB = '', label
 // polygone régulier — n sides, first vertex at top; covers pentagon, hexagon, octagon, etc.
 function regularPolygonSvg(n = 6, size = 80, label = '', fillColor = 'var(--sf)') {
   const r = size / 2;
-  const pad = 10, labelPad = label ? 24 : 0;
+  const pad = 10,
+    labelPad = label ? 24 : 0;
   const totalSize = size + pad * 2;
   const totalH = totalSize + labelPad;
-  const cx = totalSize / 2, cy = totalSize / 2;
+  const cx = totalSize / 2,
+    cy = totalSize / 2;
   const pts = Array.from({ length: n }, (_, i) => {
-    const a = (i * 2 * Math.PI / n) - Math.PI / 2;
+    const a = (i * 2 * Math.PI) / n - Math.PI / 2;
     return `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`;
   }).join(' ');
   return `<svg width="${totalSize}" height="${totalH}" viewBox="0 0 ${totalSize} ${totalH}" xmlns="http://www.w3.org/2000/svg">
@@ -421,10 +520,14 @@ function triangularPrismSvg(fw = 80, fh = 70, d = 40, color = 'var(--p)', opacit
   const totalW = fw + tilt + 4;
   const totalH = fh + tilt + 4;
   // Front triangle vertices
-  const fa = [fw / 2, tilt], fb = [0, fh + tilt], fc = [fw, fh + tilt];
+  const fa = [fw / 2, tilt],
+    fb = [0, fh + tilt],
+    fc = [fw, fh + tilt];
   // Back triangle = front + (tilt, -tilt)
-  const ba = [fw / 2 + tilt, 0], bb = [tilt, fh], bc = [fw + tilt, fh];
-  const p = v => v.join(',');
+  const ba = [fw / 2 + tilt, 0],
+    bb = [tilt, fh],
+    bc = [fw + tilt, fh];
+  const p = (v) => v.join(',');
   return `<svg width="${totalW}" height="${totalH}" viewBox="-2 -2 ${totalW} ${totalH}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
     <g stroke="var(--cs)" stroke-width="1.5" stroke-linejoin="round">
       <polygon points="${p(fb)} ${p(fc)} ${p(bc)} ${p(bb)}" fill="${color}"/>
@@ -441,8 +544,10 @@ function squarePyramidSvg(base = 80, pyh = 80, color = 'var(--p)', opacity = 1) 
   const tilt = base * 0.4;
   const totalW = base + tilt + 4;
   const totalH = pyh + tilt + 4;
-  const BFL = `0,${pyh + tilt}`, BFR = `${base},${pyh + tilt}`;
-  const BBR = `${base + tilt},${pyh}`, BBL = `${tilt},${pyh}`;
+  const BFL = `0,${pyh + tilt}`,
+    BFR = `${base},${pyh + tilt}`;
+  const BBR = `${base + tilt},${pyh}`,
+    BBL = `${tilt},${pyh}`;
   const APX = `${(base + tilt) / 2},${tilt / 2}`;
   return `<svg width="${totalW}" height="${totalH}" viewBox="-2 -2 ${totalW} ${totalH}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
     <g stroke="var(--cs)" stroke-width="1.5" stroke-linejoin="round">
@@ -464,13 +569,13 @@ function tetrahedronSvg(size = 80, color = 'var(--p)', opacity = 1) {
   const totalH = h + tilt + pad * 2;
   // Base: equilateral triangle in oblique projection
   const A = [size / 2 + pad, h + tilt + pad]; // front vertex
-  const B = [pad, tilt + pad];                 // back-left
-  const C = [size + pad, tilt + pad];          // back-right
+  const B = [pad, tilt + pad]; // back-left
+  const C = [size + pad, tilt + pad]; // back-right
   // Apex: above centroid
   const cx = (A[0] + B[0] + C[0]) / 3;
   const cy = (A[1] + B[1] + C[1]) / 3;
   const D = [cx + tilt * 0.2, cy - h * 0.55];
-  const p = v => v.map(n => n.toFixed(1)).join(',');
+  const p = (v) => v.map((n) => n.toFixed(1)).join(',');
   return `<svg width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}" style="opacity:${opacity}; display:inline-block; margin:4px;" xmlns="http://www.w3.org/2000/svg">
     <g stroke="var(--cs)" stroke-width="1.5" stroke-linejoin="round">
       <polygon points="${p(B)} ${p(C)} ${p(D)}" fill="${color}"/>
@@ -487,7 +592,10 @@ function tetrahedronSvg(size = 80, color = 'var(--p)', opacity = 1) {
 // emoji: any emoji char, or '●' for filled dot
 // color: CSS color/var for dots (ignored for emoji)
 function rowsOfSvg(rows, cols, emoji = '●', color = 'var(--p)') {
-  const ITEM = 26, CGAP = 6, RGAP = 12, PAD = 10;
+  const ITEM = 26,
+    CGAP = 6,
+    RGAP = 12,
+    PAD = 10;
   const useEmoji = emoji !== '●';
   const W = cols * (ITEM + CGAP) - CGAP + PAD * 2;
   const H = rows * (ITEM + RGAP) - RGAP + PAD * 2;
@@ -511,7 +619,11 @@ function rowsOfSvg(rows, cols, emoji = '●', color = 'var(--p)') {
 // emoji: any emoji char, or '●' for filled dot
 // color: CSS color/var for dots and packet border
 function packetsOfSvg(packets, perPacket, emoji = '●', color = 'var(--p)') {
-  const ITEM = 22, IGAP = 5, IPAD = 8, PGAP = 14, PAD = 8;
+  const ITEM = 22,
+    IGAP = 5,
+    IPAD = 8,
+    PGAP = 14,
+    PAD = 8;
   const useEmoji = emoji !== '●';
   const pCols = perPacket <= 3 ? perPacket : Math.ceil(Math.sqrt(perPacket));
   const pRows = Math.ceil(perPacket / pCols);
@@ -545,7 +657,9 @@ function packetsOfSvg(packets, perPacket, emoji = '●', color = 'var(--p)') {
 
 function rulerExerciseSvg(r) {
   if (!r) return '';
-  const W = 420, PAD = 40, Y = 60;
+  const W = 420,
+    PAD = 40,
+    Y = 60;
   const range = r.max - r.min;
   if (range <= 0) return '';
   const uw = W / range;
@@ -589,8 +703,8 @@ function thermometerExerciseSvg(r) {
 
   const PPD = 12;
   const CX = 44;
-  const HALF_OW = 8;   // half outer tube width → tube is 16px wide
-  const HALF_IW = 5;   // half mercury column width → column is 10px wide
+  const HALF_OW = 8; // half outer tube width → tube is 16px wide
+  const HALF_IW = 5; // half mercury column width → column is 10px wide
   const BULB_R = 18;
   const TOP_Y = 30;
   const TUBE_H = range * PPD;
@@ -655,7 +769,9 @@ function numberLineSvg(nl) {
   const range = max - min;
   if (range <= 0) return '';
 
-  const PAD = 40, W = 420, LY = 58;
+  const PAD = 40,
+    W = 420,
+    LY = 58;
   const uw = W / range;
   const step = nl.step ?? 1;
   const subs = nl.subdivisions ?? 0;
@@ -706,8 +822,12 @@ function coordinateGridSvg(cg) {
   const cols = cg.cols ?? 6;
   const rows = cg.rows ?? 6;
 
-  const VW = 435, VH = 428;
-  const PL = 40, PR = 35, PT = 38, PB = 30;
+  const VW = 435,
+    VH = 428;
+  const PL = 40,
+    PR = 35,
+    PT = 38,
+    PB = 30;
   const GW = VW - PL - PR; // 360
   const GH = VH - PT - PB; // 360
   const cw = GW / cols;
@@ -763,7 +883,8 @@ function coordinateGridSvg(cg) {
     for (let c = 0; c <= cols; c++) {
       for (let r = 0; r <= rows; r++) {
         if (c === 0 && r === 0) continue; // skip origin, already labelled
-        const x = toX(c), y = toY(r);
+        const x = toX(c),
+          y = toY(r);
         s += `<circle cx="${x}" cy="${y}" r="1.5" fill="currentColor" opacity="0.3"/>`;
       }
     }
@@ -790,17 +911,19 @@ function placeValueSvg(number, pos) {
   const n = digits.length;
   const LABELS = ['U', 'D', 'C', 'M', 'DM', 'CM'];
 
-  const cw = 52, rh = 44, gap = 3;
+  const cw = 52,
+    rh = 44,
+    gap = 3;
   const W = n * (cw + gap) + gap;
   const H = 2 * (rh + gap) + gap;
 
   let s = '';
   for (let i = 0; i < n; i++) {
-    const pfr = n - 1 - i;       // position from right
-    const hl  = pfr === pos;
-    const x   = gap + i * (cw + gap);
-    const y1  = gap;
-    const y2  = gap + rh + gap;
+    const pfr = n - 1 - i; // position from right
+    const hl = pfr === pos;
+    const x = gap + i * (cw + gap);
+    const y1 = gap;
+    const y2 = gap + rh + gap;
 
     // Label cell
     s += `<rect x="${x}" y="${y1}" width="${cw}" height="${rh}" rx="6"
@@ -831,14 +954,20 @@ function placeValueSvg(number, pos) {
    hour: 1-12, minute: 0-59, size: px (default 72).
    Hand colors follow palette: hour = var(--ct), minute = var(--p). */
 function clockSvg(hour, minute, size = 72) {
-  const f = SVG.f, c = size / 2, r = size / 2 - 2;
+  const f = SVG.f,
+    c = size / 2,
+    r = size / 2 - 2;
   const toXY = (deg, len) => {
-    const rad = (deg - 90) * Math.PI / 180;
+    const rad = ((deg - 90) * Math.PI) / 180;
     return [f(c + Math.cos(rad) * len), f(c + Math.sin(rad) * len)];
   };
-  const hAngle = ((hour % 12) + minute / 60) * 30, mAngle = minute * 6;
-  const [hx, hy] = toXY(hAngle, r * 0.55), [mx, my] = toXY(mAngle, r * 0.82);
-  const hw = f(size / 14), mw = f(size / 22), pr = f(size / 18);
+  const hAngle = ((hour % 12) + minute / 60) * 30,
+    mAngle = minute * 6;
+  const [hx, hy] = toXY(hAngle, r * 0.55),
+    [mx, my] = toXY(mAngle, r * 0.82);
+  const hw = f(size / 14),
+    mw = f(size / 22),
+    pr = f(size / 18);
   const res = `<circle cx="${c}" cy="${c}" r="${r}" fill="var(--sf)" stroke="var(--ct)" stroke-width="1.5"/>
     <line x1="${c}" y1="${c}" x2="${hx}" y2="${hy}" stroke="var(--ct)" stroke-width="${hw}" stroke-linecap="round"/>
     <line x1="${c}" y1="${c}" x2="${mx}" y2="${my}" stroke="var(--p)" stroke-width="${mw}" stroke-linecap="round"/>
@@ -858,14 +987,21 @@ function objectMeasureSvg(emoji) {
    parts: divisor (number of shares), total: dividend, emoji: item to share. */
 function partagerSvg(emoji, total, parts) {
   const q = total / parts;
-  const ITEM = 22, CGAP = 6, RGAP = 8, GPAD = 10;
-  const cols = q, rows = parts;
+  const ITEM = 22,
+    CGAP = 6,
+    RGAP = 8,
+    GPAD = 10;
+  const cols = q,
+    rows = parts;
   const gridW = cols * (ITEM + CGAP) - CGAP + GPAD * 2;
   const gridH = rows * (ITEM + RGAP) - RGAP + GPAD * 2;
 
   // Partition rectangle: top cell = total, bottom row = parts blank cells
-  const CW = Math.max(44, Math.round(gridW / parts)), CH = 36, SW = 1.5;
-  const rectW = parts * CW, rectH = CH * 2;
+  const CW = Math.max(44, Math.round(gridW / parts)),
+    CH = 36,
+    SW = 1.5;
+  const rectW = parts * CW,
+    rectH = CH * 2;
 
   const MID = 24;
   const W = gridW + MID + rectW;
@@ -900,16 +1036,18 @@ function partagerSvg(emoji, total, parts) {
 function jumpArrowSvg(start, step1, step2) {
   const mid = start + step1;
   const end = mid + step2;
-  const lbl = (n) => n > 0 ? `+${n}` : `\u2212${Math.abs(n)}`;
+  const lbl = (n) => (n > 0 ? `+${n}` : `\u2212${Math.abs(n)}`);
 
-  const W = 300, H = 72;
+  const W = 300,
+    H = 72;
   // Three node x-centres; leave room for 3-digit numbers
   const nx = [46, 150, 254];
   const ny = 54; // number baseline
   const ay = 32; // arrow y
 
   const arrow = (x1, x2, label, color) => {
-    const ax = x1 + 22, bx = x2 - 22;
+    const ax = x1 + 22,
+      bx = x2 - 22;
     const mx = (ax + bx) / 2;
     return `
       <line x1="${ax}" y1="${ay}" x2="${bx - 8}" y2="${ay}"
@@ -942,9 +1080,10 @@ function jumpArrowSvg(start, step1, step2) {
    Structural elements use palette vars; weight blocks use fixed dark fill so
    they look like physical weights in both light and dark modes. */
 function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
-  const W = 380, H = 175;
+  const W = 380,
+    H = 175;
 
-  const left  = Array.isArray(leftItems)  ? leftItems  : [leftItems];
+  const left = Array.isArray(leftItems) ? leftItems : [leftItems];
   const right = Array.isArray(rightItems) ? rightItems : [rightItems];
 
   // Tilt offset: positive = that end goes DOWN
@@ -953,17 +1092,20 @@ function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
   const rOff = tilt === 'right' ? TILT : tilt === 'left' ? -TILT : 0;
 
   // Geometry
-  const cx   = W / 2;
+  const cx = W / 2;
   const beamY = 75;
-  const lx = 78, rx = 302;
+  const lx = 78,
+    rx = 302;
   const rodLen = 40;
-  const panRx = 42, panRy = 10;
+  const panRx = 42,
+    panRy = 10;
   // Each pan hangs at the bottom of its rod, level regardless of tilt
   const lPanY = beamY + lOff + rodLen;
   const rPanY = beamY + rOff + rodLen;
 
   // Weight block (always dark fill so it reads as a physical weight)
-  const weightW = 30, weightH = 26;
+  const weightW = 30,
+    weightH = 26;
   const wBlock = (val, x, y) =>
     `<rect x="${x - weightW / 2}" y="${y - weightH}" width="${weightW}" height="${weightH}" rx="5"
            fill="#475569" stroke="#1e293b" stroke-width="1"/>
@@ -979,7 +1121,7 @@ function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
   const renderItems = (items, panX, panY) => {
     const isNum = (v) => !isNaN(Number(v)) && String(v).trim() !== '';
     const weights = items.filter(isNum);
-    const emojis  = items.filter((v) => !isNum(v));
+    const emojis = items.filter((v) => !isNum(v));
     let s = '';
     const panTop = panY - panRy;
 
@@ -1002,8 +1144,8 @@ function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
   };
 
   // Tilted beam: line from (lx, beamY+lOff) to (rx, beamY+rOff)
-  const lBy = beamY + lOff, rBy = beamY + rOff;
-
+  const lBy = beamY + lOff,
+    rBy = beamY + rOff;
 
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"
                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balance">
@@ -1040,12 +1182,24 @@ function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
 // Renders a monthly calendar grid (Monday-first, French labels).
 // month : 1–12  |  year : e.g. 2025  |  highlight : array of day numbers to circle
 function calendarSvg(month, year, highlight = []) {
-  const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin',
-                     'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-  const DAYS_SHORT = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const MONTHS_FR = [
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
+  ];
+  const DAYS_SHORT = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
   // First day of month: JS getDay() → 0=Sun … 6=Sat → convert to Mon=0 … Sun=6
-  const jsDay    = new Date(year, month - 1, 1).getDay();
+  const jsDay = new Date(year, month - 1, 1).getDay();
   const startCol = (jsDay + 6) % 7;
   const totalDays = new Date(year, month, 0).getDate();
 
@@ -1057,8 +1211,10 @@ function calendarSvg(month, year, highlight = []) {
   const hl = Array.isArray(highlight) ? highlight : [];
   const rows = cells.length / 7;
 
-  const CW = 32, CH = 28;           // cell width / height
-  const HDR = 32, DNH = 22;        // header height / day-name row height
+  const CW = 32,
+    CH = 28; // cell width / height
+  const HDR = 32,
+    DNH = 22; // header height / day-name row height
   const W = 7 * CW + 2;
   const H = HDR + DNH + rows * CH + 2;
 
@@ -1088,12 +1244,15 @@ function calendarSvg(month, year, highlight = []) {
     const row = Math.floor(i / 7);
     const x = 1 + col * CW;
     const y = HDR + DNH + row * CH;
-    const isWE  = col >= 5;
-    const isHL  = day && hl.includes(day);
-    const fill  = isHL  ? 'var(--p,#3b82f6)'
-                : isWE && day ? 'var(--ss,#fef2f2)'
-                : day ? 'var(--sf,#fff)'
-                :       'var(--sc,#f9fafb)';
+    const isWE = col >= 5;
+    const isHL = day && hl.includes(day);
+    const fill = isHL
+      ? 'var(--p,#3b82f6)'
+      : isWE && day
+        ? 'var(--ss,#fef2f2)'
+        : day
+          ? 'var(--sf,#fff)'
+          : 'var(--sc,#f9fafb)';
     const tFill = isHL ? '#fff' : isWE && day ? 'var(--red,#dc2626)' : 'var(--ct,#374151)';
 
     s += `<rect x="${x}" y="${y}" width="${CW}" height="${CH}" fill="${fill}" stroke="var(--cs,#e5e7eb)" stroke-width="0.5"/>`;
@@ -1111,10 +1270,15 @@ function calendarSvg(month, year, highlight = []) {
    left, right: child values — pass "?" for a blank node.
    ────────────────────────────────────────────────────────────────────────── */
 function decompTreeSvg(top, left, right) {
-  const W = 260, H = 140;
+  const W = 260,
+    H = 140;
   const R = 24;
-  const cx = W / 2, ty = 28, ly = 108, ry = 108;
-  const lx = 72, rx = W - 72;
+  const cx = W / 2,
+    ty = 28,
+    ly = 108,
+    ry = 108;
+  const lx = 72,
+    rx = W - 72;
 
   const mkCircle = (x, y, val) => {
     const isBlank = String(val) === '?';
@@ -1122,13 +1286,18 @@ function decompTreeSvg(top, left, right) {
     const bg = isBlank ? 'var(--sf,#f8fafc)' : 'var(--b1,#fff)';
     const stroke = isBlank ? 'var(--p,#3b82f6)' : 'var(--cs,#cbd5e1)';
     const tc = isBlank ? 'var(--p,#3b82f6)' : 'var(--bc,#1e293b)';
-    return `<circle cx="${x}" cy="${y}" r="${R}" fill="${bg}" stroke="${stroke}" stroke-width="2.5"/>`
-      + `<text x="${x}" y="${y + 6}" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="${tc}">${label}</text>`;
+    return (
+      `<circle cx="${x}" cy="${y}" r="${R}" fill="${bg}" stroke="${stroke}" stroke-width="2.5"/>` +
+      `<text x="${x}" y="${y + 6}" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="${tc}">${label}</text>`
+    );
   };
 
   const edgePts = (x1, y1, x2, y2) => {
-    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
-    const ux = dx / len, uy = dy / len;
+    const dx = x2 - x1,
+      dy = y2 - y1,
+      len = Math.hypot(dx, dy);
+    const ux = dx / len,
+      uy = dy / len;
     return [x1 + ux * R, y1 + uy * R, x2 - ux * R, y2 - uy * R];
   };
   const [llx1, lly1, llx2, lly2] = edgePts(cx, ty, lx, ly);

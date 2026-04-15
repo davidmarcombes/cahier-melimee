@@ -27,10 +27,10 @@
       "500": "#6a563b"
     },
     "figure": {
-      "red":    { "light": "#c94040", "dark": "#e06868" },
-      "green":  { "light": "#3a9a55", "dark": "#5cc478" },
+      "red": { "light": "#c94040", "dark": "#e06868" },
+      "green": { "light": "#3a9a55", "dark": "#5cc478" },
       "purple": { "light": "#7040c9", "dark": "#9a70e0" },
-      "pink":   { "light": "#c94080", "dark": "#e068a8" },
+      "pink": { "light": "#c94080", "dark": "#e068a8" },
       "orange": { "light": "#c97040", "dark": "#e09058" }
     },
     "dark": {
@@ -61,11 +61,11 @@
       }
     },
     "b10": {
-      "h":  { "light": "#bfdbfe", "dark": "#93c5fd" },
+      "h": { "light": "#bfdbfe", "dark": "#93c5fd" },
       "hs": { "light": "#3b82f6", "dark": "#60a5fa" },
-      "t":  { "light": "#60a5fa", "dark": "#3b82f6" },
+      "t": { "light": "#60a5fa", "dark": "#3b82f6" },
       "ts": { "light": "#2563eb", "dark": "#93c5fd" },
-      "u":  { "light": "#1d4ed8", "dark": "#1d4ed8" },
+      "u": { "light": "#1d4ed8", "dark": "#1d4ed8" },
       "us": { "light": "#ffffff", "dark": "#0f172a" }
     }
   },

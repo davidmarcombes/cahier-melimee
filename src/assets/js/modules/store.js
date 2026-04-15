@@ -14,7 +14,9 @@ export const localStore = (() => {
   function save(d) {
     try {
       localStorage.setItem(KEY, JSON.stringify(d));
-    } catch {}
+    } catch {
+      /* localStorage unavailable (private mode) — ignore */
+    }
   }
   return {
     getUser() {

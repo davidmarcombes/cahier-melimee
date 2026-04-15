@@ -20,10 +20,13 @@ import { test, expect } from '@playwright/test';
 async function waitForAlpine(page) {
   // Wait for the main player container to be ready and visible
   await page.waitForSelector('[x-data*="seriesPlayer"]', { timeout: 8000 });
-  await page.waitForFunction(() => {
-    const el = document.querySelector('[x-data*="seriesPlayer"]');
-    return el && typeof Alpine !== 'undefined' && Alpine.$data(el)._ready;
-  }, { timeout: 4000 });
+  await page.waitForFunction(
+    () => {
+      const el = document.querySelector('[x-data*="seriesPlayer"]');
+      return el && typeof Alpine !== 'undefined' && Alpine.$data(el)._ready;
+    },
+    { timeout: 4000 }
+  );
 }
 
 // ─── MCQ ─────────────────────────────────────────────────────────────────────
@@ -185,12 +188,12 @@ test.describe('Series progress', () => {
 
     // Progress bar width starts near 0
     const bar = page.locator('.bg-primary-500.h-full');
-    const widthBefore = await bar.evaluate(el => el.style.width);
+    const widthBefore = await bar.evaluate((el) => el.style.width);
 
     await page.locator('button').filter({ hasText: '🔵' }).click();
     await expect(page.locator('text=Bonne réponse !')).toBeVisible();
 
-    const widthAfter = await bar.evaluate(el => el.style.width);
+    const widthAfter = await bar.evaluate((el) => el.style.width);
     expect(widthAfter).not.toBe(widthBefore);
     expect(parseFloat(widthAfter)).toBeGreaterThan(0);
   });

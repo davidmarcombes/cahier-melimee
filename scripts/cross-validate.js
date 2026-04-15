@@ -17,23 +17,31 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const HUMAN_CSV = path.join(ROOT, 'reports/human-validate.csv');
-const LLM_CSV   = path.join(ROOT, 'reports/validate-llm-cache.csv');
+const LLM_CSV = path.join(ROOT, 'reports/validate-llm-cache.csv');
 
 const args = process.argv.slice(2);
 const verbose = args.includes('--verbose') || args.includes('-v');
-const catArg  = (args.find((a) => a.startsWith('--cat=')) || '').replace('--cat=', '') || null;
+const catArg = (args.find((a) => a.startsWith('--cat=')) || '').replace('--cat=', '') || null;
 
 const C = {
-  bold: '\x1b[1m', dim: '\x1b[2m', reset: '\x1b[0m',
-  green: '\x1b[32m', yellow: '\x1b[33m', red: '\x1b[31m',
-  cyan: '\x1b[36m', magenta: '\x1b[35m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  reset: '\x1b[0m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  red: '\x1b[31m',
+  cyan: '\x1b[36m',
+  magenta: '\x1b[35m',
 };
 
 // ── CSV parsers ───────────────────────────────────────────────────────────────
 
 function parseHuman() {
   if (!fs.existsSync(HUMAN_CSV)) return new Map();
-  const lines = fs.readFileSync(HUMAN_CSV, 'utf8').split('\n').filter((l) => l.trim());
+  const lines = fs
+    .readFileSync(HUMAN_CSV, 'utf8')
+    .split('\n')
+    .filter((l) => l.trim());
   const map = new Map();
   for (const line of lines.slice(1)) {
     const [p, seriesId, hash, validatedAt] = line.split(',');
@@ -44,7 +52,10 @@ function parseHuman() {
 
 function parseLlm() {
   if (!fs.existsSync(LLM_CSV)) return { map: new Map(), modelCols: [] };
-  const lines = fs.readFileSync(LLM_CSV, 'utf8').split('\n').filter((l) => l.trim());
+  const lines = fs
+    .readFileSync(LLM_CSV, 'utf8')
+    .split('\n')
+    .filter((l) => l.trim());
   const headers = lines[0].split(',');
   const fixed = new Set(['path', 'seriesId', 'hash', 'manual']);
   const modelCols = headers.filter((h) => !fixed.has(h));
@@ -64,7 +75,7 @@ function llmVerdict(row, modelCols) {
   if (!row) return 'unknown';
   if (row.manual === 'ok') return 'ok';
   if (modelCols.some((m) => row[m] === 'fail')) return 'fail';
-  if (modelCols.some((m) => row[m] === 'ok'))   return 'ok';
+  if (modelCols.some((m) => row[m] === 'ok')) return 'ok';
   return 'unknown';
 }
 
@@ -86,19 +97,19 @@ if (!fs.existsSync(LLM_CSV)) {
 const allPaths = new Set([...human.keys(), ...llm.keys()]);
 
 const cats = {
-  both:        { label: 'Both validated — agree',              color: C.green,   files: [] },
-  conflict:    { label: 'Human ✓ but LLM fail — investigate',  color: C.red,     files: [] },
-  'llm-fail':  { label: 'LLM fail, not human-validated — review', color: C.yellow, files: [] },
-  'human-only':{ label: 'Human ✓, LLM not run',               color: C.cyan,    files: [] },
-  'llm-only':  { label: 'LLM ok, not human-validated',         color: C.dim,     files: [] },
-  unknown:     { label: 'Neither validated',                    color: C.dim,     files: [] },
-  stale:       { label: 'Hash mismatch — data stale',          color: C.magenta, files: [] },
+  both: { label: 'Both validated — agree', color: C.green, files: [] },
+  conflict: { label: 'Human ✓ but LLM fail — investigate', color: C.red, files: [] },
+  'llm-fail': { label: 'LLM fail, not human-validated — review', color: C.yellow, files: [] },
+  'human-only': { label: 'Human ✓, LLM not run', color: C.cyan, files: [] },
+  'llm-only': { label: 'LLM ok, not human-validated', color: C.dim, files: [] },
+  unknown: { label: 'Neither validated', color: C.dim, files: [] },
+  stale: { label: 'Hash mismatch — data stale', color: C.magenta, files: [] },
 };
 
 for (const p of allPaths) {
   const h = human.get(p);
   const l = llm.get(p);
-  const humanValidated = !!(h?.validatedAt);
+  const humanValidated = !!h?.validatedAt;
   const verdict = llmVerdict(l, modelCols);
 
   // Hash mismatch (both have the file but hashes differ)
@@ -107,11 +118,26 @@ for (const p of allPaths) {
     continue;
   }
 
-  if (humanValidated && verdict === 'ok')      { cats.both.files.push(p); continue; }
-  if (humanValidated && verdict === 'fail')    { cats.conflict.files.push(p); continue; }
-  if (!humanValidated && verdict === 'fail')   { cats['llm-fail'].files.push(p); continue; }
-  if (humanValidated && verdict === 'unknown') { cats['human-only'].files.push(p); continue; }
-  if (!humanValidated && verdict === 'ok')     { cats['llm-only'].files.push(p); continue; }
+  if (humanValidated && verdict === 'ok') {
+    cats.both.files.push(p);
+    continue;
+  }
+  if (humanValidated && verdict === 'fail') {
+    cats.conflict.files.push(p);
+    continue;
+  }
+  if (!humanValidated && verdict === 'fail') {
+    cats['llm-fail'].files.push(p);
+    continue;
+  }
+  if (humanValidated && verdict === 'unknown') {
+    cats['human-only'].files.push(p);
+    continue;
+  }
+  if (!humanValidated && verdict === 'ok') {
+    cats['llm-only'].files.push(p);
+    continue;
+  }
   cats.unknown.files.push(p);
 }
 
@@ -146,15 +172,21 @@ for (const key of order) {
 console.log('─'.repeat(65));
 
 if (cats.conflict.files.length > 0) {
-  console.log(`\n${C.red}${C.bold}Action needed:${C.reset} ${cats.conflict.files.length} conflict(s) — human validated but LLM flagged as fail.`);
+  console.log(
+    `\n${C.red}${C.bold}Action needed:${C.reset} ${cats.conflict.files.length} conflict(s) — human validated but LLM flagged as fail.`
+  );
   console.log(`${C.dim}Run with --cat=conflict --verbose to investigate.${C.reset}`);
 }
 if (cats['llm-fail'].files.length > 0) {
-  console.log(`\n${C.yellow}${C.bold}Review queue:${C.reset} ${cats['llm-fail'].files.length} LLM failure(s) not yet human-validated.`);
+  console.log(
+    `\n${C.yellow}${C.bold}Review queue:${C.reset} ${cats['llm-fail'].files.length} LLM failure(s) not yet human-validated.`
+  );
   console.log(`${C.dim}Run: npm run review:failures  to go through them interactively.${C.reset}`);
 }
 if (cats.stale.files.length > 0) {
-  console.log(`\n${C.magenta}${C.bold}Stale data:${C.reset} ${cats.stale.files.length} file(s) with hash mismatch between human and LLM caches.`);
+  console.log(
+    `\n${C.magenta}${C.bold}Stale data:${C.reset} ${cats.stale.files.length} file(s) with hash mismatch between human and LLM caches.`
+  );
   console.log(`${C.dim}Run: npm run sync:human-validations  and  npm run validate:llm  to refresh.${C.reset}`);
 }
 console.log('');

@@ -10,10 +10,10 @@
  * Run after `eleventy` and `build:css`, before `generate:sw`.
  */
 
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 const { minify: minifyHtml } = require('html-minifier-terser');
-const { minify: minifyJs }   = require('terser');
+const { minify: minifyJs } = require('terser');
 
 const SITE_DIR = path.resolve(__dirname, '..', '_site');
 
@@ -39,9 +39,11 @@ const JS_OPTIONS = {
 // Files/dirs to skip for JS minification (already minified or non-source)
 const JS_SKIP = new Set(['dev.js']);
 
-let htmlCount = 0, htmlSaved = 0;
-let jsCount   = 0, jsSaved   = 0;
-const errors  = [];
+let htmlCount = 0,
+  htmlSaved = 0;
+let jsCount = 0,
+  jsSaved = 0;
+const errors = [];
 
 async function processHtml(filePath) {
   const original = fs.readFileSync(filePath, 'utf8');
@@ -86,7 +88,7 @@ async function main() {
   console.log('[minify] Starting…');
 
   const htmlFiles = collectFiles(SITE_DIR, '.html');
-  const jsFiles   = collectFiles(path.join(SITE_DIR, 'assets', 'js'), '.js');
+  const jsFiles = collectFiles(path.join(SITE_DIR, 'assets', 'js'), '.js');
 
   await Promise.all(htmlFiles.map(processHtml));
   await Promise.all(jsFiles.map(processJs));
@@ -100,9 +102,12 @@ async function main() {
 
   if (errors.length) {
     console.warn(`[minify] ${errors.length} error(s):`);
-    errors.forEach(e => console.warn(`  ${e.file}: ${e.error}`));
+    errors.forEach((e) => console.warn(`  ${e.file}: ${e.error}`));
     process.exit(1);
   }
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

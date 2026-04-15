@@ -24,7 +24,7 @@ const TYPE_SCHEMAS = {
   sort: { required: ['items'], arrays: ['items'] },
   'drag-sort': { required: ['tiles'], arrays: ['tiles'] },
   'fill-table': { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
-  'column-op':    { required: ['top', 'operation', 'result'] },
+  'column-op': { required: ['top', 'operation', 'result'] },
   ruler: { required: [] },
   thermometer: { required: [] },
   'number-line': { required: ['min', 'max', 'answer'] },
@@ -43,17 +43,27 @@ const TYPE_SCHEMAS = {
   'calc-chain': { required: ['chain'] },
   'inverse-problem': { required: ['ipBase', 'ipInverses'], arrays: ['ipInverses'] },
   'decimal-triple': { required: [], requireOneOf: [['dtFrac', 'dtDecimal', 'dtPlaces', 'dtGiven'], ['generator']] },
-  'compare-expressions': { required: ['comparisons'], arrays: ['comparisons'], arrayFields: { comparisons: ['left', 'right'] } },
-  estimation: { required: [], requireOneOf: [['estimate', 'answer'], ['estimates', 'answer']] },
+  'compare-expressions': {
+    required: ['comparisons'],
+    arrays: ['comparisons'],
+    arrayFields: { comparisons: ['left', 'right'] },
+  },
+  estimation: {
+    required: [],
+    requireOneOf: [
+      ['estimate', 'answer'],
+      ['estimates', 'answer'],
+    ],
+  },
   'error-analysis': { required: ['steps', 'wrongStep', 'correction'], arrays: ['steps'] },
   'compare-solutions': { required: ['solutions', 'correctSolution'], arrays: ['solutions'] },
   'guided-problem': { required: ['story', 'steps'], arrays: ['steps'] },
   'think-board': { required: ['expression'], requireOneOf: [['answer'], ['answers']] },
   'fact-family': { required: ['numbers', 'operation'], arrays: ['numbers'] },
   'bar-model': { required: ['bm', 'answer'] },
-  'futoshiki': { required: [], requireOneOf: [['futoshiki'], ['generator']] },
-  'kenken': { required: [], requireOneOf: [['kenken'], ['generator']] },
-  'numberlink': { required: [], requireOneOf: [['numberlink'], ['generator']] },
+  futoshiki: { required: [], requireOneOf: [['futoshiki'], ['generator']] },
+  kenken: { required: [], requireOneOf: [['kenken'], ['generator']] },
+  numberlink: { required: [], requireOneOf: [['numberlink'], ['generator']] },
 };
 
 const COLORS = {
@@ -236,7 +246,11 @@ for (const dir of defiDirs) {
     // Extra: duration is required for timed challenges
     const rel = path.relative(process.cwd(), seriesDir).replace(/\\/g, '/');
     let meta;
-    try { meta = yaml.load(fs.readFileSync(indexFile, 'utf8')); } catch { meta = null; }
+    try {
+      meta = yaml.load(fs.readFileSync(indexFile, 'utf8'));
+    } catch {
+      meta = null;
+    }
     if (meta && meta.duration == null) {
       errors.push(`${rel}/index.yaml: missing "duration" (required for timed challenges)`);
     }

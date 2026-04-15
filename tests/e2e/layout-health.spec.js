@@ -16,8 +16,8 @@ import { join } from 'node:path';
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const MIN_HEIGHT = 150;   // px — less than this = nothing rendered
-const MAX_HEIGHT = 3000;  // px — more than this = layout explosion
+const MIN_HEIGHT = 150; // px — less than this = nothing rendered
+const MAX_HEIGHT = 3000; // px — more than this = layout explosion
 
 const SITE_DIR = join(process.cwd(), '_site');
 
@@ -52,7 +52,7 @@ async function waitForAlpine(page) {
   await page.waitForSelector('[x-data]:not([x-cloak])', { timeout: 8000 });
   // For list pages: wait until the loading spinner disappears (CSV fetched)
   const spinner = page.locator('[x-show="$store.exercises.loading"]');
-  if (await spinner.count() > 0) {
+  if ((await spinner.count()) > 0) {
     await spinner.waitFor({ state: 'hidden', timeout: 8000 });
   }
 }
@@ -61,10 +61,10 @@ async function waitForAlpine(page) {
 
 async function runHealthChecks(page, url) {
   const jsErrors = [];
-  page.on('pageerror', err => jsErrors.push(err.message));
+  page.on('pageerror', (err) => jsErrors.push(err.message));
 
   // 1. JS errors (uncaught exceptions + Alpine expression errors + Generator errors)
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     if (msg.type() === 'error') {
       const text = msg.text();
       // Catch our new error boundary logs or Alpine internal errors
@@ -92,8 +92,8 @@ async function runHealthChecks(page, url) {
   if (visualErrors) issues.push('visual error indicator detected (⚠️ or Erreur de génération)');
 
   // 2. Horizontal overflow
-  const overflow = await page.evaluate(() =>
-    document.documentElement.scrollWidth > document.documentElement.clientWidth + 5
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 5
   );
   if (overflow) issues.push('horizontal overflow');
 

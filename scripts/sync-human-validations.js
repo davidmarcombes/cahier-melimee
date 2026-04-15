@@ -19,14 +19,17 @@ const crypto = require('crypto');
 const ROOT = path.resolve(__dirname, '..');
 const CSV_PATH = path.join(ROOT, 'reports/human-validate.csv');
 
-const EXERCISE_ROOTS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis']
-  .map((r) => path.join(ROOT, r));
+const EXERCISE_ROOTS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis'].map((r) => path.join(ROOT, r));
 
 const doWrite = process.argv.includes('--write');
 
 const C = {
-  bold: '\x1b[1m', dim: '\x1b[2m',
-  green: '\x1b[32m', yellow: '\x1b[33m', red: '\x1b[31m', cyan: '\x1b[36m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  red: '\x1b[31m',
+  cyan: '\x1b[36m',
   reset: '\x1b[0m',
 };
 
@@ -53,7 +56,9 @@ function getSeriesId(dir) {
   try {
     const m = fs.readFileSync(path.join(dir, 'index.yaml'), 'utf8').match(/^id:\s*(\S+)/m);
     return m ? m[1] : null;
-  } catch (_) { return null; }
+  } catch (_) {
+    return null;
+  }
 }
 
 function findExerciseFiles() {
@@ -78,7 +83,10 @@ function findExerciseFiles() {
 
 function readCsv() {
   if (!fs.existsSync(CSV_PATH)) return new Map();
-  const lines = fs.readFileSync(CSV_PATH, 'utf8').split('\n').filter((l) => l.trim());
+  const lines = fs
+    .readFileSync(CSV_PATH, 'utf8')
+    .split('\n')
+    .filter((l) => l.trim());
   const map = new Map();
   for (const line of lines.slice(1)) {
     const parts = line.split(',');
@@ -89,7 +97,10 @@ function readCsv() {
 
 function writeCsv(map) {
   const rows = [...map.values()].sort((a, b) => a.path.localeCompare(b.path));
-  const lines = ['path,seriesId,hash,validatedAt', ...rows.map((r) => `${r.path},${r.seriesId},${r.hash},${r.validatedAt}`)];
+  const lines = [
+    'path,seriesId,hash,validatedAt',
+    ...rows.map((r) => `${r.path},${r.seriesId},${r.hash},${r.validatedAt}`),
+  ];
   fs.writeFileSync(CSV_PATH, lines.join('\n') + '\n', 'utf8');
 }
 
@@ -105,7 +116,9 @@ let invalidated = 0;
 let removed = 0;
 let rehashed = 0;
 
-console.log(`\n${C.bold}Sync human validations${C.reset}  (${doWrite ? 'write mode' : 'dry-run — use --write to apply'})\n`);
+console.log(
+  `\n${C.bold}Sync human validations${C.reset}  (${doWrite ? 'write mode' : 'dry-run — use --write to apply'})\n`
+);
 
 for (const { absPath, seriesId } of files) {
   const relPath = path.relative(ROOT, absPath).replace(/\\/g, '/');
@@ -128,7 +141,7 @@ for (const { absPath, seriesId } of files) {
       updated.set(relPath, { path: relPath, seriesId, hash, validatedAt: '' });
       console.log(
         `  ${C.yellow}~${C.reset} CHANGED   ${relPath}` +
-        (wasValidated ? `  ${C.dim}(validation cleared)${C.reset}` : '')
+          (wasValidated ? `  ${C.dim}(validation cleared)${C.reset}` : '')
       );
       invalidated++;
     }
@@ -149,11 +162,11 @@ if (added + invalidated + removed + rehashed === 0) {
   console.log(`  ${C.dim}All ${files.length} exercise files are up to date.${C.reset}`);
 } else {
   const parts = [];
-  if (added)      parts.push(`${C.green}${added} added${C.reset}`);
+  if (added) parts.push(`${C.green}${added} added${C.reset}`);
   if (invalidated) parts.push(`${C.yellow}${invalidated} changed${C.reset} (validation cleared)`);
-  if (removed)    parts.push(`${C.red}${removed} removed${C.reset}`);
-  if (rehashed)   parts.push(`${C.dim}${rehashed} rehashed (CRLF→LF)${C.reset}`);
-  if (unchanged)  parts.push(`${C.dim}${unchanged} unchanged${C.reset}`);
+  if (removed) parts.push(`${C.red}${removed} removed${C.reset}`);
+  if (rehashed) parts.push(`${C.dim}${rehashed} rehashed (CRLF→LF)${C.reset}`);
+  if (unchanged) parts.push(`${C.dim}${unchanged} unchanged${C.reset}`);
   console.log(`\n${C.bold}Summary:${C.reset} ${parts.join(', ')}`);
   if (doWrite) {
     writeCsv(updated);

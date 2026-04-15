@@ -19,7 +19,9 @@ try {
   const env = readFileSync(join(process.cwd(), '.env'), 'utf8');
   const m = env.match(/^PATH_PREFIX\s*=\s*(.+)$/m);
   if (m) PATH_PREFIX = m[1].trim();
-} catch (_) {}
+} catch {
+  /* .env absent — use default PATH_PREFIX */
+}
 
 console.log(`Checking _site/ against PATH_PREFIX="${PATH_PREFIX}"\n`);
 
@@ -131,7 +133,9 @@ const EXPECTED_ORIGIN = (() => {
     const env = readFileSync(join(process.cwd(), '.env'), 'utf8');
     const m = env.match(/^SITE_URL\s*=\s*(.+)$/m);
     return m ? m[1].trim().replace(/\/$/, '') : null;
-  } catch (_) { return null; }
+  } catch (_) {
+    return null;
+  }
 })();
 
 if (EXPECTED_ORIGIN) {
@@ -163,9 +167,14 @@ if (existsSync(csvPath)) {
   if (!header.startsWith('id,l,s,t,title,d,f,ty,cl')) {
     issues.push({ file: 'fr/exercices/data.csv', attr: 'header', url: header, reason: 'unexpected CSV header' });
   }
-  const tyUndef = rows.slice(1).filter(r => r.split(',')[7] === undefined || r.split(',')[7] === '').length;
+  const tyUndef = rows.slice(1).filter((r) => r.split(',')[7] === undefined || r.split(',')[7] === '').length;
   if (tyUndef > 0) {
-    issues.push({ file: 'fr/exercices/data.csv', attr: 'ty column', url: '', reason: `${tyUndef} rows missing type index` });
+    issues.push({
+      file: 'fr/exercices/data.csv',
+      attr: 'ty column',
+      url: '',
+      reason: `${tyUndef} rows missing type index`,
+    });
   }
 }
 

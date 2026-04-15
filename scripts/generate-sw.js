@@ -11,11 +11,11 @@
  * Run after `eleventy` + `build:css` so every file is present.
  */
 
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const SITE_DIR   = path.resolve(__dirname, '..', '_site');
+const SITE_DIR = path.resolve(__dirname, '..', '_site');
 const PATH_PREFIX = (process.env.PATH_PREFIX || '/').replace(/\/$/, ''); // '' or '/subpath'
 
 // ── file scan ────────────────────────────────────────────────────────────────
@@ -33,21 +33,21 @@ function scanDir(dir) {
 function fileToUrl(filePath) {
   const rel = path.relative(SITE_DIR, filePath).replace(/\\/g, '/');
   const base = PATH_PREFIX + '/' + rel;
-  if (rel === 'index.html')              return PATH_PREFIX + '/';
-  if (rel.endsWith('/index.html'))       return base.slice(0, -'index.html'.length);
+  if (rel === 'index.html') return PATH_PREFIX + '/';
+  if (rel.endsWith('/index.html')) return base.slice(0, -'index.html'.length);
   return base;
 }
 
 const SKIP_FILES = new Set(['sw.js', '.gitkeep']);
-const SKIP_EXTS  = new Set(['.map']);
+const SKIP_EXTS = new Set(['.map']);
 
 const allFiles = scanDir(SITE_DIR);
 
 const entries = allFiles
-  .map(f => ({ file: f, url: fileToUrl(f) }))
+  .map((f) => ({ file: f, url: fileToUrl(f) }))
   .filter(({ file, url }) => {
     if (SKIP_FILES.has(path.basename(file))) return false;
-    if (SKIP_EXTS.has(path.extname(file)))   return false;
+    if (SKIP_EXTS.has(path.extname(file))) return false;
     return true;
   });
 
@@ -61,7 +61,7 @@ for (const { file } of [...entries].sort((a, b) => a.file.localeCompare(b.file))
 }
 const cacheVersion = hash.digest('hex').slice(0, 10);
 
-const urlList = entries.map(e => e.url);
+const urlList = entries.map((e) => e.url);
 
 console.log(`[generate-sw] ${urlList.length} URLs → cache version ${cacheVersion}`);
 

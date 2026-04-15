@@ -1,8 +1,8 @@
 ---
-title: "Cinq cent vingt-sept"
+title: "Centaines, dizaines et unités"
 type: "base-10"
-number: 527
-answer: "527"
+number: 327
+answer: "327"
 ---
 
 Observe bien les plaques de 100, les barres de 10 et les unités.

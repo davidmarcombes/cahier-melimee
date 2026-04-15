@@ -5,9 +5,17 @@ module.exports = [
   // Global ignores
   { ignores: ['node_modules/', '_site/', '_docs/', 'dist/', 'tailwind.config.js'] },
 
+  // ESM scripts (use import/export)
+  {
+    files: ['scripts/svg-stats.js', 'scripts/check-build-urls.js'],
+    languageOptions: { sourceType: 'module', globals: { ...globals.node } },
+    rules: { ...js.configs.recommended.rules, 'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }] },
+  },
+
   // Node.js files (CommonJS)
   {
     files: ['.eleventy.js', 'postcss.config.js', 'scripts/**/*.js', 'src/_data/**/*.js'],
+    ignores: ['scripts/svg-stats.js', 'scripts/check-build-urls.js'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: { ...globals.node },
@@ -68,6 +76,7 @@ module.exports = [
         scaleSvg: 'readonly',
         calendarSvg: 'readonly',
         decompTreeSvg: 'readonly',
+        thermometerExerciseSvg: 'readonly',
       },
     },
     rules: {
@@ -75,7 +84,10 @@ module.exports = [
       // Functions are called from inline HTML (Alpine x-data) or used as globals
       'no-unused-vars': [
         'warn',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^(seriesPlayer|timedPlayer|themeToggle|challengePlayer|.*Svg)$' },
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^(seriesPlayer|timedPlayer|themeToggle|challengePlayer|.*Svg)$',
+        },
       ],
     },
   },

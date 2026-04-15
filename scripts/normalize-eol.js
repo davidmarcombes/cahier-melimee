@@ -11,19 +11,20 @@
  */
 'use strict';
 
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const SRC_DIRS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis']
-  .map(r => path.join(ROOT, r));
+const SRC_DIRS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis'].map((r) => path.join(ROOT, r));
 const EXTENSIONS = new Set(['.md', '.yaml', '.yml']);
 
 const doWrite = process.argv.includes('--write');
 
 const C = {
-  bold: '\x1b[1m', dim: '\x1b[2m',
-  green: '\x1b[32m', yellow: '\x1b[33m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
   reset: '\x1b[0m',
 };
 
@@ -38,7 +39,9 @@ function walkFiles(dir) {
   return results;
 }
 
-console.log(`\n${C.bold}Normalize line endings${C.reset}  (${doWrite ? 'write mode' : 'dry-run — use --write to apply'})\n`);
+console.log(
+  `\n${C.bold}Normalize line endings${C.reset}  (${doWrite ? 'write mode' : 'dry-run — use --write to apply'})\n`
+);
 
 const files = SRC_DIRS.flatMap(walkFiles);
 let fixed = 0;

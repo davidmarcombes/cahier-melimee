@@ -58,7 +58,7 @@ const TYPE_CHOICES = [
   { name: 'compare         — Comparer deux nombres', value: 'compare' },
   { name: 'compare-expressions — Comparer deux expressions sans calculer', value: 'compare-expressions' },
   { name: 'estimation        — Estimer puis calculer exactement', value: 'estimation' },
-  { name: 'error-analysis   — Trouver l\'erreur dans un calcul et la corriger', value: 'error-analysis' },
+  { name: "error-analysis   — Trouver l'erreur dans un calcul et la corriger", value: 'error-analysis' },
   { name: 'compare-solutions — Deux solutions proposées, choisir la correcte', value: 'compare-solutions' },
   { name: 'multi-question  — Questions sur un contexte', value: 'multi-question' },
   { name: 'mcq             — QCM (choix multiples)', value: 'mcq' },
@@ -113,10 +113,12 @@ const TEMPLATES = {
     'columns:\n  - label: "100"\n    value: 100\n    color: "#dc2626"\n    answer: 0\n    max: 9\n  - label: "10"\n    value: 10\n    color: "#7c3aed"\n    answer: 0\n    max: 9\n  - label: "1"\n    value: 1\n    color: "#2563eb"\n    answer: 0\n    max: 9',
   'inverse-problem':
     'ipBase:\n  text: "Lucie a 15 billes. Elle en donne 4 à son frère. Combien lui en reste-t-il ?"\n  answer: 11\nipInverses:\n  - text: "Lucie a des billes. Elle en donne 4 à son frère. Il lui en reste 11. Combien en avait-elle au début ?"\n    answer: 15\n  - text: "Lucie a 15 billes. Elle en donne quelques-unes à son frère. Il lui en reste 11. Combien en a-t-elle données ?"\n    answer: 4',
-  'compare-expressions': 'comparisons:\n  - left: "47 + 38"\n    right: "47 + 35"\n  - left: "5 × 6"\n    right: "2 × 15"',
+  'compare-expressions':
+    'comparisons:\n  - left: "47 + 38"\n    right: "47 + 35"\n  - left: "5 × 6"\n    right: "2 × 15"',
   estimation: 'operation: "48 + 37"\nestimate: "80"\nanswer: "85"',
   'error-analysis': 'steps:\n  - "47 + 38"\n  - "= 75"\nwrongStep: 1\ncorrection: "85"',
-  'compare-solutions': 'solutions:\n  - name: "Léa"\n    steps:\n      - "43 - 28"\n      - "= 25"\n  - name: "Tom"\n    steps:\n      - "43 - 28"\n      - "= 15"\ncorrectSolution: 1',
+  'compare-solutions':
+    'solutions:\n  - name: "Léa"\n    steps:\n      - "43 - 28"\n      - "= 25"\n  - name: "Tom"\n    steps:\n      - "43 - 28"\n      - "= 15"\ncorrectSolution: 1',
 };
 
 const TYPES = Object.keys(TEMPLATES);

@@ -10,7 +10,7 @@
  * Run: node scripts/migrate-class-to-yaml.js [--dry]
  */
 'use strict';
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 
@@ -24,10 +24,12 @@ function findSeries(dir) {
   const results = [];
   const walk = (d) => {
     const ip = path.join(d, 'index.yaml');
-    if (fs.existsSync(ip)) { results.push(d); return; }
+    if (fs.existsSync(ip)) {
+      results.push(d);
+      return;
+    }
     if (fs.existsSync(d))
-      for (const e of fs.readdirSync(d, { withFileTypes: true }))
-        if (e.isDirectory()) walk(path.join(d, e.name));
+      for (const e of fs.readdirSync(d, { withFileTypes: true })) if (e.isDirectory()) walk(path.join(d, e.name));
   };
   walk(dir);
   return results;
@@ -65,14 +67,15 @@ function setYamlClass(yamlPath, classValue) {
 function mostCommon(arr) {
   const counts = {};
   for (const v of arr) counts[v] = (counts[v] || 0) + 1;
-  return Object.entries(counts)
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    [0][0];
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  return sorted[0][0];
 }
 
 // ── main ─────────────────────────────────────────────────────────────────────
 
-let promoted = 0, stripped = 0, yamlOnly = 0;
+let promoted = 0,
+  stripped = 0,
+  yamlOnly = 0;
 
 for (const scanDir of SCAN) {
   const dir = path.join(ROOT, scanDir);
@@ -81,8 +84,8 @@ for (const scanDir of SCAN) {
     const meta = yaml.load(fs.readFileSync(yamlPath, 'utf8')) || {};
     const yamlClass = (meta.class || '').trim();
 
-    const mdFiles = fs.readdirSync(seriesDir).filter(f => f.endsWith('.md'));
-    const mdClasses = mdFiles.map(f => readMdClass(path.join(seriesDir, f))).filter(Boolean);
+    const mdFiles = fs.readdirSync(seriesDir).filter((f) => f.endsWith('.md'));
+    const mdClasses = mdFiles.map((f) => readMdClass(path.join(seriesDir, f))).filter(Boolean);
 
     if (!yamlClass && !mdClasses.length) {
       // Should not occur given our audit, but log it

@@ -42,7 +42,7 @@ const varAliases = {
   'b10-t': 'b10t',
   'b10-ts': 'b10ts',
   'b10-u': 'b10u',
-  'b10-us': 'b10us'
+  'b10-us': 'b10us',
 };
 
 function processColors(obj, prefix = '') {

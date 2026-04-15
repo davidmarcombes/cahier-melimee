@@ -6,49 +6,49 @@ const SEARCH_ROOT = './src';
 const TARGET_ID = process.argv[2];
 
 if (!TARGET_ID) {
-    console.error("Usage: node generate-prompt.js <id>");
-    process.exit(1);
+  console.error('Usage: node generate-prompt.js <id>');
+  process.exit(1);
 }
 
 function findFolderById(dir, id) {
-    const files = fs.readdirSync(dir);
+  const files = fs.readdirSync(dir);
 
-    for (const file of files) {
-        const fullPath = path.join(dir, file);
-        const stat = fs.statSync(fullPath);
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    const stat = fs.statSync(fullPath);
 
-        if (stat.isDirectory()) {
-            const result = findFolderById(fullPath, id);
-            if (result) return result;
-        } else if (file === 'index.yaml') {
-            const content = fs.readFileSync(fullPath, 'utf8');
-            const idRegex = new RegExp(`id:\\s*["']?${id}["']?`, 'i');
-            if (idRegex.test(content)) return path.dirname(fullPath);
-        }
+    if (stat.isDirectory()) {
+      const result = findFolderById(fullPath, id);
+      if (result) return result;
+    } else if (file === 'index.yaml') {
+      const content = fs.readFileSync(fullPath, 'utf8');
+      const idRegex = new RegExp(`id:\\s*["']?${id}["']?`, 'i');
+      if (idRegex.test(content)) return path.dirname(fullPath);
     }
-    return null;
+  }
+  return null;
 }
 
 function generatePrompt(folderPath) {
-    const files = fs.readdirSync(folderPath);
-    let dumpedContent = "";
+  const files = fs.readdirSync(folderPath);
+  let dumpedContent = '';
 
-    files.forEach(file => {
-        const filePath = path.join(folderPath, file);
-        if (fs.statSync(filePath).isFile()) {
-            let content = fs.readFileSync(filePath, 'utf8');
+  files.forEach((file) => {
+    const filePath = path.join(folderPath, file);
+    if (fs.statSync(filePath).isFile()) {
+      let content = fs.readFileSync(filePath, 'utf8');
 
-            // Strip the ID line from index.yaml to avoid duplication/confusion
-            if (file === 'index.yaml') {
-                content = content.replace(/^id:\s*.*\n?/m, '');
-            }
+      // Strip the ID line from index.yaml to avoid duplication/confusion
+      if (file === 'index.yaml') {
+        content = content.replace(/^id:\s*.*\n?/m, '');
+      }
 
-            dumpedContent += `\n--- FICHIER: ${file} ---\n${content}\n`;
-        }
-    });
+      dumpedContent += `\n--- FICHIER: ${file} ---\n${content}\n`;
+    }
+  });
 
-    // The prompt is now tailored for French content and specific logic
-    return `
+  // The prompt is now tailored for French content and specific logic
+  return `
 ### CONTEXTE ###
 Le dossier suivant contient des fichiers YAML et Markdown décrivant des exercices de mathématiques en français.
 
@@ -74,9 +74,9 @@ Fournis le contenu mis à jour pour chaque fichier ci-dessus.
 const targetFolder = findFolderById(SEARCH_ROOT, TARGET_ID);
 
 if (targetFolder) {
-    console.log(targetFolder); // Shows the path found
-    console.log("-----------------------------------------");
-    console.log(generatePrompt(targetFolder));
+  console.log(targetFolder); // Shows the path found
+  console.log('-----------------------------------------');
+  console.log(generatePrompt(targetFolder));
 } else {
-    console.error(`ID "${TARGET_ID}" non trouvé.`);
+  console.error(`ID "${TARGET_ID}" non trouvé.`);
 }

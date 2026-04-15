@@ -15,20 +15,22 @@
  */
 'use strict';
 
-const fs     = require('fs');
-const path   = require('path');
+const fs = require('fs');
+const path = require('path');
 const crypto = require('crypto');
 
-const ROOT      = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..');
 const CACHE_PATH = path.join(ROOT, 'reports/validate-llm-cache.csv');
-const SRC_DIRS  = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis']
-  .map(r => path.join(ROOT, r));
+const SRC_DIRS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis'].map((r) => path.join(ROOT, r));
 
 const doWrite = process.argv.includes('--write');
 
 const C = {
-  bold: '\x1b[1m', dim: '\x1b[2m',
-  green: '\x1b[32m', yellow: '\x1b[33m', red: '\x1b[31m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  red: '\x1b[31m',
   reset: '\x1b[0m',
 };
 
@@ -60,7 +62,10 @@ function getSeriesId(absPath) {
     const id = m ? m[1] : '';
     _seriesIdCache.set(dir, id);
     return id;
-  } catch (_) { _seriesIdCache.set(dir, ''); return ''; }
+  } catch (_) {
+    _seriesIdCache.set(dir, '');
+    return '';
+  }
 }
 
 function walkMdFiles(dir) {
@@ -79,24 +84,29 @@ function walkMdFiles(dir) {
 function loadCache() {
   const map = new Map();
   if (!fs.existsSync(CACHE_PATH)) return map;
-  const lines = fs.readFileSync(CACHE_PATH, 'utf8').split('\n').filter(l => l.trim());
+  const lines = fs
+    .readFileSync(CACHE_PATH, 'utf8')
+    .split('\n')
+    .filter((l) => l.trim());
   if (lines.length === 0) return map;
 
-  const header    = lines[0].split(',');
+  const header = lines[0].split(',');
   const hasSeriesId = header[1] === 'seriesId';
-  const hasManual   = hasSeriesId && header[3] === 'manual';
-  const dataOffset  = hasManual ? 4 : hasSeriesId ? 3 : 2;
-  const modelCols   = header.slice(dataOffset);
+  const hasManual = hasSeriesId && header[3] === 'manual';
+  const dataOffset = hasManual ? 4 : hasSeriesId ? 3 : 2;
+  const modelCols = header.slice(dataOffset);
 
   for (const line of lines.slice(1)) {
     const parts = line.split(',');
     if (!parts[0]) continue;
-    const seriesId = hasSeriesId ? (parts[1] || '') : '';
-    const hash     = hasSeriesId ? (parts[2] || '') : (parts[1] || '');
-    const manual   = hasManual   ? (parts[3] || '') : '';
+    const seriesId = hasSeriesId ? parts[1] || '' : '';
+    const hash = hasSeriesId ? parts[2] || '' : parts[1] || '';
+    const manual = hasManual ? parts[3] || '' : '';
     const verdicts = parts.slice(dataOffset);
-    const models   = new Map();
-    modelCols.forEach((m, i) => { if (verdicts[i]) models.set(m, verdicts[i]); });
+    const models = new Map();
+    modelCols.forEach((m, i) => {
+      if (verdicts[i]) models.set(m, verdicts[i]);
+    });
     map.set(parts[0], { seriesId, hash, manual, models });
   }
   return map;
@@ -110,26 +120,31 @@ function saveCache(map) {
   const header = ['path', 'seriesId', 'hash', 'manual', ...cols].join(',');
   const rows = [...map.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([p, e]) => [p, e.seriesId || '', e.hash, e.manual || '', ...cols.map(m => e.models.get(m) || '')].join(','));
+    .map(([p, e]) =>
+      [p, e.seriesId || '', e.hash, e.manual || '', ...cols.map((m) => e.models.get(m) || '')].join(',')
+    );
   fs.writeFileSync(CACHE_PATH, [header, ...rows].join('\n') + '\n');
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-const cache   = loadCache();
+const cache = loadCache();
 const updated = new Map(cache);
 const allFiles = SRC_DIRS.flatMap(walkMdFiles);
-const seen    = new Set();
+const seen = new Set();
 
-let added = 0, changed = 0, rehashed = 0, removed = 0;
+let added = 0,
+  changed = 0,
+  rehashed = 0,
+  removed = 0;
 
 console.log(`\n${C.bold}Sync LLM cache${C.reset}  (${doWrite ? 'write mode' : 'dry-run — use --write to apply'})\n`);
 
 for (const absPath of allFiles) {
-  const relPath  = path.relative(ROOT, absPath).replace(/\\/g, '/');
+  const relPath = path.relative(ROOT, absPath).replace(/\\/g, '/');
   const seriesId = getSeriesId(absPath);
-  const hash     = fileHash(absPath);
-  const entry    = cache.get(relPath);
+  const hash = fileHash(absPath);
+  const entry = cache.get(relPath);
   seen.add(relPath);
 
   if (!entry) {
@@ -147,8 +162,7 @@ for (const absPath of allFiles) {
       const hadVerdicts = entry.models.size > 0;
       updated.set(relPath, { seriesId, hash, manual: entry.manual || '', models: new Map() });
       console.log(
-        `  ${C.yellow}~${C.reset} CHANGED  ${relPath}` +
-        (hadVerdicts ? `  ${C.dim}(verdicts cleared)${C.reset}` : '')
+        `  ${C.yellow}~${C.reset} CHANGED  ${relPath}` + (hadVerdicts ? `  ${C.dim}(verdicts cleared)${C.reset}` : '')
       );
       changed++;
     }
@@ -169,9 +183,9 @@ if (added + changed + removed + rehashed === 0) {
   console.log(`  ${C.dim}All ${allFiles.length} exercise files are up to date.${C.reset}`);
 } else {
   const parts = [];
-  if (added)    parts.push(`${C.green}${added} added${C.reset}`);
-  if (changed)  parts.push(`${C.yellow}${changed} changed${C.reset} (verdicts cleared)`);
-  if (removed)  parts.push(`${C.red}${removed} removed${C.reset}`);
+  if (added) parts.push(`${C.green}${added} added${C.reset}`);
+  if (changed) parts.push(`${C.yellow}${changed} changed${C.reset} (verdicts cleared)`);
+  if (removed) parts.push(`${C.red}${removed} removed${C.reset}`);
   if (rehashed) parts.push(`${C.dim}${rehashed} rehashed (CRLF→LF)${C.reset}`);
   if (unchanged) parts.push(`${C.dim}${unchanged} unchanged${C.reset}`);
   console.log(`\n${C.bold}Summary:${C.reset} ${parts.join(', ')}`);
