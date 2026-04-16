@@ -3,7 +3,7 @@
   src: url('../assets/fonts/inter-roman-subset.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -11,7 +11,7 @@
   src: url('../assets/fonts/inter-italic-subset.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: italic;
-  font-display: swap;
+  font-display: optional;
 }
 
 /* Base-10 block colors — mapped from design tokens */
@@ -27,7 +27,7 @@
 /* BEGIN:design-tokens */
 @layer base {
   :root {
-    --p: #2a85bf;
+    --p: #1e75aa;
     --a: #bf812a;
     --red: #c94040;
     --green: #3a9a55;

@@ -227,7 +227,8 @@
       "Bash(sed -n '68,73p' /e/Code/cahier-melimee/scripts/migrate-class-to-yaml.js)",
       "Bash(sed -n '20,25p' /e/Code/cahier-melimee/scripts/check-build-urls.js)",
       "Bash(sed -n '1352,1357p' /e/Code/cahier-melimee/.eleventy.js)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(curl -sL \"https://unpkg.com/alpinejs@3.15.11/dist/cdn.min.js\" -o \"e:/Code/cahier-melimee/src/assets/js/alpine.min.js\")"
     ]
   }
 }

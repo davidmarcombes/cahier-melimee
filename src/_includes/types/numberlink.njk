@@ -19,6 +19,7 @@
             <button type="button"
               @click="nlkTap(r, c)"
               :disabled="solved"
+              :aria-label="'Case ' + (r+1) + '-' + (c+1) + (cell > 0 ? ' (' + cell + ')' : '')"
               class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl border-2 text-lg font-bold transition-all flex items-center justify-center select-none"
               :class="nlkCellClass(r, c, cell)"
               :style="nlkCellStyle(r, c, cell)">

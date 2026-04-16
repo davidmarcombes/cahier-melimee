@@ -12,6 +12,7 @@
         type="button"
         @click="svgTap(i)"
         :disabled="solved"
+        :aria-label="'Tuile ' + (i + 1)"
         class="relative flex flex-col justify-between overflow-hidden
                rounded-lg border-[3px] transition-all duration-150 select-none
                bg-white dark:bg-slate-800 text-content-default"

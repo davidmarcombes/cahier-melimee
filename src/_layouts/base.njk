@@ -13,7 +13,7 @@
     <link rel="icon" type="image/x-icon" sizes="16x16" href="{{ '/favicon.ico' | url }}">
     <link rel="apple-touch-icon" href="{{ '/apple-touch-icon.png' | url }}">
     <link rel="manifest" href="{{ '/manifest.json' | url }}">
-    <meta name="theme-color" content="#2a85bf">
+    <meta name="theme-color" content="#1e75aa">
 
     <!-- Open Graph / Twitter -->
     <meta property="og:title" content="{{ title or site.title }}" />
@@ -24,6 +24,7 @@
 
 
     <link rel="stylesheet" href="{{ '/css/styles.css' | url }}">
+    {% if preloadCsv %}<script>if(!sessionStorage.getItem('ex4')){var _l=document.createElement('link');_l.rel='preload';_l.as='fetch';_l.crossOrigin='anonymous';_l.href='{{ '/fr/exercices/data.csv' | url }}';document.head.appendChild(_l);}</script>{% endif %}
     <style>[x-cloak] { display: none !important; }</style>
 
     <!-- Path prefix for JS runtime fetches -->
@@ -47,7 +48,7 @@
     {% include "components/footer.njk" %}
 
     <script defer type="module" src="{{ '/assets/js/app.js' | url }}"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.15.11/dist/cdn.min.js"></script>
+    <script defer src="{{ '/assets/js/alpine.min.js' | url }}"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {

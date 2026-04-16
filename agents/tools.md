@@ -34,6 +34,8 @@ All available commands (run `npm run help` for a live list):
 | `npm run check:spell` | Spellcheck markdown files with cspell |
 | `npm run check:duplicates` | Check for duplicate exercise entries |
 | `npm run test:a11y` | Accessibility audit (WCAG2AA) on built `_site/` — requires `npm run build` first |
+| `npm run test:lighthouse` | Lighthouse audit (perf/a11y/best-practices/SEO) on built `_site/` — requires `npm run build` first |
+| `npm run test:lighthouse:report` | Same + saves HTML reports to `reports/lighthouse/` |
 
 ### Code generation & tokens
 

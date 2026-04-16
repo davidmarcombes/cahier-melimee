@@ -3,7 +3,7 @@
 ## Page Size Budgets
 
 - **Exercise pages:** target ≤ 18 KB HTML (currently ~17 KB)
-- **CSS bundle:** target ≤ 30 KB minified (currently ~26 KB)
+- **CSS bundle:** target ≤ 60 KB minified (currently ~55 KB — grown with new exercise types; all 499 classes are actively used, no dead CSS)
 - Audit with: `wc -c _site/path/to/page.html` and `wc -c _site/assets/css/style.css`
 
 ## Build-Time Conditional Includes (critical)
