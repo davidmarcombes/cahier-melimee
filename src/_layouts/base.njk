@@ -51,9 +51,13 @@
     <script defer src="{{ '/assets/js/alpine.min.js' | url }}"></script>
     <script>
       if ('serviceWorker' in navigator) {
+        {% if site.devMode %}
+        navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+        {% else %}
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('{{ "/sw.js" | url }}', { scope: '{{ "/" | url }}' });
         });
+        {% endif %}
       }
     </script>
   </body>

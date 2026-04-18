@@ -728,7 +728,7 @@ const generators = {
           if (c <= 0 || a + c > max + 50) continue;
           left = `${a} + ${b}`;
           right = `${a} + ${c}`;
-          answer = delta > 0 ? '>' : '<';
+          answer = delta > 0 ? '<' : '>'; // larger addend on right → right is bigger → left < right
         } else if (strategy === 'sameLeftSub') {
           const a = rand(min + 20, max);
           const b = rand(5, 20);
@@ -737,7 +737,7 @@ const generators = {
           if (c <= 0 || c >= a) continue;
           left = `${a} − ${b}`;
           right = `${a} − ${c}`;
-          answer = delta > 0 ? '<' : '>'; // subtracting more → smaller result
+          answer = delta > 0 ? '>' : '<'; // subtracting more on right → right is smaller → left > right
         } else if (strategy === 'compensAdd') {
           const a = rand(min, max - 20);
           const b = rand(10, 30);
@@ -754,7 +754,7 @@ const generators = {
           if (c < 2 || c > maxFactor + 2) continue;
           left = `${a} × ${b}`;
           right = `${a} × ${c}`;
-          answer = delta > 0 ? '>' : '<';
+          answer = delta > 0 ? '<' : '>'; // larger factor on right → right is bigger → left < right
         } else if (strategy === 'sameDivDiv') {
           const a = rand(2, maxFactor);
           const b = rand(2, maxFactor);
@@ -5332,6 +5332,123 @@ const generators = {
           answers: [String(total)],
         };
       }
+    },
+  },
+
+  // conversionDenominateur: Vrai ou Faux — is this fraction equivalence correct?
+  // Shows a/b = (a*k)/(b*k) or a deliberate wrong version.
+  // params: level ('simple'|'medium'|'hard'), count (5)
+  // fractionAdditionMatching: match addition of fractions to their result
+  // params: mode ('same'|'different'|'mixed'), pairs (4)
+  fractionAdditionMatching: {
+    generate(params = {}) {
+      const mode = params.mode ?? 'same';
+      const pairCount = params.pairs ?? 4;
+      const op = params.op ?? 'add'; // 'add' | 'mixed' (add+sub)
+
+      const frac = (n, d) =>
+        `<span class="frac" style="font-size:1rem"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+
+      const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+      const simplify = (n, d) => { const g = gcd(Math.abs(n), d); return [n / g, d / g]; };
+
+      const generated = [];
+      let attempts = 0;
+
+      while (generated.length < pairCount && attempts < pairCount * 30) {
+        attempts++;
+        let left, result;
+        const useOp = op === 'mixed' ? (Math.random() < 0.5 ? '+' : '−') : '+';
+
+        if (mode === 'same') {
+          // Same denominator: a/d ± b/d = (a±b)/d
+          const d = rand(2, 8);
+          const a = rand(1, d - 1);
+          const b = rand(1, d - 1);
+          const rn = useOp === '+' ? a + b : a - b;
+          if (rn <= 0 || rn > d * 2) continue;
+          const [sn, sd] = simplify(rn, d);
+          left = `${frac(a, d)} ${useOp} ${frac(b, d)}`;
+          result = sd === 1 ? `${sn}` : frac(sn, sd);
+        } else {
+          // Different denominators: a/d1 ± b/d2 — d2 is a multiple of d1
+          const d1 = rand(2, 5);
+          const mult = rand(2, 4);
+          const d2 = d1 * mult;
+          const a = rand(1, d1 - 1);
+          const b = rand(1, d2 - 1);
+          const lcm = d2; // d2 is already the common denom
+          const an = a * mult;
+          const rn = useOp === '+' ? an + b : an - b;
+          if (rn <= 0) continue;
+          const [sn, sd] = simplify(rn, lcm);
+          left = `${frac(a, d1)} ${useOp} ${frac(b, d2)}`;
+          result = sd === 1 ? `${sn}` : frac(sn, sd);
+        }
+
+        // Avoid duplicates
+        if (generated.some((g) => g.left === left)) continue;
+        generated.push({ left, result });
+      }
+
+      if (generated.length < pairCount) return null; // retry
+
+      const rightOrder = shuffle(Array.from({ length: pairCount }, (_, i) => i));
+      const answers = generated.map((_, li) => rightOrder.indexOf(li));
+
+      return {
+        type: 'matching',
+        pairs: {
+          left: generated.map((g) => g.left),
+          right: rightOrder.map((ri) => generated[ri].result),
+          answers,
+        },
+      };
+    },
+  },
+
+  conversionDenominateur: {
+    generate(params = {}) {
+      const frac = (n, d) => `<span class="frac" style="font-size:1.1rem"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+      const level = params.level ?? 'simple';
+      const count = params.count ?? 5;
+
+      // Denominator pairs per level: [from, to] — always multiples
+      const pairs = {
+        simple: [[2,4],[2,6],[2,8],[3,6],[3,9],[4,8],[5,10],[2,10]],
+        medium: [[3,12],[4,12],[5,15],[5,20],[6,12],[4,16],[3,15],[6,18]],
+        hard:   [[4,20],[6,24],[7,14],[8,24],[9,27],[5,25],[6,30],[8,32]],
+      };
+      pairs.mix = [...pairs.simple, ...pairs.medium, ...pairs.hard];
+      const pool = pairs[level] ?? pairs.simple;
+
+      const statements = [];
+      let attempts = 0;
+      while (statements.length < count && attempts < count * 15) {
+        attempts++;
+        const [d1, d2] = pool[Math.floor(Math.random() * pool.length)];
+        const k = d2 / d1;
+        const a = rand(1, d1 - 1); // numerator < denominator (proper fraction)
+        const isTrue = Math.random() < 0.5;
+
+        let n2;
+        if (isTrue) {
+          n2 = a * k; // correct conversion
+        } else {
+          // Wrong: off by 1 in numerator, or multiply denominator but not numerator
+          const mistake = Math.random() < 0.5 ? 1 : -1;
+          n2 = a * k + mistake;
+          if (n2 <= 0 || n2 === a * k) n2 = a * k + 1;
+        }
+
+        // Avoid duplicates
+        const text = `${frac(a, d1)} = ${frac(n2, d2)}`;
+        if (statements.some((s) => s.text === text)) continue;
+
+        statements.push({ text, answer: isTrue });
+      }
+
+      return { type: 'true-false', statements };
     },
   },
 };

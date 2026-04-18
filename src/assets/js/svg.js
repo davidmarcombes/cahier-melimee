@@ -853,29 +853,29 @@ function coordinateGridSvg(cg) {
   const ay = toY(0);
   s += `<line x1="${PL}" y1="${ay}" x2="${PL + GW + 10}" y2="${ay}" stroke="currentColor" stroke-width="2"/>`;
   s += `<polygon points="${PL + GW + 15},${ay} ${PL + GW + 7},${ay - 4} ${PL + GW + 7},${ay + 4}" fill="currentColor"/>`;
-  s += `<text x="${PL + GW + 18}" y="${ay + 5}" font-size="12" fill="currentColor" font-style="italic">x</text>`;
+  s += `<text x="${PL + GW + 18}" y="${ay + 6}" font-size="20" fill="currentColor" font-style="italic" font-weight="bold">x</text>`;
 
   // y-axis (x=0 → left edge of grid)
   const ax = toX(0);
   s += `<line x1="${ax}" y1="${PT + GH}" x2="${ax}" y2="${PT - 10}" stroke="currentColor" stroke-width="2"/>`;
   s += `<polygon points="${ax},${PT - 15} ${ax - 4},${PT - 7} ${ax + 4},${PT - 7}" fill="currentColor"/>`;
-  s += `<text x="${ax}" y="${PT - 18}" font-size="12" fill="currentColor" font-style="italic" text-anchor="middle">y</text>`;
+  s += `<text x="${ax}" y="${PT - 22}" font-size="20" fill="currentColor" font-style="italic" font-weight="bold" text-anchor="middle">y</text>`;
 
-  // Origin label "O"
-  s += `<text x="${ax - 9}" y="${ay + 16}" font-size="11" fill="currentColor" text-anchor="middle">0</text>`;
+  // Origin label "0"
+  s += `<text x="${ax - 14}" y="${ay + 22}" font-size="18" fill="currentColor" font-weight="bold" text-anchor="middle">0</text>`;
 
   // x-axis ticks and labels (1 … cols)
   for (let c = 1; c <= cols; c++) {
     const x = toX(c);
     s += `<line x1="${x}" y1="${ay - 4}" x2="${x}" y2="${ay + 4}" stroke="currentColor" stroke-width="1.5"/>`;
-    s += `<text x="${x}" y="${ay + 16}" text-anchor="middle" font-size="11" fill="currentColor">${c}</text>`;
+    s += `<text x="${x}" y="${ay + 22}" text-anchor="middle" font-size="18" font-weight="bold" fill="currentColor">${c}</text>`;
   }
 
   // y-axis ticks and labels (1 … rows)
   for (let r = 1; r <= rows; r++) {
     const y = toY(r);
     s += `<line x1="${ax - 4}" y1="${y}" x2="${ax + 4}" y2="${y}" stroke="currentColor" stroke-width="1.5"/>`;
-    s += `<text x="${ax - 9}" y="${y + 4}" text-anchor="end" font-size="11" fill="currentColor">${r}</text>`;
+    s += `<text x="${ax - 12}" y="${y + 5}" text-anchor="end" font-size="18" font-weight="bold" fill="currentColor">${r}</text>`;
   }
 
   // Intersection dots (for grids ≤ 10×10, aids readability)
@@ -896,7 +896,7 @@ function coordinateGridSvg(cg) {
     const py = toY(pt.y);
     s += `<circle cx="${px}" cy="${py}" r="5" class="fill-primary-500"/>`;
     if (pt.label) {
-      s += `<text x="${px + 9}" y="${py - 6}" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${pt.label}</text>`;
+      s += `<text x="${px + 12}" y="${py - 10}" font-size="20" font-weight="900" class="fill-primary-600 dark:fill-primary-400">${pt.label}</text>`;
     }
   });
 
@@ -1080,98 +1080,103 @@ function jumpArrowSvg(start, step1, step2) {
    Structural elements use palette vars; weight blocks use fixed dark fill so
    they look like physical weights in both light and dark modes. */
 function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
-  const W = 380,
-    H = 175;
+  const W = 340,
+    H = 260;
 
   const left = Array.isArray(leftItems) ? leftItems : [leftItems];
   const right = Array.isArray(rightItems) ? rightItems : [rightItems];
 
+  // Colours — scale body in warm brass, weights in deep teal
+  const bodyColor  = '#b45309'; // amber-700: brass/bronze feel
+  const bodyLight  = '#d97706'; // amber-600: highlight
+  const weightFill = '#0f4c75'; // deep blue
+  const weightHigh = '#1a6fa8'; // lighter blue highlight
+  const weightText = '#ffffff';
+
   // Tilt offset: positive = that end goes DOWN
-  const TILT = 18;
+  const TILT = 20;
   const lOff = tilt === 'left' ? TILT : tilt === 'right' ? -TILT : 0;
   const rOff = tilt === 'right' ? TILT : tilt === 'left' ? -TILT : 0;
 
   // Geometry
   const cx = W / 2;
-  const beamY = 75;
-  const lx = 78,
-    rx = 302;
-  const rodLen = 40;
-  const panRx = 42,
-    panRy = 10;
-  // Each pan hangs at the bottom of its rod, level regardless of tilt
+  const beamY = 70;
+  const lx = 72, rx = 268;
+  const rodLen = 70; // longer rods = more headroom for weights
+  const panRx = 46, panRy = 10;
   const lPanY = beamY + lOff + rodLen;
   const rPanY = beamY + rOff + rodLen;
 
-  // Weight block (always dark fill so it reads as a physical weight)
-  const weightW = 30,
-    weightH = 26;
-  const wBlock = (val, x, y) =>
-    `<rect x="${x - weightW / 2}" y="${y - weightH}" width="${weightW}" height="${weightH}" rx="5"
-           fill="#475569" stroke="#1e293b" stroke-width="1"/>
-     <text x="${x}" y="${y - 7}" text-anchor="middle"
-           font-family="system-ui,sans-serif" font-size="12" font-weight="800" fill="white">${val}</text>`;
+  // Weight block — bottom at pan centre
+  const weightW = 40, weightH = 34;
+  const wBlock = (val, x, y) => {
+    const label = String(val);
+    const fs = label.length >= 3 ? 11 : label.length === 2 ? 13 : 15;
+    return `<rect x="${x - weightW / 2}" y="${y - weightH}" width="${weightW}" height="${weightH}" rx="8"
+           fill="${weightFill}" stroke="#061e30" stroke-width="1.5"/>
+     <rect x="${x - weightW / 2 + 3}" y="${y - weightH + 3}" width="${weightW - 6}" height="7" rx="3"
+           fill="${weightHigh}"/>
+     <text x="${x}" y="${y - weightH / 2 + fs / 2 + 2}" text-anchor="middle"
+           font-family="system-ui,sans-serif" font-size="${fs}" font-weight="800" fill="${weightText}">${label}</text>`;
+  };
 
-  // Emoji sitting on pan surface
+  // Emoji sitting on pan centre
   const eBlock = (em, x, y) =>
     `<text x="${x}" y="${y}" text-anchor="middle"
-           font-family="system-ui,sans-serif" font-size="34">${em}</text>`;
+           font-family="system-ui,sans-serif" font-size="36">${em}</text>`;
 
-  // Layout items above a pan; items sit directly on the pan surface
+  // Layout items: weight bottoms at pan centre (panY), emoji base at panY
   const renderItems = (items, panX, panY) => {
     const isNum = (v) => !isNaN(Number(v)) && String(v).trim() !== '';
     const weights = items.filter(isNum);
     const emojis = items.filter((v) => !isNum(v));
     let s = '';
-    const panTop = panY - panRy;
 
     if (weights.length > 0) {
-      const gap = 3;
+      const gap = 12;
       const totalW = weights.length * weightW + (weights.length - 1) * gap;
       weights.forEach((w, i) => {
         const x = panX - totalW / 2 + weightW / 2 + i * (weightW + gap);
-        s += wBlock(Number(w), x, panTop);
+        s += wBlock(Number(w), x, panY); // bottom at pan centre
       });
     }
     if (emojis.length > 0) {
-      const emojiBase = weights.length > 0 ? panTop - weightH - 2 : panTop + 2;
+      const emojiBase = weights.length > 0 ? panY - weightH - 4 : panY + 4;
       emojis.forEach((em, i) => {
-        const x = panX + (i - (emojis.length - 1) / 2) * 40;
+        const x = panX + (i - (emojis.length - 1) / 2) * 42;
         s += eBlock(em, x, emojiBase);
       });
     }
     return s;
   };
 
-  // Tilted beam: line from (lx, beamY+lOff) to (rx, beamY+rOff)
-  const lBy = beamY + lOff,
-    rBy = beamY + rOff;
+  const lBy = beamY + lOff, rBy = beamY + rOff;
 
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"
                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balance">
     <!-- Central post -->
-    <rect x="${cx - 5}" y="${beamY + 8}" width="10" height="50" rx="3" fill="var(--cs)"/>
+    <rect x="${cx - 3}" y="${beamY + 7}" width="6" height="62" rx="2" fill="${bodyColor}"/>
     <!-- Base -->
-    <rect x="${cx - 36}" y="${beamY + 54}" width="72" height="12" rx="5" fill="var(--cs)"/>
+    <rect x="${cx - 22}" y="${beamY + 65}" width="44" height="8" rx="4" fill="${bodyColor}"/>
     <!-- Pivot cap -->
-    <circle cx="${cx}" cy="${beamY + 8}" r="8" fill="var(--ct)" opacity="0.7"/>
+    <circle cx="${cx}" cy="${beamY + 7}" r="6" fill="${bodyLight}" opacity="0.9"/>
     <!-- Beam (tilted) -->
     <line x1="${lx}" y1="${lBy}" x2="${rx}" y2="${rBy}"
-          stroke="var(--ct)" stroke-width="10" stroke-linecap="round" opacity="0.85"/>
+          stroke="${bodyLight}" stroke-width="7" stroke-linecap="round"/>
     <!-- Left rod -->
     <line x1="${lx}" y1="${lBy}" x2="${lx}" y2="${lPanY - panRy - 1}"
-          stroke="var(--cs)" stroke-width="2.5" stroke-linecap="round"/>
+          stroke="${bodyColor}" stroke-width="2.5" stroke-linecap="round"/>
     <!-- Right rod -->
     <line x1="${rx}" y1="${rBy}" x2="${rx}" y2="${rPanY - panRy - 1}"
-          stroke="var(--cs)" stroke-width="2.5" stroke-linecap="round"/>
+          stroke="${bodyColor}" stroke-width="2.5" stroke-linecap="round"/>
     <!-- Left pan -->
-    <ellipse cx="${lx}" cy="${lPanY}" rx="${panRx}" ry="${panRy}" fill="var(--cs)"/>
+    <ellipse cx="${lx}" cy="${lPanY}" rx="${panRx}" ry="${panRy}" fill="${bodyColor}"/>
     <ellipse cx="${lx}" cy="${lPanY - panRy * 0.4}" rx="${panRx}" ry="${panRy * 0.6}"
-             fill="var(--ct)" opacity="0.15"/>
+             fill="${bodyLight}" opacity="0.25"/>
     <!-- Right pan -->
-    <ellipse cx="${rx}" cy="${rPanY}" rx="${panRx}" ry="${panRy}" fill="var(--cs)"/>
+    <ellipse cx="${rx}" cy="${rPanY}" rx="${panRx}" ry="${panRy}" fill="${bodyColor}"/>
     <ellipse cx="${rx}" cy="${rPanY - panRy * 0.4}" rx="${panRx}" ry="${panRy * 0.6}"
-             fill="var(--ct)" opacity="0.15"/>
+             fill="${bodyLight}" opacity="0.25"/>
     <!-- Items -->
     ${renderItems(left, lx, lPanY)}
     ${renderItems(right, rx, rPanY)}

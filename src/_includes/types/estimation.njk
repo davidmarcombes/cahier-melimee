@@ -2,6 +2,10 @@
 <div x-show="cur.type === 'estimation'" class="space-y-4">
   <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-2 max-w-none text-content-subtle"></div>
 
+  <div x-show="cur.operation" class="text-center mb-2">
+    <span class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide" x-text="cur.operation"></span>
+  </div>
+
   <div class="flex flex-col gap-3">
     {# Estimate row #}
     <div class="flex items-center gap-3">

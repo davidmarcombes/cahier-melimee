@@ -337,8 +337,22 @@ module.exports = async function (eleventyConfig) {
   });
 
   // Extract unique exercise types from a series (for conditional template includes)
+  // Map generator names to the type they produce at runtime (may differ from front-matter type)
+  const GENERATOR_OUTPUT_TYPES = {
+    trierNombres: 'drag-sort',
+    trierDecimaux: 'drag-sort',
+    trierFractions: 'drag-sort',
+  };
+
   eleventyConfig.addFilter('extractTypes', function (exercises) {
-    return [...new Set(exercises.map((ex) => ex.data.type || 'number-check'))];
+    const types = new Set();
+    for (const ex of exercises) {
+      types.add(ex.data.type || 'number-check');
+      if (ex.data.generator && GENERATOR_OUTPUT_TYPES[ex.data.generator]) {
+        types.add(GENERATOR_OUTPUT_TYPES[ex.data.generator]);
+      }
+    }
+    return [...types];
   });
 
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
@@ -460,7 +474,12 @@ module.exports = async function (eleventyConfig) {
           };
           if (dataSvg.par) {
             for (const [k, v] of Object.entries(dataSvg.par)) {
-              if (v !== null && typeof v === 'object') {
+              if (Array.isArray(v)) {
+                svgObj.par[k] = v.map((item) => {
+                  const s = interpolate(String(item));
+                  return isNaN(s) ? s : Number(s);
+                });
+              } else if (v !== null && typeof v === 'object') {
                 const obj = {};
                 for (const [ok, ov] of Object.entries(v)) {
                   const key = isNaN(ok) ? ok : Number(ok);

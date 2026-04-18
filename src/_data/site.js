@@ -1,4 +1,5 @@
 module.exports = {
+  version: '1.0',
   title: 'Le Cahier de Mélimée',
   description: 'Exercices éducatifs du CP à la 3e',
   url: process.env.SITE_URL || 'http://localhost:8080',

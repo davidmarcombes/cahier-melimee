@@ -1217,8 +1217,11 @@ export function seriesPlayer(exercises, seriesId) {
 
       if (_e.type === 'sort') {
         const userOrder = this.sortPicked.map((i) => this.sortShuffled[i]);
-        const items = _e.items || [];
-        const wrong = userOrder.map((v, i) => (v !== items[i] ? i : -1)).filter((i) => i !== -1);
+        const toNum = (s) => parseFloat(String(s).replace(/\s/g, '').replace(',', '.'));
+        const correctOrder = [...(_e.items || [])].sort((a, b) =>
+          _e.direction === 'desc' ? toNum(b) - toNum(a) : toNum(a) - toNum(b)
+        );
+        const wrong = userOrder.map((v, i) => (v !== correctOrder[i] ? i : -1)).filter((i) => i !== -1);
         if (wrong.length === 0) {
           this.sortErrors = [];
           this._markSolvedAndAdvance();
