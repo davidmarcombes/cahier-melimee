@@ -176,6 +176,10 @@ if (existsSync(csvPath)) {
       reason: `${tyUndef} rows missing type index`,
     });
   }
+  const longRows = rows.slice(1).filter((r) => r.length > 96);
+  for (const r of longRows) {
+    issues.push({ file: 'fr/exercices/data.csv', attr: 'line length', url: r, reason: `CSV line exceeds 96 chars (${r.length})` });
+  }
 }
 
 // ── Report ────────────────────────────────────────────────────────────────────

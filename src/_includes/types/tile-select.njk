@@ -11,13 +11,13 @@
        x-show="cur.body" x-html="cur.body"></div>
 
   {# Tile grid #}
-  <div class="flex flex-wrap justify-center gap-4 mb-8">
+  <div class="flex flex-wrap justify-center gap-3 mb-5">
     <template x-for="(tile, i) in (cur.tiles || [])" :key="i">
       <button
         type="button"
         @click="tileTap(i)"
         :disabled="solved"
-        class="min-w-[6rem] px-6 py-5 text-3xl font-bold rounded-2xl border-2
+        class="min-w-[4.5rem] px-4 py-3 text-xl font-bold rounded-xl border-2
                transition-all duration-150 select-none
                bg-white dark:bg-slate-800 text-content-default"
         :class="{

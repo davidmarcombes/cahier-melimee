@@ -1291,6 +1291,7 @@ module.exports = async function (eleventyConfig) {
       'M3.1',
       'M3.2',
       'M3.3',
+      'N4.1',
       'N4.2',
       'S1.1.1',
       'S1.1.2',
@@ -1340,6 +1341,7 @@ module.exports = async function (eleventyConfig) {
       if (clIdx < 0 && (s.usedClasses || []).length)
         csvWarnings.push(`unknown class "${s.usedClasses[0]}" in ${s.series} — add to CSV_CLASSES`);
       const line = `${s.id},${l},${subj},${t},${title},${d},${f},${tyIdx >= 0 ? tyIdx : ''},${clIdx >= 0 ? clIdx : ''}`;
+      if (line.length > 96) csvWarnings.push(`CSV line > 96 chars (${line.length}): "${line}" in ${s.series}`);
       lines.push(line);
     }
     return lines.join('\n');

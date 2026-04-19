@@ -1,0 +1,93 @@
+path,current_title,suggested_title,reason
+ce1/maths/logique/venn-nombres,"Diagramme de Venn - Nombres","Diagramme de Venn Nombres",tiret
+ce1/maths/mesures,"Lire l'heure: heures et demies","Lire l'heure",long
+ce1/maths/numeration/blocs-valeur-02,"Blocs centaines, dizaines et unités","Blocs valeur de position",long
+ce1/maths/numeration/decompo-gen,"Centaines, dizaines et unités","Valeur de position",long
+ce1/maths/operations/comparer-expressions,"Compare sans calculer (+, -)","Compare sans calculer",parens
+ce1/maths/operations/familles-faits,"Familles de faits (+, -)","Familles de faits addition",parens
+ce1/maths/operations/vrai-faux-ops,"Vrai ou faux (+, -)","Vrai ou faux addition",parens
+ce2/maths/calcul/complement-1000-01,"Compléments à 1 000 (centaines)","Compléments à 1 000",parens+long
+ce2/maths/calcul/complement-1000-02,"Compléments à 1 000 (dizaines)","Compléments à 1 000",parens+long
+ce2/maths/calcul/equilibrer-add-01,"Équilibrer des additions — jusqu'à 20","Équilibrer des additions",long
+ce2/maths/calcul/equilibrer-add-02,"Équilibrer des additions — jusqu'à 100","Équilibrer des additions",long
+ce2/maths/calcul/somme-1000-02,"Résultat = 1 000 (calcul réfléchi)","Calcul réfléchi 1 000",parens+long
+ce2/maths/logique/venn-formes,"Diagramme de Venn - Figures","Diagramme de Venn Figures",tiret
+ce2/maths/logique/venn-nombres,"Diagramme de Venn - Nombres","Diagramme de Venn Nombres",tiret
+ce2/maths/mesures,"Lire l'heure pas de 5 minutes","Lire l'heure 5 minutes",long
+ce2/maths/mesures/lire-heure-matching-01,"Lire l'heure (pile, demie)","Lire l'heure pile et demie",parens
+ce2/maths/mesures/lire-heure-matching-02,"Lire l'heure (quarts d'heure)","Lire l'heure quarts",parens+long
+ce2/maths/mesures/lire-heure-matching-03,"Lire l'heure (5 minutes)","Lire l'heure 5 minutes",parens
+ce2/maths/mesures/lire-tableau-01,"Lire un tableau — le plus et le moins","Tableau le plus moins",long
+ce2/maths/mesures/suites-horaires-heures,"Suites d'heures — heures entières","Suites d'heures",long
+ce2/maths/mesures/unites-mesure-01,"Unités de mesure — cm ou m","Unites mesure cm m",special
+ce2/maths/mesures/unites-mesure-02,"Unités de mesure — mm, cm ou m","Unites mesure mm cm m",special
+ce2/maths/mesures/unites-mesure-03,"Unités de mesure — mm, cm, m ou km","Unites mesure mm cm m km",special
+ce2/maths/numeration/ajouter-valeur-pos-difficile,"Ajouter unités, dizaines ou centaines","Ajouter une valeur",long
+ce2/maths/numeration/ajouter-valeur-pos-facile,"Ajouter des unités ou des dizaines","Ajouter une valeur",long
+ce2/maths/numeration/ajouter-valeur-pos-moyen,"Ajouter des dizaines ou centaines","Ajouter une valeur",long
+ce2/maths/numeration/blocs-valeur-position-01,"Valeur de position — centaines","Valeur de position",long+special
+ce2/maths/numeration/coloriage-magique-01,"Coloriage magique — étoile","Coloriage magique étoile",tiret
+ce2/maths/numeration/comparaison-nombres-01,"Comparer des nombres (écriture std)","Comparer des nombres",parens+long
+ce2/maths/numeration/comparaison-nombres-02,"Comparer des nombres (écriture CDU)","Comparer des nombres",parens+long
+ce2/maths/numeration/comparaison-nombres-03,"Comparer des nombres (CDU/CDU)","Comparer des nombres",parens+long
+ce2/maths/numeration/comparer-10000,"Comparer des nombres jusqu'à 10 000","Comparer des nombres",long
+ce2/maths/numeration/convertir-centaines-dizaines,"Convertir centaines et dizaines","Convertir centaines",long
+ce2/maths/numeration/convertir-valeur-melange,"Valeurs de position — mélangé","Valeurs de position",special
+ce2/maths/numeration/decomp-additif-01,"Décomposition additive — c., d., u.","Décomposer un nombre",long+special
+ce2/maths/numeration/estimation-somme-difficile,"Estimer une somme à la centaine","Estimer une somme",long
+ce2/maths/numeration/estimation-somme-facile,"Estimer une somme à la dizaine","Estimer une somme",long
+ce2/maths/numeration/estimation-somme-moyen,"Estimer 3 nombres à la dizaine","Estimer des sommes",long
+ce2/maths/numeration/nombres-pairs-impairs-02,"Pairs et impairs (grands nbs)","Pairs et impairs",parens
+ce2/maths/numeration/ordre-nombres-02,"Le plus grand / le plus petit (×3)","Comparer des nombres",long+special
+ce2/maths/numeration/recomposer-difficile,"Recomposer un nombre (5-6 chiffres)","Recomposer un nombre",parens+long
+ce2/maths/numeration/recomposer-facile,"Recomposer un nombre (2-3 chiffres)","Recomposer un nombre",parens+long
+ce2/maths/numeration/recomposer-moyen,"Recomposer un nombre (3-4 chiffres)","Recomposer un nombre",parens+long
+ce2/maths/operations/comparer-expressions,"Compare sans calculer (+, -, x)","Compare sans calculer",parens+long
+ce2/maths/operations/comparer-mult-nombre,"Comparer — multiplication et nombre","Comparer des expressions",long+special
+ce2/maths/operations/familles-faits,"Familles de faits (+, -, x)","Familles de faits",parens
+ce2/maths/operations/fruits-addition-trou,"Additions à trou — Fruits","Additions à trou fruits",tiret
+ce2/maths/operations/fruits-soustraction-trou,"Soustractions à trou — Fruits","Soustractions à trou fruits",long
+ce2/maths/operations/mult-directes-01,"Multiplier par 10, 100 ou 1000","Multiplier par 10 et 100",long
+ce2/maths/operations/mult-etapes-01,"Multiplier par 10 — étape par étape","Multiplier par 10",long+special
+ce2/maths/operations/mult-etapes-02,"Multiplier par 100 — étape par étape","Multiplier par 100",long+special
+ce2/maths/operations/mult-etapes-03,"Multiplier par 1000 — par étapes","Multiplier par 1 000",long+special
+ce2/maths/operations/table-fonction-mult,"Tables entrée/sortie — multiplication","Entrée sortie multiplication",long+special
+ce2/maths/operations/vrai-faux-ops,"Vrai ou faux (+, -, x)","Vrai ou faux opérations",parens
+cm1/maths/calcul/coloriage-tables-cm1,"Coloriage magique — tables","Coloriage tables",tiret
+cm1/maths/fractions/decompo-fraction-centieme,"Décomposer une fraction centième","Décomposer des centièmes",long
+cm1/maths/fractions/egalites-fractions,"Égalités de fractions décimales","Égalités de fractions",long
+cm1/maths/fractions/fraction-decimale-ecriture,"Fractions décimales — écriture décimale","Écriture décimale",long+special
+cm1/maths/fractions/fraction-decimale-lecture,"Fractions décimales — lecture","Lire les fractions décimales",long+special
+cm1/maths/fractions/fractions-egales,"Fractions égales — trouve les égaux","Fractions égales",long+special
+cm1/maths/fractions/operations-fractions,"Addition et soustraction de fractions","Opérations sur fractions",long
+cm1/maths/fractions/recomposer-fractions,"Recomposer des fractions décimales","Recomposer des fractions",long
+cm1/maths/geometrie/perimetre-formes,"Périmètres de figures géométriques","Périmètres de figures",long
+cm1/maths/logique/venn-formes,"Diagramme de Venn - Figures","Diagramme de Venn Figures",tiret
+cm1/maths/logique/venn-nombres,"Diagramme de Venn - Nombres","Diagramme de Venn Nombres",tiret
+cm1/maths/mesures,"Lire l'heure — toutes les minutes","Lire l'heure",long+special
+cm1/maths/mesures/lire-tableau-02,"Lire un tableau — questions variées","Lire un tableau",long+special
+cm1/maths/mesures/suites-horaires-demi,"Suites d'heures — demi-heures","Suites d'heures",long+special
+cm1/maths/numeration/ajouter-valeur-pos-difficile,"Ajouter c., mill. ou diz. de mill.","Ajouter une valeur",long
+cm1/maths/numeration/mcq-decimaux-01,"QCM — Fractions et décimaux","QCM décimaux",special
+cm1/maths/numeration/mcq-decimaux-02,"QCM — Décimaux variés","QCM décimaux variés",special
+cm1/maths/numeration/multiples-moyen,"Multiples de 2 à 9, 10 et 100","Multiples",long
+cm1/maths/operations/comparer-div-nombre,"Comparer — division et nombre","Comparer des expressions",special
+cm1/maths/operations/comparer-expressions,"Compare sans calculer (4 ops)","Compare sans calculer",parens
+cm1/maths/operations/familles-faits,"Familles de faits (x, /)","Familles de faits",parens
+cm1/maths/operations/mult-div-trou-01,"× ÷ puissances de 10 — trouver","Puissances de 10",long+special
+cm1/maths/operations/pyramides-inv,"Pyramides — retrouve la base","Retrouve la base",special
+cm2/maths/geometrie/perimetre-deduction,"Périmètres — côtés manquants","Périmètres côtés manquants",special
+cm2/maths/geometrie/perimetre-mixte,"Périmètres — conversions mm/cm","Convertir les périmètres",long+special
+cm2/maths/logique/venn-formes,"Diagramme de Venn - Figures","Diagramme de Venn Figures",tiret
+cm2/maths/logique/venn-nombres,"Diagramme de Venn - Nombres","Diagramme de Venn Nombres",tiret
+cm2/maths/mesures/suites-horaires-quart,"Suites d'heures — quarts d'heure","Suites d'heures",long+special
+cm2/maths/numeration/blocs-valeur-position-01,"Valeur de position — milliers","Valeur de position",long+special
+cm2/maths/numeration/trier-decimaux-difficile,"Ranger des décimaux — mélangé","Ranger des décimaux",long+special
+cm2/maths/operations/comparer-ops-nombre,"Comparer — opérations et nombre","Comparer des expressions",long+special
+cm2/maths/operations/equilibrer-mult-01,"Équilibrer des multiplications","Équilibrer des multiplications",ok-as-is
+cp/maths/numeration/chasse-nombres-01,"Chasse aux nombres (1 à 10)","Chasse aux nombres",parens
+cp/maths/numeration/chasse-nombres-02,"Chasse aux nombres (1 à 20)","Chasse aux nombres",parens
+cp/maths/numeration/comparer-groupes-01,"Comparer des groupes (2 à 4)","Comparer des groupes",parens
+cp/maths/numeration/comparer-groupes-02,"Comparer des groupes (2 à 6)","Comparer des groupes",parens
+cp/maths/numeration/compter-objets-01,"Compter des objets (jusqu'à 5)","Compter des objets",parens+long
+cp/maths/numeration/compter-objets-02,"Compter des objets (jusqu'à 9)","Compter des objets",parens+long
