@@ -17,6 +17,7 @@
   <div class="space-y-3">
     <template x-for="(q, i) in cur.mqQuestions" :key="i">
       <div
+        x-show="!cur.mqSequential || i === 0 || mqSolved[i - 1]"
         class="flex items-center gap-3 p-3 rounded-xl border transition-colors"
         :class="{
           'border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20': mqSolved[i],

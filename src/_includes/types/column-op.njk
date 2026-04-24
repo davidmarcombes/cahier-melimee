@@ -11,7 +11,7 @@
             <template x-for="(d, i) in cur.colOp.top" :key="'t'+i">
               <td>
                 <div class="w-11 h-11 flex items-center justify-center rounded-lg border-2 text-xl font-bold select-none"
-                     :class="d === ' ' ? 'border-transparent' : colOpColor(cur.colOp.top.length - 1 - i)"
+                     :class="d === ' ' ? 'border-transparent' : d === ',' || d === '.' ? 'border-transparent text-content-default' : colOpColor(cur.colOp.top.length - 1 - i)"
                      x-text="d === ' ' ? '' : d"></div>
               </td>
             </template>
@@ -24,7 +24,7 @@
               <template x-for="(d, i) in cur.colOp.bottom" :key="'b'+i">
                 <td>
                   <div class="w-11 h-11 flex items-center justify-center rounded-lg border-2 text-xl font-bold select-none"
-                       :class="d === ' ' ? 'border-transparent' : colOpColor(cur.colOp.bottom.length - 1 - i)"
+                       :class="d === ' ' ? 'border-transparent' : d === ',' || d === '.' ? 'border-transparent text-content-default' : colOpColor(cur.colOp.bottom.length - 1 - i)"
                        x-text="d === ' ' ? '' : d"></div>
                 </td>
               </template>
@@ -55,7 +55,7 @@
                 </template>
                 <template x-if="d !== '?'">
                   <div class="w-11 h-11 flex items-center justify-center rounded-lg border-2 text-xl font-bold select-none"
-                       :class="d === ' ' ? 'border-transparent' : colOpColor(cur.colOp.result.length - 1 - i)"
+                       :class="d === ' ' ? 'border-transparent' : d === ',' || d === '.' ? 'border-transparent text-content-default' : colOpColor(cur.colOp.result.length - 1 - i)"
                        x-text="d === ' ' ? '' : d"></div>
                 </template>
               </td>

@@ -342,6 +342,12 @@ module.exports = async function (eleventyConfig) {
     trierNombres: 'drag-sort',
     trierDecimaux: 'drag-sort',
     trierFractions: 'drag-sort',
+    nombreChiffresSelect: 'tile-select',
+    lireTableauTile: 'tile-select',
+    fractionEnLettres: 'fraction-check',
+    classerFractions: 'classify',
+    classerMultiples: 'classify',
+    multiplesOfTile: 'tile-select',
   };
 
   eleventyConfig.addFilter('extractTypes', function (exercises) {
@@ -960,29 +966,64 @@ module.exports = async function (eleventyConfig) {
 
         if (ex.data.type === 'column-op') {
           const clean = (s) => String(s).replace(/\s+/g, '');
+          const isDecSep = (c) => c === ',' || c === '.';
           const top = clean(ex.data.top || '');
           const bottom = ex.data.bottom != null ? clean(ex.data.bottom) : null;
           const result = clean(ex.data.result || '');
-          const maxLen = Math.max(top.length, bottom ? bottom.length : 0, result.length);
-          const pad = (s, n) => s.padStart(n, ' ');
-          item.colOp = {
-            operation: ex.data.operation || '+',
-            top: pad(top, maxLen).split(''),
-            bottom: bottom ? pad(bottom, maxLen).split('') : null,
-            result: pad(result, maxLen).split(''),
-          };
+          // Align decimal columns: separate integer and decimal parts for padding
+          const hasDecimal = isDecSep(top[top.indexOf(',') >= 0 ? top.indexOf(',') : top.indexOf('.')]) ||
+            (bottom && (bottom.includes(',') || bottom.includes('.')));
+          const sepIdx = (s) => { const i = s.indexOf(','); return i >= 0 ? i : s.indexOf('.'); };
+          let maxIntLen, maxDecLen;
+          if (hasDecimal) {
+            const intPart = (s) => { const i = sepIdx(s); return i >= 0 ? s.slice(0, i) : s; };
+            const decPart = (s) => { const i = sepIdx(s); return i >= 0 ? s.slice(i) : ''; };
+            maxIntLen = Math.max(intPart(top).length, bottom ? intPart(bottom).length : 0, intPart(result).length);
+            maxDecLen = Math.max(decPart(top).length, bottom ? decPart(bottom).length : 0, decPart(result).length);
+            const padDec = (s) => {
+              const i = sepIdx(s);
+              if (i < 0) return s.padStart(maxIntLen, ' ');
+              return s.slice(0, i).padStart(maxIntLen, ' ') + s.slice(i).padEnd(maxDecLen, '0');
+            };
+            item.colOp = {
+              operation: ex.data.operation || '+',
+              top: padDec(top).split(''),
+              bottom: bottom ? padDec(bottom).split('') : null,
+              result: padDec(result).split(''),
+            };
+          } else {
+            const maxLen = Math.max(top.length, bottom ? bottom.length : 0, result.length);
+            const pad = (s, n) => s.padStart(n, ' ');
+            item.colOp = {
+              operation: ex.data.operation || '+',
+              top: pad(top, maxLen).split(''),
+              bottom: bottom ? pad(bottom, maxLen).split('') : null,
+              result: pad(result, maxLen).split(''),
+            };
+          }
           if (ex.data.answers) {
             item.answers = ex.data.answers.map(String);
           } else {
             // auto-compute answers for each '?' in result
-            const topN = parseInt(top, 10);
-            const botN = bottom ? parseInt(bottom, 10) : 0;
+            const toNum = (s) => parseFloat(s.replace(',', '.'));
+            const topN = toNum(top);
+            const botN = bottom ? toNum(bottom) : 0;
             const op = item.colOp.operation;
             let resN = op === '+' ? topN + botN : op === '-' ? topN - botN : topN * botN;
-            const resStr = String(Math.abs(resN)).padStart(result.length, '0');
+            // Re-express result with same decimal places as result template
+            const decPlaces = hasDecimal && sepIdx(result) >= 0 ? result.length - sepIdx(result) - 1 : 0;
+            const resStr = Math.abs(resN).toFixed(decPlaces).replace('.', ',');
+            // Pad to match result string structure (drop separators for indexing)
+            const resultChars = item.colOp.result;
+            // Build answer digit sequence from resStr
+            const resDigits = resStr.replace(',', '').split('');
             item.answers = [];
-            for (let i = 0; i < result.length; i++) {
-              if (result[i] === '?') item.answers.push(resStr[i] || '0');
+            for (let i = 0; i < resultChars.length; i++) {
+              if (resultChars[i] === '?') {
+                // Find how many non-separator non-space chars came before this '?'
+                const pos = resultChars.slice(0, i).filter((c) => !isDecSep(c) && c !== ' ').length;
+                item.answers.push(resDigits[pos] || '0');
+              }
             }
           }
         }
@@ -1265,6 +1306,7 @@ module.exports = async function (eleventyConfig) {
       'guided-problem',
       'bar-model',
       'fact-family',
+      'classify',
     ];
     const CSV_CLASSES = [
       'A1.1',

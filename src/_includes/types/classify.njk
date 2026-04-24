@@ -1,0 +1,70 @@
+{# Classify — drag items into labelled category boxes #}
+{# Data shape: { type:'classify', categories:[{id,label},...], items:[{html,cat},...] } #}
+<div x-show="cur.type === 'classify'" class="space-y-4">
+
+  {# Category boxes #}
+  <template x-if="cur.categories">
+    <div>
+      <div class="flex gap-2 mb-4">
+        <template x-for="(cat, ci) in (cur.categories || [])" :key="ci">
+          <div
+            class="flex-1 rounded-xl border-2 cursor-pointer transition-colors min-h-[7rem] flex flex-col"
+            :class="classifySelected !== null
+              ? 'border-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30'
+              : 'border-slate-300 dark:border-slate-600 bg-surface-subtle'"
+            @click="classifyPlaceItem(cat.id)">
+            <div class="text-center text-xs font-semibold text-primary-700 dark:text-primary-300 px-2 pt-2 pb-1 border-b border-slate-200 dark:border-slate-600"
+                 x-text="cat.label"></div>
+            <div class="flex flex-wrap justify-center items-center gap-1.5 p-2 flex-1">
+              <template x-for="(it, ii) in (cur.items || [])" :key="'p'+ci+ii">
+                <button
+                  type="button"
+                  x-show="classifyPlacements[ii] === cat.id"
+                  @click.stop="classifyPickBack(ii)"
+                  :disabled="solved"
+                  class="inline-flex items-center justify-center rounded-lg border-2 px-2 py-1 transition-all"
+                  :class="classifyErrors.includes(ii)
+                    ? 'border-red-400 bg-red-50 dark:bg-red-900/20'
+                    : solved
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                      : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-primary-400'"
+                  x-html="it.html">
+                </button>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      {# Item bank — unplaced items #}
+      <div class="flex flex-wrap justify-center gap-2 min-h-[3rem]">
+        <template x-for="(it, ii) in (cur.items || [])" :key="'bank'+ii">
+          <button
+            type="button"
+            x-show="classifyPlacements[ii] === undefined"
+            @click="classifySelect(ii)"
+            :disabled="solved"
+            class="inline-flex items-center justify-center rounded-xl border-2 px-3 py-2 transition-all font-bold"
+            :class="{
+              'border-primary-500 bg-primary-100 dark:bg-primary-900/30 ring-2 ring-primary-300 scale-105': classifySelected === ii,
+              'border-red-400 bg-red-50 dark:bg-red-900/20': classifyErrors.includes(ii),
+              'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-primary-400 hover:shadow': classifySelected !== ii && !classifyErrors.includes(ii)
+            }"
+            x-html="it.html">
+          </button>
+        </template>
+      </div>
+
+      {# Verify #}
+      <div class="flex justify-center mt-4">
+        <button type="button" @click="check()"
+          :disabled="solved || Object.keys(classifyPlacements).length < (cur.items || []).length"
+          class="px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+          <span x-show="!solved">Vérifier</span>
+          <span x-show="solved">Bravo !</span>
+        </button>
+      </div>
+    </div>
+  </template>
+</div>

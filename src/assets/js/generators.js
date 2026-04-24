@@ -1902,6 +1902,102 @@ const generators = {
     },
   },
 
+  // divisionEuclidienne: Euclidean division fill-in — a = (b × q) + r
+  // params: divisors ([3,4,5,6,7,8,9]), minDividend (10), maxDividend (99)
+  divisionEuclidienne: {
+    generate(params = {}) {
+      const divisors = params.divisors ?? [3, 4, 5, 6, 7, 8, 9];
+      const b = randItem(divisors);
+      const minD = params.minDividend ?? 10;
+      const maxD = params.maxDividend ?? 99;
+      const a = rand(minD, maxD);
+      const q = Math.floor(a / b);
+      const r = a % b;
+
+      return {
+        type: 'multi-question',
+        mqSequential: true,
+        mqContext: `<span class="text-4xl font-extrabold tracking-wide">${a} = (${b} × ?) + ?</span>`,
+        mqQuestions: [
+          { text: `Quotient : ${a} ÷ ${b} = …`, answer: String(q) },
+          { text: `Reste : ${a} − (${b} × ${q}) = …`, answer: String(r) },
+        ],
+      };
+    },
+  },
+
+  // multiplesOfTile: tile-select version of multiplesOf — click all multiples of N
+  // params: divisors ([2,5,10]), count (6), min (4), max (500)
+  multiplesOfTile: {
+    generate(params = {}) {
+      const count = params.count ?? 6;
+      const pool = params.divisors || [2, 5, 10];
+      const divisor = randItem(pool);
+      const min = params.min ?? divisor;
+      const max = params.max ?? 500;
+
+      const multiples = [];
+      const nonMultiples = [];
+      for (let n = min; n <= max; n++) {
+        if (n % divisor === 0) multiples.push(n);
+        else nonMultiples.push(n);
+      }
+
+      const nCorrect = rand(2, Math.min(3, count - 2, multiples.length));
+      const picked = shuffle([
+        ...shuffle(multiples).slice(0, nCorrect).map((n) => ({ n, ok: true })),
+        ...shuffle(nonMultiples).slice(0, count - nCorrect).map((n) => ({ n, ok: false })),
+      ]);
+
+      return {
+        type: 'tile-select',
+        title: `Lesquels sont des multiples de ${divisor} ?`,
+        tiles: picked.map(({ n }) => String(n)),
+        tileAnswers: picked.map(({ ok }, i) => (ok ? i : -1)).filter((i) => i !== -1),
+      };
+    },
+  },
+
+  // classerMultiples: classify numbers into category boxes by divisibility
+  // params: divisors ([2,5,10]), count (6), min (4), max (500)
+  //   Each number belongs to exactly one category (first matching divisor wins for display,
+  //   but we generate the set so numbers don't overlap for simplicity)
+  classerMultiples: {
+    generate(params = {}) {
+      const divisors = params.divisors ?? [2, 5, 10];
+      const countPerCat = params.countPerCat ?? 2;
+      const min = params.min ?? 10;
+      const max = params.max ?? 500;
+
+      // For a clean exercise, pick numbers that are multiples of exactly one of the divisors
+      // (avoids confusion about where to place e.g. 10 when both 2 and 5 are categories)
+      const cats = divisors.map((d) => ({ id: `d${d}`, label: `multiples de ${d}`, d }));
+      const picked = [];
+      const seen = new Set();
+
+      for (const cat of cats) {
+        let added = 0, attempts = 0;
+        while (added < countPerCat && attempts < 500) {
+          attempts++;
+          const mult = rand(Math.ceil(min / cat.d), Math.floor(max / cat.d)) * cat.d;
+          if (seen.has(mult)) continue;
+          // Ensure it's not a multiple of any other cat divisor
+          const exclusive = divisors.every((d) => d === cat.d || mult % d !== 0);
+          if (!exclusive) continue;
+          seen.add(mult);
+          picked.push({ html: String(mult), cat: cat.id });
+          added++;
+        }
+      }
+
+      return {
+        type: 'classify',
+        categories: cats.map(({ id, label }) => ({ id, label })),
+        items: shuffle(picked),
+      };
+    },
+  },
+
   // Checkbox: identify even or odd numbers from a mixed set
   // params: count (6), min (2), max (99), mode ('pairs'|'impairs'|'alterne')
   // mode='alterne' randomly picks pairs or impairs each time
@@ -2396,21 +2492,33 @@ const generators = {
   },
 
   // fractionDuNombre: calcul de moitié / tiers / quart d'un nombre
-  // params: denominators ([2,4]), min (4), max (20)
+  // params: denominators ([2,4]), min (4), max (20), numerator (1), notation ('words'|'fraction')
+  //   notation 'words'    — "moitié de 12", "tiers de 18" (CE2 style)
+  //   notation 'fraction' — stacked 1/4 de 12 (CM1 style, default when numerator > 1 or denom > 4)
   fractionDuNombre: {
     generate(params = {}) {
       const NAMES = { 2: 'moitié', 3: 'tiers', 4: 'quart' };
       const denominators = params.denominators ?? [2, 4];
-      const d = denominators[Math.floor(Math.random() * denominators.length)];
+      const d = randItem(denominators);
+      const numParam = params.numerator ?? 1;
+      const num = numParam === 'mix' ? rand(1, d - 1) : numParam;
       const minVal = params.min ?? d * 2;
       const maxVal = params.max ?? d * 10;
       const first = Math.ceil(minVal / d) * d;
       const last = Math.floor(maxVal / d) * d;
       const n = first + Math.floor(Math.random() * ((last - first) / d + 1)) * d;
+      const answer = (n / d) * num;
+
+      // Choose notation
+      const useWords = (params.notation ?? 'auto') === 'words' || (num === 1 && d <= 4 && params.notation !== 'fraction');
+      const op = useWords
+        ? `${NAMES[d] || `${num}/${d}`} de ${n} = ?`
+        : `&frac(${num},${d}) de ${n} = ?`;
+
       return {
         type: 'number-check',
-        operation: `${NAMES[d] || `1/${d}`} de ${n} = ?`,
-        answers: [String(n / d)],
+        operation: op,
+        answers: [String(answer)],
       };
     },
   },
@@ -5335,6 +5443,135 @@ const generators = {
     },
   },
 
+  // classerFractions: classify fractions as < 1, = 1, or > 1
+  // params: count (6–8), level ('facile'|'moyen'|'mix')
+  //   facile — denominators 2–6, nice numbers
+  //   moyen  — denominators up to 12, larger numerators
+  classerFractions: {
+    generate(params = {}) {
+      const count = Math.max(4, Math.min(params.count ?? 6, 10));
+      const level = params.level ?? 'mix';
+      const resolved = level === 'mix' ? randItem(['facile', 'moyen']) : level;
+
+      const maxDenom = resolved === 'facile' ? 6 : 12;
+
+      const frac = (n, d) => `<span class="frac font-bold" style="font-size:1.4em;vertical-align:middle"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+
+      const seen = new Set();
+      const items = [];
+      const cats = ['lt', 'eq', 'gt'];
+      // Ensure at least 1 of each category
+      const guaranteed = shuffle([...cats]);
+
+      for (let attempt = 0; items.length < count && attempt < count * 20; attempt++) {
+        const cat = items.length < 3 ? guaranteed[items.length] : randItem(cats);
+        const d = rand(2, maxDenom);
+        let n;
+        if (cat === 'lt') n = rand(1, d - 1);
+        else if (cat === 'eq') n = d;
+        else n = rand(d + 1, d + (resolved === 'facile' ? d : d * 2));
+
+        const key = `${n}/${d}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        items.push({ html: frac(n, d), cat });
+      }
+
+      return {
+        type: 'classify',
+        categories: [
+          { id: 'lt', label: 'fractions inférieures à 1' },
+          { id: 'eq', label: 'fractions égales à 1' },
+          { id: 'gt', label: 'fractions supérieures à 1' },
+        ],
+        items: shuffle(items),
+      };
+    },
+  },
+
+  // fractionEnLettres: read a fraction written in words, type the numeric form
+  // params: level ('facile'|'moyen'|'difficile'|'mix'), count (6)
+  // facile  — halves, thirds, quarters, fifths, tenths (small numerators)
+  // moyen   — up to twentieths, larger numerators, includes centièmes
+  // difficile — any denominator up to 1000, composite numerators, millièmes
+  fractionEnLettres: {
+    generate(params = {}) {
+      const level = params.level ?? 'mix';
+
+      // Denominator word → number mapping (singular forms; generator adds 's' for plural check not needed here)
+      const DENOM_WORDS = [
+        { word: 'demi', words: ['demi', 'demis'], d: 2 },
+        { word: 'tiers', words: ['tiers'], d: 3 },
+        { word: 'quart', words: ['quart', 'quarts'], d: 4 },
+        { word: 'cinquième', words: ['cinquième', 'cinquièmes'], d: 5 },
+        { word: 'sixième', words: ['sixième', 'sixièmes'], d: 6 },
+        { word: 'septième', words: ['septième', 'septièmes'], d: 7 },
+        { word: 'huitième', words: ['huitième', 'huitièmes'], d: 8 },
+        { word: 'neuvième', words: ['neuvième', 'neuvièmes'], d: 9 },
+        { word: 'dixième', words: ['dixième', 'dixièmes'], d: 10 },
+        { word: 'onzième', words: ['onzième', 'onzièmes'], d: 11 },
+        { word: 'douzième', words: ['douzième', 'douzièmes'], d: 12 },
+        { word: 'treizième', words: ['treizième', 'treizièmes'], d: 13 },
+        { word: 'quatorzième', words: ['quatorzième', 'quatorzièmes'], d: 14 },
+        { word: 'quinzième', words: ['quinzième', 'quinzièmes'], d: 15 },
+        { word: 'seizième', words: ['seizième', 'seizièmes'], d: 16 },
+        { word: 'dix-septième', words: ['dix-septième', 'dix-septièmes'], d: 17 },
+        { word: 'dix-huitième', words: ['dix-huitième', 'dix-huitièmes'], d: 18 },
+        { word: 'dix-neuvième', words: ['dix-neuvième', 'dix-neuvièmes'], d: 19 },
+        { word: 'vingtième', words: ['vingtième', 'vingtièmes'], d: 20 },
+        { word: 'centième', words: ['centième', 'centièmes'], d: 100 },
+        { word: 'millième', words: ['millième', 'millièmes'], d: 1000 },
+      ];
+
+      const POOLS = {
+        facile:    DENOM_WORDS.filter((e) => [2, 3, 4, 5, 10].includes(e.d)),
+        moyen:     DENOM_WORDS.filter((e) => e.d <= 20 || e.d === 100),
+        difficile: DENOM_WORDS,
+      };
+      const resolvedLevel = level === 'mix' ? randItem(['facile', 'moyen', 'difficile']) : level;
+      const pool = POOLS[resolvedLevel] || POOLS.moyen;
+
+      // Numerator words (1–19 + round tens up to 90)
+      const NUM_WORDS = [
+        'un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix',
+        'onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf',
+        'vingt','trente','quarante','cinquante','soixante',
+      ];
+
+      const count = params.count ?? 6;
+      const items = [];
+      const usedKeys = new Set();
+
+      for (let attempt = 0; attempt < count * 10 && items.length < count; attempt++) {
+        const denomEntry = randItem(pool);
+        const d = denomEntry.d;
+        // Numerator: 1 to d-1 for proper fractions; for facile keep small
+        const maxN = resolvedLevel === 'facile' ? Math.min(d - 1, 9) : Math.min(d - 1, 24);
+        if (maxN < 1) continue;
+        const n = rand(1, maxN);
+        const key = `${n}/${d}`;
+        if (usedKeys.has(key)) continue;
+        usedKeys.add(key);
+
+        const nWord = NUM_WORDS[n - 1];
+        if (!nWord) continue; // n > 25, skip
+        const dWord = n > 1 ? denomEntry.words[denomEntry.words.length - 1] : denomEntry.words[0];
+        // Special case: "demi" → "deux demis" not "deux demi"
+        const text = `${nWord} ${dWord}`;
+        items.push({ text, answer: key });
+      }
+
+      // Shuffle and pick one for this round
+      const item = randItem(items.length ? items : [{ text: 'cinq dixièmes', answer: '5/10' }]);
+
+      return {
+        type: 'fraction-check',
+        operation: item.text,
+        answers: [item.answer],
+      };
+    },
+  },
+
   // conversionDenominateur: Vrai ou Faux — is this fraction equivalence correct?
   // Shows a/b = (a*k)/(b*k) or a deliberate wrong version.
   // params: level ('simple'|'medium'|'hard'), count (5)
@@ -5449,6 +5686,103 @@ const generators = {
       }
 
       return { type: 'true-false', statements };
+    },
+  },
+
+  // nombreChiffresSelect: tile-select — pick numbers (written in words) that have exactly N digits
+  // params: digits (2|3|4|'mix'), count (5), tileCount (5)
+  nombreChiffresSelect: {
+    generate(params = {}) {
+      const digitTarget = params.digits === 'mix' || !params.digits
+        ? randItem([2, 3, 4])
+        : Number(params.digits);
+      const tileCount = params.tileCount ?? 5;
+
+      // French number-to-words (1–99 999, school-appropriate)
+      const UNITS = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf',
+        'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+      const TENS = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante', 'quatre-vingt', 'quatre-vingt'];
+
+      function tensWords(n) {
+        if (n < 20) return UNITS[n];
+        const t = Math.floor(n / 10);
+        const u = n % 10;
+        if (t === 7) { // 70–79: soixante + 10…19
+          const sub = u + 10;
+          return 'soixante' + (sub === 11 ? ' et onze' : (sub < 20 ? '-' + UNITS[sub] : '-dix-neuf'));
+        }
+        if (t === 8) { // 80–89: quatre-vingts
+          return u === 0 ? 'quatre-vingts' : 'quatre-vingt-' + UNITS[u];
+        }
+        if (t === 9) { // 90–99: quatre-vingt + 10…19
+          const sub = u + 10;
+          return 'quatre-vingt-' + UNITS[sub];
+        }
+        return TENS[t] + (u === 1 && t !== 8 ? ' et un' : u ? '-' + UNITS[u] : '');
+      }
+
+      function toWords(n) {
+        if (n === 0) return 'zéro';
+        const parts = [];
+        if (n >= 10000) {
+          const dizMill = Math.floor(n / 10000);
+          parts.push(tensWords(dizMill) + ' mille');
+          n %= 10000;
+        }
+        if (n >= 1000) {
+          const mill = Math.floor(n / 1000);
+          parts.push(mill === 1 ? 'mille' : tensWords(mill) + ' mille');
+          n %= 1000;
+        }
+        if (n >= 100) {
+          const cent = Math.floor(n / 100);
+          const rest = n % 100;
+          if (cent === 1) parts.push(rest ? 'cent' : 'cent');
+          else parts.push(rest ? tensWords(cent) + ' cent' : tensWords(cent) + ' cents');
+          n = rest;
+        }
+        if (n > 0) parts.push(tensWords(n));
+        return parts.join(' ');
+      }
+
+      // Generate candidate numbers per digit count
+      const ranges = {
+        2: () => rand(10, 99),
+        3: () => rand(100, 999),
+        4: () => rand(1000, 9999),
+        5: () => rand(10000, 99999),
+      };
+
+      // We want tileCount tiles; ~2-3 correct, rest distractors
+      const correctCount = rand(2, Math.min(3, tileCount - 2));
+      const wrongCount = tileCount - correctCount;
+
+      // Distractor digit counts (always different from target)
+      const distractorDigits = [2, 3, 4, 5].filter((d) => d !== digitTarget);
+
+      const seen = new Set();
+      const pick = (d) => {
+        let n, attempts = 0;
+        do { n = ranges[d](); attempts++; } while (seen.has(n) && attempts < 50);
+        seen.add(n);
+        return n;
+      };
+
+      const corrects = Array.from({ length: correctCount }, () => pick(digitTarget));
+      const wrongs = Array.from({ length: wrongCount }, () => pick(randItem(distractorDigits)));
+
+      const pool = shuffle([
+        ...corrects.map((n) => ({ n, ok: true })),
+        ...wrongs.map((n) => ({ n, ok: false })),
+      ]);
+
+      const tiles = pool.map(({ n }) => toWords(n));
+      const tileAnswers = pool.map(({ ok }, i) => (ok ? i : -1)).filter((i) => i !== -1);
+
+      const digitLabels = { 2: 'deux', 3: 'trois', 4: 'quatre', 5: 'cinq' };
+      const title = `Lesquels s'écrivent avec ${digitLabels[digitTarget]} chiffres ?`;
+
+      return { type: 'tile-select', title, tiles, tileAnswers };
     },
   },
 };

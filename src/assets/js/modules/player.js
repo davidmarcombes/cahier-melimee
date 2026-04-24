@@ -107,6 +107,10 @@ export function seriesPlayer(exercises, seriesId) {
     ffInputs: [], // fact-family: one input per equation (4 total)
     ffErrors: [], // fact-family: indices of wrong equations
 
+    classifyPlacements: {}, // classify: itemIdx → categoryId
+    classifySelected: null, // classify: currently selected item index
+    classifyErrors: [], // classify: item indices with wrong placement
+
     futoInputs: [], // futoshiki: flat N*N array of input strings
     futoErrors: [], // futoshiki: flat indices of invalid cells
 
@@ -458,6 +462,10 @@ export function seriesPlayer(exercises, seriesId) {
       this.ffInputs = _e.ffEquations ? _e.ffEquations.map(() => '') : [];
       this.ffErrors = [];
 
+      this.classifyPlacements = {};
+      this.classifySelected = null;
+      this.classifyErrors = [];
+
       if (_e.futoshiki) {
         const n2 = _e.futoshiki.size * _e.futoshiki.size;
         this.futoInputs = Array(n2).fill('');
@@ -512,7 +520,7 @@ export function seriesPlayer(exercises, seriesId) {
         return `\x00${stash.length - 1}\x00`;
       });
       // Stash &box / &highlight spans
-      safe = safe.replace(/&(?:box|highlight)\([^)]*\)/g, (match) => {
+      safe = safe.replace(/&(?:box|highlight|frac)\([^)]*\)/g, (match) => {
         stash.push(renderOpShorthands(match));
         return `\x00${stash.length - 1}\x00`;
       });
@@ -802,6 +810,33 @@ export function seriesPlayer(exercises, seriesId) {
       this.vennErrors = [];
     },
 
+    /* Classify — select an item from the bank */
+    classifySelect(i) {
+      if (this.solved) return;
+      this.classifySelected = this.classifySelected === i ? null : i;
+      this.classifyErrors = [];
+    },
+
+    /* Classify — place selected item into a category */
+    classifyPlaceItem(catId) {
+      if (this.solved || this.classifySelected === null) return;
+      const updated = { ...this.classifyPlacements };
+      updated[this.classifySelected] = catId;
+      this.classifyPlacements = updated;
+      this.classifySelected = null;
+      this.classifyErrors = [];
+    },
+
+    /* Classify — pick an already-placed item back to the bank */
+    classifyPickBack(i) {
+      if (this.solved) return;
+      const updated = { ...this.classifyPlacements };
+      delete updated[i];
+      this.classifyPlacements = updated;
+      this.classifySelected = i;
+      this.classifyErrors = [];
+    },
+
     check() {
       const _e = this.cur;
       if (this.solved) return;
@@ -867,6 +902,26 @@ export function seriesPlayer(exercises, seriesId) {
           this._flashError(() => {
             this.vennErrors = [];
           });
+        }
+        return;
+      }
+
+      if (_e.type === 'classify' && _e.categories && _e.items) {
+        const items = _e.items;
+        if (Object.keys(this.classifyPlacements).length < items.length) {
+          this._flashError();
+          return;
+        }
+        const errors = items.map((it, i) => (this.classifyPlacements[i] !== it.cat ? i : -1)).filter((i) => i !== -1);
+        if (errors.length === 0) {
+          this.classifyErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.classifyErrors = errors;
+          const updated = { ...this.classifyPlacements };
+          errors.forEach((i) => { delete updated[i]; });
+          this.classifyPlacements = updated;
+          this._flashError(() => { this.classifyErrors = []; });
         }
         return;
       }
