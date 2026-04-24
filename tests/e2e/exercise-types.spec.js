@@ -262,8 +262,8 @@ test.describe('sort — ordonner-01 CE2', () => {
   test('placing all tiles in correct order marks exercise solved', async ({ page }) => {
     await page.goto('/fr/exercices/dd2805e3/');
     await waitForAlpine(page);
-    // Click tiles in the expected order (matches cur.items YAML order: 124, 241, 412, 214)
-    for (const n of ['124', '241', '412', '214']) {
+    // Click tiles in correct ascending order: 124 < 214 < 241 < 412
+    for (const n of ['124', '214', '241', '412']) {
       await page
         .locator('button')
         .filter({ hasText: new RegExp(`^\\s*${n}\\s*$`) })
