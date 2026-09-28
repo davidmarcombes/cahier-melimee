@@ -60,6 +60,9 @@ const TYPE_CHOICES = [
   { name: 'estimation        — Estimer puis calculer exactement', value: 'estimation' },
   { name: "error-analysis   — Trouver l'erreur dans un calcul et la corriger", value: 'error-analysis' },
   { name: 'compare-solutions — Deux solutions proposées, choisir la correcte', value: 'compare-solutions' },
+  { name: 'emoji-equations — Équations à emojis (trouver la valeur d’un emoji)', value: 'emoji-equations' },
+  { name: 'number-forms    — Écritures d’un nombre (40 = ? × 5, 9 + ?…)', value: 'number-forms' },
+  { name: 'op-triangle     — Schéma d’opérateurs (7 ×10→ 70 ×10→ 700, 7 ×100→ 700)', value: 'op-triangle' },
   { name: 'multi-question  — Questions sur un contexte', value: 'multi-question' },
   { name: 'mcq             — QCM (choix multiples)', value: 'mcq' },
   { name: 'fraction        — Représentation de fraction', value: 'fraction' },
@@ -116,6 +119,8 @@ const TEMPLATES = {
   'compare-expressions':
     'comparisons:\n  - left: "47 + 38"\n    right: "47 + 35"\n  - left: "5 × 6"\n    right: "2 × 15"',
   estimation: 'operation: "48 + 37"\nestimate: "80"\nanswer: "85"',
+  'number-forms': 'target: 40\nforms:\n  - "? × 5"\n  - "9 + ?"\n  - "100 − ?"\n  - "? : 2"',
+  'emoji-equations': 'eqLines:\n  - "🍎 + 🍎 + 🍎 = 12"\n  - "🍎 + 🍌 = 5"\neqQuestion: "🍌"\nanswer: 1',
   'error-analysis': 'steps:\n  - "47 + 38"\n  - "= 75"\nwrongStep: 1\ncorrection: "85"',
   'compare-solutions':
     'solutions:\n  - name: "Léa"\n    steps:\n      - "43 - 28"\n      - "= 25"\n  - name: "Tom"\n    steps:\n      - "43 - 28"\n      - "= 15"\ncorrectSolution: 1',
@@ -141,11 +146,11 @@ program
 const options = program.opts();
 
 // ---------------------------------------------------------------------------
-// Available generators (read dynamically from generators.js)
+// Available generators (read dynamically from generators/index.js)
 // ---------------------------------------------------------------------------
 function getAvailableGenerators() {
   try {
-    const gens = require('../src/assets/js/generators.js');
+    const gens = require('../src/assets/js/generators/index.js');
     return Object.keys(gens);
   } catch {
     return [];
@@ -286,7 +291,7 @@ async function run() {
       }));
     if (generator === 'Autre') {
       generator = await input({
-        message: 'Nom du générateur (doit exister dans generators.js) :',
+        message: 'Nom du générateur (doit exister dans src/assets/js/generators/) :',
         validate: (v) => /^[a-zA-Z][a-zA-Z0-9]*$/.test(v) || 'Utilisez un nom camelCase valide',
       });
     }
@@ -311,7 +316,6 @@ async function run() {
   // Generate a unique ID
   const existingIds = collectExistingIds();
   const id = generateUniqueId(name, existingIds);
-  const timestamp = new Date().toISOString();
 
   // Write index.yaml
   const yamlContent = `id: ${id}

@@ -4,7 +4,7 @@ title: "Pyramide avec cases manquantes"
 pyramid:
   - [null, 8, null, 5]
   - [15, null, null]
-  - [null, null]
+  - [27, null]
   - [48]
 ---
 

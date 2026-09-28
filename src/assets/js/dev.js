@@ -45,7 +45,7 @@ document.addEventListener('alpine:init', () => {
           });
           this.humanValidated = true;
           await this._fetchNextUnvalidated();
-        } catch (_) {
+        } catch {
           // non-fatal
         } finally {
           this.humanValidating = false;
@@ -73,7 +73,7 @@ function debugPanel() {
     get _meta() {
       try {
         return JSON.parse(document.getElementById('series-meta')?.textContent || '{}');
-      } catch (_) {
+      } catch {
         return {};
       }
     },
@@ -84,7 +84,7 @@ function debugPanel() {
         if (!el) return null;
         const d = Alpine.$data(el);
         return { index: d.currentIndex, total: d.exercises.length, cur: d.cur };
-      } catch (_) {
+      } catch {
         return null;
       }
     },

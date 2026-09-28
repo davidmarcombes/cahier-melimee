@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createRequire } from 'node:module';
 
-// generators.js calls svg.js functions (clockSvg) as browser globals — stub them for Node tests
+// Generators call svg.js functions (clockSvg) as browser globals — stub them for Node tests
 global.clockSvg = (h, m) => `<circle data-h="${h}" data-m="${m}"/>`;
 
 const require = createRequire(import.meta.url);
-const generators = require('../src/assets/js/generators.js');
+const generators = require('../src/assets/js/generators/index.js');
 
 // ─── Structural helpers ───────────────────────────────────────────────────────
 
@@ -429,6 +429,60 @@ describe('numberlinkPuzzle', () => {
     expect(r.numberlink.pairs.length).toBeGreaterThan(0);
   });
 
+  // Exhaustive search: can every pair be linked with non-crossing paths covering ALL cells
+  // (the rule enforced by the player)? The former hand-written puzzles all failed this.
+  function solvable({ size, pairs }) {
+    const owner = Array(size * size).fill(0);
+    pairs.forEach(([a, b], k) => {
+      owner[a[0] * size + a[1]] = k + 1;
+      owner[b[0] * size + b[1]] = k + 1;
+    });
+    const nb = (i) =>
+      [i - size, i + size, i % size ? i - 1 : -1, (i + 1) % size ? i + 1 : -1].filter((j) => j >= 0 && j < size * size);
+    const route = (k) => {
+      if (k === pairs.length) return owner.every(Boolean);
+      const [a, b] = pairs[k];
+      const end = b[0] * size + b[1];
+      const dfs = (cur) => {
+        for (const n of nb(cur)) {
+          if (n === end && route(k + 1)) return true;
+          if (n === end || owner[n]) continue;
+          owner[n] = k + 1;
+          if (dfs(n)) return true;
+          owner[n] = 0;
+        }
+        return false;
+      };
+      return dfs(a[0] * size + a[1]);
+    };
+    return route(0);
+  }
+
+  it('is always solvable with every cell covered (4×4, 5×5)', () => {
+    for (const size of [4, 5]) {
+      for (let i = 0; i < 50; i++)
+        expect(solvable(generators.numberlinkPuzzle.generate({ size }).numberlink)).toBe(true);
+    }
+  });
+
+  it('solver sanity: rejects crossing pairs', () => {
+    expect(
+      solvable({
+        size: 3,
+        pairs: [
+          [
+            [0, 1],
+            [2, 1],
+          ],
+          [
+            [1, 0],
+            [1, 2],
+          ],
+        ],
+      })
+    ).toBe(false);
+  });
+
   it('each pair has two distinct endpoint coordinates', () => {
     const r = generators.numberlinkPuzzle.generate({ size: 4 });
     r.numberlink.pairs.forEach(([ep1, ep2]) => {
@@ -776,5 +830,226 @@ describe('vennFormes', () => {
     // CE2 pool has 7 shapes
     const r = generators.vennFormes.generate({ level: 'CE2' });
     expect(r.venn.items).toHaveLength(7);
+  });
+});
+
+describe('equationsEmojis', () => {
+  // Solve the system line by line: each line has exactly one emoji not yet known
+  function solve(lines) {
+    const val = {};
+    for (const { lhs, rhs } of lines) {
+      const m = lhs.match(/^(\d+) × (.+)$/);
+      const terms = m ? Array(Number(m[1])).fill(m[2]) : lhs.split(' + ');
+      const unknown = terms.filter((t) => !(t in val));
+      expect(new Set(unknown).size).toBe(1);
+      const known = terms.filter((t) => t in val).reduce((s, t) => s + val[t], 0);
+      val[unknown[0]] = (rhs - known) / unknown.length;
+      expect(Number.isInteger(val[unknown[0]])).toBe(true);
+    }
+    return val;
+  }
+
+  it('value mode: answer is the value of the last emoji', () => {
+    for (let i = 0; i < 50; i++) {
+      const r = generators.equationsEmojis.generate({ unknowns: 3, max: 20, mult: i % 2 === 0 });
+      expect(r.type).toBe('emoji-equations');
+      expect(r.eqLines).toHaveLength(3);
+      const val = solve(r.eqLines);
+      expect(r.answers).toEqual([String(val[r.eqQuestion])]);
+    }
+  });
+
+  it('sum and priority modes compute the question expression', () => {
+    for (let i = 0; i < 50; i++) {
+      const s = generators.equationsEmojis.generate({ unknowns: 3, ask: 'sum' });
+      const vs = solve(s.eqLines);
+      expect(s.answers[0]).toBe(String(s.eqQuestion.split(' + ').reduce((t, e) => t + vs[e], 0)));
+
+      const p = generators.equationsEmojis.generate({ unknowns: 2, ask: 'priority' });
+      const vp = solve(p.eqLines);
+      const [a, bc] = p.eqQuestion.split(' + ');
+      const [b, c] = bc.split(' × ');
+      expect(p.answers[0]).toBe(String(vp[a] + vp[b] * vp[c]));
+    }
+  });
+
+  it('terminates with Math.random mocked', () => {
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const r = generators.equationsEmojis.generate({ unknowns: 3 });
+    spy.mockRestore();
+    expect(r.eqLines).toHaveLength(3);
+  });
+});
+
+describe('suiteAvecControle', () => {
+  const num = (s) =>
+    Number(
+      String(s)
+        .replace(/[\s\u202f\u00a0]/g, '')
+        .replace(',', '.')
+    );
+  const values = (r) => r.sequence.items.map((it) => num(it.blank ? it.answer : it.value));
+
+  it('3 given, 6 blanks, last given; constant step', () => {
+    for (let i = 0; i < 50; i++) {
+      const r = generators.suiteAvecControle.generate({
+        steps: [15, 125, 250],
+        direction: 'mixed',
+        offset: i % 2 === 0,
+      });
+      const items = r.sequence.items;
+      expect(items).toHaveLength(10);
+      expect(items.map((it) => !!it.blank)).toEqual([false, false, false, true, true, true, true, true, true, false]);
+      expect(items.filter((it) => it.blank).map((it) => it.inputIdx)).toEqual([0, 1, 2, 3, 4, 5]);
+      const v = values(r);
+      const d = v[1] - v[0];
+      expect([15, 125, 250]).toContain(Math.abs(d));
+      v.forEach((x, j) => expect(x).toBe(v[0] + j * d));
+      expect(Math.min(...v)).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('decimal steps have no float drift', () => {
+    for (let i = 0; i < 50; i++) {
+      const r = generators.suiteAvecControle.generate({ steps: [0.2, 0.25], startMax: 10 });
+      r.sequence.items.filter((it) => it.blank).forEach((it) => expect(it.answer).toMatch(/^\d+(\.\d{1,2})?$/));
+      expect(r.sequence.items[1].value).toMatch(/^\d+(,\d{1,2})?$/);
+    }
+  });
+});
+
+describe('ecrituresNombre', () => {
+  const num = (s) =>
+    Number(
+      String(s)
+        .replace(/[\s\u202f\u00a0]/g, '')
+        .replace(',', '.')
+    );
+  // Evaluate "before x after" with the answer substituted
+  const evalRow = (r) =>
+    new Function(
+      `return ${`${r.before} ${r.answer} ${r.after}`
+        .replace(/×/g, '*')
+        .replace(/:/g, '/')
+        .replace(/−/g, '-')
+        .replace(/(\d)[\s\u202f\u00a0]+(?=\d)/g, '$1')}`
+    )();
+
+  ['cm1', 'cm2'].forEach((level) => {
+    it(`${level}: 4 rows, one per operation, each equal to the target`, () => {
+      for (let i = 0; i < 100; i++) {
+        const { type, forms } = generators.ecrituresNombre.generate({ level });
+        expect(type).toBe('number-forms');
+        expect(forms.rows).toHaveLength(4);
+        expect(forms.answers).toEqual(forms.rows.map((r) => r.answer));
+        const ops = forms.rows.map((r) => (r.before + r.after).match(/[×+−:]/)[0]).sort();
+        expect(ops).toEqual(['+', ':', '×', '−'].sort());
+        forms.rows.forEach((r) => {
+          expect(Number(r.answer)).toBeGreaterThan(0);
+          expect(Number.isInteger(Number(r.answer))).toBe(true);
+          expect(evalRow(r)).toBe(num(forms.target));
+        });
+      }
+    });
+  });
+});
+
+describe('triangleOperateurs', () => {
+  const num = (s) =>
+    Number(
+      String(s)
+        .replace(/[\s\u202f\u00a0]/g, '')
+        .replace(',', '.')
+    );
+  // Rebuild all six values (given or blank) from the item
+  const full = ({ nodes, ops, answers }) => {
+    const v = (c) => num(c.blank ? answers[c.idx] : c.value);
+    return { n: nodes.map(v), k: ops.map(v), sign: ops[0].sign };
+  };
+  const close = (x, y) => expect(Math.abs(x - y)).toBeLessThan(1e-9);
+
+  it('chain and shortcut agree (×, :, decimals, compositions)', () => {
+    for (let i = 0; i < 200; i++) {
+      const r = generators.triangleOperateurs.generate({
+        op: 'mixed',
+        pairs: [
+          [10, 100],
+          [4, 25],
+          [2, 50],
+        ],
+        startMin: 1,
+        decimals: 2,
+        blanks: 'mixed',
+      });
+      expect(r.type).toBe('op-triangle');
+      const { n, k, sign } = full(r.opTri);
+      expect(k[2]).toBe(k[0] * k[1]);
+      const f = sign === '×' ? (x, m) => x * m : (x, m) => x / m;
+      close(f(n[0], k[0]), n[1]);
+      close(f(n[1], k[1]), n[2]);
+      close(f(n[0], k[2]), n[2]);
+      // Answers are plain decimal strings (no float noise like 0.30000000000000004)
+      r.opTri.answers.forEach((a) => expect(a).toMatch(/^\d+(\.\d{1,6})?$/));
+    }
+  });
+
+  it('blank layouts per mode', () => {
+    const blanks = (mode) => {
+      const { nodes, ops } = generators.triangleOperateurs.generate({ blanks: mode }).opTri;
+      return [...nodes, ...ops].map((c) => !!c.blank);
+    };
+    expect(blanks('nodes')).toEqual([false, true, true, false, false, false]);
+    expect(blanks('op')).toEqual([false, true, false, false, true, true]);
+    expect(blanks('reverse')).toEqual([true, true, false, false, false, false]);
+  });
+});
+
+describe('classerTableau', () => {
+  // Parse a displayed value back to base units (cents, metres, minutes)
+  const parse = (s) => {
+    const t = s.replace(/[\s\u202f\u00a0]/g, '').replace(',', '.');
+    let m;
+    if ((m = t.match(/^([\d.]+)€$/))) return Math.round(m[1] * 100);
+    if ((m = t.match(/^([\d.]+)km$/))) return Math.round(m[1] * 1000);
+    if ((m = t.match(/^([\d.]+)m$/))) return Number(m[1]);
+    if ((m = t.match(/^(\d+)h(\d+)min$/))) return m[1] * 60 + Number(m[2]);
+    if ((m = t.match(/^(\d+)min$/))) return Number(m[1]);
+    throw new Error(`unparsed ${s}`);
+  };
+
+  ['prix', 'distances', 'durees'].forEach((theme) => {
+    it(`${theme}: items follow the table values in the stated direction`, () => {
+      for (let i = 0; i < 50; i++) {
+        const r = generators.classerTableau.generate({ theme, count: 6, direction: 'mixed', mixedUnits: true });
+        expect(r.type).toBe('sort');
+        expect(r.sortKeepOrder).toBe(true);
+        const table = Object.fromEntries(
+          [...r.body.matchAll(/<td[^>]*>([^<]*)<\/td><td[^>]*>([^<]*)<\/td>/g)].map((m) => [m[1], parse(m[2])])
+        );
+        expect(Object.keys(table)).toHaveLength(6);
+        const v = r.items.map((n) => table[n]);
+        v.slice(1).forEach((x, j) =>
+          r.direction === 'desc' ? expect(x).toBeLessThan(v[j]) : expect(x).toBeGreaterThan(v[j])
+        );
+      }
+    });
+  });
+
+  it('terminates with Math.random mocked', () => {
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const r = generators.classerTableau.generate({ theme: 'durees', count: 6 });
+    spy.mockRestore();
+    expect(r.items).toHaveLength(6);
+  });
+});
+
+describe('positionChiffre', () => {
+  it('returns mcqChoices (the field the mcq partial reads) with a valid answer index', () => {
+    for (let i = 0; i < 30; i++) {
+      const r = generators.positionChiffre.generate();
+      expect(r.type).toBe('mcq');
+      expect(Array.isArray(r.mcqChoices)).toBe(true);
+      expect(r.mcqChoices[r.mcqAnswer]).toBe(r.answers[0]);
+    }
   });
 });

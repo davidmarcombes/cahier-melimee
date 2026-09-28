@@ -4,7 +4,7 @@ title: "Pyramide — cases cachées"
 pyramid:
   - [null, 23, null, 16]
   - [45, null, null]
-  - [null, null]
+  - [99, null]
   - [200]
 ---
 

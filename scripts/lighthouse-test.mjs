@@ -110,13 +110,9 @@ function pageExists(urlPath) {
 }
 
 function buildUrls() {
-  const staticPages = [
-    '/fr/',
-    '/fr/exercices/',
-    '/fr/a-propos/',
-    '/fr/connexion/',
-    '/fr/onboarding/',
-  ].filter(pageExists);
+  const staticPages = ['/fr/', '/fr/exercices/', '/fr/a-propos/', '/fr/connexion/', '/fr/onboarding/'].filter(
+    pageExists
+  );
 
   const exerciseIds = sampleDirs(path.join(ROOT, 'fr/exercices'), SAMPLE_SIZE);
   const applicationIds = sampleDirs(path.join(ROOT, 'fr/applications'), SAMPLE_SIZE);
@@ -249,7 +245,9 @@ async function main() {
     console.error();
     process.exit(1);
   } else {
-    console.log(`${COLORS.green}${COLORS.bold}  ✓ All ${urls.length} pages passed Lighthouse thresholds${COLORS.reset}\n`);
+    console.log(
+      `${COLORS.green}${COLORS.bold}  ✓ All ${urls.length} pages passed Lighthouse thresholds${COLORS.reset}\n`
+    );
   }
 }
 

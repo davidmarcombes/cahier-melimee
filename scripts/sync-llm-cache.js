@@ -62,7 +62,7 @@ function getSeriesId(absPath) {
     const id = m ? m[1] : '';
     _seriesIdCache.set(dir, id);
     return id;
-  } catch (_) {
+  } catch {
     _seriesIdCache.set(dir, '');
     return '';
   }

@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const SITE_DIR = path.resolve(__dirname, '..', '_site');
+const SITE_DIR = path.resolve(__dirname, '..', process.env.SITE_OUT || '_site');
 const PATH_PREFIX = (process.env.PATH_PREFIX || '/').replace(/\/$/, ''); // '' or '/subpath'
 
 // ── file scan ────────────────────────────────────────────────────────────────
@@ -45,7 +45,7 @@ const allFiles = scanDir(SITE_DIR);
 
 const entries = allFiles
   .map((f) => ({ file: f, url: fileToUrl(f) }))
-  .filter(({ file, url }) => {
+  .filter(({ file }) => {
     if (SKIP_FILES.has(path.basename(file))) return false;
     if (SKIP_EXTS.has(path.extname(file))) return false;
     return true;

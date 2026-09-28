@@ -246,9 +246,9 @@ function parseExercises(filePath) {
 let _generators = null;
 function getGenerators() {
   if (_generators) return _generators;
-  global.clockSvg = () => ''; // only SVG call inside generators.js
+  global.clockSvg = () => ''; // only SVG call inside the generators
   try {
-    _generators = require(path.join(ROOT, 'src/assets/js/generators.js'));
+    _generators = require(path.join(ROOT, 'src/assets/js/generators/index.js'));
   } catch {
     /* */
   }

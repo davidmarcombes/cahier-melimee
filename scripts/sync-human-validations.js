@@ -56,7 +56,7 @@ function getSeriesId(dir) {
   try {
     const m = fs.readFileSync(path.join(dir, 'index.yaml'), 'utf8').match(/^id:\s*(\S+)/m);
     return m ? m[1] : null;
-  } catch (_) {
+  } catch {
     return null;
   }
 }

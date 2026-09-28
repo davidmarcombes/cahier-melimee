@@ -64,7 +64,7 @@ function getTypesFromDir(seriesDir) {
         if (m) types.add(m[1]);
       }
     }
-  } catch (_) {
+  } catch {
     /* unreadable file — skip */
   }
   return [...types];
@@ -133,6 +133,9 @@ if (showMissing) {
     'number-hunt',
     'compare-groups',
     'count-objects',
+    'emoji-equations',
+    'number-forms',
+    'op-triangle',
   ];
   const usedTypes = new Set(series.flatMap((s) => s.types));
   const missing = ALL_TYPES.filter((t) => !usedTypes.has(t));

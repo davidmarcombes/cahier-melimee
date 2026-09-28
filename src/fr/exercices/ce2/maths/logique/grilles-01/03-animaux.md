@@ -1,8 +1,8 @@
 ---
 type: logic-grid
 title: "Quel est l'animal de chaque enfant ?"
-columns: ["Chat", "Chien", "Lapin"]
-rows: ["Emma", "Nathan", "Sara"]
+rows: ["Chat", "Chien", "Lapin"]
+columns: ["Emma", "Nathan", "Sara"]
 solution:
   Emma: "Chien"
   Nathan: "Lapin"

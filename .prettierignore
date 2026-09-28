@@ -8,3 +8,10 @@ tailwind.config.js
 *.yaml
 *.yml
 package-lock.json
+
+# Generated / vendored
+_zsite/
+reports/
+test-results/
+src/assets/js/alpine.min.js
+_site-check/

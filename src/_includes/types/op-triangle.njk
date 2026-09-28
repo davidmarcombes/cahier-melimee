@@ -1,0 +1,56 @@
+{# op-triangle — operator diagram: A →(op0)→ B →(op1)→ C, shortcut A →(op2)→ C
+   Fixed 320×280 box; node centres A(116,40) B(266,140) C(116,240), nodes 96×48.
+   Shortcut label sits LEFT of the vertical arrow (right-aligned) so it is not read as a chain label.
+   Blank cells (nodes or operator numbers) share seqInputs/seqErrors via cell.idx. #}
+<div x-show="cur.type === 'op-triangle'" class="js-seq bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle" x-show="cur.body" x-html="cur.body"></div>
+
+  <div class="relative mx-auto" style="width:320px;height:280px">
+    <svg class="absolute inset-0 pointer-events-none text-slate-500 dark:text-slate-400" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
+      <defs><marker id="opt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+      <g stroke="currentColor" stroke-width="2" marker-end="url(#opt-arrow)">
+        <line x1="166" y1="58" x2="220" y2="120"/>
+        <line x1="220" y1="160" x2="166" y2="222"/>
+        <line x1="116" y1="66" x2="116" y2="214"/>
+      </g>
+    </svg>
+
+    {# Nodes #}
+    <template x-for="(node, i) in (cur.opTri?.nodes || [])" :key="'otn'+i">
+      <div class="absolute" style="width:96px;height:48px" :style="{ left: [68, 218, 68][i] + 'px', top: [16, 116, 216][i] + 'px' }">
+        <div x-show="!node.blank" class="w-full h-full flex items-center justify-center rounded-2xl border-2 border-primary-300 dark:border-primary-700 bg-primary-50 dark:bg-primary-900/30 font-extrabold text-lg text-content-default whitespace-nowrap" x-text="node.value"></div>
+        <template x-if="node.blank">
+          <input type="text" inputmode="decimal" x-model="seqInputs[node.idx]" @keydown.enter="check()" @input="seqErrors = []" :disabled="solved" placeholder="?" :aria-label="'Case ' + (i + 1)"
+            class="w-full h-full rounded-2xl text-center text-lg font-extrabold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+            :class="{ 'border-green-500 bg-green-50 dark:bg-green-900/20': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(node.idx), 'border-slate-300 dark:border-slate-600': !solved && !seqErrors.includes(node.idx) }" />
+        </template>
+      </div>
+    </template>
+
+    {# Operator labels — chain labels centred on their point, shortcut label right-aligned left of its arrow #}
+    <template x-for="(op, i) in (cur.opTri?.ops || [])" :key="'oto'+i">
+      <div class="absolute flex items-center gap-1 font-bold text-lg text-content-default whitespace-nowrap" :style="{ left: [214, 242, 106][i] + 'px', top: [74, 210, 140][i] + 'px', transform: i === 2 ? 'translate(-100%, -50%)' : 'translate(-50%, -50%)' }">
+        <span x-text="op.sign"></span>
+        <span x-show="!op.blank" x-text="op.value"></span>
+        <template x-if="op.blank">
+          <input type="text" inputmode="numeric" x-model="seqInputs[op.idx]" @keydown.enter="check()" @input="seqErrors = []" :disabled="solved" placeholder="?" :aria-label="'Opérateur ' + (i + 1)"
+            class="w-16 h-10 rounded-xl text-center text-base font-bold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
+            :class="{ 'border-green-500 bg-green-50 dark:bg-green-900/20': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(op.idx), 'border-slate-300 dark:border-slate-600': !solved && !seqErrors.includes(op.idx) }" />
+        </template>
+      </div>
+    </template>
+  </div>
+
+  <div class="flex justify-center mt-4">
+    <button
+      type="button"
+      @click="check()"
+      :disabled="solved || seqInputs.some(v => !String(v ?? '').trim())"
+      class="px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+  </div>
+</div>

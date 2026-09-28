@@ -66,6 +66,26 @@ describe('seriesPlayer Logic', () => {
     { title: 'Ex 3', type: 'number-check', operation: '1/2 + 1/2 = ?', answers: ['1'] },
   ];
 
+  it('regenerateAll keeps the series length ("Recommencer la série")', () => {
+    let n = 0;
+    globalThis.window = globalThis.window || globalThis;
+    window.AppGenerators = {
+      g: { generate: () => ({ type: 'number-check', operation: `${++n} + 1`, answers: ['?'] }) },
+    };
+    const placeholders = [
+      { type: 'number-check', _gen: { name: 'g', params: {}, count: 7 } },
+      { type: 'number-check', operation: '1 + 1', answers: ['2'] },
+    ];
+    const p = seriesPlayer(placeholders, 'regen');
+    p.regenerateAll();
+    expect(p.exercises).toHaveLength(8);
+    p.regenerateAll();
+    p.regenerateAll();
+    expect(p.exercises).toHaveLength(8);
+    expect(p.exercises[0].operation).not.toBe('1 + 1'); // fresh draws each time
+    delete window.AppGenerators;
+  });
+
   it('should initialize correctly', () => {
     const p = seriesPlayer(mockExercises, 'test-series');
     expect(p.exercises).toEqual(mockExercises);

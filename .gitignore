@@ -72,3 +72,8 @@ debug/
 pocketbase/pocketbase
 pocketbase/pb_data/
 pocketbase/pb_public/
+
+# Test outputs (regenerated on every run)
+reports/playwright/
+test-results/
+_site-check/

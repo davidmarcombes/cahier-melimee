@@ -1,5 +1,5 @@
 ---
-title: "Soixante-dix-huit"
+title: "Compte les barres et les cubes"
 type: "base-10"
 number: 78
 answer: "78"

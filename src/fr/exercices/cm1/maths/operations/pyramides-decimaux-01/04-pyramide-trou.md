@@ -4,7 +4,7 @@ title: "Pyramide — cases cachées"
 pyramid:
   - [null, 4.6, null, 3.8]
   - [7.5, null, null]
-  - [null, null]
+  - [15.6, null]
   - [31]
 ---
 

@@ -4,6 +4,12 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const VALID_DIFFICULTIES = ['facile', 'moyen', 'difficile'];
+// French number words — a title made only of these spells a number (and may be the answer)
+const NUMBER_WORDS = new Set(
+  'zéro un une deux trois quatre cinq six sept huit neuf dix onze douze treize quatorze quinze seize vingt vingts trente quarante cinquante soixante cent cents mille et'.split(
+    ' '
+  )
+);
 
 const TYPE_SCHEMAS = {
   'number-check': { required: [], requireOneOf: [['answer'], ['answers'], ['generator']] },
@@ -39,6 +45,13 @@ const TYPE_SCHEMAS = {
   'compare-groups': { required: [] },
   'fraction-paint': { required: ['numerator', 'denominator'] },
   'count-objects': { required: [] },
+  'emoji-equations': {
+    required: [],
+    requireOneOf: [['eqLines', 'eqQuestion', 'answer'], ['generator']],
+    arrays: ['eqLines'],
+  },
+  'number-forms': { required: [], requireOneOf: [['target', 'forms'], ['generator']], arrays: ['forms'] },
+  'op-triangle': { required: ['generator'] },
   'bar-chart': { required: ['labels', 'values', 'yMax', 'yStep'], arrays: ['labels', 'values'] },
   'calc-chain': { required: ['chain'] },
   'inverse-problem': { required: ['ipBase', 'ipInverses'], arrays: ['ipInverses'] },
@@ -96,6 +109,55 @@ function parseFrontmatter(filePath) {
   }
 }
 
+// ─── Generated exercises ──────────────────────────────────────────────────────
+// Run each generator with the file's own params (GEN_RUNS times) and check that the output
+// can actually render: known generator, no exception, no NaN/undefined/Infinity, SVG helper
+// exists in svg.js, and the produced type equals the front-matter type — the page only
+// includes the partials of front-matter types, so a mismatch renders a blank exercise.
+
+const GEN_RUNS = 20;
+global.clockSvg = () => '<svg/>'; // svg.js helper called at generation time (browser global)
+const generators = require('../src/assets/js/generators/index.js');
+const svgSource = fs.readFileSync(path.join(__dirname, '../src/assets/js/svg.js'), 'utf8');
+const svgHelperExists = (name) =>
+  name === 'embedSvg' || svgSource.includes(`function ${name}(`) || svgSource.includes(`${name} =`);
+
+function validateGenerated(relMd, data, errors) {
+  const name = data.generator;
+  const gen = generators[name];
+  if (!gen) {
+    errors.push(`${relMd}: unknown generator "${name}"`);
+    return;
+  }
+  const expected = data.type || 'number-check';
+  for (let i = 0; i < GEN_RUNS; i++) {
+    let out;
+    try {
+      out = gen.generate(data.params || {});
+    } catch (e) {
+      errors.push(`${relMd}: generator "${name}" throws with these params — ${e.message}`);
+      return;
+    }
+    if (!out || typeof out.type !== 'string') {
+      errors.push(`${relMd}: generator "${name}" returned no "type"`);
+      return;
+    }
+    if (out.type !== expected) {
+      errors.push(`${relMd}: generator "${name}" produces type "${out.type}" but front-matter says "${expected}"`);
+      return;
+    }
+    const bad = JSON.stringify(out).match(/NaN|undefined|Infinity/);
+    if (bad) {
+      errors.push(`${relMd}: generator "${name}" output contains "${bad[0]}"`);
+      return;
+    }
+    if (out.svg && out.svg.gen && !svgHelperExists(out.svg.gen)) {
+      errors.push(`${relMd}: generator "${name}" uses SVG helper "${out.svg.gen}" missing from svg.js`);
+      return;
+    }
+  }
+}
+
 function validateSeries(seriesDir, errors) {
   const indexPath = path.join(seriesDir, 'index.yaml');
   const rel = path.relative(process.cwd(), seriesDir).replace(/\\/g, '/');
@@ -133,8 +195,11 @@ function validateSeries(seriesDir, errors) {
       continue;
     }
 
-    // Skip generated exercises
-    if (data.generator) continue;
+    // Generated exercises: no static schema, run the generator instead
+    if (data.generator) {
+      validateGenerated(relMd, data, errors);
+      continue;
+    }
 
     const type = data.type || 'number-check';
     const schema = TYPE_SCHEMAS[type];
@@ -184,6 +249,43 @@ function validateSeries(seriesDir, errors) {
             }
           }
         }
+      }
+    }
+
+    // The operation line is shown very large (text-5xl): it must hold the calculation only.
+    // A sentence with — or → ("Achat : 3,50 € — payé : 5 €…") reads as minus signs and wraps
+    // badly; its data belongs in the body, e.g. body "Tu paies 5 €…", operation "monnaie = ? €".
+    if (typeof data.operation === 'string' && /[—→]/.test(data.operation)) {
+      errors.push(`${relMd}: "operation" contains — or →, put the data in the body and keep only the calculation`);
+    }
+
+    // The title must not give the answer away: "Sept cent cinquante-quatre" above base-10 blocks
+    // whose answer is 754, or a title containing the expected number itself.
+    if (typeof data.title === 'string') {
+      const words = data.title
+        .toLowerCase()
+        .replace(/[-’']/g, ' ')
+        .replace(/[?!.:]/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean);
+      if (words.length && words.every((w) => NUMBER_WORDS.has(w)))
+        errors.push(
+          `${relMd}: title "${data.title}" is a number in words — it may give away the answer, use a generic title`
+        );
+      const answer = data.answer != null ? String(data.answer).trim() : '';
+      if (/^[0-9]{2,}$/.test(answer) && new RegExp(`(^|[^0-9])${answer}([^0-9]|$)`).test(data.title.replace(/\s/g, '')))
+        errors.push(`${relMd}: title "${data.title}" contains the answer ${answer}`);
+    }
+
+    // logic-grid: .eleventy.js reads solution[column] = row. Keys written the other way round
+    // produce an all-false solution matrix, i.e. a grid that can never be solved.
+    if (type === 'logic-grid' && data.solution && Array.isArray(data.columns) && Array.isArray(data.rows)) {
+      const cols = data.columns.map(String),
+        rows = data.rows.map(String);
+      for (const [key, value] of Object.entries(data.solution)) {
+        if (!cols.includes(String(key)))
+          errors.push(`${relMd}: solution key "${key}" is not a column (keys = columns)`);
+        if (!rows.includes(String(value))) errors.push(`${relMd}: solution value "${value}" is not a row`);
       }
     }
   }

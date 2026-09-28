@@ -13,4 +13,4 @@ choices:
 answer: "une sphère"
 ---
 
-Mélimee a dessiné un solide. Quel est son nom ?
+Mélimée a dessiné un solide. Quel est son nom ?

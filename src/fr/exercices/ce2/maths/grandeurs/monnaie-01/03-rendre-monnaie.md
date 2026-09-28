@@ -1,8 +1,10 @@
 ---
 type: number-check
 title: "La monnaie à rendre"
-operation: "Achat : 3,50 € — payé : 5 € — monnaie : ? €"
+operation: "monnaie = ? €"
 answer: "1,50"
 ---
+
+Tu achètes un livre à **3,50 €** et tu paies avec un billet de **5 €**.
 
 Combien doit-on rendre en monnaie ?

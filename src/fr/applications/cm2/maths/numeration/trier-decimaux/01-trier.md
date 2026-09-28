@@ -1,5 +1,5 @@
 ---
-type: sort
+type: drag-sort
 title: "Trier des décimaux"
 generator: trierDecimaux
 repeat: 12

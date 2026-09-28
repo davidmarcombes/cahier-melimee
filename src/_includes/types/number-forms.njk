@@ -1,0 +1,46 @@
+{# number-forms — several writings of one number: 40 = [?] × 5 / 9 + [?] / 100 − [?] / [?] : 2
+   Rows are fixed-height (h-12 + gap-3 = 60px pitch) so the arrow fan can be drawn in real pixels. #}
+<div x-show="cur.type === 'number-forms'" class="js-seq bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle" x-show="cur.body" x-html="cur.body"></div>
+
+  <div class="flex items-center justify-center gap-1 sm:gap-2">
+    <div class="text-2xl sm:text-3xl font-extrabold text-content-default whitespace-nowrap" x-text="(cur.forms?.target ?? '') + ' ='"></div>
+
+    <div class="w-12 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden="true"
+         x-html="((n) => { const h = n * 60 - 12; return `<svg width='48' height='${h}' viewBox='0 0 48 ${h}'>${Array.from({ length: n }, (_, i) => { const y = i * 60 + 24; const a = Math.atan2(y - h / 2, 40); const hx = (d) => (44 - 7 * Math.cos(a + d)).toFixed(1) + ',' + (y - 7 * Math.sin(a + d)).toFixed(1); return `<line x1='4' y1='${h / 2}' x2='44' y2='${y}' stroke='currentColor' stroke-width='1.5'/><polyline points='${hx(-0.45)} 44,${y} ${hx(0.45)}' fill='none' stroke='currentColor' stroke-width='1.5'/>`; }).join('')}</svg>`; })((cur.forms?.rows || []).length)"></div>
+
+    <div class="flex flex-col gap-3">
+      <template x-for="(row, i) in (cur.forms?.rows || [])" :key="'nf'+i">
+        <div class="h-12 flex items-center gap-2 text-xl sm:text-2xl font-bold text-content-default whitespace-nowrap">
+          <span x-show="row.before" x-text="row.before"></span>
+          <input
+            type="text"
+            inputmode="decimal"
+            x-model="seqInputs[i]"
+            @keydown.enter="check()"
+            @input="seqErrors = []"
+            :disabled="solved"
+            placeholder="?"
+            :aria-label="'Écriture ' + (i + 1)"
+            class="w-16 sm:w-20 h-12 text-center rounded-xl border-2 font-bold text-lg sm:text-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-subtle text-content-default"
+            :class="{ 'border-green-500 bg-green-50 dark:bg-green-900/20': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(i), 'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(i) }"
+          />
+          <span x-show="row.after" x-text="row.after"></span>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <div class="flex justify-center mt-6">
+    <button
+      type="button"
+      @click="check()"
+      :disabled="solved || seqInputs.some(v => !String(v ?? '').trim())"
+      class="px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'"
+    >
+      <span x-show="!solved">Vérifier</span>
+      <span x-show="solved">Bravo !</span>
+    </button>
+  </div>
+</div>

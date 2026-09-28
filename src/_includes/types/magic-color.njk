@@ -33,12 +33,12 @@
 
     {# Pixel grid #}
     <div
-      class="inline-grid gap-px bg-slate-200 dark:bg-slate-600 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600"
-      :style="`grid-template-columns: repeat(${cur.magicColor?.cols || 1}, 2.5rem)`"
+      class="inline-grid max-sm:grid max-sm:w-fit max-sm:max-w-full max-sm:mx-auto gap-px bg-slate-200 dark:bg-slate-600 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-600"
+      :style="`grid-template-columns: repeat(${cur.magicColor?.cols || 1}, minmax(0, 2.5rem))`"
     >
       <template x-for="(cell, i) in (cur.magicColor?.cells || [])" :key="i">
         <div
-          class="w-10 h-10 flex items-center justify-center text-xs font-bold select-none transition-colors"
+          class="w-10 h-10 max-sm:w-full max-sm:h-auto max-sm:aspect-square min-w-0 flex items-center justify-center text-xs font-bold select-none transition-colors"
           :class="{
             'cursor-pointer hover:brightness-90 active:scale-95': !solved,
             'cursor-default': solved,

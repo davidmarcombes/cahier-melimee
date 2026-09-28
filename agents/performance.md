@@ -23,7 +23,7 @@ Type partials live in `src/_includes/types/`. When adding a new exercise type, c
 `series-player.njk` conditionally loads JS files to minimize payload:
 
 - **`svg.js`** — loaded when any exercise has `generator:` OR `svg:` field
-- **`generators.js`** — loaded only when an exercise has `generator:` field
+- **`generators/_core.js` + needed topic modules** — loaded only when an exercise has `generator:` field; only the modules holding the series generators (usually one, ~6 KB gzip)
 - **KaTeX CSS** — loaded when any exercise title contains `$`
 
 ## Layout Shift Prevention (CLS)
@@ -94,6 +94,6 @@ Both `seriesPayload` and `seriesListPayload` filters in `.eleventy.js` apply thi
 
 - Images optimized to AVIF/WebP via `@11ty/eleventy-img`
 - Fonts loaded with `font-display: swap`
-- Minimal JS footprint: Alpine.js CDN (~15 KB) + one `app.js` file + conditional `svg.js` / `generators.js`
+- Minimal JS footprint: Alpine.js CDN (~15 KB) + one `app.js` file + conditional `svg.js` / `generators/*.js` (per-topic modules)
 - Static HTML for fast initial loads and SEO
 - SVG `slicedPieSvg` optimized: floats rounded to 2dp, `<g>` wrapper for shared `stroke` attribute

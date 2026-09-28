@@ -69,6 +69,17 @@ document.addEventListener('alpine:init', () => {
     'estimation',
     'error-analysis',
     'compare-solutions',
+    'futoshiki',
+    'kenken',
+    'numberlink',
+    'think-board',
+    'guided-problem',
+    'bar-model',
+    'fact-family',
+    'classify',
+    'emoji-equations',
+    'number-forms',
+    'op-triangle',
   ];
   const CSV_CLASSES = [
     'A1.1',
@@ -141,7 +152,7 @@ document.addEventListener('alpine:init', () => {
             return;
           }
           sessionStorage.removeItem('ex4');
-        } catch (e) {
+        } catch {
           sessionStorage.removeItem('ex3');
         }
       }

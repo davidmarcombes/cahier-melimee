@@ -79,7 +79,7 @@ function tagSkill(filePath) {
     let fm;
     try {
       fm = yaml.load(fmMatch[1]);
-    } catch (e) {
+    } catch {
       return;
     }
 

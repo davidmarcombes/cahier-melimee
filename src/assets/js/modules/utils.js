@@ -24,7 +24,7 @@ export function normalizeAnswer(s) {
     .trim()
     .toLowerCase();
   // Strip trailing decimal zeros: "1.50" → "1.5", "3.10" → "3.1", "2.00" → "2"
-  if (/^\-?\d+\.\d+$/.test(v)) {
+  if (/^-?\d+\.\d+$/.test(v)) {
     v = parseFloat(v).toString();
   }
   return v;

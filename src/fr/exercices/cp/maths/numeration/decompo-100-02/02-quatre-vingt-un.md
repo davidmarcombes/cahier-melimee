@@ -1,5 +1,5 @@
 ---
-title: "Quatre-vingt-un"
+title: "Compte les barres et les cubes"
 type: "base-10"
 number: 81
 answer: "81"

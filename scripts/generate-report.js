@@ -27,15 +27,6 @@ const OUTPUT = outputArg ? path.resolve(outputArg.split('=')[1]) : path.join(ROO
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function findDirs(dir) {
-  /** Return all direct subdirectories (series folders). */
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir, { withFileTypes: true })
-    .filter((e) => e.isDirectory())
-    .map((e) => path.join(dir, e.name));
-}
-
 function findSeriesDirs(rootDir) {
   /** Recursively find directories that contain an index.yaml. */
   const results = [];

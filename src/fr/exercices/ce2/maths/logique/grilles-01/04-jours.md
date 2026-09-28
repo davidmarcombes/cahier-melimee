@@ -1,8 +1,8 @@
 ---
 type: logic-grid
 title: "Quel jour chaque enfant va-t-il à l'activité ?"
-columns: ["Lundi", "Mercredi", "Vendredi"]
-rows: ["Jade", "Lucas", "Mia"]
+rows: ["Lundi", "Mercredi", "Vendredi"]
+columns: ["Jade", "Lucas", "Mia"]
 solution:
   Jade: "Mercredi"
   Lucas: "Vendredi"

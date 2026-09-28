@@ -2,10 +2,11 @@
 layout: base
 isSeriesPage: true
 ---
-<script src="{{ '/assets/js/svg.js' | url }}"></script>
-<script src="{{ '/assets/js/generators.js' | url }}"></script>
-
 {% set exercises = collections.defis | seriesExercises(series) %}
+<script src="{{ '/assets/js/svg.js' | url }}"></script>
+{% for src in exercises | generatorScripts %}
+<script src="{{ src | url }}"></script>
+{% endfor %}
 
 <div
   x-data='timedPlayer({{ exercises | seriesPayload | safe }}, "{{ id }}", { duration: {{ duration or 60 }} })'

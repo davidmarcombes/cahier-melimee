@@ -194,6 +194,29 @@
     padding-left: 1em;
     font-style: italic;
   }
+  /* Markdown tables — same look as generators' tableHtml() */
+  .prose table {
+    margin-inline: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2px solid var(--p, #2a85bf);
+    border-radius: 10px;
+    overflow: hidden;
+    line-height: 1.5;
+  }
+  .prose th {
+    background: var(--p, #2a85bf);
+    color: #fff;
+    font-weight: 700;
+    padding: 8px 16px;
+  }
+  .prose td {
+    padding: 6px 16px;
+    border-top: 1px solid #e2e8f0;
+  }
+  .prose-invert td {
+    border-color: #334155;
+  }
   .prose-invert a {
     color: #60a5fa;
   }

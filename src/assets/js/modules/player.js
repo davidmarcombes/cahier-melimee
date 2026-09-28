@@ -228,7 +228,9 @@ export function seriesPlayer(exercises, seriesId) {
     regenerateAll() {
       if (!window.AppGenerators) return;
       const expanded = [];
-      const source = this.exercises.length > 0 ? this.exercises : exercises || [];
+      // Always expand the ORIGINAL placeholders: this.exercises is already expanded, and each item
+      // still carries _gen — re-expanding it multiplied the series ("Recommencer": 10 → 58 → 370)
+      const source = exercises || [];
       for (const ex of source) {
         if (!ex._gen) {
           expanded.push(ex);
@@ -293,9 +295,10 @@ export function seriesPlayer(exercises, seriesId) {
       const _colOpBlanks = _e.colOp ? (_e.colOp.result || []).filter((d) => d === '?').length : 0;
       this.trouInputs = _blanks + _colOpBlanks > 0 ? Array(_blanks + _colOpBlanks).fill('') : [];
 
-      const _ia = _e.sequence || _e.bounding || _e.convert;
+      const _ia = _e.sequence || _e.bounding || _e.convert || _e.forms || _e.opTri;
       if (_ia) {
-        this.seqInputs = _ia.items ? _ia.items.filter((it) => it.blank).map(() => '') : _ia.answers.map(() => '');
+        // Explicit answers win (convert has items = prompts + answers); interleaved sequences have only items
+        this.seqInputs = (_ia.answers || _ia.items.filter((it) => it.blank)).map(() => '');
       } else {
         this.seqInputs = [];
       }
@@ -505,6 +508,30 @@ export function seriesPlayer(exercises, seriesId) {
         this._dragErrTimer = null;
       }
       this.dragErrors = [];
+    },
+
+    /* Font size of an operation à trou, from its widest unbreakable segment: short operations keep
+       text-5xl; long glued phrases ("? centaines et 8 unités", emoji rows) step down instead of
+       sticking out of the player column (same width on desktop and tablet). */
+    get opSizeClass() {
+      const parts = this.trouParts || [];
+      // Visual width in "characters": an emoji (code point ≥ U+1F000) is about two glyphs wide
+      const width = (s) => [...s].reduce((n, ch) => n + (ch.codePointAt(0) >= 0x1f000 ? 2 : 1), 0);
+      const widest = Math.max(
+        0,
+        ...parts
+          .filter((p) => p.t === 'x')
+          .map((p) =>
+            width(
+              String(p.v)
+                .replace(/<[^>]*>/g, '')
+                .trim()
+            )
+          )
+      );
+      if (widest > 22) return 'text-2xl sm:text-3xl';
+      if (widest > 15) return 'text-3xl sm:text-4xl';
+      return 'text-3xl sm:text-5xl';
     },
 
     /* Parse operation à trou into structured parts for fraction rendering */
@@ -919,9 +946,13 @@ export function seriesPlayer(exercises, seriesId) {
         } else {
           this.classifyErrors = errors;
           const updated = { ...this.classifyPlacements };
-          errors.forEach((i) => { delete updated[i]; });
+          errors.forEach((i) => {
+            delete updated[i];
+          });
           this.classifyPlacements = updated;
-          this._flashError(() => { this.classifyErrors = []; });
+          this._flashError(() => {
+            this.classifyErrors = [];
+          });
         }
         return;
       }
@@ -1273,9 +1304,10 @@ export function seriesPlayer(exercises, seriesId) {
       if (_e.type === 'sort') {
         const userOrder = this.sortPicked.map((i) => this.sortShuffled[i]);
         const toNum = (s) => parseFloat(String(s).replace(/\s/g, '').replace(',', '.'));
-        const correctOrder = [...(_e.items || [])].sort((a, b) =>
-          _e.direction === 'desc' ? toNum(b) - toNum(a) : toNum(a) - toNum(b)
-        );
+        // sortKeepOrder: items are labels (e.g. fruit names) already listed in the correct order
+        const correctOrder = _e.sortKeepOrder
+          ? [...(_e.items || [])]
+          : [...(_e.items || [])].sort((a, b) => (_e.direction === 'desc' ? toNum(b) - toNum(a) : toNum(a) - toNum(b)));
         const wrong = userOrder.map((v, i) => (v !== correctOrder[i] ? i : -1)).filter((i) => i !== -1);
         if (wrong.length === 0) {
           this.sortErrors = [];
@@ -1461,14 +1493,20 @@ export function seriesPlayer(exercises, seriesId) {
         return;
       }
 
-      if (_e.type === 'sequence' || _e.type === 'bounding' || _e.type === 'convert') {
-        const s = _e.sequence || _e.bounding || _e.convert;
+      if (
+        _e.type === 'sequence' ||
+        _e.type === 'bounding' ||
+        _e.type === 'convert' ||
+        _e.type === 'number-forms' ||
+        _e.type === 'op-triangle'
+      ) {
+        const s = _e.sequence || _e.bounding || _e.convert || _e.forms || _e.opTri;
         if (!s) return;
         if (this.seqInputs.some((v) => !v.trim())) {
           this._flashError();
           return;
         }
-        const _answers = s.items ? s.items.filter((it) => it.blank).map((it) => it.answer) : s.answers;
+        const _answers = s.answers || s.items.filter((it) => it.blank).map((it) => it.answer);
         const wrong = _answers
           .map((a, i) => (normalizeAnswer(this.seqInputs[i]) !== normalizeAnswer(a) ? i : -1))
           .filter((i) => i !== -1);

@@ -4,7 +4,7 @@ title: "Pyramide d'additions"
 pyramid:
   - [6, 4, 9, 2]
   - [null, null, null]
-  - [null, 20]
+  - [null, 24]
   - [null]
 ---
 

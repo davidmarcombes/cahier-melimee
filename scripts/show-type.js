@@ -92,6 +92,18 @@ const TYPE_SCHEMAS = {
   'number-hunt': { required: [], desc: 'Find numbers in a grid (CP specific)' },
   'compare-groups': { required: [], desc: 'Compare groups of objects (CP specific)' },
   'count-objects': { required: [], desc: 'Count items in an image (CP specific)' },
+  'emoji-equations': {
+    required: [],
+    desc: 'Emoji equation system — eqLines[] ("🍎 + 🍎 = 8"), eqQuestion ("🍌"), answer; or generator equationsEmojis',
+  },
+  'number-forms': {
+    required: [],
+    desc: 'Several writings of one number — target, forms[] ("? × 5", "9 + ?"), answers[] optional (auto-solved); or generator ecrituresNombre',
+  },
+  'op-triangle': {
+    required: [],
+    desc: 'Operator diagram A →op→ B →op→ C + shortcut A →op→ C — generator-only: triangleOperateurs (op, pairs, startMin, startMax, decimals, blanks)',
+  },
   'seq-verify': {
     required: [],
     desc: 'Shared verify button partial for sequence/bounding/convert (not a standalone type)',

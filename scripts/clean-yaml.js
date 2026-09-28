@@ -13,7 +13,7 @@ function cleanContent(rawStr) {
     // Simple regex to catch key: value pairs
     const match = line.match(/^([\w_]+):\s*["']?(.*?)["']?\s*$/);
     if (match) {
-      const [_, key, value] = match;
+      const [, key, value] = match;
 
       if (key === 'created_at') {
         const currentVal = dataMap[key];

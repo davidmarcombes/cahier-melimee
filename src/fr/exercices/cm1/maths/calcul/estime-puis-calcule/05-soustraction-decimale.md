@@ -3,8 +3,8 @@ type: multi-question
 title: "Estime puis calcule"
 context: "9,2 − 3,6"
 questions:
-  - text: "Estimation (arrondi à l'unité)"
-    answer: "6"
+  - text: "Estimation : arrondis chaque nombre à l'unité, puis calcule"
+    answer: "5"
   - text: "Résultat exact"
     answer: "5,6"
 ---

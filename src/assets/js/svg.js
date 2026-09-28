@@ -1087,8 +1087,8 @@ function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
   const right = Array.isArray(rightItems) ? rightItems : [rightItems];
 
   // Colours — scale body in warm brass, weights in deep teal
-  const bodyColor  = '#b45309'; // amber-700: brass/bronze feel
-  const bodyLight  = '#d97706'; // amber-600: highlight
+  const bodyColor = '#b45309'; // amber-700: brass/bronze feel
+  const bodyLight = '#d97706'; // amber-600: highlight
   const weightFill = '#0f4c75'; // deep blue
   const weightHigh = '#1a6fa8'; // lighter blue highlight
   const weightText = '#ffffff';
@@ -1101,14 +1101,17 @@ function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
   // Geometry
   const cx = W / 2;
   const beamY = 70;
-  const lx = 72, rx = 268;
+  const lx = 72,
+    rx = 268;
   const rodLen = 70; // longer rods = more headroom for weights
-  const panRx = 46, panRy = 10;
+  const panRx = 46,
+    panRy = 10;
   const lPanY = beamY + lOff + rodLen;
   const rPanY = beamY + rOff + rodLen;
 
   // Weight block — bottom at pan centre
-  const weightW = 40, weightH = 34;
+  const weightW = 40,
+    weightH = 34;
   const wBlock = (val, x, y) => {
     const label = String(val);
     const fs = label.length >= 3 ? 11 : label.length === 2 ? 13 : 15;
@@ -1150,7 +1153,8 @@ function scaleSvg(leftItems, rightItems, tilt = 'balanced') {
     return s;
   };
 
-  const lBy = beamY + lOff, rBy = beamY + rOff;
+  const lBy = beamY + lOff,
+    rBy = beamY + rOff;
 
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"
                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balance">
@@ -1316,3 +1320,61 @@ function decompTreeSvg(top, left, right) {
   s += mkCircle(rx, ry, right);
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;max-width:100%">${s}</svg>`;
 }
+
+// ── Base-10 blocks renderer ────────────────────────────────────────────────
+// Called at runtime from the base-10 exercise template.
+// Returns { markup: string, width: number, height: number }.
+function base10Render(b) {
+  const U = 12,
+    TEN_H = 120,
+    PAD = 8,
+    GAP_TYPE = 18,
+    GAP_SAME = 4;
+  const num = b.number || 0;
+  const h = b.hundreds !== null && b.hundreds !== undefined ? b.hundreds : Math.floor(num / 100);
+  const t = b.tens !== null && b.tens !== undefined ? b.tens : Math.floor((num % 100) / 10);
+  const u = b.ones !== null && b.ones !== undefined ? b.ones : num % 10;
+
+  const style =
+    '<style>.h{fill:var(--b10-h);stroke:var(--b10-hs)}.t{fill:var(--b10-t);stroke:var(--b10-ts)}.u{fill:var(--b10-u);stroke:var(--b10-us)}.h,.t,.u{stroke-width:1}.lh{stroke:var(--b10-hs)}.lt{stroke:var(--b10-ts)}.lh,.lt{stroke-width:.5;opacity:.5}</style>';
+  const unit = (x, y) => `<rect class="u" x="${x + 1}" y="${y + 1}" width="${U - 2}" height="${U - 2}" rx="1"/>`;
+  const ten = (x, y) => {
+    let s = '';
+    for (let i = 1; i < 10; i++)
+      s += `<line class="lt" x1="${x + 0.5}" y1="${y + i * U}" x2="${x + U - 0.5}" y2="${y + i * U}"/>`;
+    return `<rect class="t" x="${x + 0.5}" y="${y + 0.5}" width="${U - 1}" height="${TEN_H - 1}" rx="1"/>${s}`;
+  };
+  const hundred = (x, y) => {
+    let s = '';
+    for (let i = 1; i < 10; i++) {
+      s += `<line class="lh" x1="${x + 0.5}" y1="${y + i * U}" x2="${x + TEN_H - 0.5}" y2="${y + i * U}"/>`;
+      s += `<line class="lh" x1="${x + i * U}" y1="${y + 0.5}" x2="${x + i * U}" y2="${y + TEN_H - 0.5}"/>`;
+    }
+    return `<rect class="h" x="${x + 0.5}" y="${y + 0.5}" width="${TEN_H - 1}" height="${TEN_H - 1}" rx="1"/>${s}`;
+  };
+
+  // More than 4 hundreds: plates on two rows (7 → 4 + 3) so the drawing stays compact and is not
+  // scaled down until the units become too small to count. Tens and units sit on the bottom row.
+  const rows = h > 4 ? 2 : 1;
+  const perRow = Math.ceil(h / rows);
+  const baseY = PAD + (rows - 1) * (TEN_H + GAP_SAME);
+  let svg = style,
+    x = PAD;
+  for (let i = 0; i < h; i++) {
+    const col = i % perRow,
+      row = Math.floor(i / perRow);
+    svg += hundred(PAD + col * (TEN_H + GAP_SAME), PAD + row * (TEN_H + GAP_SAME));
+  }
+  if (h > 0) x = PAD + Math.min(h, perRow) * (TEN_H + GAP_SAME);
+  if (h > 0 && (t > 0 || u > 0)) x += GAP_TYPE - GAP_SAME;
+  for (let i = 0; i < t; i++) {
+    svg += ten(x, baseY);
+    x += U + GAP_SAME;
+  }
+  if (t > 0 && u > 0) x += GAP_TYPE - GAP_SAME;
+  const uCols = Math.ceil(u / 10);
+  for (let i = 0; i < u; i++) svg += unit(x + Math.floor(i / 10) * (U + GAP_SAME), baseY + TEN_H - ((i % 10) + 1) * U);
+  if (u > 0) x += uCols * (U + GAP_SAME) - GAP_SAME;
+  return { markup: svg, width: x + PAD, height: rows * TEN_H + (rows - 1) * GAP_SAME + 2 * PAD };
+}
+if (typeof window !== 'undefined') window.base10Render = base10Render;

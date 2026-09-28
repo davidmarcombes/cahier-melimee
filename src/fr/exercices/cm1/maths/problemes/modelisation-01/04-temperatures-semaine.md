@@ -4,7 +4,7 @@ title: "Les températures de la semaine"
 questions:
   - text: "Quel jour a-t-il fait le plus chaud ? (écris le jour)"
     answer: "jeudi"
-  - text: "Quelle est la différence de température entre lundi et vendredi ?"
+  - text: "Quelle est la différence de température entre lundi et jeudi ?"
     answer: "6"
   - text: "Quelle est la température moyenne sur les 5 jours ?"
     answer: "14"

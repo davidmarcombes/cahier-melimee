@@ -10,7 +10,7 @@ locale: fr-FR
 
 > **Pour les parents :** Ce site est conçu selon le principe de l'**Anonymat Radical**. Nous ne collectons __aucune__ donnée personnelle (PII) : ni email, ni nom, ni adresse IP. L'identité de votre enfant est protégée par un pseudonyme généré et une clé visuelle secrète. 
 
-> Si vous le shouhaitez, vous pouvez même télécharger le sîte et le faire totalement tourner sur un ordinateur personnel.
+> Si vous le souhaitez, vous pouvez même télécharger le site et le faire totalement tourner sur un ordinateur personnel.
 
 ---
 
@@ -51,4 +51,4 @@ En utilisant un **identifiant combiné (Nom Triple + Sticker + Code Image)**, no
 * **Sécurité :** Le niveau de protection est calibré pour sécuriser un parcours pédagogique. Même en cas de brèche de sécurité, aucune donnée sensible ne peut être extraite.
 * **Zéro Tracking :** Aucune analyse comportementale, aucun cookie publicitaire, aucune exploitation commerciale.
 
-**Le risque maximal ?** Qu'un acteur malveillant s'introduise pour faire des additions à la place de votre enfant ! Nous préferons ce risque à celui d'une fuite d'information sur votre enfant.
+**Le risque maximal ?** Qu'un acteur malveillant s'introduise pour faire des additions à la place de votre enfant ! Nous préférons ce risque à celui d'une fuite d'information sur votre enfant.

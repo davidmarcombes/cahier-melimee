@@ -10,10 +10,6 @@ const DIRS_TO_SCAN = [
 // id → [paths that use it]
 const idMap = new Map();
 
-function existingIds() {
-  return new Set(idMap.keys());
-}
-
 /**
  * Generates a unique 8-character hex ID.
  * Checks against idMap to prevent collisions.

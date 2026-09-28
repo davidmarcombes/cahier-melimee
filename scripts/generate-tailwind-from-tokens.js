@@ -97,17 +97,6 @@ function processColors(obj, prefix = '') {
 
 if (tokens.colors) processColors(tokens.colors);
 
-// Generate CSS variables file
-const cssContent = `/* DO NOT EDIT — auto-generated from design-tokens.json by scripts/generate-tailwind-from-tokens.js */
-:root {
-  ${lightVars.join('\n  ')}
-}
-
-.dark {
-  ${darkVars.join('\n  ')}
-}
-`;
-
 // Generate Tailwind config
 const config = `/** @type {import('tailwindcss').Config} */
 // DO NOT EDIT — auto-generated from design-tokens.json by scripts/generate-tailwind-from-tokens.js

@@ -1,5 +1,5 @@
 ---
-type: compare
+type: tile-select
 title: "Compare les grands nombres"
 generator: "comparerNombres"
 repeat: 10
@@ -9,4 +9,4 @@ params:
   count: 4
 ---
 
-Compare chaque paire de grands nombres avec < ou >.
+Compare les grands nombres et clique sur celui qui est demandé.

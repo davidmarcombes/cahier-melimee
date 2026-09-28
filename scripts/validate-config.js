@@ -92,7 +92,7 @@ function checkFile(filePath, relativePath) {
         }
       });
     });
-  } catch (error) {
+  } catch {
     // Skip files that can't be read
   }
 }
@@ -126,7 +126,7 @@ function checkJsonFile(filePath, relativePath) {
     }
 
     traverse(data);
-  } catch (error) {
+  } catch {
     // Skip invalid JSON or files that can't be read
   }
 }

@@ -13,18 +13,6 @@ function question(prompt) {
   return new Promise((resolve) => rl.question(prompt, resolve));
 }
 
-function renameIfExists(from, to) {
-  const fromPath = path.join(__dirname, '..', from);
-  const toPath = path.join(__dirname, '..', to);
-
-  if (fs.existsSync(fromPath)) {
-    fs.renameSync(fromPath, toPath);
-    console.log(`✓ Renamed ${from} → ${to}`);
-    return true;
-  }
-  return false;
-}
-
 function updateJsonFile(filePath, updates) {
   const fullPath = path.join(__dirname, '..', filePath);
 

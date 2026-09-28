@@ -4,14 +4,17 @@
     ".eleventy.js",
     "tailwind.config.js",
     "src/assets/js/app.js",
-    "src/assets/js/generators.js",
-    "scripts/*.js",
-    "tests/**/*.spec.js",
+    "src/assets/js/svg.js",
+    "src/assets/js/dev.js",
+    "src/assets/js/generators/*.js",
+    "scripts/*.{js,mjs}",
+    "tests/**/*.{js,mjs}",
     "src/_data/*.js",
     "pocketbase/pb_migrations/*.js",
     "marp.config.mjs"
   ],
   "project": ["**/*.{js,mjs,ts}"],
-  "ignoreDependencies": ["svgo", "@peaceroad/markdown-it-math-tex-to-mathml"],
+  "ignore": ["src/assets/js/alpine.min.js"],
+  "ignoreDependencies": ["svgo", "@marp-team/marp-cli", "@marp-team/marp-core"],
   "eleventy": false
 }

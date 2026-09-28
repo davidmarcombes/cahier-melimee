@@ -1,16 +1,16 @@
 <div
   x-show="cur.type === 'number-check'"
-  class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 mb-8">
+  class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-8 mb-8">
   <template x-if="cur.svg">
-    <div class="flex justify-center mb-6" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
+    <div class="flex justify-center mb-6 max-sm:[&_svg]:max-w-full max-sm:[&_svg]:h-auto" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
   <div x-show="cur.operation && !cur.operation.includes('?')" class="text-center mb-6">
-    <span class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide" x-html="operationHtml + ' = ?'"></span>
+    <span class="text-3xl sm:text-5xl font-extrabold text-content-default tracking-wide break-words" x-html="operationHtml + ' = ?'"></span>
   </div>
   <div x-show="trouParts" class="js-trou text-center mb-6 leading-relaxed">
     <template x-for="(p, i) in trouParts" :key="i">
-      <span class="inline-block align-middle whitespace-nowrap py-1">
-        <span x-show="p.t==='x'" class="text-4xl sm:text-5xl font-extrabold text-content-default tracking-wide" x-html="p.v"></span>
+      <span class="inline-block align-middle sm:whitespace-nowrap py-1">
+        <span x-show="p.t==='x'" class="font-extrabold text-content-default tracking-wide" :class="opSizeClass" x-html="p.v"></span>
         <span x-show="p.t==='f'" class="frac text-4xl sm:text-5xl font-extrabold text-content-default">
           <span class="fn" x-text="p.n"></span>
           <span class="fd" x-text="p.d"></span>

@@ -230,7 +230,16 @@
       "Bash(npx prettier:*)",
       "Bash(curl -sL \"https://unpkg.com/alpinejs@3.15.11/dist/cdn.min.js\" -o \"e:/Code/cahier-melimee/src/assets/js/alpine.min.js\")",
       "Bash(netstat -ano)",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "Bash(git -C e:/Code/cahier-melimee log --all --full-history -- '_site/fr/applications/402938c6/index.html')",
+      "Bash(git -C e:/Code/cahier-melimee log --oneline --diff-filter=A -- 'src/fr/applications/*/index.yaml')",
+      "Bash(git -C e:/Code/cahier-melimee show acffda9 --name-only)",
+      "Bash(git -C e:/Code/cahier-melimee log --oneline --diff-filter=A -- 'src/fr/applications/**')",
+      "Bash(git -C e:/Code/cahier-melimee show 6c8bf16 --name-only)",
+      "Bash(git -C e:/Code/cahier-melimee show 4f72abe --name-only)",
+      "Bash(git -C e:/Code/cahier-melimee log --all --oneline -- \"src/fr/applications/cm1/maths/fractions/addition-fractions/index.yaml\")",
+      "Bash(git -C e:/Code/cahier-melimee show 5e24226:src/fr/applications/cm1/maths/fractions/addition-fractions/index.yaml)",
+      "Bash(git -C e:/Code/cahier-melimee show 5e24226:src/fr/applications/cm1/maths/fractions/operations-fractions/index.yaml)"
     ]
   }
 }

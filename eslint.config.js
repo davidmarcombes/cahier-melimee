@@ -3,7 +3,21 @@ const globals = require('globals');
 
 module.exports = [
   // Global ignores
-  { ignores: ['node_modules/', '_site/', '_docs/', 'dist/', 'tailwind.config.js'] },
+  // Global ignores: dependencies, build outputs, generated reports, vendored minified Alpine
+  {
+    ignores: [
+      'node_modules/',
+      '_site/',
+      '_site-check/',
+      '_zsite/',
+      '_docs/',
+      'dist/',
+      'reports/',
+      'test-results/',
+      'tailwind.config.js',
+      'src/assets/js/alpine.min.js',
+    ],
+  },
 
   // ESM scripts (use import/export)
   {
@@ -35,7 +49,8 @@ module.exports = [
         ...globals.browser,
         Alpine: 'readonly',
         PocketBase: 'readonly',
-        module: 'readonly', // dual-export pattern in generators.js
+        module: 'readonly', // dual-export pattern in generators/*.js
+        require: 'readonly', // generators/*.js load ./_core.js when running under Node
         // SVG globals (browser only)
         circleSvg: 'readonly',
         rectangleSvg: 'readonly',
@@ -86,7 +101,7 @@ module.exports = [
         'warn',
         {
           argsIgnorePattern: '^_',
-          varsIgnorePattern: '^(seriesPlayer|timedPlayer|themeToggle|challengePlayer|.*Svg)$',
+          varsIgnorePattern: '^(seriesPlayer|timedPlayer|themeToggle|challengePlayer|debugPanel|.*Svg|.*Html)$',
         },
       ],
     },

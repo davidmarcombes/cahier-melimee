@@ -13,4 +13,4 @@ choices:
 answer: "un cube"
 ---
 
-Mélimee a dessiné un solide. Quel est son nom ?
+Mélimée a dessiné un solide. Quel est son nom ?

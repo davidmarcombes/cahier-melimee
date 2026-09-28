@@ -32,12 +32,13 @@ Defined entirely in front-matter (answer, operation, type-specific fields).
 ### Generated exercises (applications)
 Use `generator` + `repeat` + optional `params` in front-matter. At build time, `seriesPayload` emits a lightweight placeholder with `_gen` metadata. At runtime, `regenerateAll()` expands placeholders and generates fresh numbers on each page load.
 
-Generators live in `src/assets/js/generators.js` (single source, dual export: `window.AppGenerators` for browser, `module.exports` for Node.js).
+Generators live in `src/assets/js/generators/`, one module per topic (`numeration`, `nombres`, `calcul`, `operations`, `fractions-decimaux`, `mesures`, `logique`) plus `_core.js` for shared helpers (`rand`, `shuffle`, `tableHtml`…). Each module is dual-export: it registers into `window.AppGenerators` in the browser and is `module.exports` under Node. `generators/index.js` is the Node entry (validator, tests, build): all generators merged, plus `moduleOf` (generator → module).
 
 ### Script loading in series-player.njk
 
 - **`svg.js`** is loaded when ANY exercise in the series has a `generator:` OR `svg:` field.
-- **`generators.js`** is loaded only when an exercise has a `generator:` field.
+- **`generators/_core.js` + the modules holding the series generators** are loaded only when an exercise has a `generator:` field (`generatorScripts` filter in `.eleventy.js`; an unknown generator fails the build). A typical page loads `_core.js` + one module (~6 KB gzip instead of 28 KB for all generators).
+- **`svg.js`** also holds `base10Render` (base-10 blocks), so `base-10` exercises load it.
 - **KaTeX CSS** is loaded when any exercise title contains `$` (LaTeX).
 
 ## Exercise Types
@@ -47,10 +48,10 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `number-check` | `types/number-check.njk` | Default. Simple operation with answer input. Supports trou (hole) mode. |
 | `problem` | `types/problem.njk` | Word problem or emoji puzzle. Shows body, answer input. |
 | `matching` | `types/matching.njk` | Drag/click to match pairs. SVG lines between items. |
-| `sequence` | `types/sequence.njk` | Fill blanks in a number sequence. |
+| `sequence` | `types/sequence.njk` | Fill blanks in a number sequence. Legacy `given[]`+`answers[]`, or interleaved `sequence.items[]` (`{value}` / `{blank, inputIdx, answer}`) from generators — e.g. `suiteAvecControle` (hidden step, last cell given as a self-check; params `steps`, `given`, `blanks`, `direction` asc/desc/mixed, `startMax`, `offset`). |
 | `bounding` | `types/bounding.njk` | Place a number between bounds (encadrement). |
 | `convert` | `types/convert.njk` | Unit conversion exercises. |
-| `pyramid` | `types/pyramid.njk` | Addition pyramids — fill missing cells. |
+| `pyramid` | `types/pyramid.njk` | Addition pyramids — fill missing cells. Give at least one cell per unknown so the pyramid is **solvable step by step**: each hidden cell must follow from one addition or subtraction of known neighbours (a top-down pyramid needing algebra, e.g. `2 160 + 3 × ? = 3 240`, is too hard for CP–CM2). The build computes all cells algebraically and fails on contradictory data; `check:answers` rejects pyramids that are not solvable step by step. |
 | `logic-grid` | `types/logic-grid.njk` | Logic grid puzzle — click cells to place marks. |
 | `true-false` | `types/true-false.njk` | Vrai/Faux table — tick true or false per assertion. |
 | `compare` | `types/compare.njk` | Compare numbers — pick < or > between two values. |
@@ -59,7 +60,7 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `multi-question` | `types/multi-question.njk` | Shared context + multiple sub-questions, each validated on Enter. |
 | `mcq` | `types/mcq.njk` | Multiple choice — click the correct answer among 3-5 shuffled choices. |
 | `ruler` | `types/ruler.njk` | Graduated ruler with markers — read a value. SVG via `rulerSvg` getter. |
-| `sort` | `types/sort.njk` | Order items by clicking them in sequence. Items listed in correct order in YAML, shuffled at runtime. |
+| `sort` | `types/sort.njk` | Order items by clicking them in sequence. Items listed in correct order in YAML, shuffled at runtime. By default the check re-sorts items as numbers; with `sortKeepOrder: true` items are labels (names) and the YAML order is the answer — put the data in a Markdown table in the body. `sortLabels: [from, to]` replaces "plus grand / plus petit". Generator `classerTableau` (params: `theme` prix/distances/durees, `count`, `direction` asc/desc/mixed, `min`/`max` in cents/metres/minutes, `mixedUnits`). |
 | `drag-sort` | `types/drag-sort.njk` | Sort tiles by clicking pairs to swap them. Direction indicator. Tiles support HTML via `x-html`. Fields: `tiles[]` (strings), `direction` (`asc`/`desc`). |
 | `fill-table` | `types/fill-table.njk` | Table with blank cells — student fills each digit/value. Supports `cur.svg` above the table. Uses `blankCount`, `headers`, `rows` (cells: `{blank, idx, answer}`). |
 | `checkbox` | `types/checkbox.njk` | Tick all valid statements — multi-select with a verify button. Fields: `statements[]` (HTML strings), `checkedAnswers[]` (integer indices). Supports `cur.svg`. |
@@ -80,6 +81,9 @@ Generators live in `src/assets/js/generators.js` (single source, dual export: `w
 | `inverse-problem` | `types/inverse-problem.njk` | Inverse problems (Russie method) — base problem + derived variations. Fields: base operation + inverse operations array. |
 | `number-hunt` | `types/number-hunt.njk` | Click numbers 1..N in order; emoji sits in center cell. Fields: `grid[]`, `cols`, `count`, `emoji`. Supports generators. |
 | `count-objects` | `types/count-objects.njk` | Scattered emoji SVG — type the total count. Fields: `count`, `emoji`. Supports generators. |
+| `emoji-equations` | `types/emoji-equations.njk` | Emoji equation system — deduce each emoji's value line by line, answer the last line (e.g. 🍎+🍎+🍎=12, 🍎+🍌=5, 🍌=?). Fields: `eqLines[]` (strings `"🍎 + 🍌 = 5"`, split on the last `=`), `eqQuestion` (left side of the question line), `answer`. Generator `equationsEmojis` (params: `unknowns` 2|3, `min`, `max`, `mult`, `ask` value/sum/priority). |
+| `number-forms` | `types/number-forms.njk` | Several writings of one number — target on the left, arrow fan, one row per writing with a blank anywhere (`40 = ? × 5 / 9 + ? / 100 − ? / ? : 2`). Fields: `target`, `forms[]` (strings with one `?`), `answers[]` optional (auto-solved at build time by bisection). Reuses `seqInputs`/`seqErrors`. Generator `ecrituresNombre` (params: `level` cm1/cm2, `targets`). |
+| `op-triangle` | `types/op-triangle.njk` | Operator diagram — A →(op a)→ B →(op b)→ C plus the shortcut A →(op a·b)→ C (7 ×10→ 70 ×10→ 700, 7 ×100→ 700). Blanks on nodes and/or operator numbers; reuses `seqInputs`/`seqErrors`. Generator-only: `triangleOperateurs` (params: `op` mult/div/mixed, `pairs` [[a, b]…], `startMin`, `startMax`, `decimals`, `blanks` nodes/op/reverse/mixed). |
 | `compare-groups` | `types/compare-groups.njk` | Two scattered emoji groups — click Autant / Plus / Moins. Fields: `groupA`, `groupB`, `answer`. Supports generators. |
 | `magic-color` | `types/magic-color.njk` | Pixel-art coloriage magique — paint cells matching a rule (e.g. multiples). Fields: `grid`, `palette`. Supports generators. |
 | `tri-arith` | `types/tri-arith.njk` | Arithmetic triangle — vertices and edges are linked by addition; fill in the missing values. Fields: `givenV[]`, `givenE[]`, `answers[]`. Supports generators. |
@@ -229,6 +233,9 @@ Register the type so the validator accepts it:
 ### 7. Sample content + IDs
 Create at least one series under `src/fr/exercices/`, then run `npm run generate:ids`.
 
+### 7b. Solver for the solvability test
+Add an entry for the type in `S = { … }` in `tests/e2e/solve.spec.js`: write the correct answer into the player state (the fields the partial binds to) and call the validation the UI calls; with `w = true`, write a wrong answer instead. Then run `npm run check`. Types without a solver are listed as "not covered" at the end of the check.
+
 ### 8. Documentation
 - Add a row to the **Exercise Types** table above.
 - Add new YAML fields to the **Front-Matter Schema** section below.
@@ -249,12 +256,12 @@ operation: `6__dizaines__et__5__unités__=__?`
 
 ## Adding a New Generator
 
-1. Add the generator function in `src/assets/js/generators.js` (single source for both build and runtime)
+1. Add the generator to the topic module in `src/assets/js/generators/` that matches the content folder it serves (e.g. `operations.js` for `maths/operations/`). Shared helpers come from `_core.js` — add a helper there only if several modules need it, and list it in the module destructuring at the top. A new module must be added to `MODULES` in `generators/index.js` (load order).
 2. Generators must return seriesPlayer-compatible items:
    ```javascript
    { type: 'number-check', operation: '5 + 3', answers: ['8'] }
    ```
-4. Create an `.md` file in `src/fr/applications/{series}/` with:
+3. Create an `.md` file in `src/fr/applications/{series}/` with:
    ```yaml
    type: number-check
    generator: "yourGenerator"
@@ -263,6 +270,7 @@ operation: `6__dizaines__et__5__unités__=__?`
      min: 1
      max: 100
    ```
+4. **The front-matter `type` must be the type the generator returns.** The page only includes the partials of front-matter types, so a mismatch renders a blank exercise. `npm run validate:exercises` runs every generator 20× with the file's `params` and fails on: unknown generator, exception, `NaN`/`undefined`/`Infinity` in the output, `svg.gen` helper missing from `svg.js`, or a type mismatch.
 
 ## SVG Generation Helpers (svg.js)
 
@@ -283,7 +291,7 @@ Use **build-time SVG** (generated in `.eleventy.js`, embedded in the HTML payloa
 - The SVG is **shared** across many exercises (e.g. a file from `_includes/svg/` via `gen: file`).
 - The SVG is **small** (a few hundred bytes max per exercise).
 
-Use **client-side SVG** (generated in `generators.js` or `svg.js`, called from Alpine templates) when:
+Use **client-side SVG** (generated in `generators/*.js` or `svg.js`, called from Alpine templates) when:
 - The SVG depends on **exercise-specific data** that varies per exercise (e.g. a number to decompose).
 - The SVG is **parameterized** and the same function is called with different values across many exercises in a series.
 - Generating it at build time would **bloat** the HTML payload (rule of thumb: if a single series page with ~10 exercises would exceed ~15–20 kB of SVG, move it to runtime).
@@ -331,6 +339,8 @@ items:                     # sort — listed in CORRECT order, shuffled at runti
   - "3,7"
   - "30,7"
 direction: asc             # sort / drag-sort — "asc" (petit → grand) or "desc"
+sortKeepOrder: true        # sort — items are names in the correct order (not numbers)
+sortLabels: ["le plus cher", "le moins cher"]  # sort — ends of the direction arrow
 tiles:                     # drag-sort — HTML strings, listed in CORRECT order
   - "1/6"
   - "1/4"
@@ -373,6 +383,12 @@ columns:                   # click-blocks — place-value columns
     color: "#7c3aed"
     answer: 2
     max: 9
+eqLines:                   # emoji-equations — "lhs = rhs" strings, solvable top to bottom
+  - "🍎 + 🍎 + 🍎 = 12"
+  - "🍎 + 🍌 = 5"
+eqQuestion: "🍌"          # emoji-equations — left side of the question line (answer: 1)
+target: 40                 # number-forms — the number on the left
+forms: ["? × 5", "9 + ?", "100 − ?", "? : 2"]  # number-forms — one "?" each; answers auto-computed
 answers:                   # fraction-check — [numerator, denominator] as strings
   - "3"
   - "4"

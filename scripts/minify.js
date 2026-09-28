@@ -15,7 +15,7 @@ const path = require('path');
 const { minify: minifyHtml } = require('html-minifier-terser');
 const { minify: minifyJs } = require('terser');
 
-const SITE_DIR = path.resolve(__dirname, '..', '_site');
+const SITE_DIR = path.resolve(__dirname, '..', process.env.SITE_OUT || '_site');
 
 const HTML_OPTIONS = {
   collapseWhitespace: true,

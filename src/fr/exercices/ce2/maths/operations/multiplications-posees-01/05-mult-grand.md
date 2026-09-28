@@ -4,7 +4,7 @@ title: "Pose et calcule"
 operation: "×"
 top: "324"
 bottom: "5"
-result: "???"
+result: "????"
 ---
 
 Pose la multiplication et calcule.

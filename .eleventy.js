@@ -3,10 +3,10 @@ const Image = require('@11ty/eleventy-img');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+const arith = require('./scripts/lib/arith.js'); // French-notation arithmetic (shared with the answer oracle)
 const pathPrefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
 // HTML minification using html-minifier-terser
 const htmlmin = require('html-minifier-terser');
-const UpgradeHelper = require('@11ty/eleventy-upgrade-help');
 
 const markdownIt = require('markdown-it');
 
@@ -176,7 +176,7 @@ module.exports = async function (eleventyConfig) {
       let metadata = await Image(src, {
         widths: [320, 640, 1024, 1600],
         formats: ['avif', 'webp', 'png'],
-        outputDir: './_site/assets/images/',
+        outputDir: `./${process.env.SITE_OUT || '_site'}/assets/images/`,
         urlPath: `${pathPrefix}/assets/images/`,
       });
 
@@ -336,29 +336,27 @@ module.exports = async function (eleventyConfig) {
       .sort((a, b) => a.inputPath.localeCompare(b.inputPath));
   });
 
-  // Extract unique exercise types from a series (for conditional template includes)
-  // Map generator names to the type they produce at runtime (may differ from front-matter type)
-  const GENERATOR_OUTPUT_TYPES = {
-    trierNombres: 'drag-sort',
-    trierDecimaux: 'drag-sort',
-    trierFractions: 'drag-sort',
-    nombreChiffresSelect: 'tile-select',
-    lireTableauTile: 'tile-select',
-    fractionEnLettres: 'fraction-check',
-    classerFractions: 'classify',
-    classerMultiples: 'classify',
-    multiplesOfTile: 'tile-select',
-  };
-
-  eleventyConfig.addFilter('extractTypes', function (exercises) {
-    const types = new Set();
+  // Generator scripts a series needs: _core.js + the modules holding its generators (in load order).
+  // A page with one CM2 generator loads ~2 small files instead of every generator.
+  eleventyConfig.addFilter('generatorScripts', function (exercises) {
+    const generators = require('./src/assets/js/generators/index.js');
+    const needed = new Set();
     for (const ex of exercises) {
-      types.add(ex.data.type || 'number-check');
-      if (ex.data.generator && GENERATOR_OUTPUT_TYPES[ex.data.generator]) {
-        types.add(GENERATOR_OUTPUT_TYPES[ex.data.generator]);
-      }
+      const name = ex.data.generator;
+      if (!name) continue;
+      const mod = generators.moduleOf[name];
+      if (!mod) throw new Error(`Unknown generator "${name}" in ${ex.inputPath}`);
+      needed.add(mod);
     }
-    return [...types];
+    if (!needed.size) return [];
+    return ['_core', ...generators.MODULES.filter((m) => needed.has(m))].map((m) => `/assets/js/generators/${m}.js`);
+  });
+
+  // Extract unique exercise types from a series (for conditional template includes).
+  // Generated exercises must declare the type their generator produces — enforced by
+  // scripts/validate-exercises.js, which runs every generator with its params.
+  eleventyConfig.addFilter('extractTypes', function (exercises) {
+    return [...new Set(exercises.map((ex) => ex.data.type || 'number-check'))];
   });
 
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
@@ -413,7 +411,7 @@ module.exports = async function (eleventyConfig) {
               const vals = [...Object.values(helpers), ...Object.values(vars)];
               const result = new Function(...keys, `return ${formula}`)(...vals);
               return result !== undefined ? String(result) : match;
-            } catch (e) {
+            } catch {
               // If it's not a valid expression, try simple variable replacement
               return vars[formula.trim()] !== undefined ? String(vars[formula.trim()]) : match;
             }
@@ -469,7 +467,7 @@ module.exports = async function (eleventyConfig) {
             tens: ex.data.tens != null ? Number(interpolate(String(ex.data.tens))) : null,
             ones: ex.data.ones != null ? Number(interpolate(String(ex.data.ones))) : null,
           };
-          item.base10 = b; // SVG rendered client-side by base10Render() in generators.js
+          item.base10 = b; // SVG rendered client-side by base10Render() in svg.js
         }
 
         const parseSvgElement = (dataSvg) => {
@@ -588,48 +586,44 @@ module.exports = async function (eleventyConfig) {
         if (ex.data.type === 'pyramid' && ex.data.pyramid) {
           const rawRows = ex.data.pyramid.map((r) => r.map((v) => (v == null ? null : Number(interpolate(String(v))))));
           const given = rawRows.map((r) => r.map((v) => v !== null));
-          let changed = true;
-          while (changed) {
-            changed = false;
-            for (let r = 0; r < rawRows.length - 1; r++) {
-              for (let c = 0; c < rawRows[r].length - 1; c++) {
-                const l = rawRows[r][c],
-                  ri = rawRows[r][c + 1],
-                  p = rawRows[r + 1][c];
-                if (l !== null && ri !== null && p === null) {
-                  rawRows[r + 1][c] = l + ri;
-                  changed = true;
-                }
-                if (p !== null && l !== null && ri === null) {
-                  rawRows[r][c + 1] = p - l;
-                  changed = true;
-                }
-                if (p !== null && ri !== null && l === null) {
-                  rawRows[r][c] = p - ri;
-                  changed = true;
-                }
-              }
+          // Solve the whole pyramid algebraically. Rows are bottom-first; cell (r, c) is
+          // Σ C(r, k) · base[c + k]. Each given cell is one linear equation on the base values,
+          // solved by Gaussian elimination. (Local propagation left unknown cells as null when a
+          // pyramid had to be filled from the top — those exercises could never be solved.)
+          const n = rawRows[0].length;
+          const binom = (r, k) => {
+            let v = 1;
+            for (let i = 1; i <= k; i++) v = (v * (r - i + 1)) / i;
+            return v;
+          };
+          const coeffs = (r, c) => Array.from({ length: n }, (_, j) => (j >= c && j <= c + r ? binom(r, j - c) : 0));
+          const M = [];
+          rawRows.forEach((row, r) => row.forEach((v, c) => v !== null && M.push([...coeffs(r, c), v])));
+          let rank = 0;
+          const pivots = [];
+          for (let col = 0; col < n && rank < M.length; col++) {
+            let p = rank;
+            for (let i = rank + 1; i < M.length; i++) if (Math.abs(M[i][col]) > Math.abs(M[p][col])) p = i;
+            if (Math.abs(M[p][col]) < 1e-12) continue;
+            [M[rank], M[p]] = [M[p], M[rank]];
+            for (let i = 0; i < M.length; i++) {
+              if (i === rank) continue;
+              const f = M[i][col] / M[rank][col];
+              for (let j = col; j <= n; j++) M[i][j] -= f * M[rank][j];
             }
-            // Extra pass: resolve non-edge unknowns using grandparent (binomial identity).
-            // For [L, x, R] → [L+x, x+R] → [grandparent]:
-            //   grandparent = L + 2x + R  →  x = (grandparent - L - R) / 2
-            for (let r = 0; r < rawRows.length - 2; r++) {
-              const row = rawRows[r];
-              for (let c = 1; c < row.length - 1; c++) {
-                if (row[c] !== null) continue;
-                const L = row[c - 1],
-                  R = row[c + 1];
-                if (L === null || R === null) continue;
-                const gp = rawRows[r + 2][c - 1];
-                if (gp === null) continue;
-                const x = (gp - L - R) / 2;
-                if (Number.isInteger(x)) {
-                  row[c] = x;
-                  changed = true;
-                }
-              }
-            }
+            pivots.push(col);
+            rank++;
           }
+          if (M.slice(rank).some((row) => Math.abs(row[n]) > 1e-6))
+            throw new Error(`pyramid: the given cells contradict each other in ${ex.inputPath}`);
+          if (rank < n) throw new Error(`pyramid: several solutions — give more cells in ${ex.inputPath}`);
+          const base = Array(n);
+          pivots.forEach((col, i) => (base[col] = M[i][n] / M[i][col]));
+          rawRows.forEach((row, r) =>
+            row.forEach((_, c) => {
+              row[c] = Math.round(coeffs(r, c).reduce((s, k, j) => s + k * base[j], 0) * 1e6) / 1e6;
+            })
+          );
           item.pyramid = { rows: [...rawRows].reverse(), given: [...given].reverse() };
         }
 
@@ -684,14 +678,16 @@ module.exports = async function (eleventyConfig) {
             if (c.answer) {
               answer = c.answer.trim();
             } else {
+              // French notation (5,8 · 1 000 · − · :) — a JS eval read "5,8 - 2,3" as the comma operator
               try {
-                const evalExpr = (s) =>
-                  Function('"use strict"; return (' + s.replace(/×/g, '*').replace(/÷/g, '/') + ')')();
-                const nl = evalExpr(l);
-                const nr = evalExpr(r);
-                answer = nl < nr ? '<' : nl > nr ? '>' : '=';
-              } catch {
-                answer = '?';
+                const nl = arith.num(l);
+                const nr = arith.num(r);
+                answer = arith.same(nl, nr) ? '=' : nl < nr ? '<' : '>';
+              } catch (e) {
+                throw new Error(
+                  `compare-expressions: cannot compute "${l}" vs "${r}" in ${ex.inputPath} — give "answer" explicitly (${e.message})`,
+                  { cause: e }
+                );
               }
             }
             return { left: l, right: r, answer };
@@ -933,6 +929,8 @@ module.exports = async function (eleventyConfig) {
         if (ex.data.type === 'sort' && ex.data.items) {
           item.items = ex.data.items.map((v) => interpolate(String(v)));
           if (ex.data.direction) item.direction = ex.data.direction;
+          if (ex.data.sortKeepOrder) item.sortKeepOrder = true;
+          if (ex.data.sortLabels) item.sortLabels = ex.data.sortLabels.map(String);
         }
         if (ex.data.type === 'select' && ex.data.statements) {
           if (ex.data.choices) item.selectChoices = ex.data.choices.map(String);
@@ -971,13 +969,23 @@ module.exports = async function (eleventyConfig) {
           const bottom = ex.data.bottom != null ? clean(ex.data.bottom) : null;
           const result = clean(ex.data.result || '');
           // Align decimal columns: separate integer and decimal parts for padding
-          const hasDecimal = isDecSep(top[top.indexOf(',') >= 0 ? top.indexOf(',') : top.indexOf('.')]) ||
+          const hasDecimal =
+            isDecSep(top[top.indexOf(',') >= 0 ? top.indexOf(',') : top.indexOf('.')]) ||
             (bottom && (bottom.includes(',') || bottom.includes('.')));
-          const sepIdx = (s) => { const i = s.indexOf(','); return i >= 0 ? i : s.indexOf('.'); };
+          const sepIdx = (s) => {
+            const i = s.indexOf(',');
+            return i >= 0 ? i : s.indexOf('.');
+          };
           let maxIntLen, maxDecLen;
           if (hasDecimal) {
-            const intPart = (s) => { const i = sepIdx(s); return i >= 0 ? s.slice(0, i) : s; };
-            const decPart = (s) => { const i = sepIdx(s); return i >= 0 ? s.slice(i) : ''; };
+            const intPart = (s) => {
+              const i = sepIdx(s);
+              return i >= 0 ? s.slice(0, i) : s;
+            };
+            const decPart = (s) => {
+              const i = sepIdx(s);
+              return i >= 0 ? s.slice(i) : '';
+            };
             maxIntLen = Math.max(intPart(top).length, bottom ? intPart(bottom).length : 0, intPart(result).length);
             maxDecLen = Math.max(decPart(top).length, bottom ? decPart(bottom).length : 0, decPart(result).length);
             const padDec = (s) => {
@@ -1017,6 +1025,12 @@ module.exports = async function (eleventyConfig) {
             const resultChars = item.colOp.result;
             // Build answer digit sequence from resStr
             const resDigits = resStr.replace(',', '').split('');
+            // One slot per digit, or the digits land in the wrong columns (34 × 2 with "???" expected 6-8-0)
+            const slots = resultChars.filter((c) => !isDecSep(c) && c !== ' ').length;
+            if (slots !== resDigits.length)
+              throw new Error(
+                `column-op: result "${result}" has ${slots} digit slot(s) but ${top} ${op} ${bottom} = ${resStr} (${resDigits.length} digits) in ${ex.inputPath}`
+              );
             item.answers = [];
             for (let i = 0; i < resultChars.length; i++) {
               if (resultChars[i] === '?') {
@@ -1082,14 +1096,6 @@ module.exports = async function (eleventyConfig) {
           const rows = [];
           for (let r = 0; r < size; r++) {
             const cells = [];
-            let blankIdx = 0;
-            let totalBlanks = 0;
-            // Count blanks before this row to get correct flat index
-            for (let ri = 0; ri < r; ri++) {
-              for (let ci = 0; ci < size; ci++) {
-                if (given[ri * size + ci] === null) totalBlanks++;
-              }
-            }
             for (let c = 0; c < size; c++) {
               const flatIdx = r * size + c;
               cells.push({ given: given[flatIdx], idx: flatIdx });
@@ -1176,6 +1182,49 @@ module.exports = async function (eleventyConfig) {
             labelB: interpolate(String(v.labelB || '')),
             items,
           };
+        }
+
+        if (ex.data.type === 'emoji-equations' && ex.data.eqLines) {
+          // "🍎 + 🍎 = 8" → { lhs: "🍎 + 🍎", rhs: "8" } (split on the last "=")
+          item.eqLines = ex.data.eqLines.map((l) => {
+            const s = interpolate(String(l));
+            const at = s.lastIndexOf('=');
+            return { lhs: s.slice(0, at).trim(), rhs: s.slice(at + 1).trim() };
+          });
+          item.eqQuestion = interpolate(String(ex.data.eqQuestion || ''));
+        }
+
+        if (ex.data.type === 'number-forms' && ex.data.forms) {
+          // "? × 5" → { before: "", after: "× 5" }; answer solved from target unless given explicitly
+          const T = Number(String(ex.data.target).replace(/\s/g, '').replace(',', '.'));
+          const rows = ex.data.forms.map((f, i) => {
+            const [before, after = ''] = interpolate(String(f)).split('?');
+            let answer = ex.data.answers?.[i];
+            if (answer === undefined) {
+              // One blank in a +, −, ×, : expression → f(x) is monotonic on x > 0: bisect
+              const js = (before + 'x' + after)
+                .replace(/×/g, '*')
+                .replace(/:/g, '/')
+                .replace(/−/g, '-')
+                .replace(/(\d),(\d)/g, '$1.$2')
+                .replace(/(\d)[\s\u00a0\u202f]+(?=\d)/g, '$1');
+              const f = new Function('x', `return ${js}`);
+              let lo = 1e-9,
+                hi = 1e7;
+              const up = f(hi) > f(lo);
+              for (let k = 0; k < 200; k++) {
+                const mid = (lo + hi) / 2;
+                if (f(mid) < T === up) lo = mid;
+                else hi = mid;
+              }
+              const x = Math.round(lo * 1000) / 1000;
+              if (Math.abs(f(x) - T) > 1e-6)
+                throw new Error(`number-forms: cannot solve "${f}" = ${T} in ${ex.inputPath}`);
+              answer = x;
+            }
+            return { before: before.trim(), after: after.trim(), answer: String(answer).replace(',', '.') };
+          });
+          item.forms = { target: interpolate(String(ex.data.target)), rows, answers: rows.map((r) => r.answer) };
         }
 
         if (ex.data.type === 'inverse-problem' && ex.data.ipBase) {
@@ -1307,6 +1356,9 @@ module.exports = async function (eleventyConfig) {
       'bar-model',
       'fact-family',
       'classify',
+      'emoji-equations',
+      'number-forms',
+      'op-triangle',
     ];
     const CSV_CLASSES = [
       'A1.1',
@@ -1481,7 +1533,7 @@ module.exports = async function (eleventyConfig) {
     const sorted = pageSizes.sort((a, b) => b.kb - a.kb);
     const fmt = (b) => (b / 1024).toFixed(1) + 'k';
     const row = ({ path: p, kb, svgBytes, jsBytes, imgBytes, cssBytes }) => {
-      const short = p.replace(process.cwd(), '').replace('/_site', '');
+      const short = p.replace(process.cwd(), '').replace(`/${process.env.SITE_OUT || '_site'}`, '');
       console.log(
         short.padEnd(70) +
           (kb + 'k').padStart(8) +
@@ -1692,7 +1744,7 @@ module.exports = async function (eleventyConfig) {
         });
         req.on('end', () => {
           try {
-            const { seriesId, url } = JSON.parse(body);
+            const { seriesId } = JSON.parse(body);
             const seriesDir = seriesId ? findSeriesDir(seriesId) : null;
             const map = readHumanCsv();
             const ts = new Date().toISOString();
@@ -1715,7 +1767,7 @@ module.exports = async function (eleventyConfig) {
             writeHumanCsv(map);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ ok: true }));
-          } catch (_) {
+          } catch {
             res.writeHead(400);
             res.end('Bad request');
           }
@@ -1728,7 +1780,7 @@ module.exports = async function (eleventyConfig) {
     pathPrefix: process.env.PATH_PREFIX || '/',
     dir: {
       input: 'src',
-      output: '_site',
+      output: process.env.SITE_OUT || '_site', // npm run check builds into its own folder (_site-check)
       includes: '_includes',
       layouts: '_layouts',
       data: '_data',

@@ -1,8 +1,8 @@
 ---
 type: logic-grid
 title: "Qui préfère quelle couleur ?"
-columns: ["Jaune", "Vert", "Orange"]
-rows: ["Lola", "Rayan", "Zoé"]
+rows: ["Jaune", "Vert", "Orange"]
+columns: ["Lola", "Rayan", "Zoé"]
 solution:
   Lola: "Vert"
   Rayan: "Orange"

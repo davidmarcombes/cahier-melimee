@@ -58,7 +58,9 @@ project-root/
     │   └── js/
     │       ├── app.js           # Alpine components (seriesPlayer, themeToggle, localStore, exercises store)
     │       ├── svg.js           # SVG generation helpers (embedSvg, slicedPieSvg, clockSvg, partagerSvg, etc.)
-    │       ├── generators.js    # Exercise generators (single source: Node.js + browser)
+    │       ├── generators/      # Exercise generators by topic (Node.js + browser): _core.js (helpers),
+    │       │                    #   numeration, nombres, calcul, operations, fractions-decimaux, mesures, logique;
+    │       │                    #   index.js = Node entry (all generators + moduleOf map)
     │       └── timed-player.js  # Alpine component for timed challenges (timedPlayer)
     └── fr/              # French content — ONLY .md/.yaml files (no templates)
         ├── exercices/   # Static exercises: many hand-written .md per series

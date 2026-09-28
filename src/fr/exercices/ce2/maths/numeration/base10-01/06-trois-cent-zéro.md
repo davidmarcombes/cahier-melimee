@@ -1,5 +1,5 @@
 ---
-title: "Trois cents"
+title: "Quel nombre est représenté ?"
 type: "base-10"
 number: 300
 answer: "300"

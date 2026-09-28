@@ -12,7 +12,6 @@ async function diagnose() {
 
   console.log('Checking for duplicates...');
   const names = new Map();
-  let page = 1;
   let duplicates = 0;
 
   // Check first 1000 records

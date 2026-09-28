@@ -1,8 +1,10 @@
 ---
 type: number-check
 title: "Aire d'un rectangle"
-operation: "Rectangle 8 cm × 4 cm → aire = ? cm²"
+operation: "aire = ? cm²"
 answer: "32"
 ---
+
+Rectangle de longueur **8 cm** et de largeur **4 cm**.
 
 Calcule l'**aire** du rectangle. **Aire = longueur × largeur**

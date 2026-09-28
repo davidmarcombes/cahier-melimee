@@ -38,86 +38,101 @@ const THRESHOLDS = {
 
 // Type index → name — kept in sync with CSV_TYPES in app.js
 const CSV_TYPES = [
-  '',             // 0 — unused
-  'bar-chart',    // 1
-  'base-10',      // 2
-  'bounding',     // 3
-  'calc-chain',   // 4
-  'checkbox',     // 5
+  '', // 0 — unused
+  'bar-chart', // 1
+  'base-10', // 2
+  'bounding', // 3
+  'calc-chain', // 4
+  'checkbox', // 5
   'click-blocks', // 6
-  'clock',        // 7
-  'column-op',    // 8
-  'compare',      // 9
-  'compare-groups',    // 10
-  'convert',           // 11
-  'coordinate-grid',   // 12
-  'count-objects',     // 13
-  'decimal-triple',    // 14
-  'decomp',            // 15
-  'drag-sort',         // 16
-  'fill-table',        // 17
-  'fraction',          // 18
-  'fraction-check',    // 19
-  'fraction-paint',    // 20
-  'function-machine',  // 21
-  'inverse-problem',   // 22
-  'logic-grid',        // 23
-  'magic-color',       // 24
-  'matching',          // 25
-  'maze',              // 26
-  'mcq',               // 27
-  'multi',             // 28
-  'multi-question',    // 29
-  'number-check',      // 30
-  'number-hunt',       // 31
-  'number-line',       // 32
-  'problem',           // 33
-  'pyramid',           // 34
-  'ruler',             // 35
-  'select',            // 36
-  'sequence',          // 37
-  'sort',              // 38
-  'svg-tiles',         // 39
-  'thermometer',       // 40
-  'tile-select',       // 41
-  'tri-arith',         // 42
-  'true-false',        // 43
-  'venn',              // 44
-  'defi',              // 45
+  'clock', // 7
+  'column-op', // 8
+  'compare', // 9
+  'compare-groups', // 10
+  'convert', // 11
+  'coordinate-grid', // 12
+  'count-objects', // 13
+  'decimal-triple', // 14
+  'decomp', // 15
+  'drag-sort', // 16
+  'fill-table', // 17
+  'fraction', // 18
+  'fraction-check', // 19
+  'fraction-paint', // 20
+  'function-machine', // 21
+  'inverse-problem', // 22
+  'logic-grid', // 23
+  'magic-color', // 24
+  'matching', // 25
+  'maze', // 26
+  'mcq', // 27
+  'multi', // 28
+  'multi-question', // 29
+  'number-check', // 30
+  'number-hunt', // 31
+  'number-line', // 32
+  'problem', // 33
+  'pyramid', // 34
+  'ruler', // 35
+  'select', // 36
+  'sequence', // 37
+  'sort', // 38
+  'svg-tiles', // 39
+  'thermometer', // 40
+  'tile-select', // 41
+  'tri-arith', // 42
+  'true-false', // 43
+  'venn', // 44
+  'defi', // 45
   'compare-expressions', // 46
-  'estimation',          // 47
-  'error-analysis',      // 48
-  'compare-solutions',   // 49
-  'futoshiki',           // 50
-  'kenken',              // 51
-  'numberlink',          // 52
-  'think-board',         // 53
-  'guided-problem',      // 54
-  'bar-model',           // 55
-  'fact-family',         // 56
+  'estimation', // 47
+  'error-analysis', // 48
+  'compare-solutions', // 49
+  'futoshiki', // 50
+  'kenken', // 51
+  'numberlink', // 52
+  'think-board', // 53
+  'guided-problem', // 54
+  'bar-model', // 55
+  'fact-family', // 56
 ];
 
 const COLORS = {
-  red: '\x1b[31m', green: '\x1b[32m', yellow: '\x1b[33m',
-  cyan: '\x1b[36m', dim: '\x1b[2m', bold: '\x1b[1m', reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  cyan: '\x1b[36m',
+  dim: '\x1b[2m',
+  bold: '\x1b[1m',
+  reset: '\x1b[0m',
 };
 const c = COLORS;
 
 // ── Static file server ────────────────────────────────────────────────────────
 
 const MIME = {
-  '.html': 'text/html; charset=utf-8', '.css': 'text/css',
-  '.js': 'application/javascript', '.json': 'application/json',
-  '.woff2': 'font/woff2', '.avif': 'image/avif', '.webp': 'image/webp',
-  '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml',
-  '.csv': 'text/csv', '.txt': 'text/plain',
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
+  '.json': 'application/json',
+  '.woff2': 'font/woff2',
+  '.avif': 'image/avif',
+  '.webp': 'image/webp',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.svg': 'image/svg+xml',
+  '.csv': 'text/csv',
+  '.txt': 'text/plain',
 };
 
 function createServer() {
   return http.createServer((req, res) => {
     let fp = path.join(ROOT, req.url.split('?')[0]);
     if (fs.existsSync(fp) && fs.statSync(fp).isDirectory()) fp = path.join(fp, 'index.html');
-    if (!fs.existsSync(fp)) { res.writeHead(404); return res.end('404'); }
+    if (!fs.existsSync(fp)) {
+      res.writeHead(404);
+      return res.end('404');
+    }
     res.writeHead(200, { 'Content-Type': MIME[path.extname(fp)] || 'application/octet-stream' });
     fs.createReadStream(fp).pipe(res);
   });
@@ -203,7 +218,7 @@ async function main() {
 
   if (SAVE_REPORTS) fs.mkdirSync(REPORT_DIR, { recursive: true });
 
-  const staticPages = discoverStaticPages().map(url => ({ url, label: url }));
+  const staticPages = discoverStaticPages().map((url) => ({ url, label: url }));
   const typePages = discoverTypePages();
 
   const allPages = [
@@ -213,11 +228,15 @@ async function main() {
 
   const totalPages = staticPages.length + typePages.length;
 
-  console.log(`\n${c.bold}Lighthouse full audit${c.reset}  ${c.dim}${DESKTOP ? 'desktop' : 'mobile (throttled)'}${c.reset}`);
-  console.log(`${c.dim}${totalPages} pages: ${staticPages.length} static + ${typePages.length} exercise types${c.reset}\n`);
+  console.log(
+    `\n${c.bold}Lighthouse full audit${c.reset}  ${c.dim}${DESKTOP ? 'desktop' : 'mobile (throttled)'}${c.reset}`
+  );
+  console.log(
+    `${c.dim}${totalPages} pages: ${staticPages.length} static + ${typePages.length} exercise types${c.reset}\n`
+  );
 
   const server = createServer();
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise((r) => server.listen(PORT, r));
 
   const chrome = await chromeLauncher.launch({
     chromeFlags: ['--headless', '--no-sandbox', '--disable-setuid-sandbox'],
@@ -245,10 +264,10 @@ async function main() {
         const { lhr, report } = await lighthouse(BASE + url, lhOptions);
 
         const s = {
-          performance:      lhr.categories['performance'].score,
-          accessibility:    lhr.categories['accessibility'].score,
+          performance: lhr.categories['performance'].score,
+          accessibility: lhr.categories['accessibility'].score,
           'best-practices': lhr.categories['best-practices'].score,
-          seo:              lhr.categories['seo'].score,
+          seo: lhr.categories['seo'].score,
         };
 
         const cls = lhr.audits['cumulative-layout-shift']?.displayValue ?? '?';
@@ -256,10 +275,10 @@ async function main() {
 
         console.log(
           `P:${fmt(s.performance, THRESHOLDS.performance)}  ` +
-          `A:${fmt(s.accessibility, THRESHOLDS.accessibility)}  ` +
-          `BP:${fmt(s['best-practices'], THRESHOLDS['best-practices'])}  ` +
-          `SEO:${fmt(s.seo, THRESHOLDS.seo)}  ` +
-          `${c.dim}CLS:${cls}  LCP:${lcp}${c.reset}`
+            `A:${fmt(s.accessibility, THRESHOLDS.accessibility)}  ` +
+            `BP:${fmt(s['best-practices'], THRESHOLDS['best-practices'])}  ` +
+            `SEO:${fmt(s.seo, THRESHOLDS.seo)}  ` +
+            `${c.dim}CLS:${cls}  LCP:${lcp}${c.reset}`
         );
 
         const pageFailures = Object.entries(THRESHOLDS)
@@ -269,7 +288,10 @@ async function main() {
         if (pageFailures.length) failures.push({ url, label, failures: pageFailures });
 
         if (SAVE_REPORTS) {
-          const slug = (label + url).replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+          const slug = (label + url)
+            .replace(/[^a-z0-9]/gi, '_')
+            .replace(/_+/g, '_')
+            .replace(/^_|_$/g, '');
           const htmlReport = Array.isArray(report) ? report[1] : report;
           fs.writeFileSync(path.join(REPORT_DIR, `${slug}.html`), htmlReport);
         }
@@ -293,11 +315,12 @@ async function main() {
       acc[cat] = allResults.reduce((s, r) => s + (r.scores[cat] ?? 0), 0) / allResults.length;
       return acc;
     }, {});
-    console.log(`${c.bold}Averages${c.reset}  ` +
-      `P:${fmt(avg.performance, THRESHOLDS.performance)}  ` +
-      `A:${fmt(avg.accessibility, THRESHOLDS.accessibility)}  ` +
-      `BP:${fmt(avg['best-practices'], THRESHOLDS['best-practices'])}  ` +
-      `SEO:${fmt(avg.seo, THRESHOLDS.seo)}\n`
+    console.log(
+      `${c.bold}Averages${c.reset}  ` +
+        `P:${fmt(avg.performance, THRESHOLDS.performance)}  ` +
+        `A:${fmt(avg.accessibility, THRESHOLDS.accessibility)}  ` +
+        `BP:${fmt(avg['best-practices'], THRESHOLDS['best-practices'])}  ` +
+        `SEO:${fmt(avg.seo, THRESHOLDS.seo)}\n`
     );
   }
 
@@ -314,4 +337,7 @@ async function main() {
   console.log(`${c.green}${c.bold}✓ All ${allResults.length} pages passed Lighthouse thresholds${c.reset}\n`);
 }
 
-main().catch(err => { console.error(err); process.exit(1); });
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

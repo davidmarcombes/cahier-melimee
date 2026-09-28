@@ -1,5 +1,5 @@
 ---
-type: compare
+type: tile-select
 title: "Compare les nombres"
 generator: "comparerNombres"
 repeat: 10
@@ -9,4 +9,4 @@ params:
   count: 4
 ---
 
-Compare chaque paire de nombres avec < ou >.
+Compare les nombres et clique sur celui qui est demandé.

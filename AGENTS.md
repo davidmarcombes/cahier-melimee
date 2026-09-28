@@ -24,6 +24,7 @@ AI assistant documentation for **Le Cahier de Melimee** — an elementary school
 | [agents/svg.md](agents/svg.md)                    | SVG snippet rules, generation helpers, naming conventions     |
 | [docs/classification.md](docs/classification.md) | Skill classification (S1.1.1, I1, D1) and pedagogical intents |
 | [docs/js_roadmap.md](docs/js_roadmap.md)          | JS code review findings and maintenance TODO list             |
+| [docs/code-review-2026-09.md](docs/code-review-2026-09.md) | Sept 2026 codebase review: findings + prioritized plan |
 
 
 ## Quick Reference
@@ -33,6 +34,9 @@ npm start                  # Dev server (localhost:8080)
 npm run build              # Production build (test + validate + css + html-validate)
 npm run clean              # Remove _site/
 npm run help               # List all available npm scripts
+npm run check              # BEFORE EVERY COMMIT: lint → unit → validate → fresh build → e2e on changed series
+npm run lint:fix           # Auto-fix lint/format issues (lint is strict: 0 warnings)
+npm run check:full         # Same, e2e on every page (layout-health + solvability + type scenarios)
 npm test                   # Unit tests (vitest)
 npm run build:e2e          # Build _site/ for E2E (fast, no validation)
 npm run test:e2e           # E2E tests (Playwright, ~555 tests: player, types smoke, layout-health all pages)

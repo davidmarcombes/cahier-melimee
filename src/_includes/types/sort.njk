@@ -18,11 +18,11 @@
 
   {# Direction label #}
   <div class="flex items-center gap-2 text-xs text-content-subtle px-1">
-    <span x-text="cur.direction === 'desc' ? 'plus grand' : 'plus petit'"></span>
+    <span x-text="cur.sortLabels ? cur.sortLabels[0] : cur.direction === 'desc' ? 'plus grand' : 'plus petit'"></span>
     <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700 relative">
       <svg class="absolute right-0 top-1/2 -translate-y-1/2" width="8" height="8" viewBox="0 0 8 8"><path d="M0 4h7M4 1l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
     </div>
-    <span x-text="cur.direction === 'desc' ? 'plus petit' : 'plus grand'"></span>
+    <span x-text="cur.sortLabels ? cur.sortLabels[1] : cur.direction === 'desc' ? 'plus petit' : 'plus grand'"></span>
   </div>
 
   {# Answer track — placed items + empty slots #}

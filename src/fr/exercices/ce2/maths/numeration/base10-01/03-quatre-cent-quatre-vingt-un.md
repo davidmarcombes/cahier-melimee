@@ -1,5 +1,5 @@
 ---
-title: "Quatre cent quatre-vingt-un"
+title: "Quel nombre est représenté ?"
 type: "base-10"
 number: 481
 answer: "481"

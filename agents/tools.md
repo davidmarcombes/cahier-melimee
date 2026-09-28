@@ -16,8 +16,36 @@ All available commands (run `npm run help` for a live list):
 
 ### Testing & Validation
 
+**Before every commit: `npm run check`.** One command, fail-fast, always on a fresh build — in its **own folder `_site-check/` and port 4174**, so `npm start` (`_site/`, port 8080) can keep running alongside:
+
+1. `lint` — ESLint (0 warnings), Prettier, knip. Fix with `npm run lint:fix`
+2. Unit tests (vitest)
+3. `validate:exercises` — static schemas + runs every generator 20× with its file's `params`
+4. French spelling (cspell) of the changed content files — front matter included (titles, choices, statements). Add proper nouns to `words` in `cspell.json`
+5. Build — fresh `_site-check/` (`SITE_OUT` env var; defaults to `_site/` for every other script) `_site/` (never tests a stale build)
+6. `check:answers` — **answer oracle**: recomputes expected answers (operations incl. blanks, sequences, pyramids, conversions, comparisons, clocks…) on the built pages and on 20 draws of each generator. Blocking. `--verbose` for coverage per type, `--unchecked=<type>` to see what it cannot parse
+7. `minify` — e2e runs on the production (minified) output
+8. Playwright, scoped to what changed since HEAD (`git status`):
+   - only content (`src/fr/**`) → `layout-health` + `solve` on the touched series only
+   - engine (anything in `src/` outside `src/fr/`, `.eleventy.js`, `tests/e2e/`, Playwright config, `package.json`…) → every spec on every page
+   - nothing site-related → e2e skipped
+
+   Viewports: desktop + portrait tablet (768 px) for `layout-health`. Phones are not a target: phone-only tweaks use `max-sm:` and must not change `sm+` rendering.
+9. Reminder (non-blocking): changed exercises not yet validated by hand, with their local URL — validate with the "✓ Valider la série" button (`npm start`).
+
+`npm run check:full` forces e2e on every page; `npm run check -- --no-e2e` stops after the build; `npm run check -- --scope` only prints what the e2e step would cover (add `--files=a,b` to preview for given files). On failure: `npx playwright show-report reports/playwright`.
+
+The e2e per-page specs:
+
+- **`layout-health.spec.js`** — every page renders: no JS/generator errors, no overflow, interactive elements inside the player, and **every exercise** of the series shows its type block.
+- **`solve.spec.js`** — **every exercise** is solvable: a per-type solver writes the correct answer into the player state and validates it the way the UI does, and a wrong answer must be refused. Futoshiki, kenken, numberlink and mazes are solved by search, so unsolvable puzzles fail. Types without a solver are listed at the end of `npm run check`, not failed. When adding a type, add its solver in `solve.spec.js` (see `S = { … }`).
+
+`E2E_PAGES=applications/abc12345,exercices/def67890 npx playwright test` limits the per-page specs to those series.
+
 | Command | Description |
 |---------|-------------|
+| `npm run check` | Pre-commit check (see above) |
+| `npm run check:full` | Pre-commit check, e2e on every page |
 | `npm test` | Run vitest unit test suite (generators, Alpine logic) |
 | `npm run test:watch` | Run vitest in watch mode |
 | `npm run test:e2e` | Run Playwright E2E tests — requires built `_site/` (auto-starts static server) |
@@ -29,7 +57,8 @@ All available commands (run `npm run help` for a live list):
 | `npm run validate:llm` | LLM-powered answer checker (requires Ollama — see `agents/ollama.md`) |
 | `npm run validate:html` | Run html-validate on all `_site/**/*.html` files |
 | `npm run validate:config` | Validate project configuration files |
-| `npm run lint` | Run ESLint + Prettier checks |
+| `npm run lint` | Strict lint: ESLint with **0 warnings allowed**, Prettier check, knip (unused files/exports/deps). First step of `npm run check` and `npm run build` |
+| `npm run lint:fix` | Auto-fix what can be: `eslint --fix` + `prettier --write` |
 | `npm run format` | Auto-format with Prettier |
 | `npm run check:spell` | Spellcheck markdown files with cspell |
 | `npm run check:duplicates` | Check for duplicate exercise entries |

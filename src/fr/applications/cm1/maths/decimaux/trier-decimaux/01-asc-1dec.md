@@ -1,5 +1,5 @@
 ---
-type: sort
+type: drag-sort
 title: "Range du plus petit au plus grand"
 generator: trierDecimaux
 repeat: 6

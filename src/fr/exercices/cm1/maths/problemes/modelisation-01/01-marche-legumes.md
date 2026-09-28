@@ -7,7 +7,7 @@ questions:
   - text: "Combien coûtent 2 kg de tomates ?"
     answer: "5"
   - text: "Combien coûte au total 1 kg de carottes et 1 kg de tomates ?"
-    answer: "4"
+    answer: "4,50"
 ---
 
 Au marché, voici les prix au kilogramme :

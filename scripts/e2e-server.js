@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.E2E_PORT || 4173;
-const ROOT = path.join(__dirname, '../_site');
+const ROOT = path.join(__dirname, '..', process.env.SITE_OUT || '_site');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',

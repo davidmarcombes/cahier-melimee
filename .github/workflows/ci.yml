@@ -1,0 +1,37 @@
+# Minimal CI — the checks that catch broken exercises before they ship:
+# unit tests, exercise validation (runs every generator with its params), build,
+# then Playwright e2e (layout-health walks every exercise of every page).
+# Lint is not enforced yet: see docs/code-review-2026-09.md, item 2.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run validate:exercises
+      - run: npm run build:e2e
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: reports/playwright
+          retention-days: 7

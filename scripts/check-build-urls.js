@@ -91,7 +91,6 @@ function check(file, url, attr) {
   // Only check paths that look like static files (have an extension)
   if (url.includes('.') && !url.includes('?')) {
     // Map URL to filesystem path
-    const fsPath = join(SITE_DIR, '..', url); // _site is served at PATH_PREFIX
     // We can't simply resolve because _site/ IS the root for PATH_PREFIX
     // e.g. /melimee/css/styles.css → _site/css/styles.css
     const relative_url = url.slice(PATH_PREFIX.length);
@@ -127,13 +126,12 @@ for (const file of walkHtml(SITE_DIR)) {
 
 // ── Canonical URL check ───────────────────────────────────────────────────────
 
-const SITE_URL_RE = /content="(https?:\/\/[^"]+)"/g;
 const EXPECTED_ORIGIN = (() => {
   try {
     const env = readFileSync(join(process.cwd(), '.env'), 'utf8');
     const m = env.match(/^SITE_URL\s*=\s*(.+)$/m);
     return m ? m[1].trim().replace(/\/$/, '') : null;
-  } catch (_) {
+  } catch {
     return null;
   }
 })();
@@ -178,7 +176,12 @@ if (existsSync(csvPath)) {
   }
   const longRows = rows.slice(1).filter((r) => r.length > 96);
   for (const r of longRows) {
-    issues.push({ file: 'fr/exercices/data.csv', attr: 'line length', url: r, reason: `CSV line exceeds 96 chars (${r.length})` });
+    issues.push({
+      file: 'fr/exercices/data.csv',
+      attr: 'line length',
+      url: r,
+      reason: `CSV line exceeds 96 chars (${r.length})`,
+    });
   }
 }
 
