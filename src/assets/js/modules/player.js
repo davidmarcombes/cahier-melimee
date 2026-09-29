@@ -1370,7 +1370,12 @@ export function seriesPlayer(exercises, seriesId) {
         } else {
           this.matchErrors = errs;
           this.$nextTick(() => this.updateMatchLines());
-          this._flashError();
+          // After the red flash, drop the wrong links (the right ones stay) so the child can redo them
+          this._flashError(() => {
+            this.matchConnections = this.matchConnections.filter((c) => !errs.includes(c));
+            this.matchErrors = [];
+            this.$nextTick(() => this.updateMatchLines());
+          });
         }
         return;
       }
@@ -1900,10 +1905,24 @@ export function seriesPlayer(exercises, seriesId) {
 
     matchTap(side, i) {
       if (this.solved) return;
+      // Tapping a linked item unlinks it (left: and selects it, ready to be linked again)
+      const unlink = (keep) => {
+        this.matchConnections = this.matchConnections.filter(keep);
+        this.matchErrors = this.matchErrors.filter(keep);
+        this.$nextTick(() => this.updateMatchLines());
+      };
       if (side === 'left') {
+        if (this.matchSelected !== i && this.matchConnections.some((c) => c.left === i)) {
+          unlink((c) => c.left !== i);
+          this.matchSelected = i;
+          return;
+        }
         this.matchSelected = this.matchSelected === i ? null : i;
       } else {
-        if (this.matchSelected === null) return;
+        if (this.matchSelected === null) {
+          if (this.matchConnections.some((c) => c.right === i)) unlink((c) => c.right !== i);
+          return;
+        }
         const l = this.matchSelected;
         this.matchConnections = this.matchConnections.filter((c) => c.left !== l && c.right !== i);
         this.matchConnections.push({ left: l, right: i });

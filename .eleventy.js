@@ -4,6 +4,13 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const arith = require('./scripts/lib/arith.js'); // French-notation arithmetic (shared with the answer oracle)
+const {
+  readFlags,
+  setFlag,
+  status: humanStatus,
+  unvalidateSeries,
+  validateSeries,
+} = require('./scripts/lib/human-validation.js'); // human validation records (dev API)
 const pathPrefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
 // HTML minification using html-minifier-terser
 const htmlmin = require('html-minifier-terser');
@@ -149,8 +156,11 @@ module.exports = async function (eleventyConfig) {
     { layout: null, permalink: '/sitemap.xml', eleventyExcludeFromCollections: true }
   );
 
-  // Watch reports CSVs so validation changes trigger a live rebuild of the admin dashboard
+  // Watch reports CSVs so report changes trigger a live rebuild of the admin dashboard.
+  // Not the human validation records: the dashboard reads them live (/api/human-status), and a
+  // rebuild + reload on every « Fait ✓ » click would swallow the next click.
   eleventyConfig.addWatchTarget('./reports/');
+  eleventyConfig.watchIgnores.add('./reports/human-*');
 
   // Passthrough static assets
   eleventyConfig.addPassthroughCopy({ 'src/.htaccess': '.htaccess' });
@@ -1487,24 +1497,17 @@ module.exports = async function (eleventyConfig) {
     return content;
   });
 
-  // Warn when exercise files are newer than human-validate.csv (only during serve)
+  // Serve only: series a human validated that changed since (regressions to re-check)
   eleventyConfig.on('eleventy.before', () => {
     if (process.env.ELEVENTY_RUN_MODE !== 'serve') return;
-    if (!fs.existsSync(HUMAN_CSV)) return;
-    const csvMtime = fs.statSync(HUMAN_CSV).mtimeMs;
-    let stale = false;
-    function checkDir(dir) {
-      if (stale || !fs.existsSync(dir)) return;
-      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        if (stale) return;
-        const full = path.join(dir, entry.name);
-        if (entry.isDirectory()) checkDir(full);
-        else if (entry.name.endsWith('.md') && fs.statSync(full).mtimeMs > csvMtime) stale = true;
-      }
-    }
-    for (const r of ALL_EXERCISE_ROOTS) checkDir(r);
-    if (stale) {
-      console.warn('\x1b[33m⚠  Exercise files changed since last sync. Run: npm run sync:human-validations\x1b[0m');
+    try {
+      const stale = humanStatus().filter((x) => x.status === 'stale');
+      if (stale.length)
+        console.warn(
+          `\x1b[33m⚠  ${stale.length} validated series changed since their human validation — see /admin/ (À vérifier)\x1b[0m`
+        );
+    } catch {
+      /* never block the dev server on this */
     }
   });
 
@@ -1598,180 +1601,79 @@ module.exports = async function (eleventyConfig) {
     );
   });
 
-  // Dev-only: POST /api/human-validate → appends to reports/human-validate.csv
-  const HUMAN_CSV = path.join(__dirname, 'reports/human-validate.csv');
-  const ALL_EXERCISE_ROOTS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis'].map((r) =>
-    path.join(__dirname, r)
-  );
-  const crypto = require('crypto');
-
-  function getAllSeriesIds() {
-    const results = [];
-    function scan(dir) {
-      if (!fs.existsSync(dir)) return;
-      for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
-        const full = path.join(dir, entry.name);
-        if (entry.isDirectory()) scan(full);
-        else if (entry.name === 'index.yaml') {
-          const m = fs.readFileSync(full, 'utf8').match(/^id:\s*['"]?([A-Za-z0-9_-]+)['"]?/m);
-          if (m) results.push(m[1]);
+  // Dev-only human-validation API (npm start). Logic lives in scripts/lib/human-validation.js,
+  // shared with the admin dashboard, `npm run check` and `npm run flag`.
+  //   GET  /api/human-status                 → { series: [...status], flags: [...] } (live)
+  //   GET  /api/human-next-unvalidated?current=<id> → { id, url } of the next series to check
+  //   GET  /api/human-validated-ids          → ids of series validated and unchanged since
+  //   POST /api/human-validate  { seriesId } → records a fingerprint per file, resolves its flags
+  //   POST /api/human-validate  { seriesId, action: 'unvalidate', previous, reopen } → undoes it
+  //   POST /api/human-flag      { id, action: 'resolve' | 'reopen' }
+  const prefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
+  const sendJson = (res, code, obj) => {
+    res.writeHead(code, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(obj));
+  };
+  const readBody = (req) =>
+    new Promise((resolve, reject) => {
+      let body = '';
+      req.on('data', (c) => (body += c));
+      req.on('end', () => {
+        try {
+          resolve(JSON.parse(body || '{}'));
+        } catch (e) {
+          reject(e);
         }
-      }
-    }
-    for (const r of ALL_EXERCISE_ROOTS) scan(r);
-    return results;
-  }
-
-  function findSeriesDir(seriesId) {
-    function scan(dir) {
-      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        const full = path.join(dir, entry.name);
-        if (entry.isDirectory()) {
-          const result = scan(full);
-          if (result) return result;
-        } else if (entry.name === 'index.yaml') {
-          const content = fs.readFileSync(full, 'utf8');
-          if (content.match(new RegExp(`^id:\\s*${seriesId}\\s*$`, 'm'))) return dir;
-        }
-      }
-      return null;
-    }
-    for (const root of ALL_EXERCISE_ROOTS) {
-      try {
-        const result = scan(root);
-        if (result) return result;
-      } catch {
-        /* unreadable directory — skip */
-      }
-    }
-    return null;
-  }
-
-  function fileHash(filePath) {
-    return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex').slice(0, 16);
-  }
-
-  function readHumanCsv() {
-    if (!fs.existsSync(HUMAN_CSV)) return new Map();
-    const lines = fs
-      .readFileSync(HUMAN_CSV, 'utf8')
-      .split('\n')
-      .filter((l) => l.trim());
-    const map = new Map();
-    for (const line of lines.slice(1)) {
-      const parts = line.split(',');
-      map.set(parts[0], {
-        path: parts[0],
-        seriesId: parts[1] || '',
-        hash: parts[2] || '',
-        validatedAt: parts[3] || '',
       });
-    }
-    return map;
-  }
-
-  function writeHumanCsv(map) {
-    const rows = [...map.values()].sort((a, b) => a.path.localeCompare(b.path));
-    const lines = [
-      'path,seriesId,hash,validatedAt',
-      ...rows.map((r) => `${r.path},${r.seriesId},${r.hash},${r.validatedAt}`),
-    ];
-    fs.writeFileSync(HUMAN_CSV, lines.join('\n') + '\n', 'utf8');
-  }
+    });
 
   eleventyConfig.setServerOptions({
     middleware: [
-      function devValidate(req, res, next) {
-        // GET /api/human-next-unvalidated?current=<id> → next series URL not yet validated
-        if (req.method === 'GET' && req.url.startsWith('/api/human-next-unvalidated')) {
-          const currentId = new URL(req.url, 'http://localhost').searchParams.get('current');
-          const map = readHumanCsv();
-          const seriesFiles = {};
-          for (const { seriesId, validatedAt } of map.values()) {
-            if (!seriesId) continue;
-            if (!seriesFiles[seriesId]) seriesFiles[seriesId] = [];
-            seriesFiles[seriesId].push(validatedAt);
+      async function humanValidationApi(req, res, next) {
+        if (!req.url.startsWith('/api/human-')) return next();
+        try {
+          if (req.method === 'GET' && req.url === '/api/human-status') {
+            return sendJson(res, 200, { series: humanStatus(), flags: readFlags() });
           }
-          const validatedSet = new Set(
-            Object.entries(seriesFiles)
-              .filter(([, ts]) => ts.length > 0 && ts.every((t) => t))
-              .map(([id]) => id)
-          );
-          const allIds = getAllSeriesIds();
-          const currentPos = allIds.indexOf(currentId);
-          let next = null;
-          for (let i = currentPos + 1; i < allIds.length; i++) {
-            if (!validatedSet.has(allIds[i])) {
-              next = allIds[i];
-              break;
-            }
+          if (req.method === 'GET' && req.url === '/api/human-validated-ids') {
+            return sendJson(
+              res,
+              200,
+              humanStatus()
+                .filter((s) => s.status === 'ok')
+                .map((s) => s.id)
+            );
           }
-          if (!next) {
-            for (let i = 0; i < currentPos; i++) {
-              if (!validatedSet.has(allIds[i])) {
-                next = allIds[i];
-                break;
-              }
-            }
+          if (req.method === 'GET' && req.url.startsWith('/api/human-next-unvalidated')) {
+            const current = new URL(req.url, 'http://localhost').searchParams.get('current');
+            const all = humanStatus();
+            const at = all.findIndex((s) => s.id === current);
+            // Stale (regressions) first, then the next unvalidated series after the current one
+            const next =
+              all.find((s) => s.status === 'stale' && s.id !== current) ||
+              [...all.slice(at + 1), ...all.slice(0, Math.max(at, 0))].find((s) => s.status !== 'ok');
+            return sendJson(res, 200, { id: next ? next.id : null, url: next ? prefix + next.url : null });
           }
-          const prefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ id: next, url: next ? `${prefix}/fr/exercices/${next}/` : null }));
-          return;
+          if (req.method === 'POST' && req.url === '/api/human-validate') {
+            // action 'unvalidate' undoes a validation with what the validation returned (previous, reopen)
+            const { seriesId, action = 'validate', previous, reopen } = await readBody(req);
+            let result = {};
+            if (action === 'validate') result = validateSeries(seriesId);
+            else if (action === 'unvalidate') unvalidateSeries(seriesId, { previous, reopen });
+            else throw new Error(`unknown action ${action}`);
+            // The series' fresh status and flags, so the dashboard updates the row in place
+            const [series] = humanStatus(seriesId);
+            const flags = readFlags().filter((f) => f.seriesId === seriesId);
+            return sendJson(res, 200, { ok: true, ...result, series, flags });
+          }
+          if (req.method === 'POST' && req.url === '/api/human-flag') {
+            const { id, action } = await readBody(req);
+            return sendJson(res, 200, { ok: true, flag: setFlag(id, action) });
+          }
+          return next();
+        } catch (e) {
+          return sendJson(res, 400, { ok: false, error: e.message });
         }
-
-        // GET /api/human-validated-ids → seriesIds where ALL files have been validated
-        if (req.method === 'GET' && req.url === '/api/human-validated-ids') {
-          const map = readHumanCsv();
-          const seriesFiles = {};
-          for (const { seriesId, validatedAt } of map.values()) {
-            if (!seriesId) continue;
-            if (!seriesFiles[seriesId]) seriesFiles[seriesId] = [];
-            seriesFiles[seriesId].push(validatedAt);
-          }
-          const ids = Object.entries(seriesFiles)
-            .filter(([, ts]) => ts.length > 0 && ts.every((t) => t))
-            .map(([id]) => id);
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify(ids));
-          return;
-        }
-
-        if (req.method !== 'POST' || req.url !== '/api/human-validate') return next();
-        let body = '';
-        req.on('data', (chunk) => {
-          body += chunk;
-        });
-        req.on('end', () => {
-          try {
-            const { seriesId } = JSON.parse(body);
-            const seriesDir = seriesId ? findSeriesDir(seriesId) : null;
-            const map = readHumanCsv();
-            const ts = new Date().toISOString();
-            if (seriesDir) {
-              const mdFiles = fs
-                .readdirSync(seriesDir)
-                .filter((f) => f.endsWith('.md'))
-                .sort();
-              for (const f of mdFiles) {
-                const absPath = path.join(seriesDir, f);
-                const relPath = path.relative(__dirname, absPath).replace(/\\/g, '/');
-                const hash = fileHash(absPath);
-                map.set(relPath, { path: relPath, seriesId, hash, validatedAt: ts });
-              }
-            } else {
-              // Series dir not found — record bare entry without path/hash
-              const key = `(unknown)/${seriesId}`;
-              map.set(key, { path: key, seriesId: seriesId || '', hash: '', validatedAt: ts });
-            }
-            writeHumanCsv(map);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ ok: true }));
-          } catch {
-            res.writeHead(400);
-            res.end('Bad request');
-          }
-        });
       },
     ],
   });

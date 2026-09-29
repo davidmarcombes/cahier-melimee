@@ -6,6 +6,9 @@ const desc = {
   check: 'Pre-commit check: unit → validate → fresh build → e2e on changed series (full if engine changed)',
   'check:full': 'Pre-commit check with e2e on every page',
   'check:answers': 'Answer oracle: recompute expected answers on the built site + generators (needs a build)',
+  flag: 'Ask a human to check something: npm run flag -- <series id|URL> "<reason>" (shows in /admin/)',
+  'release:verify':
+    'Check the production artifact before upload (dev content, broken links, removed series): after npm run build',
   build: 'Build for production (test + validate + eleventy + css)',
   'build:css': 'Compile and minify CSS',
   'build:compress': 'Compress static assets',

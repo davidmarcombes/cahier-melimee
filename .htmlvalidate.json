@@ -44,7 +44,12 @@
           ":key": {},
           ":aria-label": {},
           ":aria-expanded": {},
-          ":disabled": {}
+          ":disabled": {},
+          ":aria-pressed": {},
+          ":aria-controls": {},
+          ":aria-sort": {},
+          ":title": {},
+          ":id": {}
         }
       },
       "template": {

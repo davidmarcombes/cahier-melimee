@@ -3,7 +3,8 @@
  * sync-human-validations.js — Keep human-validate.csv in sync with exercise files.
  *
  * - Adds new exercise files (validatedAt empty = not yet validated)
- * - Clears validatedAt when a file's content has changed since validation
+ * - Keeps validations of files changed since: they become "à revérifier" (stale), the regression
+ *   signal shown in /admin/ and by npm run check. Never cleared here: clearing it hid regressions.
  * - Removes entries for files that no longer exist
  *
  * Usage:
@@ -35,11 +36,10 @@ const C = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-// Normalized hash: LF line endings, so CRLF↔LF changes on Windows don't appear as content changes.
-function fileHash(filePath) {
-  const content = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  return crypto.createHash('sha256').update(content).digest('hex').slice(0, 16);
-}
+// Fingerprint shared with the dev server, /admin/ and npm run check (md + generator source)
+const { fingerprint, loadGenerators } = require('./lib/human-validation.js');
+const gens = loadGenerators();
+const fileHash = (filePath) => fingerprint(filePath, gens);
 
 // Raw hash: used to detect whether stored hash is a legacy CRLF hash for the same file.
 function fileHashRaw(filePath) {
@@ -136,14 +136,15 @@ for (const { absPath, seriesId } of files) {
     if (isLineEndingChange) {
       updated.set(relPath, { path: relPath, seriesId, hash, validatedAt: entry.validatedAt });
       rehashed++;
-    } else {
-      const wasValidated = !!entry.validatedAt;
-      updated.set(relPath, { path: relPath, seriesId, hash, validatedAt: '' });
+    } else if (entry.validatedAt) {
+      // Validated, then changed: keep the record as is — its old fingerprint marks it "à revérifier"
       console.log(
-        `  ${C.yellow}~${C.reset} CHANGED   ${relPath}` +
-          (wasValidated ? `  ${C.dim}(validation cleared)${C.reset}` : '')
+        `  ${C.yellow}↻${C.reset} STALE     ${relPath}  ${C.dim}(validated, changed since — re-check)${C.reset}`
       );
       invalidated++;
+    } else {
+      updated.set(relPath, { path: relPath, seriesId, hash, validatedAt: '' });
+      rehashed++;
     }
   }
 }
@@ -163,9 +164,9 @@ if (added + invalidated + removed + rehashed === 0) {
 } else {
   const parts = [];
   if (added) parts.push(`${C.green}${added} added${C.reset}`);
-  if (invalidated) parts.push(`${C.yellow}${invalidated} changed${C.reset} (validation cleared)`);
+  if (invalidated) parts.push(`${C.yellow}${invalidated} to re-check${C.reset} (validated, changed since)`);
   if (removed) parts.push(`${C.red}${removed} removed${C.reset}`);
-  if (rehashed) parts.push(`${C.dim}${rehashed} rehashed (CRLF→LF)${C.reset}`);
+  if (rehashed) parts.push(`${C.dim}${rehashed} rehashed${C.reset}`);
   if (unchanged) parts.push(`${C.dim}${unchanged} unchanged${C.reset}`);
   console.log(`\n${C.bold}Summary:${C.reset} ${parts.join(', ')}`);
   if (doWrite) {

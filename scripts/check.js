@@ -169,38 +169,32 @@ if (fs.existsSync(coverageDir)) {
   if (list.length) console.log(`\n${C.yellow}Not covered by the solvability test:${C.reset} ${list.join(', ')}`);
 }
 
-// Changed exercises not yet validated by a human since their last change (reminder, not a failure).
-// Validate with the "✓ Valider la série" button on the dev server (npm start), which stamps
-// reports/human-validate.csv with the file hash — the same normalized hash as sync-human-validations.
-const csvPath = path.join(ROOT, 'reports', 'human-validate.csv');
-if (fs.existsSync(csvPath)) {
-  const crypto = require('crypto');
-  const validated = new Map();
-  for (const line of fs.readFileSync(csvPath, 'utf8').split('\n').slice(1)) {
-    const [p, , h, at] = line.split(',');
-    if (p && at && at.trim()) validated.set(p, h);
+// Human validation — reminder, not a failure (scripts/lib/human-validation.js, same data as /admin/):
+//   ↻ series a human validated that changed since: regressions, re-check first
+//   • changed series not yet validated by hand
+//   ⚑ items flagged for a human (npm run flag), 🚩 in the /admin/ « À vérifier » column
+// Validate with « ✓ Valider la série » at the end of a series on the dev server (npm start).
+try {
+  const { readFlags, status } = require('./lib/human-validation.js');
+  const all = status();
+  const touched = new Set(pages.map((p) => p.split('/')[1]));
+  const stale = all.filter((s) => s.status === 'stale');
+  const todo = all.filter((s) => touched.has(s.id) && s.status !== 'ok' && s.status !== 'stale');
+  const flags = readFlags().filter((f) => !f.resolvedAt);
+  const link = (s) => `http://localhost:8080${s.url}`;
+  if (stale.length) {
+    console.log(`\n${C.yellow}${C.bold}↻ Validated by hand, changed since — re-check first:${C.reset}`);
+    for (const s of stale) console.log(`  ${link(s)}  ${C.dim}${s.title} · changed: ${s.stale.join(', ')}${C.reset}`);
   }
-  const hash = (f) =>
-    crypto
-      .createHash('sha256')
-      .update(fs.readFileSync(path.join(ROOT, f), 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n'))
-      .digest('hex')
-      .slice(0, 16);
-  const todo = {};
-  for (const f of files.filter((x) => /^src\/fr\/(exercices|applications|defis)\/.*\.md$/.test(x))) {
-    if (!fs.existsSync(path.join(ROOT, f)) || validated.get(f) === hash(f)) continue;
-    (todo[seriesLabel(f) || f] ??= []).push(path.basename(f));
+  if (todo.length) {
+    console.log(`\n${C.yellow}Changed, not yet validated by hand:${C.reset}`);
+    for (const s of todo)
+      console.log(`  ${link(s)}  ${C.dim}${s.title} · ${s.validated}/${s.total} validated${C.reset}`);
   }
-  const series = Object.entries(todo);
-  if (series.length) {
-    console.log(`\n${C.yellow}To proofread and validate by hand (changed since last human validation):${C.reset}`);
-    for (const [label, list] of series) {
-      const url = label.includes('/') && !label.startsWith('src/') ? `http://localhost:8080/fr/${label}/` : label;
-      console.log(
-        `  ${url}  ${C.dim}${list.length} file(s): ${list.slice(0, 4).join(', ')}${list.length > 4 ? '…' : ''}${C.reset}`
-      );
-    }
-  }
+  if (flags.length)
+    console.log(`\n${C.yellow}⚑ ${flags.length} item(s) flagged for you:${C.reset} http://localhost:8080/admin/`);
+} catch (e) {
+  console.log(`\n${C.dim}Human validation status unavailable: ${e.message}${C.reset}`);
 }
 
 summary();

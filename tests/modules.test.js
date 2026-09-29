@@ -86,6 +86,55 @@ describe('seriesPlayer Logic', () => {
     delete window.AppGenerators;
   });
 
+  describe('matching — a child can undo links', () => {
+    const ex = { type: 'matching', pairs: { left: ['A', 'B'], right: ['a', 'b'], answers: [0, 1] } };
+    const mk = () => {
+      const p = seriesPlayer([ex], 'match');
+      Object.defineProperty(p, 'cur', { get: () => ex });
+      p.$nextTick = (f) => f && f();
+      p.updateMatchLines = () => {};
+      p.matchConnections = [];
+      p.matchErrors = [];
+      p.matchSelected = null;
+      return p;
+    };
+
+    it('tapping a linked left item unlinks it and selects it', () => {
+      const p = mk();
+      p.check = () => {};
+      p.matchTap('left', 0);
+      p.matchTap('right', 1);
+      expect(p.matchConnections).toEqual([{ left: 0, right: 1 }]);
+      p.matchTap('left', 0);
+      expect(p.matchConnections).toEqual([]);
+      expect(p.matchSelected).toBe(0);
+    });
+
+    it('tapping a linked right item with nothing selected unlinks it', () => {
+      const p = mk();
+      p.check = () => {};
+      p.matchTap('left', 0);
+      p.matchTap('right', 1);
+      p.matchTap('right', 1);
+      expect(p.matchConnections).toEqual([]);
+    });
+
+    it('after a wrong check, the wrong links are removed and the right ones kept', () => {
+      vi.useFakeTimers();
+      const p = mk();
+      p.matchConnections = [
+        { left: 0, right: 0 }, // right
+        { left: 1, right: 0 }, // wrong
+      ];
+      p.check();
+      expect(p.matchErrors).toHaveLength(1);
+      vi.advanceTimersByTime(SETTINGS.ERROR_FLASH_DURATION + 10);
+      expect(p.matchConnections).toEqual([{ left: 0, right: 0 }]);
+      expect(p.matchErrors).toEqual([]);
+      vi.useRealTimers();
+    });
+  });
+
   it('should initialize correctly', () => {
     const p = seriesPlayer(mockExercises, 'test-series');
     expect(p.exercises).toEqual(mockExercises);

@@ -10,7 +10,8 @@ All available commands (run `npm run help` for a live list):
 |---------|-------------|
 | `npm start` / `npm run dev` | Start dev server (Eleventy + Tailwind watch mode) |
 | `bun run dev:bun` | Same, using Bun runtime (faster if Bun is installed) |
-| `npm run build` | Full production build: test → validate → generate:tokens → eleventy → css → html-validate |
+| `npm run build` | Production build into `_site/` (wipes it — stop `npm start` first): lint → test → validate → eleventy → answer oracle → css → minify → html-validate → service worker. Release procedure: [docs/release.md](../docs/release.md) |
+| `npm run release:verify` | After `npm run build`, before the manual upload: required files, no dev content (/admin/, localhost), broken local links, series removed vs the live site (`--offline`, `--strict-ids`) |
 | `npm run clean` | Remove `_site/` build output |
 | `npm run serve:local` | Serve the built `_site/` locally (useful for testing subpath deployments) |
 
@@ -84,7 +85,8 @@ The e2e per-page specs:
 | `npm run validate:llm` | LLM answer checker — caches results in `reports/validate-llm-cache.csv` by file hash |
 | `npm run review:failures` | Interactive review of LLM-flagged failures — opens browser, prompts y/n/s per file |
 | `npm run sync:human-validations` | Dry-run: show which exercise files are new/changed vs `reports/human-validate.csv` |
-| `npm run sync:human-validations:write` | Apply: update `human-validate.csv` (add new files, clear stale validations) |
+| `npm run sync:human-validations:write` | Apply: update `human-validate.csv` (add new files, rehash unvalidated ones; validated-then-changed files are kept and reported as stale) |
+| `npm run flag -- <id or URL> "<reason>"` | Flag an exercise for a human to check (🚩 in the /admin/ « À vérifier » column; `--list`, `--resolve <id>`) |
 | `npm run list:human-validations` | Display the human-validate.csv as a table with progress summary |
 | `npm run validate:cross` | Join human + LLM validation CSVs — shows conflicts, gaps, stale hashes (`--verbose`, `--cat=`) |
 
@@ -119,7 +121,7 @@ All scripts are in `scripts/`. Key files:
 | `validate-exercises.js` | Validates all exercise `.md` front-matter against `TYPE_SCHEMAS`. Run via `npm run validate:exercises`. |
 | `validate-llm.js` | LLM-powered answer validator using local Ollama. Caches results in `validate-llm-cache.csv` by file hash. See `agents/ollama.md` for setup. |
 | `review-failures.js` | Interactive review of LLM-flagged failures. Opens browser per file, prompts y/n/s, writes `manual:ok` back to cache. |
-| `sync-human-validations.js` | Syncs `reports/human-validate.csv` with current exercise files. Adds new, clears stale (hash changed), removes deleted. Use `--write` to apply. |
+| `sync-human-validations.js` | Syncs `reports/human-validate.csv` with current exercise files. Adds new, rehashes unvalidated files, keeps validated-then-changed files (reported ↻ STALE), removes deleted. Use `--write` to apply. |
 | `show-human-validations.js` | Displays `reports/human-validate.csv` as a formatted table (`--last N`, `--clear`). |
 | `cross-validate.js` | Joins `human-validate.csv` + `validate-llm-cache.csv` on `path`. Reports agreement, conflicts, coverage gaps, and hash mismatches. Options: `--verbose`, `--cat=<category>`. |
 | `list-series.js` | Lists all exercise series with LEVEL/CATEGORY/SLUG/TYPE/TITLE/ID. Filters: `--level`, `--type`, `--cat`, `--missing`. |
@@ -147,43 +149,56 @@ All scripts are in `scripts/`. Key files:
 
 ## Human Validation Workflow
 
-A lightweight QA loop for manually validating exercise series during development. All data lives in `reports/human-validate.csv` (format: `path,seriesId,hash,validatedAt` — one row per `.md` file).
+Human validations are the regression baseline: a series a human played and approved is recorded with a **fingerprint** of what was approved. If it changes afterwards, it shows up as **↻ à revérifier** (stale) everywhere. All logic lives in `scripts/lib/human-validation.js` (used by the dev API, `/admin/`, `npm run check`, `npm run flag` and the sync script).
+
+### Records
+
+- `reports/human-validate.csv` — `path,seriesId,hash,validatedAt`, one row per `.md` file. `hash` = 16-char SHA-256 of the LF-normalised file **plus, for generated exercises, the generator's source code** (a generator change invalidates its exercises).
+- `reports/human-flags.json` — items flagged for a human: `{ id, seriesId, url, title, reason, source, createdAt, resolvedAt, resolvedBy }`.
+
+Series status: `ok` (all files validated, unchanged) · `stale` (validated, changed since — **re-check first**) · `partial` · `pending`.
 
 ### Typical session
 
 ```bash
-# 1. Sync the CSV with current files after adding/editing exercises
-npm run sync:human-validations           # dry-run — shows what would change
-npm run sync:human-validations:write     # apply (adds new files, clears stale validations)
-
-# 2. Start the dev server
-npm run dev
-
-# 3. Open the exercise list → click "Non validées" to see unvalidated series
-#    Navigate to a series, work through all exercises
-#    When done: "Série terminée!" modal → click "✓ Valider la série"
-#    This writes one row per .md file with the current hash + timestamp
-
-# 4. Review what has been validated
-npm run list:human-validations
-npm run list:human-validations -- --last 20
+npm start                      # dev server (the API below only exists in serve mode)
+# /admin/ → « À vérifier » column of the series table (one cell per series):
+#   ↻ modifiée (stale) · 🚩 n open flags · ○ à faire (never / partly validated) · ✓ date (validated)
+#   ☐ tick = validate the series (fingerprints + closes its flags), 5 s « Annuler » toast to undo
+#   click the state → the series' flags: « Fait ✓ » closes one, « rouvrir » reopens it
+#   sort the column: stale, then flagged, then pending, then ok · « À vérifier seulement » filter
+# Or play the series → « Série terminée ! » → « ✓ Valider la série » (same record);
+#   « → Suivante non validée » goes on
+npm run check                  # ends with a reminder: stale series, touched unvalidated series, open flags
 ```
 
-### Key rules
+### Flagging something for the human (agents: use this, not a markdown list)
 
-- `"Non validées"` filter (visible on `localhost` only) hides series where **all** files have a `validatedAt` timestamp.
-- A series becomes **unvalidated** again automatically if any of its files change (detected by hash mismatch during `sync`).
-- The right-click **debug panel** (on any series page) lets you grab the current exercise state and copy an agent-ready prompt to the clipboard.
-- The CSV can be joined with `reports/validate-llm-cache.csv` on the `path` and `hash` columns.
+```bash
+npm run flag -- f06ea123 "Bike, longest − shortest = 11 (was 7)"
+npm run flag -- "http://localhost:8080/fr/exercices/f06ea123/#5" "..."   # keeps the #n anchor
+npm run flag -- --list
+npm run flag -- --resolve <flag id>
+```
 
-### CSV columns
+### Dev API (`.eleventy.js`, serve mode only)
 
-| Column | Description |
-|--------|-------------|
-| `path` | Relative path from project root (e.g. `src/fr/exercices/ce1/…/01-foo.md`) |
-| `seriesId` | 8-char series ID from `index.yaml` |
-| `hash` | 16-char SHA-256 of file content at validation time |
-| `validatedAt` | ISO 8601 timestamp, or empty if not yet validated / invalidated by sync |
+| Endpoint | |
+|----------|---|
+| `GET /api/human-status` | `{ series: [...status], flags }` — the dashboard loads this live |
+| `GET /api/human-next-unvalidated?current=<id>` | next series to check (stale first) |
+| `GET /api/human-validated-ids` | ids with status `ok` (« Non validées » list filter) |
+| `POST /api/human-validate { seriesId }` | validate a series → `{ files, previous, closedFlags, series, flags }` |
+| `POST /api/human-validate { seriesId, action: 'unvalidate', previous, reopen }` | undo: the series' rows go back to `previous` (none → pending), the `reopen` flags it closed are reopened |
+| `POST /api/human-flag { id, action: 'resolve' \| 'reopen' }` | close / reopen a flag |
+
+`reports/human-*` is excluded from the dev server's watch: writes don't trigger a rebuild.
+
+### Rules
+
+- `sync:human-validations:write` (also run by `generate:commit`) never clears a validation: a validated file that changed stays recorded and is reported as stale.
+- The right-click **debug panel** (on any series page) copies an agent-ready prompt for the current exercise.
+- The CSV can be joined with `reports/validate-llm-cache.csv` on `path` (`npm run validate:cross`).
 
 ## E2E Testing (Playwright)
 

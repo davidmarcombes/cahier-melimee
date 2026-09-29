@@ -43,6 +43,8 @@
     "validate:config": "node scripts/validate-config.js",
     "validate:exercises": "node scripts/validate-exercises.js",
     "check:answers": "node scripts/check-answers.js",
+    "release:verify": "node scripts/release-verify.js",
+    "flag": "node scripts/flag.js",
     "validate:html": "html-validate \"_site/**/*.html\"",
     "validate:llm": "node scripts/validate-llm.js",
     "validate:llm:smoke": "node scripts/validate-llm.js --one --verbose",

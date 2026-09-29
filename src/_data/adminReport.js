@@ -60,24 +60,15 @@ function parseCSV(filePath) {
   });
 }
 
+const { status: humanValidationStatus } = require('../../scripts/lib/human-validation.js');
+
 module.exports = function () {
-  const humanRows = parseCSV(path.join(ROOT, 'reports/human-validate.csv'));
+  // Human status (ok / stale / partial / pending) from the shared module — fingerprints included
+  const humanStatus = Object.fromEntries(humanValidationStatus().map((x) => [x.id, x]));
   const llmRows = parseCSV(path.join(ROOT, 'reports/validate-llm-cache.csv'));
   const reportRows = parseCSV(path.join(ROOT, 'reports/exercises-report.csv'));
 
-  if (!humanRows.length && !llmRows.length && !reportRows.length) return [];
-
-  // Aggregate human validations by seriesId
-  const human = {};
-  for (const row of humanRows) {
-    if (!row.seriesId) continue;
-    if (!human[row.seriesId]) human[row.seriesId] = { total: 0, validated: 0, latestDate: '' };
-    human[row.seriesId].total++;
-    if (row.validatedAt) {
-      human[row.seriesId].validated++;
-      if (row.validatedAt > human[row.seriesId].latestDate) human[row.seriesId].latestDate = row.validatedAt;
-    }
-  }
+  if (!llmRows.length && !reportRows.length) return [];
 
   // Aggregate LLM results by seriesId
   const llm = {};
@@ -105,29 +96,23 @@ module.exports = function () {
 
   // Return one entry per unique id seen across all sources
   const ids = new Set(
-    [...humanRows.map((r) => r.seriesId), ...llmRows.map((r) => r.seriesId), ...Object.keys(pathMap)].filter(Boolean)
+    [...Object.keys(humanStatus), ...llmRows.map((r) => r.seriesId), ...Object.keys(pathMap)].filter(Boolean)
   );
 
   return [...ids].map((id) => {
-    const h = human[id] || null;
+    const h = humanStatus[id] || null;
     const l = llm[id] || null;
     const relPath = pathMap[id] || '';
     const absPath = relPath ? path.join(ROOT, 'src', relPath, 'index.yaml').replace(/\\/g, '/') : '';
-    const humanStatus = !h
-      ? 'pending'
-      : h.validated === h.total && h.total > 0
-        ? 'ok'
-        : h.validated > 0
-          ? 'partial'
-          : 'pending';
     const llmStatus = !l || l.total === 0 ? 'pending' : l.fail > 0 ? 'fail' : l.ok > 0 ? 'ok' : 'skip';
     return {
       id,
       path: relPath,
       absPath,
-      humanStatus,
+      humanStatus: h ? h.status : 'pending',
+      humanStale: h ? h.stale : [],
       humanCoverage: h ? `${h.validated}/${h.total}` : '—',
-      humanDate: h && h.latestDate ? h.latestDate.slice(0, 10) : '',
+      humanDate: h && h.validatedAt ? h.validatedAt.slice(0, 10) : '',
       llmStatus,
     };
   });

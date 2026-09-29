@@ -97,7 +97,7 @@ Student progress is stored in localStorage by series ID (`melimee_v1.progress[se
      - **Spelling:** French spellcheck (cspell) of the changed content, front matter included. The config was broken: it ignored almost every word and never checked the front matter.
      - **Production output:** e2e runs on the minified output, on desktop and on a portrait tablet (the target devices).
      - **Stricter e2e:** layout-health reports every JS error and failed request, and content sticking out of the player on every exercise. The solvability test solves 10 draws per generated series and fails on a missing (`null`) expected answer.
-     - **Human-validation reminder:** `check` lists the changed exercises not yet validated by hand, with their local URL.
+     - **Human validation as a regression baseline** (`scripts/lib/human-validation.js`): a validated series is fingerprinted (the file, plus the generator's code for generated exercises). If it changes afterwards it is shown as **stale** (« ↻ à revérifier ») in `/admin/`, in `check` and in the sync script, which no longer erases these validations. The dashboard loads the data live; its « À vérifier » column shows each series' state (stale, **flags** from `npm run flag`, pending, validated), validates with one tick (5 s undo) and closes flags one by one. `check` ends with a reminder: stale series, then changed series not yet validated, then open flags.
      - **One-off proofread:** Haiku reviewed the 871 word-based exercises, and every finding was checked by hand: 4 real errors (3 wrong answers in CM1 `modelisation-01`, 1 inconsistent estimate) and 4 false positives.
      - **Bugs fixed:**
        - `compare-expressions` auto-answers used a JS eval: decimals came out wrong and "1 000" gave `?`.

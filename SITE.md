@@ -25,11 +25,14 @@
 
 ## Deployment
 
+**Procedure and pre-release checklist: [docs/release.md](docs/release.md)** — build, `npm run release:verify`, manual upload.
+
 ### Build Settings
 ```bash
-Build command: npm run build
-Publish directory: _site
-Node version: 18.x
+Build command: npm run build   # after npm run check -- --full
+Publish directory: _site          # upload its contents, including .htaccess and sw.js
+Node version: 22.x
+Host: LWS, www.melimee.fr (static files, manual upload)
 ```
 
 ### Custom Domain

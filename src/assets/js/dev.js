@@ -38,15 +38,17 @@ document.addEventListener('alpine:init', () => {
         this.humanValidating = true;
         try {
           const meta = JSON.parse(document.getElementById('series-meta')?.textContent || '{}');
-          await fetch('/api/human-validate', {
+          const res = await fetch('/api/human-validate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ seriesId: meta.id, url: window.location.pathname }),
           });
+          if (!res.ok) throw new Error(`human-validate: HTTP ${res.status}`);
           this.humanValidated = true;
           await this._fetchNextUnvalidated();
-        } catch {
-          // non-fatal
+        } catch (e) {
+          // non-fatal: the button stays, so it can be retried
+          console.warn(e);
         } finally {
           this.humanValidating = false;
         }

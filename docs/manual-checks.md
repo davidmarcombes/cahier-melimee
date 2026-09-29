@@ -1,6 +1,8 @@
 # Manual checks — September 2026 session
 
-Start the dev server with `npm start`, then open the links. `#n` jumps to exercise n. On the priority 1, 3 and 4 series, the **« ✓ Valider la série »** button (dev mode) removes them from the reminder at the end of `npm run check`.
+> These items are now **flags** in the dashboard: http://localhost:8080/admin/ → « À vérifier » column (🚩 on each series; sort the column or use « À vérifier seulement »). Click 🚩 to see them, « Fait ✓ » closes one; the ☐ tick validates the whole series and closes all of its flags (5 s to « Annuler »). This file is kept as the original list.
+
+Start the dev server with `npm start`, then open the links. `#n` jumps to exercise n.
 
 ## Priority 1 — Bugs fixed (they were broken in production)
 
@@ -34,6 +36,7 @@ Check that the correct answer is accepted **and** that a wrong answer is refused
 - [ ] Comparing numbers, blank page:
   - [ ] [fa708ecd](http://localhost:8080/fr/applications/fa708ecd/)
   - [ ] [ed911252](http://localhost:8080/fr/applications/ed911252/)
+- [ ] [a9a121ac #1](http://localhost:8080/fr/exercices/a9a121ac/#1): **Matching, undoing a link**. Make a wrong matching: after the red flash, the wrong links disappear and the correct ones stay. Tapping a linked item unlinks it
 - [ ] [b2025e33](http://localhost:8080/fr/applications/b2025e33/): **« Recommencer la série »**. Play to the end and restart: the count must stay at 10 (it used to go 58, then 370)
 
 ## Priority 2 — Display (on desktop **and** tablet)

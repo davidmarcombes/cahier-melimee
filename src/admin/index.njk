@@ -1,7 +1,6 @@
 ---
 layout: admin
 title: Dashboard
-permalink: /admin/
 ---
 
 {% if site.devMode %}
@@ -79,12 +78,19 @@ permalink: /admin/
 
           <div x-show="hasHumanData" class="flex items-center gap-1.5">
             <span class="text-xs font-medium text-slate-400 uppercase tracking-wide">Humain</span>
-            <template x-for="s in [{v:'ok',l:'✓'},{v:'partial',l:'partiel'},{v:'pending',l:'✗'}]" :key="s.v">
+            <template x-for="s in [{v:'ok',l:'✓'},{v:'stale',l:'à revérifier'},{v:'partial',l:'partiel'},{v:'pending',l:'✗'}]" :key="s.v">
               <button type="button" @click="filters.humanStatus = filters.humanStatus === s.v ? '' : s.v"
                       :class="filters.humanStatus === s.v ? 'bg-primary-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'"
                       class="px-2 py-0.5 rounded-md text-xs font-medium transition-colors" x-text="s.l"></button>
             </template>
           </div>
+
+          <button type="button" x-show="live" @click="filters.toCheck = !filters.toCheck"
+                  :aria-pressed="filters.toCheck ? 'true' : 'false'"
+                  title="Modifiées depuis la validation, signalées ou jamais validées"
+                  :class="filters.toCheck ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'"
+                  class="px-2 py-0.5 rounded-md text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  x-text="'À vérifier seulement (' + toCheckCount + ')'"></button>
 
           <div x-show="hasHumanData" class="flex items-center gap-1.5">
             <span class="text-xs font-medium text-slate-400 uppercase tracking-wide">LLM</span>
@@ -143,6 +149,12 @@ permalink: /admin/
                 <th @click="sortBy('difficulty')" :class="sort.col==='difficulty' && 'active'" class="text-left px-3 py-2.5 font-semibold text-slate-500 dark:text-slate-400 cursor-pointer hover:text-slate-700 dark:hover:text-slate-200 whitespace-nowrap select-none">
                   Diff. <span class="sort-icon" x-text="sort.col==='difficulty' ? (sort.dir==='asc' ? '↑' : '↓') : '↕'"></span>
                 </th>
+                <th x-show="live" :aria-sort="sort.col==='check' ? (sort.dir==='asc' ? 'ascending' : 'descending') : 'none'" class="text-left px-3 py-2.5 font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                  <button type="button" @click="sortBy('check')" :class="sort.col==='check' && 'active'" title="Trier : modifiées, puis signalées, puis à faire, puis validées"
+                          class="font-semibold cursor-pointer hover:text-slate-700 dark:hover:text-slate-200 select-none">
+                    À vérifier <span class="sort-icon" x-text="sort.col==='check' ? (sort.dir==='asc' ? '↑' : '↓') : '↕'"></span>
+                  </button>
+                </th>
                 <th x-show="hasHumanData" @click="sortBy('humanStatus')" :class="sort.col==='humanStatus' && 'active'" class="text-center px-3 py-2.5 font-semibold text-slate-500 dark:text-slate-400 cursor-pointer hover:text-slate-700 dark:hover:text-slate-200 whitespace-nowrap select-none">
                   Humain <span class="sort-icon" x-text="sort.col==='humanStatus' ? (sort.dir==='asc' ? '↑' : '↓') : '↕'"></span>
                 </th>
@@ -155,7 +167,7 @@ permalink: /admin/
             <tbody>
               <template x-if="filtered.length === 0">
                 <tr>
-                  <td colspan="10" class="px-4 py-8 text-center text-slate-400">Aucun résultat</td>
+                  <td colspan="11" class="px-4 py-8 text-center text-slate-400">Aucun résultat</td>
                 </tr>
               </template>
               <template x-for="row in filtered" :key="row.id">
@@ -195,6 +207,51 @@ permalink: /admin/
                     <span :class="{'text-green-600 dark:text-green-400': row.difficulty === 'facile', 'text-amber-600 dark:text-amber-400': row.difficulty === 'moyen', 'text-red-600 dark:text-red-400': row.difficulty === 'difficile'}" class="text-xs font-medium" x-text="row.difficulty"></span>
                   </td>
 
+                  {# À vérifier — tick validates the series (5 s undo); the state opens its flags #}
+                  <td x-show="live" class="px-3 py-2 align-top">
+                    <div class="flex items-center gap-2 whitespace-nowrap">
+                      <button type="button" @click="validate(row)" :disabled="busy === row.id"
+                              :aria-pressed="row.check === 'ok' ? 'true' : 'false'"
+                              :aria-label="'Valider la série « ' + (row.title || row.id) + ' »'"
+                              :title="row.check === 'ok' ? 'Validée le ' + row.humanDate + ' (cliquer pour revalider)' : 'Valider la série : enregistre ta vérification et clôt ses signalements'"
+                              :class="row.check === 'ok' ? 'bg-green-500 border-green-500 text-white' : 'border-slate-300 dark:border-slate-600 text-transparent hover:text-green-500 hover:border-green-500'"
+                              class="w-6 h-6 shrink-0 rounded-md border-2 flex items-center justify-center text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-400 disabled:opacity-40">✓</button>
+                      <button type="button" @click="openCell = openCell === row.id ? null : row.id"
+                              :aria-expanded="openCell === row.id ? 'true' : 'false'" :aria-controls="'check-' + row.id"
+                              :aria-label="'Détails de la vérification : ' + checkLabel(row)"
+                              class="flex items-center gap-1.5 text-xs rounded px-1 py-0.5 hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400">
+                        <span x-show="row.humanStatus === 'stale'" class="font-bold text-amber-600 dark:text-amber-400">↻ modifiée</span>
+                        <span x-show="row.openFlags.length" class="font-bold text-red-600 dark:text-red-400" x-text="'🚩 ' + row.openFlags.length"></span>
+                        <span x-show="row.check === 'pending'" class="text-slate-400" x-text="row.humanStatus === 'partial' ? '○ ' + row.humanCoverage : '○ à faire'"></span>
+                        <span x-show="row.check === 'ok'" class="text-green-600 dark:text-green-400" x-text="row.humanDate"></span>
+                      </button>
+                    </div>
+                    <template x-if="openCell === row.id">
+                      <div :id="'check-' + row.id" class="mt-2 space-y-1.5 text-xs min-w-[18rem] max-w-md">
+                        <p x-show="row.humanStatus === 'stale'" class="text-amber-700 dark:text-amber-300" x-text="'Modifié depuis ta validation : ' + (row.humanStale || []).join(', ')"></p>
+                        <template x-for="f in row.openFlags" :key="f.id">
+                          <div class="flex items-start gap-2">
+                            <button type="button" @click="setFlag(f.id, 'resolve')" :aria-label="'Marquer comme fait : ' + f.reason"
+                                    class="shrink-0 px-1.5 py-0.5 rounded bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-green-400">Fait ✓</button>
+                            <span>
+                              <a href="#" :href="f.url" target="_blank" class="font-medium text-primary-600 dark:text-primary-400 hover:underline"
+                                 x-text="f.url.includes('#') ? 'Exercice ' + f.url.slice(f.url.indexOf('#')) : 'Série'">Exercice</a>
+                              <span class="text-slate-600 dark:text-slate-300" x-text="f.reason"></span>
+                            </span>
+                          </div>
+                        </template>
+                        <template x-for="f in row.resolvedFlags" :key="f.id">
+                          <div class="flex items-start gap-2 text-slate-400">
+                            <button type="button" @click="setFlag(f.id, 'reopen')" :aria-label="'Rouvrir : ' + f.reason"
+                                    class="shrink-0 underline hover:text-slate-600 dark:hover:text-slate-200">rouvrir</button>
+                            <span class="line-through" x-text="f.reason"></span>
+                          </div>
+                        </template>
+                        <p x-show="!row.openFlags.length && !row.resolvedFlags.length && row.humanStatus !== 'stale'" class="text-slate-400">Aucun signalement.</p>
+                      </div>
+                    </template>
+                  </td>
+
                   {# Human validation #}
                   <td x-show="hasHumanData" class="px-3 py-2 text-center whitespace-nowrap">
                     <template x-if="row.humanStatus === 'ok'">
@@ -202,6 +259,9 @@ permalink: /admin/
                         <span class="text-green-600 dark:text-green-400 font-bold">✓</span>
                         <span class="text-xs text-slate-400" x-text="row.humanDate"></span>
                       </span>
+                    </template>
+                    <template x-if="row.humanStatus === 'stale'">
+                      <span class="text-amber-600 dark:text-amber-400 text-xs font-bold" :title="'Modifié depuis la validation : ' + (row.humanStale || []).join(', ')">↻ à revérifier</span>
                     </template>
                     <template x-if="row.humanStatus === 'partial'">
                       <span class="text-amber-600 dark:text-amber-400 text-xs font-medium" x-text="row.humanCoverage"></span>
@@ -253,6 +313,15 @@ permalink: /admin/
         Chemin copié !
       </div>
 
+      {# Undo a validation (mis-click safety) / action error #}
+      <div x-show="undo || error" x-transition.opacity role="status" aria-live="polite"
+           class="fixed bottom-6 left-1/2 -translate-x-1/2 max-w-[90vw] bg-slate-800 text-white text-sm pl-4 pr-2 py-2 rounded-xl shadow-lg flex items-center gap-3">
+        <span x-show="error" class="text-red-300" x-text="error"></span>
+        <span x-show="!error && undo" class="truncate" x-text="undo ? 'Série validée : ' + undo.title : ''"></span>
+        <button type="button" x-show="!error && undo" @click="undoValidate()"
+                class="shrink-0 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-white">Annuler</button>
+      </div>
+
     </div>
   </template>
 
@@ -272,7 +341,7 @@ function adminDashboard() {
     loading: true,
     hasHumanData: false,
     search: '',
-    filters: { kinds: [], levels: [], difficulties: [], humanStatus: '', llmStatus: '', template: '', onePerTemplate: false },
+    filters: { kinds: [], levels: [], difficulties: [], humanStatus: '', llmStatus: '', template: '', onePerTemplate: false, toCheck: false },
     sort: { col: 'level', dir: 'asc' },
     copied: false,
 
@@ -289,7 +358,7 @@ function adminDashboard() {
           const [id, l, , t, title, d, f, ty, cl] = row.split(',');
           const tyIdx = ty !== undefined && ty !== '' ? Number(ty) : -1;
           const clIdx = cl !== undefined && cl !== '' ? Number(cl) : -1;
-          return { id, level: LEVELS[l] || l, topic: t || '', title: title || '', difficulty: DIFFS[d] || d, kind: KINDS[f] || 'exercice', typeKey: CSV_TYPES[tyIdx] || '', classKey: CSV_CLASSES[clIdx] || '', _f: f, path: '', absPath: '', humanStatus: 'pending', humanCoverage: '—', humanDate: '', llmStatus: 'pending' };
+          return { id, level: LEVELS[l] || l, topic: t || '', title: title || '', difficulty: DIFFS[d] || d, kind: KINDS[f] || 'exercice', typeKey: CSV_TYPES[tyIdx] || '', classKey: CSV_CLASSES[clIdx] || '', _f: f, path: '', absPath: '', humanStatus: 'pending', humanCoverage: '—', humanDate: '', humanStale: [], llmStatus: 'pending', openFlags: [], resolvedFlags: [], check: 'pending', checkRank: 2 };
         });
 
         // Merge devMode enrichment (human/llm/path) if available
@@ -308,10 +377,121 @@ function adminDashboard() {
         }
 
         this.rows = base;
+        await this.loadHuman();
       } catch(e) {
         console.error('Admin load error:', e);
       }
       this.loading = false;
+    },
+
+    // ── À vérifier: live human-validation status + flags from the dev server (npm start) ──
+    // Records live in reports/human-validate.csv + reports/human-flags.json (scripts/lib/human-validation.js)
+    live: false,
+    flags: [],
+    openCell: null,   // series id whose À vérifier details are expanded
+    busy: null,       // series id being validated
+    undo: null,       // { n, id, title, previous, reopen, timer } — 5 s to undo the last tick
+    error: '',
+    async loadHuman() {
+      try {
+        const res = await fetch('/api/human-status');
+        if (!res.ok) return;
+        const { series, flags } = await res.json();
+        const byId = Object.fromEntries(series.map(s => [s.id, s]));
+        for (const row of this.rows) if (byId[row.id]) this.applyStatus(row, byId[row.id]);
+        this.flags = flags;
+        const bySeries = {};
+        for (const fl of flags) (bySeries[fl.seriesId] = bySeries[fl.seriesId] || []).push(fl);
+        for (const row of this.rows) this.indexRow(row, bySeries[row.id] || []);
+        this.live = true;
+        this.hasHumanData = true;
+      } catch (_) {
+        /* not on the dev server */
+      }
+    },
+    applyStatus(row, s) {
+      row.humanStatus = s.status;
+      row.humanCoverage = s.validated + '/' + s.total;
+      row.humanDate = (s.validatedAt || '').slice(0, 10);
+      row.humanStale = s.stale;
+    },
+    // Per-row index, recomputed only for the series an action touched (768 rows: keep renders cheap)
+    // check: stale (changed since validated) · flagged (open flags) · pending (never / partly validated) · ok
+    indexRow(row, flags) {
+      row.openFlags = flags.filter(f => !f.resolvedAt);
+      row.resolvedFlags = flags.filter(f => f.resolvedAt);
+      row.check = row.humanStatus === 'stale' ? 'stale' : row.openFlags.length ? 'flagged' : row.humanStatus === 'ok' ? 'ok' : 'pending';
+      row.checkRank = ['stale', 'flagged', 'pending', 'ok'].indexOf(row.check);
+    },
+    reindex(seriesId) {
+      const row = this.rows.find(r => r.id === seriesId);
+      if (row) this.indexRow(row, this.flags.filter(f => f.seriesId === seriesId));
+    },
+    checkLabel(row) {
+      const n = row.openFlags.length;
+      return [
+        row.humanStatus === 'stale' ? 'modifiée depuis la validation' : '',
+        n ? n + ' signalement(s)' : '',
+        { ok: 'validée le ' + row.humanDate, pending: 'jamais validée' }[row.check] || '',
+      ].filter(Boolean).join(', ');
+    },
+    get toCheckCount() {
+      return this.rows.filter(r => r.checkRank < 3).length;
+    },
+    async post(url, body) {
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.ok) throw new Error(json.error || 'HTTP ' + res.status);
+      return json;
+    },
+    showError(e) {
+      this.error = 'Échec : ' + e.message;
+      setTimeout(() => { this.error = ''; }, 4000);
+    },
+    // Replace a series' status and flags with the server's answer (row updated in place)
+    applySeries(row, json) {
+      this.applyStatus(row, json.series);
+      this.flags = [...this.flags.filter(f => f.seriesId !== row.id), ...json.flags];
+      this.indexRow(row, json.flags);
+    },
+    async validate(row) {
+      if (this.busy) return;
+      this.busy = row.id;
+      try {
+        const json = await this.post('/api/human-validate', { seriesId: row.id });
+        this.applySeries(row, json);
+        if (this.undo) clearTimeout(this.undo.timer);
+        const n = Date.now();
+        const undo = { n, id: row.id, title: row.title || row.id, previous: json.previous, reopen: json.closedFlags, timer: null };
+        this.undo = undo;
+        // The 5 s start once the toast is on screen; a later tick replaces this undo
+        this.$nextTick(() => { undo.timer = setTimeout(() => { if (this.undo && this.undo.n === n) this.undo = null; }, 5000); });
+      } catch (e) {
+        this.showError(e);
+      }
+      this.busy = null;
+    },
+    async undoValidate() {
+      const u = this.undo;
+      if (!u) return;
+      clearTimeout(u.timer);
+      this.undo = null;
+      const row = this.rows.find(r => r.id === u.id);
+      try {
+        const json = await this.post('/api/human-validate', { seriesId: u.id, action: 'unvalidate', previous: u.previous, reopen: u.reopen });
+        if (row) this.applySeries(row, json);
+      } catch (e) {
+        this.showError(e);
+      }
+    },
+    async setFlag(id, action) {
+      try {
+        const { flag } = await this.post('/api/human-flag', { id, action });
+        this.flags = this.flags.map(f => (f.id === id ? flag : f));
+        this.reindex(flag.seriesId);
+      } catch (e) {
+        this.showError(e);
+      }
     },
 
     get allLevels() {
@@ -360,6 +540,8 @@ function adminDashboard() {
         result = result.filter(r => r.llmStatus === this.filters.llmStatus);
       if (this.filters.template)
         result = result.filter(r => r.typeKey === this.filters.template);
+      if (this.filters.toCheck)
+        result = result.filter(r => r.checkRank < 3);
       if (this.filters.onePerTemplate) {
         const seen = new Set();
         result = result.filter(r => {
@@ -373,6 +555,11 @@ function adminDashboard() {
       return [...result].sort((a, b) => {
         let av = a[this.sort.col] ?? '';
         let bv = b[this.sort.col] ?? '';
+        if (this.sort.col === 'check') {
+          // stale, then flagged, then pending, then ok; most flags first within a state
+          const d = a.checkRank - b.checkRank || b.openFlags.length - a.openFlags.length;
+          return this.sort.dir === 'asc' ? d : -d;
+        }
         if (this.sort.col === 'level') {
           const order = ['CP','CE1','CE2','CM1','CM2'];
           av = order.indexOf(av); bv = order.indexOf(bv);
@@ -397,7 +584,7 @@ function adminDashboard() {
 
     resetFilters() {
       this.search = '';
-      this.filters = { kinds: [], levels: [], difficulties: [], humanStatus: '', llmStatus: '', template: '', onePerTemplate: false };
+      this.filters = { kinds: [], levels: [], difficulties: [], humanStatus: '', llmStatus: '', template: '', onePerTemplate: false, toCheck: false };
     },
 
     seriesUrl(row) {

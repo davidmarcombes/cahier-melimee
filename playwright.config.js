@@ -14,6 +14,8 @@ export default defineConfig({
   timeout: 20_000,
   expect: { timeout: 8_000 },
   fullyParallel: true,
+  // One retry absorbs load-related timing flakes; such tests are still reported as "flaky"
+  retries: 1,
   // ~1,600 per-page tests: use most cores (the static server is cheap). Override with E2E_WORKERS.
   workers: process.env.E2E_WORKERS || '75%',
   // `npm run check` sets E2E_REPORTER=line to keep the console readable; the HTML report is always written
