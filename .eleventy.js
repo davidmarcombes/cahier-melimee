@@ -1,5 +1,5 @@
 require('dotenv').config();
-const Image = require('@11ty/eleventy-img');
+const Image = require('@11ty/eleventy-img').default; // ESM-only since v6: require() returns the namespace
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');

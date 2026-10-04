@@ -15,7 +15,7 @@
  *   --output=FILE Output PNG path (default: <input>-pixel.png)
  *
  * Requires jimp (dev dep):
- *   npm install --save-dev jimp@0.22.12
+ *   npm install --save-dev jimp@1
  */
 'use strict';
 
@@ -49,9 +49,9 @@ if (!fs.existsSync(inputPath)) {
 
 let Jimp, PNG;
 try {
-  Jimp = require('jimp');
+  ({ Jimp } = require('jimp'));
 } catch {
-  console.error('Missing dependency. Run:  npm install --save-dev jimp@0.22.12');
+  console.error('Missing dependency. Run:  npm install --save-dev jimp@1');
   process.exit(1);
 }
 try {
