@@ -178,7 +178,7 @@ async function main() {
     let done = 0;
     await Promise.all(
       Array.from({ length: 4 }, async () => {
-        for (let a; (a = queue.shift()); ) {
+        for (let a; (a = queue.shift());) {
           const page = { label: a.label, url: a.label === 'index' ? '/' : `/${a.label}/` };
           try {
             const baseShots = path.join(baseDir, 'shots');

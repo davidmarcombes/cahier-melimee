@@ -77,7 +77,7 @@ async function main() {
     const queue = [...pages];
     await Promise.all(
       Array.from({ length: 4 }, async () => {
-        for (let p; (p = queue.shift()); ) {
+        for (let p; (p = queue.shift());) {
           await capturePage(browser, server.url, p, path.join(dir, 'shots')).catch((e) =>
             console.error(`  ${p.label}: ${e.message}`)
           );

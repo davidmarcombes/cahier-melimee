@@ -14,6 +14,7 @@ module.exports = [
       'dist/',
       'reports/',
       'test-results/',
+      '.snapshots/',
       'tailwind.config.js',
       'src/assets/js/alpine.min.js',
     ],
