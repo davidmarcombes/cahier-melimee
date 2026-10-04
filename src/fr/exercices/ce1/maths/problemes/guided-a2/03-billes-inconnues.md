@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Ce qui s'est passé (A2.3)"
+title: "Ce qui s'est passé"
 story: "J'avais **12 billes**. Maintenant j'en ai **15**. Que s'est-il passé ? Combien de billes ai-je **gagnées** ?"
 steps:
   - kind: keywords

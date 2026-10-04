@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Le loyer (A2.4)"
+title: "Le loyer"
 story: "Après une **hausse de 50 €**, le loyer est maintenant de **800 €**. Quel était le loyer **avant** la hausse ?"
 steps:
   - kind: keywords

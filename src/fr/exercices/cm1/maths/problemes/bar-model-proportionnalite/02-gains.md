@@ -1,6 +1,6 @@
 ---
 type: bar-model
-title: "Les gains (M1.2)"
+title: "Les gains"
 body: "**500 €** de gains sont répartis **équitablement** entre **8 joueurs**. Quelle est la part de chacun ?"
 bm:
   mode: part-whole

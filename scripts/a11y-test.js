@@ -85,7 +85,7 @@ function buildUrls() {
   const staticPages = [
     '/fr/',
     '/fr/a-propos/',
-    '/fr/connexion/',
+    '/fr/cahiers/',
     '/fr/cahier/',
     '/fr/confidentialite/',
     '/fr/onboarding/',

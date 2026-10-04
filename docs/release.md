@@ -29,6 +29,6 @@ Everything runs locally; there is no CI. `_site/` is the artifact, uploaded by h
 
 ## Known — state on 2026-09-29
 
-- `/fr/connexion/`, `/fr/onboarding/` and `/fr/anon/` date from the PocketBase-era accounts and are still built. Check they still make sense for a static, localStorage-only site.
+- Cahiers (2026-10-03): `/fr/connexion/` replaced by `/fr/cahiers/` (several children per browser, import from a file); the onboarding lost its secret link and visual key; `/fr/anon/` rewritten to match. Visitors who already created a cahier keep it (the store migrates v1 data). See `agents/identity.md`.
 - Cache: `.htaccess` caches CSS/JS for 1 year, and their names have no version. Visitors are covered by the service worker, which re-downloads every file with `cache: 'no-cache'` when `sw.js` changes. A browser without an active service worker could keep an old `app.js` next to new HTML.
 - The live site dates from 2026-04-25: 747 series live, 768 in this version (39 new, 18 IDs renamed by `generate:ids`).

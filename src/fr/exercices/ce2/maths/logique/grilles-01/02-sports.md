@@ -10,4 +10,4 @@ solution:
 ---
 
 - Théo ne fait ni football ni tennis.
-- Chloé n'aime pas la natation.
+- Chloé ne joue pas au tennis.

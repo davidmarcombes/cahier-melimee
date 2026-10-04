@@ -6,6 +6,6 @@ locale: fr-FR
 permalink: /fr/blog/
 ---
 
-Retrouve ici les dernières actualités et conseils du Cahier Mélimée.
+Les nouvelles du Cahier de Mélimée et de Salto la grenouille.
 
 

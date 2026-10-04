@@ -8,10 +8,10 @@
     {# Desktop nav #}
     <nav aria-label="Navigation principale" class="hidden md:flex items-center gap-4">
       {% for item in navigation[lang or 'fr'] %}
-        {% if item.url == '/fr/onboarding/' %}
+        {% if item.url == '/fr/cahiers/' %}
           <template x-if="cahierUser">
             <a :href="(window.__pathPrefix || '/') + 'fr/cahier/?user=' + cahierUser.slug"
-               class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors">Mon Cahier</a>
+               class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors"><span x-text="cahierUser.sticker_id"></span> Mon cahier</a>
           </template>
           <template x-if="!cahierUser">
             <a href="{{ item.url | url }}"
@@ -60,11 +60,11 @@
     class="md:hidden border-t border-slate-200 dark:border-slate-700 bg-surface-chrome px-4 py-3"
   >
     {% for item in navigation[lang or 'fr'] %}
-      {% if item.url == '/fr/onboarding/' %}
+      {% if item.url == '/fr/cahiers/' %}
         <template x-if="cahierUser">
           <a :href="(window.__pathPrefix || '/') + 'fr/cahier/?user=' + cahierUser.slug"
              @click="mobileOpen = false"
-             class="block py-3 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors">Mon Cahier</a>
+             class="block py-3 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors"><span x-text="cahierUser.sticker_id"></span> Mon cahier</a>
         </template>
         <template x-if="!cahierUser">
           <a href="{{ item.url | url }}"

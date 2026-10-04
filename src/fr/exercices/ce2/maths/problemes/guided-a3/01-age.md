@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "L'écart d'âge (A3.1)"
+title: "L'écart d'âge"
 story: "Tom a **8 ans** et Julie a **11 ans**. Quelle est la **différence** d'âge entre Julie et Tom ?"
 steps:
   - kind: keywords

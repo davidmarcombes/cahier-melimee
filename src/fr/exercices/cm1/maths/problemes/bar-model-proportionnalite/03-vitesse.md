@@ -1,6 +1,6 @@
 ---
 type: bar-model
-title: "La voiture (M1.4)"
+title: "La voiture"
 body: "Une voiture parcourt **450 km** avec **30 litres** d'essence. Quelle est sa consommation pour **100 km** ?"
 bm:
   mode: comparison

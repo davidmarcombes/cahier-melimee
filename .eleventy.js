@@ -372,12 +372,27 @@ module.exports = async function (eleventyConfig) {
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
   eleventyConfig.addFilter('seriesPayload', function (exercises) {
     const payload = [];
+    // Build-time shuffles and random values are seeded by the exercise's file path: a static page
+    // shows every visitor the same order anyway, and two builds of the same code are now identical
+    // (npm run snapshot / npm run regress compare builds page by page).
+    let random = Math.random;
+    const seeded = (key) => {
+      let h = 2166136261;
+      for (const c of key) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+      return () => {
+        h = (h + 0x6d2b79f5) | 0;
+        let t = Math.imul(h ^ (h >>> 15), 1 | h);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    };
     const helpers = {
-      rand: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
-      pick: (...args) => args[Math.floor(Math.random() * args.length)],
+      rand: (min, max) => Math.floor(random() * (max - min + 1)) + min,
+      pick: (...args) => args[Math.floor(random() * args.length)],
     };
 
     exercises.forEach((ex) => {
+      random = seeded(String(ex.inputPath || ex.url || ''));
       const repeat = ex.data.repeat || 1;
 
       // For generator-based exercises, emit a single placeholder (runtime expands + fills)
@@ -407,7 +422,7 @@ module.exports = async function (eleventyConfig) {
                 vars[v.name] = v.formula;
               }
             } else if (v.min !== undefined && v.max !== undefined) {
-              vars[v.name] = Math.floor(Math.random() * (v.max - v.min + 1)) + v.min;
+              vars[v.name] = Math.floor(random() * (v.max - v.min + 1)) + v.min;
             }
           });
         }
@@ -553,11 +568,11 @@ module.exports = async function (eleventyConfig) {
           const leftIndexed = processedPairs.map((p, i) => ({ label: p.left, origIdx: i }));
           const rightIndexed = processedPairs.map((p, i) => ({ label: p.right, origIdx: i }));
           for (let i = leftIndexed.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            const j = Math.floor(random() * (i + 1));
             [leftIndexed[i], leftIndexed[j]] = [leftIndexed[j], leftIndexed[i]];
           }
           for (let i = rightIndexed.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            const j = Math.floor(random() * (i + 1));
             [rightIndexed[i], rightIndexed[j]] = [rightIndexed[j], rightIndexed[i]];
           }
           item.pairs = {
@@ -656,7 +671,7 @@ module.exports = async function (eleventyConfig) {
           const correct = interpolate(String(ex.data.answer)).trim();
           const choices = ex.data.choices.map((c) => md.renderInline(interpolate(String(c))));
           for (let i = choices.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            const j = Math.floor(random() * (i + 1));
             [choices[i], choices[j]] = [choices[j], choices[i]];
           }
           item.mcqChoices = choices;
@@ -1184,7 +1199,7 @@ module.exports = async function (eleventyConfig) {
           }));
           // Shuffle items for display
           for (let i = items.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            const j = Math.floor(random() * (i + 1));
             [items[i], items[j]] = [items[j], items[i]];
           }
           item.venn = {

@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { normalizeAnswer, renderOpShorthands } from '../src/assets/js/modules/utils.js';
 import { SETTINGS } from '../src/assets/js/modules/constants.js';
 
@@ -57,7 +57,7 @@ describe('Modules Utilities', () => {
   });
 });
 
-import { seriesPlayer } from '../src/assets/js/modules/player.js';
+import { seriesPlayer, sortValue } from '../src/assets/js/modules/player.js';
 
 describe('seriesPlayer Logic', () => {
   const mockExercises = [
@@ -179,6 +179,8 @@ describe('seriesPlayer Logic', () => {
 import { localStore } from '../src/assets/js/modules/store.js';
 
 describe('localStore Persistence', () => {
+  beforeEach(() => localStorage.clear());
+
   it('should handle user identity', () => {
     const user = { slug: 'lucas', username: 'Lucas', sticker_id: '1' };
     localStore.setUser(user);
@@ -186,6 +188,7 @@ describe('localStore Persistence', () => {
 
     localStore.clearUser();
     expect(localStore.getUser()).toBeNull();
+    expect(localStore.listUsers()).toHaveLength(1); // nobody working, the cahier stays
   });
 
   it('should handle progress marking', () => {
@@ -193,6 +196,49 @@ describe('localStore Persistence', () => {
     const p = localStore.getProgress();
     expect(p['series-1']).toBeDefined();
     expect(p['series-1'].done).toBe(true);
+  });
+
+  it('migrates the single-user v1 format', () => {
+    localStorage.setItem(
+      'melimee_v1',
+      JSON.stringify({
+        user: { slug: 'renard-3', username: 'renard', sticker_id: '🎈' },
+        progress: { a1: { done: true } },
+      })
+    );
+    expect(localStore.getUser()).toMatchObject({ slug: 'renard-3' });
+    expect(localStore.getProgress()).toHaveProperty('a1');
+  });
+
+  it('keeps one progress per child, the first cahier adopts guest work', () => {
+    localStore.markDone('guest-series');
+    const a = localStore.addUser({ slug: 'loutre-1', username: 'loutre', sticker_id: '⭐' });
+    expect(localStore.getProgress()).toHaveProperty('guest-series');
+    const b = localStore.addUser({ slug: 'loutre-1', username: 'loutre', sticker_id: '⭐' });
+    expect(b).toBe('loutre-1-2'); // same animal + sticker: unique slug
+    expect(localStore.getProgress()).toEqual({});
+    localStore.markDone('s2');
+    localStore.switchUser(a);
+    expect(Object.keys(localStore.getProgress())).toEqual(['guest-series']);
+    localStore.removeUser(b);
+    expect(localStore.listUsers().map((u) => u.slug)).toEqual([a]);
+  });
+
+  it('exports and imports a cahier, merging with an existing one', () => {
+    const slug = localStore.addUser({ slug: 'lion-2', username: 'lion', sticker_id: '🚀' });
+    localStore.markDone('s1');
+    const file = JSON.parse(JSON.stringify(localStore.exportUser()));
+    localStorage.clear();
+    expect(localStore.importUser(file)).toEqual({ slug, merged: false });
+    expect(localStore.getProgress()).toHaveProperty('s1');
+    localStore.markDone('s2');
+    expect(localStore.importUser(file).merged).toBe(true);
+    expect(Object.keys(localStore.getProgress()).sort()).toEqual(['s1', 's2']); // nothing lost
+  });
+
+  it('refuses a file that is not a cahier', () => {
+    expect(() => localStore.importUser({ hello: 1 })).toThrow(/pas un cahier/);
+    expect(() => localStore.importUser({ format: 'cahier-melimee', pupil: { slug: '' } })).toThrow();
   });
 });
 
@@ -614,5 +660,35 @@ describe('Numberlink Logic', () => {
       [3, 0],
     ];
     expect(p.nlkAllConnected()).toBe(true);
+  });
+});
+
+describe('sortValue (sort / drag-sort order)', () => {
+  it('reads numbers with spaces and decimal commas, and fractions', () => {
+    expect(sortValue('3 050')).toBe(3050);
+    expect(sortValue('4,5')).toBe(4.5);
+    expect(sortValue('3/4')).toBe(0.75);
+    expect(sortValue(' 1 / 2 ')).toBe(0.5);
+  });
+
+  it('orders fractions by value, not by numerator', () => {
+    const tiles = ['3/4', '1/2', '3/8', '1/4'];
+    expect([...tiles].sort((a, b) => sortValue(a) - sortValue(b))).toEqual(['1/4', '3/8', '1/2', '3/4']);
+  });
+
+  it('gives NaN for picture tiles, which keep their listed order', () => {
+    expect(sortValue('<span><svg></svg></span>')).toBeNaN();
+  });
+});
+
+describe('sortValue — HTML fractions', () => {
+  it('reads <span class="fn">/<span class="fd"> fractions', () => {
+    const f = (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+    expect(sortValue(f(3, 8))).toBe(0.375);
+    expect([f(3, 4), f(1, 4), f(1, 2)].sort((a, b) => sortValue(a) - sortValue(b))).toEqual([
+      f(1, 4),
+      f(1, 2),
+      f(3, 4),
+    ]);
   });
 });

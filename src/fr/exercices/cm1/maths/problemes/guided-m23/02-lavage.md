@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Le lavage (M2.3)"
+title: "Le lavage"
 story: "Un **plein d'essence** coûte **80 €**. C'est **4 fois** le prix d'un **lavage**. Quel est le prix du lavage ?"
 steps:
   - kind: keywords

@@ -1,11 +1,13 @@
 ---
 type: error-analysis
-title: "Les salles — erreur A3.3"
+title: "Les salles"
 steps:
-  - "La salle A accueille 312 personnes, soit 48 de plus que la salle B. Capacité de la salle B ?"
+  - "La salle A accueille 120 personnes, soit 30 de plus que la salle B. Combien de personnes la salle B accueille-t-elle ?"
   - "« de plus » → j'additionne"
-  - "312 + 48 = 360 personnes"
-  - "Réponse : la salle B accueille 360 personnes"
+  - "120 + 30 = 150 personnes"
+  - "Réponse : la salle B accueille 150 personnes"
 wrongStep: 1
-correction: "« de plus » → c'est A qui est plus grande → je soustrais pour trouver B"
+correction: "90"
 ---
+
+Clique sur l'étape fausse, puis écris la bonne réponse.

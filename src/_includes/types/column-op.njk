@@ -1,4 +1,6 @@
 {# column-op — vertical arithmetic with coloured digit tiles #}
+<div x-show="cur.type === 'column-op' && cur.body" class="prose dark:prose-invert text-center text-sm max-w-none mb-2 text-content-subtle"
+     x-html="cur.body"></div>
 <div x-show="cur.type === 'column-op'" class="flex justify-center my-2">
   <template x-if="cur.colOp">
     <div class="inline-block">

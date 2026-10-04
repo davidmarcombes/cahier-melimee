@@ -1,6 +1,6 @@
 ---
 type: bar-model
-title: "Léa et Luc (A3.3 — non-congruent)"
+title: "Léa et Luc"
 body: "Luc a **30 billes**. Il en a **6 de plus** que Léa. Combien Léa a-t-elle de billes ?"
 bm:
   mode: comparison

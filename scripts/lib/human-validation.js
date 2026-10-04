@@ -214,13 +214,20 @@ function writeFlags(flags) {
 }
 
 // target: a series id, or a URL/path containing /fr/{section}/{id}/ (optionally #n)
-function addFlag(target, reason, source = 'claude') {
+// « f06ea123 », « http://localhost:8080/fr/exercices/f06ea123/#5 » or « /fr/…/id/ » → { series, anchor }
+function resolveTarget(target) {
   const m = String(target).match(/\/fr\/(exercices|applications|defis)\/([a-z0-9]+)\/?(#[0-9]+)?/);
   const seriesId = m ? m[2] : String(target).trim();
-  const s = listSeries().find((x) => x.id === seriesId);
-  if (!s) throw new Error(`unknown series "${seriesId}"`);
+  const series = listSeries().find((x) => x.id === seriesId);
+  if (!series) throw new Error(`unknown series "${seriesId}"`);
+  return { series, anchor: m && m[3] ? m[3] : '' };
+}
+
+function addFlag(target, reason, source = 'claude') {
+  const { series: s, anchor } = resolveTarget(target);
+  const seriesId = s.id;
   const flags = readFlags();
-  const url = seriesUrl(s) + (m && m[3] ? m[3] : '');
+  const url = seriesUrl(s) + anchor;
   const dup = flags.find((f) => !f.resolvedAt && f.url === url && f.reason === reason);
   if (dup) return dup;
   const flag = {
@@ -266,6 +273,7 @@ module.exports = {
   writeValidations,
   validateSeries,
   unvalidateSeries,
+  resolveTarget,
   status,
   readFlags,
   addFlag,

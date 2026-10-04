@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "L'aire du terrain (M3.1)"
+title: "L'aire du terrain"
 story: "Un terrain mesure **25 mètres** de long et **40 mètres** de large. Quelle est sa **surface** ?"
 steps:
   - kind: keywords

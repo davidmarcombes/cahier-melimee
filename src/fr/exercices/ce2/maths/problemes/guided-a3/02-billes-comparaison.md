@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Les billes de Paul (A3.2)"
+title: "Les billes de Paul"
 story: "Pierre a **10 billes**. Paul en a **5 de plus** que Pierre. Combien Paul a-t-il de billes ?"
 steps:
   - kind: keywords

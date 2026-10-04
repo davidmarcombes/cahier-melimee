@@ -1,8 +1,8 @@
 ---
 layout: onboarding
-title: Ton Arrivée
+title: Créer mon cahier
 lang: fr
 locale: fr-FR
 ---
 
-Commence ton aventure en choisissant ton identité secrète. Pas besoin d'email, juste de ton imagination.
+Choisis ton animal. Pas de compte, pas d'e-mail : ton cahier reste sur cet appareil.

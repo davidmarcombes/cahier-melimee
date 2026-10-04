@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "L'âge du père (M2.1)"
+title: "L'âge du père"
 story: "Jean a **5 ans**. Son père est **6 fois plus vieux** que lui. Quel est l'âge du père ?"
 steps:
   - kind: keywords

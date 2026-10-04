@@ -680,7 +680,7 @@
         const resolvedLevel = level === 'mix' ? randItem(['facile', 'moyen', 'difficile']) : level;
         const pool = POOLS[resolvedLevel] || POOLS.moyen;
 
-        // Numerator words (1–19 + round tens up to 90)
+        // Numerator words, indexed by n − 1 (n ≤ 24, see maxN). Was 1–19 + « vingt, trente… »: 21 read « trente »
         const NUM_WORDS = [
           'un',
           'deux',
@@ -702,10 +702,10 @@
           'dix-huit',
           'dix-neuf',
           'vingt',
-          'trente',
-          'quarante',
-          'cinquante',
-          'soixante',
+          'vingt et un',
+          'vingt-deux',
+          'vingt-trois',
+          'vingt-quatre',
         ];
 
         const count = params.count ?? 6;
@@ -724,7 +724,7 @@
           usedKeys.add(key);
 
           const nWord = NUM_WORDS[n - 1];
-          if (!nWord) continue; // n > 25, skip
+          if (!nWord) continue; // no word for this n
           const dWord = n > 1 ? denomEntry.words[denomEntry.words.length - 1] : denomEntry.words[0];
           // Special case: "demi" → "deux demis" not "deux demi"
           const text = `${nWord} ${dWord}`;

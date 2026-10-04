@@ -9,5 +9,5 @@ solution:
   Tom: "Pomme"
 ---
 
-- Adam ne préfère pas la pomme.
 - Tom n'aime ni la banane ni la fraise.
+- Adam n'aime pas la fraise.

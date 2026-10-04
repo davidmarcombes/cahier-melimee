@@ -5,8 +5,8 @@ generator: "ruler"
 repeat: 8
 params:
   min: 0
-  max: 5
-  divisions: 10
+  max: 20
+  divisions: 1
 ---
 
-Quel nombre décimal est indiqué par la flèche ? (ex : 2,7)
+Quel nombre est indiqué par la flèche ?

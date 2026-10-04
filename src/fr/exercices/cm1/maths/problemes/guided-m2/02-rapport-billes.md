@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Combien de fois plus ? (M2.2)"
+title: "Combien de fois plus ?"
 story: "Tom a **10 billes**. Luc en a **40**. **Combien de fois** Luc a-t-il plus de billes que Tom ?"
 steps:
   - kind: keywords

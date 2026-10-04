@@ -47,11 +47,20 @@ for (const arg of process.argv.slice(2)) {
   flags[k] = v !== undefined ? v : true;
 }
 
-const MODEL = flags.model || process.env.LLM_MODEL || 'qwen2.5:7b';
+// --export / --import: Claude Code subagents instead of a local Ollama model (see exportBatches)
+const BATCH_DIR = path.join(ROOT, '.scratch/llm-batches');
+const EXPORT_DIR = flags.export ? (flags.export === true ? BATCH_DIR : path.resolve(flags.export)) : null;
+const IMPORT_DIR = flags.import ? (flags.import === true ? BATCH_DIR : path.resolve(flags.import)) : null;
+const BATCH = parseInt(flags.batch || '30', 10);
+const MODEL = flags.model || process.env.LLM_MODEL || (EXPORT_DIR || IMPORT_DIR ? 'claude-haiku-4-5' : 'qwen2.5:7b');
 const CONCURRENCY = parseInt(flags.concurrency || '3', 10);
 const FORCE = flags.force === true;
-const FILTER_DIR = flags.dir ? path.resolve(flags.dir) : null;
-const FILTER_TYPE = flags.type || null;
+const FILTER_DIR = flags.dir
+  ? String(flags.dir)
+      .split(',')
+      .map((d) => path.resolve(d))
+  : null; // --dir=a,b
+const FILTER_TYPE = flags.type ? new Set(String(flags.type).split(',')) : null; // --type=problem,mcq
 const FAILURES_ONLY = flags['failures-only'] === true;
 const COUNT = flags.one === true ? 1 : flags.count ? parseInt(flags.count, 10) : 0; // 0 = no limit
 const VERBOSE = flags.verbose === true || COUNT === 1; // print prompts + raw responses
@@ -85,6 +94,14 @@ const LLM_TYPES = new Set([
   'base-10',
   'logic-grid',
   'ruler',
+  'guided-problem',
+  'think-board',
+  'inverse-problem',
+  'bar-model',
+  'error-analysis',
+  'compare-solutions',
+  'bar-chart',
+  'tile-select',
 ]);
 
 // ─── ANSI colours ────────────────────────────────────────────────────────────
@@ -276,7 +293,8 @@ function generateSamples(generatorName, params, body) {
 
 function strip(text) {
   if (!text) return '';
-  return text
+  return String(text)
+    .replace(/<span class="fn">([^<]*)<\/span><span class="fd">([^<]*)<\/span>/g, '$1/$2') // HTML fractions → a/b
     .replace(/<[^>]+>/g, ' ') // HTML tags
     .replace(/\*\*(.*?)\*\*/g, '$1') // bold
     .replace(/\*(.*?)\*/g, '$1') // italic
@@ -284,6 +302,26 @@ function strip(text) {
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+// = sortValue() in src/assets/js/modules/player.js (ES module, not requirable here)
+function sortValue(s) {
+  const html = String(s).replace(/<span class="fn">([^<]*)<\/span><span class="fd">([^<]*)<\/span>/g, '$1/$2');
+  const t = html
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s/g, '')
+    .replace(',', '.');
+  const frac = t.match(/^(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
+  return frac ? Number(frac[1]) / Number(frac[2]) : parseFloat(t);
+}
+
+// HTML tables (generated statements) → « a | b ; c | d » before stripping, so the values survive
+function tableText(html) {
+  return strip(
+    String(html)
+      .replace(/<\/t[hd]>\s*<t[hd][^>]*>/gi, ' | ')
+      .replace(/<\/tr>/gi, ' ; ')
+  ).replace(/(\s*;\s*)+$/, '');
 }
 
 // ─── Prompt builder ──────────────────────────────────────────────────────────
@@ -358,11 +396,17 @@ function buildPrompt({ data, body }) {
     case 'mcq': {
       const bodyText = strip(data.body || body || '');
       const question = bodyText || title;
-      const choices = (data.choices || []).map((c) => `- ${strip(String(c))}`).join('\n');
-      const ans = fmt(data.answer);
+      // Static files: choices + answer (text). Generators: mcqChoices + mcqAnswer (index)
+      const list = data.mcqChoices || data.choices || [];
+      const choices = list.map((c) => `- ${strip(String(c))}`).join('\n');
+      if (!choices) return null;
+      const ans =
+        data.mcqChoices && Number.isInteger(data.mcqAnswer) ? strip(String(list[data.mcqAnswer])) : fmt(data.answer);
       return [
         `Type: QCM (Question à Choix Multiples)`,
         question && `Question: ${question}`,
+        title && title !== question && `Énoncé: ${strip(title)}`,
+        data.operation && `Calcul: ${strip(String(data.operation))}`,
         data.generator && `(figure générée: ${data.generator})`,
         `Choix proposés:\n${choices}`,
         `Réponse proposée comme étant la bonne : ${ans}`,
@@ -377,7 +421,12 @@ function buildPrompt({ data, body }) {
       const lines = data.questions.map((q, i) => `${i + 1}. ${strip(q.text)} → ${fmt(q.answer)}`);
       return [
         `Type: questions multiples`,
+        title && `Consigne: ${title}`,
         context && `Contexte: ${context}`,
+        // The data the questions are about (« 45 + 28 = ? », a statement, a table)
+        data.context && `Données: ${tableText(String(data.context))}`,
+        data.operation && `Calcul: ${strip(String(data.operation))}`,
+        data.svg && data.svg.gen && `Figure: ${data.svg.gen} ${JSON.stringify(data.svg.par || {})}`,
         data.generator && `(figure générée: ${data.generator})`,
         ...lines,
       ]
@@ -434,13 +483,26 @@ function buildPrompt({ data, body }) {
     }
 
     case 'matching': {
-      if (!data.pairs || !Array.isArray(data.pairs.left)) return null;
-      const { left, right, answers } = data.pairs;
-      const lines = left.map((l, i) => {
+      // Two formats: a list of { left, right } (current) or { left: [], right: [], answers } (older)
+      let left, right, answers;
+      if (Array.isArray(data.pairs) && data.pairs.every((p) => p && typeof p === 'object' && 'left' in p)) {
+        left = data.pairs.map((p) => p.left);
+        right = data.pairs.map((p) => p.right);
+      } else if (data.pairs && Array.isArray(data.pairs.left)) ({ left, right, answers } = data.pairs);
+      else return null;
+      const pairs = left.map((l, i) => {
         const ri = Array.isArray(answers) ? answers[i] : i;
-        return `${strip(String(l))} ↔ ${strip(String(right[ri]))}`;
+        return [strip(String(l)), strip(String(right[ri]))];
       });
-      return `Type: association\n${title && `Contexte: ${title}\n`}${lines.join('\n')}`;
+      if (pairs.some(([l, r]) => !l || !r)) return null; // picture on one side (clocks…): visual
+      const lines = pairs.map(([l, r]) => `${l} ↔ ${r}`);
+      return [
+        `Type: association — les paires ci-dessous sont les réponses proposées (gauche relié à droite)`,
+        title && `Contexte: ${title}`,
+        ...lines,
+      ]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'pyramid': {
@@ -457,6 +519,19 @@ function buildPrompt({ data, body }) {
     }
 
     case 'fill-table': {
+      // Generated tables: table.rows of cells { value } or { blank, answer }
+      if (data.table && Array.isArray(data.table.rows)) {
+        const cell = (c) => (c.blank ? `[${fmt(c.answer)}]` : strip(String(c.value ?? '')));
+        return [
+          `Type: compléter un tableau (les réponses proposées sont entre crochets)`,
+          title && `Consigne: ${title}`,
+          Array.isArray(data.table.headers) &&
+            `Colonnes: ${data.table.headers.map((h) => strip(String(h))).join(' | ')}`,
+          ...data.table.rows.map((r) => r.map(cell).join(' | ')),
+        ]
+          .filter(Boolean)
+          .join('\n');
+      }
       if (!Array.isArray(data.headers)) return null;
       const hdrs = data.headers.join(' | ');
       const rows = (data.rows || []).map((r, i) => {
@@ -468,9 +543,14 @@ function buildPrompt({ data, body }) {
 
     case 'select': {
       if (!Array.isArray(data.statements)) return null;
-      const choices = (data.choices || []).map((c) => `- ${strip(String(c))}`).join('\n');
-      const lines = data.statements.map((s) => `${strip(s.template || s.text || '')} → ${fmt(s.answer)}`);
-      return `Type: sélection\nChoix disponibles:\n${choices}\n${lines.join('\n')}`;
+      // Choices are per statement (or shared at the top level)
+      const lines = data.statements.map((s) => {
+        const choices = (s.choices || data.choices || []).map((c) => strip(String(c)));
+        return `${strip(s.template || s.text || '')}  [choix : ${choices.join(', ')}] → réponse proposée : ${fmt(s.answer)}`;
+      });
+      return [`Type: phrases à compléter (le mot choisi remplace ___)`, title && `Consigne: ${title}`, ...lines]
+        .filter(Boolean)
+        .join('\n');
     }
 
     case 'checkbox': {
@@ -484,11 +564,33 @@ function buildPrompt({ data, body }) {
 
     case 'sort':
     case 'drag-sort': {
-      const items = data.items || data.tiles || [];
+      // The expected order is computed like the player does (src/assets/js/modules/player.js):
+      // numeric sort by `direction`, or the listed order for sortKeepOrder (labels from a table)
+      // Fraction picture tiles ({ gen, par: { n, d } }) are shown as « n/d (figure) »
+      const raw = data.items || data.tiles || [];
+      const items = raw.map((i) =>
+        i && typeof i === 'object'
+          ? i.par && i.par.d
+            ? `${i.par.n}/${i.par.d} (figure)`
+            : ''
+          : strip(String(i).replace(/<span class="fn">([^<]*)<\/span><span class="fd">([^<]*)<\/span>/g, '$1/$2'))
+      );
+      if (items.some((i) => !i)) return null; // other picture tiles
+      // Picture tiles are pre-rendered with their n/d spans, which sortValue() reads (= player.js)
+      const value = (i) => (typeof raw[i] === 'object' ? raw[i].par.n / raw[i].par.d : sortValue(raw[i]));
+      const expected = data.sortKeepOrder
+        ? items
+        : items
+            .map((_, i) => i)
+            .sort((a, b) => (data.direction === 'desc' ? value(b) - value(a) : value(a) - value(b)))
+            .map((i) => items[i]);
       return [
-        `Type: trier dans l'ordre`,
-        title && `Contexte: ${title}`,
-        `Ordre proposé: ${items.map((i) => strip(String(i))).join(' < ')}`,
+        `Type: ranger dans l'ordre`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${tableText(data.body || body)}`,
+        `Éléments à ranger: ${items.join(' ; ')}`,
+        `Ordre attendu par le jeu (du premier au dernier): ${expected.join(' ; ')}`,
+        `Vérifie que cet ordre respecte la consigne (sens croissant / décroissant, valeurs du tableau).`,
       ]
         .filter(Boolean)
         .join('\n');
@@ -525,19 +627,31 @@ function buildPrompt({ data, body }) {
 
     case 'fraction-check': {
       const answers = data.answers ? data.answers.join(' ou ') : fmt(data.answer);
-      return [`Type: vérifier une fraction`, title && `Contexte: ${title}`, `Réponse proposée: ${answers}`]
+      const bodyText = strip(data.body || body || '');
+      return [
+        `Type: vérifier une fraction`,
+        title && `Titre: ${title}`,
+        bodyText && `Énoncé: ${bodyText}`,
+        data.operation && `Calcul: ${strip(String(data.operation))}`,
+        `Réponse proposée: ${answers}`,
+      ]
         .filter(Boolean)
         .join('\n');
     }
 
     case 'number-line': {
       const bodyText = strip(body || '');
+      const place = data.mode === 'place';
       return [
-        `Type: droite graduée`,
+        place
+          ? `Type: droite graduée — l'élève doit placer le nombre ${fmt(data.answer)} sur une graduation`
+          : `Type: droite graduée`,
         bodyText && `Question: ${bodyText}`,
         `Graduation: de ${fmt(data.min)} à ${fmt(data.max)}, pas de ${fmt(data.step || 1)}`,
         data.value != null && `Position du point ${data.label || 'A'}: ${data.value}`,
-        `Réponse proposée: ${fmt(data.answer)}`,
+        place
+          ? `Vérifie que ${fmt(data.answer)} est entre ${fmt(data.min)} et ${fmt(data.max)} et tombe exactement sur une graduation.`
+          : `Réponse proposée: ${fmt(data.answer)}`,
       ]
         .filter(Boolean)
         .join('\n');
@@ -602,6 +716,126 @@ function buildPrompt({ data, body }) {
         `Colonnes : ${(data.columns || []).join(', ')}`,
         `Lignes : ${(data.rows || []).join(', ')}`,
         `Solution proposée à vérifier par rapport aux indices :\n${sol}`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    // ── Problem / reasoning types (no answer oracle for them) ──
+
+    case 'guided-problem': {
+      if (!Array.isArray(data.steps)) return null;
+      const steps = data.steps.map((s, i) => {
+        if (s.kind === 'keywords') return `${i + 1}. Mots-clés à repérer : ${(s.tokens || []).join(', ')}`;
+        if (s.kind === 'numbers') return `${i + 1}. Nombres utiles à repérer : ${(s.tokens || []).join(', ')}`;
+        if (s.kind === 'operation')
+          return `${i + 1}. Opération à choisir parmi ${(s.choices || []).join(' / ')} → réponse proposée : ${fmt(s.answer)}`;
+        if (s.kind === 'calculate') return `${i + 1}. Résultat → réponse proposée : ${fmt(s.answer)} ${s.unit || ''}`;
+        return `${i + 1}. ${s.kind} → ${fmt(s.answer ?? (s.tokens || []).join(', '))}`;
+      });
+      return [
+        `Type: problème guidé (chaque étape a une réponse proposée)`,
+        title && `Titre: ${title}`,
+        `Énoncé: ${strip(data.story || '')}`,
+        ...steps,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'think-board': {
+      return [
+        `Type: calcul représenté (l'élève calcule et illustre)`,
+        `Calcul: ${strip(String(data.expression || ''))}`,
+        data.manipLabel && `Représentation montrée: ${strip(data.manipLabel)}`,
+        `Réponse proposée: ${data.answers ? data.answers.join(' ou ') : fmt(data.answer)} ${data.unit || ''}`,
+        `Vérifie le calcul ET que la représentation correspond bien au calcul.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'inverse-problem': {
+      if (!data.ipBase) return null;
+      return [
+        `Type: problème et ses problèmes inverses (chaque énoncé a sa réponse proposée)`,
+        `Problème de départ: ${strip(data.ipBase.text)} → réponse proposée : ${fmt(data.ipBase.answer)}`,
+        ...(data.ipInverses || []).map(
+          (q, i) => `Variante ${i + 1}: ${strip(q.text)} → réponse proposée : ${fmt(q.answer)}`
+        ),
+      ].join('\n');
+    }
+
+    case 'bar-model': {
+      const bm = data.bm || {};
+      const bars = Object.entries(bm)
+        .filter(([k]) => !/label/i.test(k))
+        .map(([k, v]) => `${k}=${Array.isArray(v) ? v.join('+') : v}`)
+        .join(', ');
+      return [
+        `Type: problème avec schéma en barres`,
+        title && `Titre: ${title}`,
+        `Énoncé: ${strip(data.body || body || '')}`,
+        `Schéma: ${bars}`,
+        `Réponse proposée: ${fmt(data.answer)} ${data.unit || ''}`,
+        `Vérifie la réponse ET que le schéma correspond à l'énoncé.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'error-analysis': {
+      if (!Array.isArray(data.steps)) return null;
+      return [
+        `Type: analyse d'erreur — un élève a fait ce calcul, une étape est fausse`,
+        (data.body || body) && `Consigne: ${strip(data.body || body)}`,
+        ...data.steps.map((s, i) => `Étape ${i + 1}: ${strip(String(s))}`),
+        `Étape fausse proposée: ${Number(data.wrongStep) + 1}`,
+        `Correction proposée: ${fmt(data.correction)}`,
+        `Vérifie que c'est bien cette étape qui est fausse et que la correction est juste.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'compare-solutions': {
+      if (!Array.isArray(data.solutions)) return null;
+      return [
+        `Type: deux solutions d'élèves — laquelle a raison ?`,
+        ...data.solutions.map(
+          (s, i) => `Solution ${i + 1} (${s.name}): ${(s.steps || []).map((x) => strip(String(x))).join(' | ')}`
+        ),
+        `Bonne solution proposée: Solution ${Number(data.correctSolution) + 1} (${data.solutions[data.correctSolution]?.name})`,
+      ].join('\n');
+    }
+
+    case 'bar-chart': {
+      if (!Array.isArray(data.labels)) return null;
+      const vals = data.labels.map((l, i) => `${l} = ${data.values[i]}`).join(', ');
+      // build: the pupil draws the bars → the expected values must be those of the statement
+      // read: the chart is shown → the answers to its questions must match it
+      return [
+        data.mode === 'read'
+          ? `Type: lecture d'un diagramme en barres — réponds aux questions avec les valeurs du diagramme`
+          : `Type: construction d'un diagramme en barres — les valeurs attendues doivent être exactement celles de l'énoncé`,
+        `Énoncé: ${strip(data.body || body || title)}`,
+        `Valeurs ${data.mode === 'read' ? 'du diagramme' : 'attendues'}: ${vals}`,
+        ...(data.questions || []).map((q) => `Question: ${strip(q.text)} → réponse proposée : ${fmt(q.answer)}`),
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'tile-select': {
+      if (!Array.isArray(data.tiles)) return null;
+      const tiles = data.tiles.map((t) => (typeof t === 'object' ? '' : strip(String(t))));
+      if (tiles.some((t) => !t)) return null; // picture tiles
+      const good = new Set((data.tileAnswers || []).map(Number));
+      return [
+        `Type: sélection de cases (les cases cochées [✓] sont les réponses proposées)`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        ...tiles.map((t, i) => `[${good.has(i) ? '✓' : ' '}] ${t}`),
       ]
         .filter(Boolean)
         .join('\n');
@@ -758,24 +992,153 @@ async function pool(tasks, concurrency, fn) {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-async function main() {
-  console.log(
-    `\n${C.bold}LLM exercise validator${C.reset}  model: ${C.cyan}${MODEL}${C.reset}  concurrency: ${CONCURRENCY}\n`
-  );
+// ─── Claude subagents: --export / --import ───────────────────────────────────
+// No local model needed: Claude Code subagents (Haiku) read the exported batches and write one
+// verdict per item; --import records them in the cache under MODEL (default claude-haiku-4-5),
+// so the admin dashboard's LLM column shows them. Failures become flags (🚩 in /admin/).
+//
+//   node scripts/validate-llm.js --export [--batch=30] [--count=N] [--dir=…]   → .scratch/llm-batches/
+//   (one subagent per batch-NNN.json → batch-NNN.result.jsonl, see the README written there)
+//   node scripts/validate-llm.js --import                                      ← reads the results
 
-  // 1. Check Ollama
-  if (!(await checkOllama())) {
-    console.error(`${C.red}Ollama not reachable at ${OLLAMA_URL}${C.reset}`);
-    console.error('Start it with: ollama serve');
-    process.exit(1);
-  }
+// The data of a generated figure (chips of a numeration table, a calendar…) is often what the
+// answers are about: always give it to the checker
+function withFigure(prompt, data) {
+  if (!prompt || !data.svg || !data.svg.gen || prompt.includes('Figure:')) return prompt;
+  return `${prompt}\nFigure: ${data.svg.gen} ${JSON.stringify(data.svg.par || {})}`;
+}
 
-  // 2. Load cache
+function exportBatches() {
   const cache = loadCache();
+  const { tasks, allFiles, cacheHits } = collectTasks(cache);
+  saveCache(cache); // manifest rows + direct 'skip' verdicts for files with nothing checkable
+  fs.rmSync(EXPORT_DIR, { recursive: true, force: true });
+  fs.mkdirSync(EXPORT_DIR, { recursive: true });
 
+  const manifest = {}; // key → { relPath, hash, seriesId, type, title }
+  const items = [];
+  for (const t of tasks) {
+    for (const ex of t.exercises) {
+      const prompt = withFigure(buildPrompt(ex), ex.data);
+      const type = ex.data.type || 'number-check';
+      const title = (
+        (ex.generatorName ? `[gen:${ex.generatorName}] ` : '') + strip(ex.data.title || ex.body || '')
+      ).slice(0, 70);
+      const key = String(Object.keys(manifest).length + 1); // every exercise, with or without a prompt
+      manifest[key] = { relPath: t.relPath, hash: t.hash, seriesId: t.seriesId, type, title, noPrompt: !prompt };
+      if (prompt) items.push({ key, prompt });
+    }
+  }
+  const batches = [];
+  for (let i = 0; i < items.length; i += BATCH) batches.push(items.slice(i, i + BATCH));
+  batches.forEach((b, i) => {
+    const name = `batch-${String(i + 1).padStart(3, '0')}`;
+    fs.writeFileSync(path.join(EXPORT_DIR, `${name}.json`), JSON.stringify({ items: b }, null, 1));
+  });
+  fs.writeFileSync(path.join(EXPORT_DIR, 'manifest.json'), JSON.stringify({ model: MODEL, manifest }, null, 1));
+  fs.writeFileSync(
+    path.join(EXPORT_DIR, 'README.md'),
+    `# Consignes pour le vérificateur\n\n${SYSTEM}\n\n` +
+      `### FICHIERS\nLis \`batch-NNN.json\` : une liste \`items\` de { key, prompt }. Pour CHAQUE item, écris UNE ligne JSON ` +
+      `dans \`batch-NNN.result.jsonl\` (même dossier) :\n` +
+      `{"key":"<key>","verdict":"CORRECT"|"INCORRECT"|"SKIP","reason":"<raison courte en français, vide si CORRECT>"}\n` +
+      `Pas d'autre texte dans ce fichier. N'écris INCORRECT que si tu as refait le calcul et que tu es sûr ; en cas de doute, SKIP.\n` +
+      `N'écris CORRECT que si tu as pu refaire le calcul avec les données du prompt : si une donnée nécessaire manque ` +
+      `(le nombre de départ, une figure non décrite), réponds SKIP avec « donnée manquante : … ».\n`
+  );
+  console.log(
+    `Files: ${allFiles.length} total, ${C.green}${cacheHits} cached${C.reset}, ${C.yellow}${tasks.length} to validate${C.reset}` +
+      ` → ${items.length} prompts in ${batches.length} batch(es) of ≤ ${BATCH}: ${path.relative(ROOT, EXPORT_DIR)}/`
+  );
+  return 0;
+}
+
+function importResults() {
+  const dir = IMPORT_DIR;
+  const { model, manifest } = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8'));
+  const results = {};
+  for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.result.jsonl'))) {
+    for (const line of fs.readFileSync(path.join(dir, f), 'utf8').split(/\r?\n/)) {
+      if (!line.trim()) continue;
+      try {
+        const r = JSON.parse(line);
+        if (r.key != null) results[String(r.key)] = r;
+      } catch {
+        console.log(`${C.yellow}  unreadable line in ${f}: ${line.slice(0, 80)}${C.reset}`);
+      }
+    }
+  }
+  // Group by file; a file gets a verdict only when every one of its items has a result
+  const byFile = new Map();
+  for (const [key, m] of Object.entries(manifest)) {
+    if (!byFile.has(m.relPath)) byFile.set(m.relPath, []);
+    byFile.get(m.relPath).push({ key, ...m });
+  }
+  const cache = loadCache();
+  const human = require('./lib/human-validation.js');
+  let ok = 0,
+    fail = 0,
+    skip = 0,
+    incomplete = 0,
+    changed = 0;
+  for (const [relPath, entries] of byFile) {
+    const abs = path.join(ROOT, relPath);
+    if (!fs.existsSync(abs) || fileHash(abs) !== entries[0].hash) {
+      changed++; // edited since the export: its verdict would describe another version
+      continue;
+    }
+    const verdicts = entries.map((e) => {
+      if (e.noPrompt) return { verdict: 'skip', reason: 'no prompt for type' };
+      const r = results[e.key];
+      if (!r) return null;
+      const v = String(r.verdict || '').toUpperCase();
+      return { ...e, verdict: v === 'CORRECT' ? 'ok' : v === 'INCORRECT' ? 'fail' : 'skip', reason: r.reason || '' };
+    });
+    if (verdicts.some((v) => !v)) {
+      incomplete++;
+      continue;
+    }
+    const fileVerdict = verdicts.some((v) => v.verdict === 'fail')
+      ? 'fail'
+      : verdicts.every((v) => v.verdict === 'skip')
+        ? 'skip'
+        : 'ok';
+    const e = cache.get(relPath);
+    const entry =
+      e && e.hash === entries[0].hash
+        ? e
+        : { seriesId: entries[0].seriesId, hash: entries[0].hash, manual: e?.manual || '', models: new Map() };
+    entry.models.set(model, fileVerdict);
+    cache.set(relPath, entry);
+    if (fileVerdict === 'ok') ok++;
+    else if (fileVerdict === 'skip') skip++;
+    else {
+      fail++;
+      for (const v of verdicts.filter((x) => x.verdict === 'fail')) {
+        const reason = `[LLM ${model}] ${path.basename(relPath)} · ${v.type} « ${v.title} » : ${v.reason}`;
+        human.addFlag(v.seriesId, reason, 'llm');
+        console.log(`  ${C.red}✗${C.reset} ${relPath}\n     ${C.yellow}${v.title} — ${v.reason}${C.reset}`);
+      }
+    }
+  }
+  saveCache(cache);
+  console.log(
+    `\n${C.bold}Imported (${model}):${C.reset} ${C.green}${ok} ok${C.reset} · ${C.red}${fail} fail (flagged in /admin/)${C.reset} · ${C.grey}${skip} skip${C.reset}` +
+      (incomplete ? ` · ${C.yellow}${incomplete} file(s) without all results${C.reset}` : '') +
+      (changed ? ` · ${C.yellow}${changed} file(s) changed since the export, ignored${C.reset}` : '')
+  );
+  return 0;
+}
+
+// ─── Task collection ─────────────────────────────────────────────────────────
+// Files needing a verdict from MODEL (new, changed, failed, or never validated by it), with their
+// LLM-checkable exercises (generated ones expanded into samples). Files with nothing checkable get
+// a 'skip' verdict directly. Updates the cache manifest in place.
+
+function collectTasks(cache) {
   // 3. Collect all .md files
   let allFiles = SRC_DIRS.flatMap(walkMdFiles);
-  if (FILTER_DIR) allFiles = allFiles.filter((f) => f.startsWith(FILTER_DIR));
+  if (FILTER_DIR) allFiles = allFiles.filter((f) => FILTER_DIR.some((d) => f.startsWith(d)));
 
   // 4. Build task list: files that need (re-)validation
   const tasks = [];
@@ -806,7 +1169,9 @@ async function main() {
 
     // Use cache if this model already validated this exact file version
     const modelVerdict = entry?.hash === hash ? entry.models.get(MODEL) : undefined;
-    if (!FORCE && modelVerdict && modelVerdict !== 'fail') {
+    // A failure is retried with a local model (small models are noisy), but not with --export: a
+    // Claude failure is flagged for a human, who settles it (manual=ok, or fixes the file)
+    if (!FORCE && modelVerdict && (modelVerdict !== 'fail' || EXPORT_DIR)) {
       cacheHits++;
       continue;
     }
@@ -818,7 +1183,7 @@ async function main() {
     const relevant = [];
     for (const ex of exercises) {
       const t = ex.data.type || 'number-check';
-      if (FILTER_TYPE && t !== FILTER_TYPE) continue;
+      if (FILTER_TYPE && !FILTER_TYPE.has(t)) continue;
       if (ex.data.generator) {
         // Application exercise: run generator to produce real samples
         const samples = generateSamples(ex.data.generator, ex.data.params, ex.body);
@@ -846,7 +1211,33 @@ async function main() {
     tasks.push({ absPath, relPath, seriesId, hash, exercises: relevant });
   }
   // --count / --one: trim task list
-  if (COUNT > 0) tasks.splice(COUNT);
+  // --export picks files spread over the whole list (every level and theme), not the first N
+  if (COUNT > 0 && EXPORT_DIR && tasks.length > COUNT) {
+    const step = tasks.length / COUNT;
+    const picked = Array.from({ length: COUNT }, (_, i) => tasks[Math.floor(i * step)]);
+    tasks.splice(0, tasks.length, ...picked);
+  } else if (COUNT > 0) tasks.splice(COUNT);
+  return { tasks, allFiles, cacheHits };
+}
+
+async function main() {
+  console.log(
+    `\n${C.bold}LLM exercise validator${C.reset}  model: ${C.cyan}${MODEL}${C.reset}  concurrency: ${CONCURRENCY}\n`
+  );
+
+  if (EXPORT_DIR) return exportBatches();
+  if (IMPORT_DIR) return importResults();
+
+  // 1. Check Ollama
+  if (!(await checkOllama())) {
+    console.error(`${C.red}Ollama not reachable at ${OLLAMA_URL}${C.reset}`);
+    console.error('Start it with: ollama serve');
+    process.exit(1);
+  }
+
+  // 2. Load cache, 3–4. collect the files to (re-)validate
+  const cache = loadCache();
+  const { tasks, allFiles, cacheHits } = collectTasks(cache);
 
   console.log(
     `Files: ${allFiles.length} total, ${C.green}${cacheHits} cached${C.reset}, ${C.yellow}${tasks.length} to validate${C.reset}\n`

@@ -10,4 +10,4 @@ solution:
 ---
 
 - Nathan n'a ni chat ni chien.
-- Emma ne veut pas de lapin.
+- Emma n'a pas de chat.

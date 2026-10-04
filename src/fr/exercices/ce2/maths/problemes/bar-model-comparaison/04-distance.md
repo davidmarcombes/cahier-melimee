@@ -1,6 +1,6 @@
 ---
 type: bar-model
-title: "Deux trajets (A3.1)"
+title: "Deux trajets"
 body: "Le trajet A dure **1h 20 min** soit **80 minutes**. Le trajet B dure **55 minutes**. Quelle est la différence de durée ?"
 bm:
   mode: comparison

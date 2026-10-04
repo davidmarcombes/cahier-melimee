@@ -7,6 +7,14 @@ const desc = {
   'check:full': 'Pre-commit check with e2e on every page',
   'check:answers': 'Answer oracle: recompute expected answers on the built site + generators (needs a build)',
   flag: 'Ask a human to check something: npm run flag -- <series id|URL> "<reason>" (shows in /admin/)',
+  unvalidate:
+    'Withdraw a human validation (any time, unlike the 5 s « Annuler »): npm run unvalidate -- <series id|URL> "<why>"',
+  snapshot:
+    'Checkpoint of the built site to compare against later: npm run snapshot -- [name] (--list, --delete, --shots)',
+  regress:
+    'Compare now with a checkpoint: changed pages + pages using changed generators / SVG helpers, screenshots, pixel-diff report (--e2e, --all, --no-shots)',
+  'check:spell:generated':
+    'French spelling of the text generators produce (titles, tiles, choices) — run by check when generators change',
   'release:verify':
     'Check the production artifact before upload (dev content, broken links, removed series): after npm run build',
   build: 'Build for production (test + validate + eleventy + css)',

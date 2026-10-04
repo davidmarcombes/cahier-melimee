@@ -1,5 +1,8 @@
 {# Fraction Paint — click/drag to colour strips. Supports n/d or decimal. #}
 <div x-show="cur.type === 'fraction-paint'" class="space-y-4">
+  {# The statement carries the fraction to colour (« Colorie 3/5 de la bande ») #}
+  <div class="prose dark:prose-invert text-center max-w-none text-content-default"
+       x-show="cur.body" x-html="cur.body"></div>
 
   <div class="flex justify-center"
     @mouseup.window="paintDragging = false"

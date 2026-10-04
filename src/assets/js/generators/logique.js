@@ -823,6 +823,28 @@
           hexagone: { char: '⬡', quadri: false, allEqual: true, rightAngle: false, parallel: false },
         };
 
+        // Drawn figures: a font character cannot show whether sides are equal (△ and ▲ both look
+        // equilateral, ◆ looks like a rotated square). Proportions make each property visible.
+        const fig = (shape) =>
+          `<svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true" style="color:var(--p,#6366f1)">${shape}</svg>`;
+        const poly = (pts) =>
+          fig(
+            `<polygon points="${pts}" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`
+          );
+        const SHAPE_SVG = {
+          carre: poly('6,6 34,6 34,34 6,34'),
+          rect: poly('2,12 38,12 38,28 2,28'),
+          losange: poly('20,2 32,20 20,38 8,20'), // unequal diagonals: not a square
+          paralelo: poly('12,10 38,10 28,30 2,30'),
+          trapeze: poly('13,10 27,10 38,30 2,30'),
+          triEqui: poly('3,33 37,33 20,3.6'),
+          triQqque: poly('2,34 38,34 9,5'), // sides 36, 29.8, 41 — visibly unequal
+          cercle: fig(
+            '<circle cx="20" cy="20" r="16" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="2"/>'
+          ),
+          hexagone: poly('11,4.4 29,4.4 38,20 29,35.6 11,35.6 2,20'),
+        };
+
         const themesByLevel = {
           CE2: [
             {
@@ -874,7 +896,7 @@
           const s = shapes[key];
           const inA = theme.predA(s),
             inB = theme.predB(s);
-          return { char: s.char, zone: inA && inB ? 'ab' : inA ? 'a' : inB ? 'b' : 'out' };
+          return { char: s.char, svg: SHAPE_SVG[key], zone: inA && inB ? 'ab' : inA ? 'a' : inB ? 'b' : 'out' };
         });
 
         return {

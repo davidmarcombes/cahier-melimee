@@ -449,7 +449,11 @@
         // Helper: build 4-choice MCQ (correct + 3 unique wrong)
         const mkMCQ = (correct, wrongs) => {
           const pool = [...new Set(wrongs.map(String).filter((w) => w !== String(correct)))];
-          while (pool.length < 3) pool.push(String(rand(1, 20)));
+          // Pad with numbers not already shown (a second « 5 » button was refused as a wrong answer)
+          while (pool.length < 3) {
+            const w = String(rand(1, 20));
+            if (w !== String(correct) && !pool.includes(w)) pool.push(w);
+          }
           const choices = shuffle([String(correct), ...pool.slice(0, 3)]);
           return { choices, answer: choices.indexOf(String(correct)) };
         };
@@ -482,8 +486,8 @@
           const dix = rand(1, 9);
           const cent = rand(1, 9);
           const numStr = `${intPt},${dix}${cent}`;
-          const place = randItem(['dix\u00e8mes', 'centi\u00e8mes']);
-          const correct = String(place === 'dix\u00e8mes' ? dix : cent);
+          const place = randItem(['dixi\u00e8mes', 'centi\u00e8mes']);
+          const correct = String(place === 'dixi\u00e8mes' ? dix : cent);
           const wrongs = [String(intPt), String(dix), String(cent), String(dix * 10 + cent)];
           const { choices, answer } = mkMCQ(
             correct,
@@ -681,14 +685,11 @@
         function toWords(n) {
           if (n === 0) return 'zéro';
           const parts = [];
-          if (n >= 10000) {
-            const dizMill = Math.floor(n / 10000);
-            parts.push(tensWords(dizMill) + ' mille');
-            n %= 10000;
-          }
           if (n >= 1000) {
+            // The thousands as one block (83 063 → quatre-vingt-trois mille …); « vingt » stays
+            // invariable before « mille » (quatre-vingt mille)
             const mill = Math.floor(n / 1000);
-            parts.push(mill === 1 ? 'mille' : tensWords(mill) + ' mille');
+            parts.push(mill === 1 ? 'mille' : tensWords(mill).replace(/vingts$/, 'vingt') + ' mille');
             n %= 1000;
           }
           if (n >= 100) {

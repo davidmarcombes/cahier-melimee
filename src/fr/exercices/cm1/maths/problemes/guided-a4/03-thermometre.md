@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "La température (A4.3)"
+title: "La température"
 story: "Le matin, la température **monte de 4 °C**. Le bilan de la journée est **+1 °C**. De combien la température a-t-elle **varié l'après-midi** ?"
 steps:
   - kind: keywords

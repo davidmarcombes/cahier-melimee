@@ -52,7 +52,7 @@ Generators live in `src/assets/js/generators/`, one module per topic (`numeratio
 | `bounding` | `types/bounding.njk` | Place a number between bounds (encadrement). |
 | `convert` | `types/convert.njk` | Unit conversion exercises. |
 | `pyramid` | `types/pyramid.njk` | Addition pyramids — fill missing cells. Give at least one cell per unknown so the pyramid is **solvable step by step**: each hidden cell must follow from one addition or subtraction of known neighbours (a top-down pyramid needing algebra, e.g. `2 160 + 3 × ? = 3 240`, is too hard for CP–CM2). The build computes all cells algebraically and fails on contradictory data; `check:answers` rejects pyramids that are not solvable step by step. |
-| `logic-grid` | `types/logic-grid.njk` | Logic grid puzzle — click cells to place marks. |
+| `logic-grid` | `types/logic-grid.njk` | Logic grid puzzle — click cells to place marks. Clues are the body's list items; they must give **exactly one** solution. `validate:exercises` checks it when every clue is direct (« Théo ne fait ni football ni tennis. »); descriptive clues (« Adèle dribble avec un ballon ») are left to the human check. Classic trap: a clue excluding an element another clue already assigned — it adds nothing and leaves two people interchangeable. |
 | `true-false` | `types/true-false.njk` | Vrai/Faux table — tick true or false per assertion. |
 | `compare` | `types/compare.njk` | Compare numbers — pick < or > between two values. |
 | `compare-expressions` | `types/compare-expressions.njk` | Compare two expression strings without calculating — pick < = >. Fields: `comparisons[]` (left, right; answer auto-computed or explicit). |

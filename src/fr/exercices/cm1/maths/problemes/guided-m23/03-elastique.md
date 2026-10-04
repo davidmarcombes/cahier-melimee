@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "L'élastique (M2.3)"
+title: "L'élastique"
 story: "Un élastique étiré mesure **60 cm**. C'est **2,5 fois** sa longueur d'origine. Quelle est la longueur d'**origine** de l'élastique ?"
 steps:
   - kind: keywords

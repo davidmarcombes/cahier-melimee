@@ -11,6 +11,7 @@ process.env.HUMAN_FLAGS = join(dir, 'flags.json');
 const require = createRequire(import.meta.url);
 const {
   addFlag,
+  resolveTarget,
   fingerprint,
   listSeries,
   loadGenerators,
@@ -122,6 +123,12 @@ describe('flags', () => {
     expect(f.seriesId).toBe(STATIC);
     expect(addFlag(`/fr/exercices/${STATIC}/#2`, 'check the wording').id).toBe(f.id);
     expect(readFlags()).toHaveLength(1);
+  });
+
+  it('resolves a target given as id, URL or path', () => {
+    expect(resolveTarget(STATIC).series.id).toBe(STATIC);
+    expect(resolveTarget(`http://localhost:8080/fr/exercices/${STATIC}/#4`)).toMatchObject({ anchor: '#4' });
+    expect(() => resolveTarget('zzzzzzzz')).toThrow(/unknown series/);
   });
 
   it('refuses an unknown series', () => {

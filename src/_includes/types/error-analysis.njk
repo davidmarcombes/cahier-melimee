@@ -2,7 +2,10 @@
 {# guided mode (cur.guided): wrong step pre-highlighted, student only types correction #}
 <div x-show="cur.type === 'error-analysis'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 mb-8">
 
-  <p class="text-sm text-content-subtle text-center mb-5 italic"
+  {# The file's statement (« Un élève a soustrait le petit chiffre du grand… ») when there is one #}
+  <div x-show="cur.body" class="prose dark:prose-invert text-sm text-content-subtle text-center max-w-none mb-5 italic"
+       x-html="cur.body"></div>
+  <p x-show="!cur.body" class="text-sm text-content-subtle text-center mb-5 italic"
      x-text="cur.guided ? 'L\'étape en rouge contient une erreur. Écris la correction.' : 'Clique sur l\'étape qui contient une erreur, puis écris la correction.'"></p>
 
   {# Steps list #}

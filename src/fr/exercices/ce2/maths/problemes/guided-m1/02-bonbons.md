@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Les bonbons (M1.2 — partage)"
+title: "Les bonbons"
 story: "J'ai **20 bonbons** à **partager équitablement** entre **4 enfants**. Combien de bonbons chaque enfant reçoit-il ?"
 steps:
   - kind: keywords

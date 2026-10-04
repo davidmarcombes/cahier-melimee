@@ -1,6 +1,6 @@
 ---
 type: bar-model
-title: "Les classeurs (M1.1)"
+title: "Les classeurs"
 body: "Chaque classeur coûte **4,50 €**. L'école achète **12 classeurs**. Quel est le coût total ?"
 bm:
   mode: part-whole

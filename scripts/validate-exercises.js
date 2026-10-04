@@ -118,11 +118,40 @@ function parseFrontmatter(filePath) {
 const GEN_RUNS = 20;
 global.clockSvg = () => '<svg/>'; // svg.js helper called at generation time (browser global)
 const generators = require('../src/assets/js/generators/index.js');
+const { solveGrid } = require('./lib/logic-grid.js');
+const logicGrids = { checked: 0, unchecked: 0 }; // uniqueness of the solution (see lib/logic-grid.js)
 const svgSource = fs.readFileSync(path.join(__dirname, '../src/assets/js/svg.js'), 'utf8');
 const svgHelperExists = (name) =>
   name === 'embedSvg' || svgSource.includes(`function ${name}(`) || svgSource.includes(`${name} =`);
 
-function validateGenerated(relMd, data, errors) {
+// Two identical buttons / tiles: the pupil clicks the « other » right value and is refused
+function duplicateChoice(item) {
+  const plain = (s) =>
+    String(typeof s === 'object' ? JSON.stringify(s) : s)
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  for (const key of ['mcqChoices', 'choices', 'tiles']) {
+    const list = item[key];
+    if (!Array.isArray(list) || list.length < 2) continue;
+    const seen = new Set();
+    for (const c of list.map(plain)) {
+      if (seen.has(c)) return `« ${c} »`;
+      seen.add(c);
+    }
+  }
+  return null;
+}
+
+function statementOf(mdPath) {
+  return fs
+    .readFileSync(mdPath, 'utf8')
+    .replace(/^---[\s\S]*?\n---/, '')
+    .trim();
+}
+
+function validateGenerated(relMd, data, errors, bodyText = '') {
   const name = data.generator;
   const gen = generators[name];
   if (!gen) {
@@ -155,7 +184,27 @@ function validateGenerated(relMd, data, errors) {
       errors.push(`${relMd}: generator "${name}" uses SVG helper "${out.svg.gen}" missing from svg.js`);
       return;
     }
+    const dup = duplicateChoice(out);
+    if (dup) {
+      errors.push(`${relMd}: generator "${name}" shows the same choice twice (${dup}) — one of them is refused`);
+      return;
+    }
+    if (expected === 'matching' && !data.title && !out.title && !bodyText && !out.body) {
+      errors.push(`${relMd}: matching exercise has no title and no statement — say what to link`);
+      return;
+    }
   }
+}
+
+// Does the type's partial display the statement (cur.body)? Types without their own partial use
+// the generic player text, which does.
+const _showsBody = {};
+function typeShowsBody(type) {
+  if (!(type in _showsBody)) {
+    const f = path.join(__dirname, '../src/_includes/types', `${type}.njk`);
+    _showsBody[type] = !fs.existsSync(f) || fs.readFileSync(f, 'utf8').includes('cur.body');
+  }
+  return _showsBody[type];
 }
 
 function validateSeries(seriesDir, errors) {
@@ -186,7 +235,14 @@ function validateSeries(seriesDir, errors) {
   }
 
   // Validate exercise .md files
-  const mdFiles = findFiles(seriesDir, '*.md');
+  // A few series folders also hold other series (applications/ce2/maths/mesures) — those are
+  // validated on their own, so skip any .md whose nearest index.yaml is not this series'
+  const ownSeries = (mdPath) => {
+    for (let d = path.dirname(mdPath); d !== seriesDir; d = path.dirname(d))
+      if (fs.existsSync(path.join(d, 'index.yaml'))) return false;
+    return true;
+  };
+  const mdFiles = findFiles(seriesDir, '*.md').filter(ownSeries);
   for (const mdPath of mdFiles) {
     const relMd = path.relative(process.cwd(), mdPath).replace(/\\/g, '/');
     const data = parseFrontmatter(mdPath);
@@ -195,9 +251,15 @@ function validateSeries(seriesDir, errors) {
       continue;
     }
 
+    const bodyText = statementOf(mdPath);
+    // The matching template shows no prompt of its own: without a title or statement the pupil sees
+    // two columns and no instruction (« Relie chaque horloge… » was missing in lire-heure-matching)
+    if ((data.type || 'number-check') === 'matching' && !data.title && !bodyText && !data.generator)
+      errors.push(`${relMd}: matching exercise has no title and no statement — say what to link`);
+
     // Generated exercises: no static schema, run the generator instead
     if (data.generator) {
-      validateGenerated(relMd, data, errors);
+      validateGenerated(relMd, data, errors, bodyText);
       continue;
     }
 
@@ -207,6 +269,23 @@ function validateSeries(seriesDir, errors) {
       errors.push(`${relMd}: unknown type "${type}"`);
       continue;
     }
+
+    // A statement the type's template never displays is invisible to the pupil
+    // (« Colorie 3/5 de la bande » under fraction-paint, hidden until 2026-10)
+    // The pupil types the correction: a sentence can never be matched (« « de plus » → c'est A qui… »)
+    if (type === 'error-analysis' && /\p{L}{3,}.*\s.*\p{L}{3,}/u.test(String(data.correction ?? '')))
+      errors.push(
+        `${relMd}: error-analysis correction "${data.correction}" is a sentence — use the right result (a number)`
+      );
+    // Internal curriculum codes are for us, not for pupils (« Les salles — erreur A3.3 »)
+    if (/\b[ADIMNS]\d(\.\d)+\b/.test(String(data.title || '')))
+      errors.push(`${relMd}: title "${data.title}" shows an internal class code`);
+    const dupStatic = duplicateChoice(data);
+    if (dupStatic) errors.push(`${relMd}: the same choice appears twice (${dupStatic}) — one of them is refused`);
+    if (bodyText && !typeShowsBody(type))
+      errors.push(
+        `${relMd}: has a statement but the ${type} template never displays cur.body — show it in src/_includes/types/${type}.njk`
+      );
 
     // Check required fields
     for (const field of schema.required) {
@@ -287,6 +366,24 @@ function validateSeries(seriesDir, errors) {
           errors.push(`${relMd}: solution key "${key}" is not a column (keys = columns)`);
         if (!rows.includes(String(value))) errors.push(`${relMd}: solution value "${value}" is not a row`);
       }
+      // Clues must lead to exactly one solution — the stored one. Checked when every clue is
+      // direct (names its elements); descriptive clues are left to the human check.
+      const grid = solveGrid({
+        columns: cols,
+        rows,
+        body: fs.readFileSync(mdPath, 'utf8').replace(/^---[\s\S]*?\n---/, ''),
+      });
+      if (grid.checked) {
+        logicGrids.checked++;
+        const show = (s) => cols.map((c) => `${c}=${s[c]}`).join(', ');
+        if (!grid.solutions.length) errors.push(`${relMd}: the clues contradict each other (no solution)`);
+        else if (grid.solutions.length > 1)
+          errors.push(
+            `${relMd}: ${grid.solutions.length} solutions fit the clues (${grid.solutions.map(show).join(' | ')}) — a clue is redundant`
+          );
+        else if (cols.some((c) => grid.solutions[0][c] !== String(data.solution[c])))
+          errors.push(`${relMd}: the clues give ${show(grid.solutions[0])}, not the stored solution`);
+      } else logicGrids.unchecked++;
     }
   }
 
@@ -370,6 +467,7 @@ if (errors.length > 0) {
   process.exit(1);
 } else {
   console.log(
-    `\n${COLORS.green}${COLORS.bold}  ✓ ${seriesCount} series, ${exerciseCount} exercises validated${COLORS.reset}\n`
+    `\n${COLORS.green}${COLORS.bold}  ✓ ${seriesCount} series, ${exerciseCount} exercises validated${COLORS.reset}\n` +
+      `  logic grids: ${logicGrids.checked} with a unique solution, ${logicGrids.unchecked} with descriptive clues (human check)\n`
   );
 }

@@ -30,7 +30,7 @@
           <div class="absolute flex flex-wrap content-center justify-center gap-1 p-1"
             style="left: 10px; top: 70px; width: 90px; height: 160px;">
             <template x-for="(it, i) in cur.venn.items" :key="'pa'+i">
-              <span x-show="vennPlacements[i] === 'a'" class="text-2xl leading-none" x-text="it.char"></span>
+              <span x-show="vennPlacements[i] === 'a'" class="text-2xl leading-none" x-html="vennLabel(it)"></span>
             </template>
           </div>
         </div>
@@ -42,7 +42,7 @@
           <div class="absolute flex flex-wrap content-center justify-center gap-1 p-1"
             style="right: 10px; top: 70px; width: 90px; height: 160px;">
             <template x-for="(it, i) in cur.venn.items" :key="'pb'+i">
-              <span x-show="vennPlacements[i] === 'b'" class="text-2xl leading-none" x-text="it.char"></span>
+              <span x-show="vennPlacements[i] === 'b'" class="text-2xl leading-none" x-html="vennLabel(it)"></span>
             </template>
           </div>
         </div>
@@ -53,7 +53,7 @@
           @click="vennPlaceZone('ab')">
           <div class="flex flex-wrap content-center justify-center gap-1 w-full h-full p-1">
             <template x-for="(it, i) in cur.venn.items" :key="'pab'+i">
-              <span x-show="vennPlacements[i] === 'ab'" class="text-2xl leading-none" x-text="it.char"></span>
+              <span x-show="vennPlacements[i] === 'ab'" class="text-2xl leading-none" x-html="vennLabel(it)"></span>
             </template>
           </div>
         </div>
@@ -65,7 +65,7 @@
           @click="vennPlaceZone('out')">
           <span class="text-xs text-content-subtle" x-show="!Object.values(vennPlacements).some(v => v === 'out')">Ni l'un ni l'autre</span>
           <template x-for="(it, i) in cur.venn.items" :key="'po'+i">
-            <span x-show="vennPlacements[i] === 'out'" class="text-2xl leading-none" x-text="it.char"></span>
+            <span x-show="vennPlacements[i] === 'out'" class="text-2xl leading-none" x-html="vennLabel(it)"></span>
           </template>
         </div>
       </div>
@@ -83,7 +83,7 @@
               'border-red-400 bg-red-50 dark:bg-red-900/20': vennErrors.includes(i),
               'border-slate-200 dark:border-slate-700 bg-surface-subtle hover:border-slate-300': vennSelected !== i && !vennErrors.includes(i)
             }"
-            x-text="it.char">
+            x-html="vennLabel(it)">
           </button>
         </template>
       </div>

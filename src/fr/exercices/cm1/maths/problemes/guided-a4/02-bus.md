@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Le bus (A4.2)"
+title: "Le bus"
 story: "Au **1er arrêt**, le bus **perd 5 passagers**. Au **2ème arrêt**, il en **gagne 8**. Quelle est l'**évolution totale** du nombre de passagers ?"
 steps:
   - kind: keywords

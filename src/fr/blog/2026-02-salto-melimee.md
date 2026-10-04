@@ -8,13 +8,13 @@ Il était une fois, au fond d'un jardin un peu sauvage, un étang que personne n
 
 ## Mélimée
 
-Mélimée, c'est cette petite fille qui se mélange les méninges. Tu sais, celle qui écrit 56 au lieu de 65, qui confond le périmètre et l'aire, et qui oublie systématiquement la retenue. Mais elle a un truc que beaucoup n'ont pas : elle recommence. Toujours. Pas parce qu'on lui demande, mais parce qu'elle veut comprendre.
+Mélimée, c'est une petite fille qui se mélange parfois les méninges. Il lui arrive d'écrire 56 au lieu de 65, de confondre le périmètre et l'aire, ou d'oublier la retenue. Mais elle a un super pouvoir : elle recommence. Pas parce qu'on le lui demande, mais parce qu'elle veut comprendre.
 
 Un jour, en cherchant un endroit tranquille pour s'entraîner loin des regards, elle a découvert un étang au fond du jardin. Et au bord de cet étang, quelque chose de bleu l'observait.
 
 ## Salto
 
-Salto est une grenouille bleue. Pas une grenouille ordinaire -- une grenouille qui bondit à chaque erreur. Pas pour se moquer, non. Salto bondit parce que pour lui, chaque erreur est un tremplin. Se tromper, c'est juste trouver un nouveau nénuphar d'où s'élancer.
+Salto est une grenouille bleue. Pas une grenouille ordinaire : une grenouille qui bondit à chaque erreur. Pas pour se moquer, non. Salto bondit parce que pour lui, chaque erreur est un tremplin. Se tromper, c'est juste trouver un nouveau nénuphar d'où s'élancer.
 
 Quand Mélimée a posé son cahier au bord de l'étang, Salto a fait son premier saut. Et depuis, il ne l'a plus quittée.
 
@@ -23,12 +23,12 @@ Quand Mélimée a posé son cahier au bord de l'étang, Salto a fait son premier
 Salto et Mélimée ont passé un accord simple :
 
 - **Pas de jugement.** On se trompe, on recommence, on progresse.
-- **Pas de secrets volés.** Dans l'étang de Salto, personne ne te demande ton nom. Tu es qui tu veux être -- peut-être **petit-renard-roux**, peut-être **étoile-de-mer-verte**.
-- **Pas de spectacle.** Ici, pas de pubs qui clignotent, pas de pop-ups qui crient. Juste le calme du cahier et le "plop" de Salto qui rebondit sur l'eau.
+- **Pas besoin de ton nom.** Dans l'étang de Salto, tu choisis un animal : peut-être **petit-renard-roux**, peut-être **douce-tortue-rose**.
+- **Du calme.** Ici, rien ne clignote et rien ne crie. Juste ton cahier et le « plop » de Salto qui rebondit sur l'eau.
 
 ## Pourquoi une grenouille ?
 
-Parce qu'une grenouille, ça fait des bonds. Des petits, des grands, des ratés parfois -- mais ça avance toujours. Et surtout, ça n'a pas peur de se mouiller.
+Parce qu'une grenouille, ça fait des bonds. Des petits, des grands, des ratés parfois, mais ça avance toujours. Et surtout, ça n'a pas peur de se mouiller.
 
 Salto ne donne pas les réponses. Il attend, il observe, et quand tu trouves, il fait un saut de joie. C'est tout. C'est suffisant.
 

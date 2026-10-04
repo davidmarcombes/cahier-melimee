@@ -1,15 +1,15 @@
 ---
 type: ruler
 title: "Lis la valeur du point A"
-min: 0
-max: 5
-divisions: 5
+min: 20
+max: 30
+divisions: 1
 markers:
   - label: "A"
-    value: 2.4
+    value: 24
   - label: "B"
-    value: 4.2
-answer: "2,4"
+    value: 27
+answer: "24"
 ---
 
-Deux points sont placés sur la règle. Quel nombre décimal est indiqué par la flèche A ? (ex : 3,2)
+Deux points sont placés sur la règle. Quel nombre est indiqué par la flèche A ?

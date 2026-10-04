@@ -110,9 +110,7 @@ function pageExists(urlPath) {
 }
 
 function buildUrls() {
-  const staticPages = ['/fr/', '/fr/exercices/', '/fr/a-propos/', '/fr/connexion/', '/fr/onboarding/'].filter(
-    pageExists
-  );
+  const staticPages = ['/fr/', '/fr/exercices/', '/fr/a-propos/', '/fr/cahiers/', '/fr/onboarding/'].filter(pageExists);
 
   const exerciseIds = sampleDirs(path.join(ROOT, 'fr/exercices'), SAMPLE_SIZE);
   const applicationIds = sampleDirs(path.join(ROOT, 'fr/applications'), SAMPLE_SIZE);

@@ -1,6 +1,6 @@
 ---
 type: bar-model
-title: "Les sacs (A3.3)"
+title: "Les sacs"
 body: "Un sac pèse **15 kg**. Il est **2,5 kg plus lourd** que l'autre sac. Combien pèse l'autre sac ?"
 bm:
   mode: comparison

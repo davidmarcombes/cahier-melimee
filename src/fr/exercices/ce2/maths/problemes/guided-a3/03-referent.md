@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Les billes de Léa (A3.3)"
+title: "Les billes de Léa"
 story: "Luc a **10 billes**. Il en a **3 de plus** que Léa. Combien Léa a-t-elle de billes ?"
 steps:
   - kind: keywords

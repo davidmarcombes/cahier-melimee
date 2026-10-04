@@ -1,6 +1,6 @@
 ---
 type: bar-model
-title: "La salle B (A3.3 — non-congruent)"
+title: "La salle B"
 body: "La salle A accueille **312 personnes**, soit **48 de plus** que la salle B. Quelle est la capacité de la salle B ?"
 bm:
   mode: comparison

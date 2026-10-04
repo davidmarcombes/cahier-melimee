@@ -4,15 +4,12 @@ layout: base
 
 <div x-data="cahierPage()" x-init="init()" x-cloak class="max-w-2xl mx-auto py-12 px-4">
 
-  {# Not found / no user param #}
+  {# Not found — unknown cahier on this device #}
   <div x-show="state === 'notfound'" class="text-center py-16">
     <div class="text-6xl mb-6">🔍</div>
     <h1 class="text-2xl font-bold text-content-default mb-3">Cahier introuvable</h1>
-    <p class="text-content-subtle mb-8">Ce lien ne correspond à aucun cahier enregistré.</p>
-    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a href="{{ '/fr/connexion/' | url }}" class="px-6 py-3 bg-primary-500 text-white font-bold rounded-xl hover:bg-primary-600 transition-all shadow-md">Se connecter</a>
-      <a href="{{ '/fr/onboarding/' | url }}" class="px-6 py-3 border border-slate-300 dark:border-slate-600 text-content-default font-bold rounded-xl hover:bg-surface-subtle transition-all">Créer un cahier</a>
-    </div>
+    <p class="text-content-subtle mb-8">Ce cahier n'est pas enregistré dans ce navigateur. S'il est sauvegardé dans un fichier, tu peux le reprendre.</p>
+    <a href="{{ '/fr/cahiers/' | url }}" class="px-6 py-3 bg-primary-500 text-white font-bold rounded-xl hover:bg-primary-600 transition-all shadow-md">Voir les cahiers</a>
   </div>
 
   {# Cahier content #}
@@ -20,53 +17,31 @@ layout: base
 
     {# Header — identity card #}
     <div class="flex items-center gap-5 mb-10 p-6 bg-surface-subtle rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-      <div class="text-6xl leading-none" x-text="pupil.sticker_id"></div>
+      <div class="text-6xl leading-none" x-text="pupil?.sticker_id"></div>
       <div>
-        <h1 class="text-2xl font-extrabold text-content-default leading-tight" x-text="pupil?.username || 'Cahier personnel'">Cahier personnel</h1>
-        <p class="text-sm text-content-subtle mt-1">Mon cahier personnel</p>
+        <h1 class="text-2xl font-extrabold text-content-default leading-tight" x-text="pupil?.username || 'Mon cahier'">Mon cahier</h1>
+        <p class="text-sm text-content-subtle mt-1">Mon cahier</p>
       </div>
       <div class="ml-auto">
-        <button type="button" @click="logout()" class="text-xs px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-content-subtle hover:text-content-default hover:bg-surface-subtle transition-all">
-          Déconnexion
-        </button>
+        <a href="{{ '/fr/cahiers/' | url }}" class="text-xs px-3 py-1.5 border border-slate-300 dark:border-slate-600 rounded-lg text-content-subtle hover:text-content-default hover:bg-surface-subtle transition-all whitespace-nowrap">
+          Changer d'élève
+        </a>
       </div>
-    </div>
-
-    {# Share link #}
-    <div class="mb-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <div>
-        <p class="text-xs font-semibold text-blue-800 dark:text-blue-300 mb-0.5">Ton lien secret (marque-le !)</p>
-        <code class="text-xs text-blue-600 dark:text-blue-400 font-mono break-all" x-text="shareUrl"></code>
-      </div>
-      <button type="button" @click="copyLink()" class="shrink-0 px-3 py-1.5 text-xs font-bold border border-blue-200 dark:border-blue-700 rounded-lg text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-slate-700 transition-all active:scale-95">
-        <span x-show="!recentlyCopied">📋 Copier</span>
-        <span x-show="recentlyCopied" class="text-green-600 dark:text-green-400">✅ Copié !</span>
-      </button>
     </div>
 
     {# Quick access to exercises #}
     <div class="mb-8">
-      <h2 class="text-lg font-bold text-content-default mb-4">Commencer à travailler</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <a href="{{ '/fr/exercices/' | url }}" class="flex items-center gap-3 p-4 bg-surface-subtle rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-400 hover:shadow-md transition-all group">
-          <span class="text-3xl">📚</span>
-          <div>
-            <p class="font-bold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400">Exercices</p>
-            <p class="text-xs text-content-subtle">Toutes les séries disponibles</p>
-          </div>
-        </a>
-        <a href="{{ '/fr/connexion/' | url }}" class="flex items-center gap-3 p-4 bg-surface-subtle rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-400 hover:shadow-md transition-all group">
-          <span class="text-3xl">🔑</span>
-          <div>
-            <p class="font-bold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400">Changer de cahier</p>
-            <p class="text-xs text-content-subtle">Se connecter avec un autre nom</p>
-          </div>
-        </a>
-      </div>
+      <a href="{{ '/fr/exercices/' | url }}" class="flex items-center gap-3 p-4 bg-surface-subtle rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-400 hover:shadow-md transition-all group">
+        <span class="text-3xl">📚</span>
+        <div>
+          <p class="font-bold text-content-default group-hover:text-primary-600 dark:group-hover:text-primary-400">Exercices</p>
+          <p class="text-xs text-content-subtle">Toutes les séries disponibles</p>
+        </div>
+      </a>
     </div>
 
     {# Progress — from localStorage #}
-    <div class="p-6 bg-surface-subtle rounded-2xl border border-slate-200 dark:border-slate-700">
+    <div class="mb-8 p-6 bg-surface-subtle rounded-2xl border border-slate-200 dark:border-slate-700">
       <h2 class="text-lg font-bold text-content-default mb-3">Mes progrès</h2>
       <template x-if="doneSeries.length === 0">
         <p class="text-sm text-content-subtle">Tu n'as pas encore terminé de série. Lance-toi !</p>
@@ -89,6 +64,23 @@ layout: base
       </template>
     </div>
 
+    {# Save to a file — the only way to move a cahier to another device #}
+    <div class="mb-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div>
+        <p class="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-0.5">Sauvegarder mon cahier</p>
+        <p class="text-xs text-blue-700 dark:text-blue-400">Ton cahier est enregistré sur cet appareil. Garde une copie dans un fichier pour le reprendre ailleurs.</p>
+      </div>
+      <button type="button" @click="download()" class="shrink-0 px-3 py-1.5 text-xs font-bold border border-blue-200 dark:border-blue-700 rounded-lg text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-slate-700 transition-all active:scale-95">
+        Télécharger le fichier
+      </button>
+    </div>
+
+    <div class="text-center">
+      <button type="button" @click="remove()" class="text-xs text-content-subtle hover:text-red-600 dark:hover:text-red-400 underline transition-colors">
+        Supprimer ce cahier de cet appareil
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -98,28 +90,15 @@ function cahierPage() {
     state: 'loading',   // 'loading' | 'ready' | 'notfound'
     pupil: null,
     doneSeries: [],
-    recentlyCopied: false,
-
-    get shareUrl() {
-      const prefix = window.__pathPrefix || '/';
-      return window.location.origin + prefix + 'fr/cahier/?user=' + (this.pupil?.slug || '');
-    },
 
     init() {
-      const params = new URLSearchParams(window.location.search);
-      const slug = params.get('user');
-
-      if (!slug) { this.state = 'notfound'; return; }
-
-      const cached = localStore.getUser();
-      if (cached && cached.slug === slug) {
-        this.pupil = cached;
-        this._loadProgress();
-        this.state = 'ready';
-        return;
-      }
-
-      this.state = 'notfound';
+      // ?user=slug opens that child's cahier (and makes it current); no param → the current one
+      const slug = new URLSearchParams(window.location.search).get('user');
+      if (slug && !localStore.switchUser(slug)) { this.state = 'notfound'; return; }
+      this.pupil = localStore.getUser();
+      if (!this.pupil) { window.location.replace((window.__pathPrefix || '/') + 'fr/cahiers/'); return; }
+      this._loadProgress();
+      this.state = 'ready';
     },
 
     _loadProgress() {
@@ -130,17 +109,25 @@ function cahierPage() {
         .map(([id]) => ({ id }));
     },
 
-    async copyLink() {
-      try {
-        await navigator.clipboard.writeText(this.shareUrl);
-        this.recentlyCopied = true;
-        setTimeout(() => this.recentlyCopied = false, 2000);
-      } catch {}
+    download() {
+      const data = localStore.exportUser(this.pupil.slug);
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `cahier-${this.pupil.username}-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     },
 
-    logout() {
-      localStore.clearUser();
-      window.location.href = (window.__pathPrefix || '/') + 'fr/onboarding/';
+    remove() {
+      const ok = window.confirm(
+        `Supprimer le cahier de ${this.pupil.username} de cet appareil ?\n\nSes progrès seront perdus, sauf s'il est sauvegardé dans un fichier.`
+      );
+      if (!ok) return;
+      localStore.removeUser(this.pupil.slug);
+      window.location.href = (window.__pathPrefix || '/') + 'fr/cahiers/';
     }
   };
 }

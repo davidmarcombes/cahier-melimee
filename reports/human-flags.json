@@ -7,8 +7,8 @@
     "reason": "[Priority 1] Market, carrots + tomatoes = 4,50 (was 4)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:50.183Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-29T18:00:35.485Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "8652fc10",
@@ -18,8 +18,8 @@
     "reason": "[Priority 1] Temperatures, difference Monday–Thursday = 6 (the question changed)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:50.361Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-29T18:00:35.485Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "63d48fdb",
@@ -29,8 +29,8 @@
     "reason": "[Priority 1] Bike, longest − shortest = 11 (was 7)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:50.524Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-29T18:00:35.485Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "22af2ade",
@@ -40,8 +40,8 @@
     "reason": "[Priority 1] Estimate 9,2 − 3,6 → 5 (rounding the terms), new wording",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:50.664Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T13:41:53.668Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "38c155af",
@@ -51,8 +51,8 @@
     "reason": "[Priority 1] CM2 comparing expressions with decimals, #1 to #4 had wrong answers",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:50.796Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T17:18:46.757Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "e4d3d5e7",
@@ -62,8 +62,8 @@
     "reason": "[Priority 1] « 1 000 − 1 » vs …, was impossible to answer",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:50.950Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T12:57:29.407Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "023800e9",
@@ -73,8 +73,8 @@
     "reason": "[Priority 1] CE2 pyramid, the given cell is now 24 (was 20, contradictory)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:51.080Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:37:37.512Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "e5264350",
@@ -84,8 +84,8 @@
     "reason": "[Priority 1] Pyramids with hidden cells — CM2 (the one from the screenshot), 1690 revealed",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:51.219Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:21:37.556Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "93626e03",
@@ -95,8 +95,8 @@
     "reason": "[Priority 1] Pyramids with hidden cells — CM2 decimals, 13,85 revealed",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:51.367Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:21:42.473Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "4c139c6c",
@@ -106,8 +106,8 @@
     "reason": "[Priority 1] Pyramids with hidden cells — CM1, 99 revealed",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:51.515Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-01T05:27:39.536Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "a5f54893",
@@ -117,8 +117,8 @@
     "reason": "[Priority 1] Pyramids with hidden cells — CM1, 645 revealed",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:51.652Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:20:39.275Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "efaf33bc",
@@ -128,8 +128,8 @@
     "reason": "[Priority 1] Pyramids with hidden cells — CM1 decimals, 15,6 revealed",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:51.815Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:21:26.879Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "26d2553e",
@@ -139,8 +139,8 @@
     "reason": "[Priority 1] Pyramids with hidden cells — CE2, 27 revealed",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:51.958Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:37:37.512Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "9bf0a7a7",
@@ -150,8 +150,8 @@
     "reason": "[Priority 1] Pyramids with hidden cells — CE1, 6 revealed",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:52.091Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:35:23.007Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "4ab07806",
@@ -161,8 +161,8 @@
     "reason": "[Priority 1] Pyramids with hidden cells — CE1, 4 revealed",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:52.231Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:35:23.007Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "a72613fd",
@@ -172,8 +172,8 @@
     "reason": "[Priority 1] Column multiplications — 34 × 2 now has 2 boxes",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:52.367Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:37:04.294Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "6081d2c1",
@@ -183,8 +183,8 @@
     "reason": "[Priority 1] Column multiplications — 324 × 5 now has 4 boxes",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:52.509Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:37:04.294Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "85cdc3ee",
@@ -194,8 +194,8 @@
     "reason": "[Priority 1] CE2 logic grids, were impossible (people are now in the columns)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:52.647Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T12:56:21.228Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "799ddb66",
@@ -205,8 +205,8 @@
     "reason": "[Priority 1] Conversions, a wrong answer used to be accepted. Try one",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:52.788Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T11:57:03.846Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "047259c8",
@@ -216,8 +216,8 @@
     "reason": "[Priority 1] Numberlink, were impossible (puzzles are now generated) — (4×4)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:52.918Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T17:20:18.607Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "7383ec13",
@@ -227,8 +227,8 @@
     "reason": "[Priority 1] Numberlink, were impossible (puzzles are now generated) — (5×5)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:53.045Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T17:21:58.855Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "850de153",
@@ -238,8 +238,8 @@
     "reason": "[Priority 1] Position of a digit (MCQ), the choices didn't show",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:53.223Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-01T05:31:09.073Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "8b3bae53",
@@ -249,8 +249,8 @@
     "reason": "[Priority 1] Comparing numbers, blank page",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:53.370Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T17:20:43.923Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "58c160a4",
@@ -260,8 +260,8 @@
     "reason": "[Priority 1] Comparing numbers, blank page",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:53.529Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:23:21.767Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "1309e90a",
@@ -271,8 +271,8 @@
     "reason": "[Priority 1] Matching, undoing a link. Make a wrong matching: after the red flash, the wrong links disappear and the correct ones stay. Tapping a linked item unlinks it",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:53.664Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:36:24.192Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "a9c92657",
@@ -282,8 +282,8 @@
     "reason": "[Priority 1] « Recommencer la série ». Play to the end and restart: the count must stay at 10 (it used to go 58, then 370)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:53.789Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:38:32.649Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "f580a463",
@@ -293,8 +293,8 @@
     "reason": "[Priority 2] Control, a short operation must look exactly like before (large text)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:53.921Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T17:19:33.048Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "5cff7f88",
@@ -304,8 +304,8 @@
     "reason": "[Priority 2] « ? centaines et 8 unités », text reduced, stays inside the card",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:54.046Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-01T05:29:39.713Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "768fcda3",
@@ -315,8 +315,8 @@
     "reason": "[Priority 2] Rows of fruit emojis",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:54.178Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T17:21:10.976Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "415e73a8",
@@ -326,8 +326,8 @@
     "reason": "[Priority 2] Areas, the shape's data moved from the operation line into the statement",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:54.315Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-29T18:01:27.026Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "97942798",
@@ -337,8 +337,8 @@
     "reason": "[Priority 2] Areas, the shape's data moved from the operation line into the statement",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:54.461Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-29T18:01:27.026Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "5b91c010",
@@ -348,8 +348,8 @@
     "reason": "[Priority 2] Areas, the shape's data moved from the operation line into the statement — CM1 area of a square",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:54.599Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:38:08.219Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b051e4f7",
@@ -359,8 +359,8 @@
     "reason": "[Priority 2] Sentences removed from the operation line (the long dashes read like minus signs); the data is now in the statement — Change, « monnaie = ? € »",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:54.724Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T11:58:35.738Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "31987a70",
@@ -370,8 +370,8 @@
     "reason": "[Priority 2] Sentences removed from the operation line (the long dashes read like minus signs); the data is now in the statement — Duration, « durée = ? min »",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:54.858Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T11:57:51.347Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "809b675c",
@@ -381,8 +381,8 @@
     "reason": "[Priority 2] Sentences removed from the operation line (the long dashes read like minus signs); the data is now in the statement — CM1 area of a rectangle",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:54.983Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:38:08.219Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "326b1092",
@@ -392,8 +392,8 @@
     "reason": "[Priority 2] Sentences removed from the operation line (the long dashes read like minus signs); the data is now in the statement — CM2 area of a rectangle",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:55.111Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-29T18:01:27.026Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "09982cc7",
@@ -403,8 +403,8 @@
     "reason": "[Priority 2] Base-10 blocks — CE2 up to 999 (754 → 4 + 3 plates), title « Quel nombre est représenté ? »",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:55.241Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T12:57:14.306Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "e3fc96da",
@@ -414,8 +414,8 @@
     "reason": "[Priority 2] Base-10 blocks — CE2, generic title",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:55.377Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T12:01:40.166Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "43fb2461",
@@ -425,8 +425,8 @@
     "reason": "[Priority 2] Base-10 blocks — CP, title « Compte les barres et les cubes »",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:55.525Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T17:19:11.432Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "dda88858",
@@ -436,8 +436,8 @@
     "reason": "[Priority 2] Matching with long labels",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:55.667Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-01T05:25:16.896Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "7a30f746",
@@ -447,8 +447,8 @@
     "reason": "[Priority 2] Matching with long labels",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:55.805Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:36:24.192Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "985e2a56",
@@ -458,8 +458,8 @@
     "reason": "[Priority 3] Emoji equations — (hand-written)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:55.955Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T13:42:22.349Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "0056a685",
@@ -469,8 +469,8 @@
     "reason": "[Priority 3] Emoji equations",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:56.090Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T17:21:28.448Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "fa6f168d",
@@ -480,8 +480,8 @@
     "reason": "[Priority 3] Emoji equations",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:56.226Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:21:59.183Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "670d1970",
@@ -491,8 +491,8 @@
     "reason": "[Priority 3] Emoji equations",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:56.352Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:25:25.014Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "25d8586a",
@@ -502,8 +502,8 @@
     "reason": "[Priority 3] Emoji equations",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:56.495Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:25:42.805Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "661283d7",
@@ -513,8 +513,8 @@
     "reason": "[Priority 3] Sequences with a check cell",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:56.628Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T06:38:32.649Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "4c0621fb",
@@ -524,8 +524,8 @@
     "reason": "[Priority 3] Sequences with a check cell",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:56.759Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:27:19.614Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "ba802ac7",
@@ -535,8 +535,8 @@
     "reason": "[Priority 3] Sequences with a check cell",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:56.960Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:28:19.433Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "916fb28c",
@@ -546,8 +546,8 @@
     "reason": "[Priority 3] Forms of a number",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:57.096Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T13:44:10.516Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "3389926c",
@@ -557,8 +557,8 @@
     "reason": "[Priority 3] Forms of a number",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:57.224Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:19:21.133Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "fe2b19ad",
@@ -568,8 +568,8 @@
     "reason": "[Priority 3] Forms of a number",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:57.363Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:24:24.400Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "2ffc101e",
@@ -579,8 +579,8 @@
     "reason": "[Priority 3] Forms of a number",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:57.508Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:29:54.068Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "513aa4b9",
@@ -590,8 +590,8 @@
     "reason": "[Priority 3] Operator diagrams",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:57.650Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:24:56.925Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "4cf88b1f",
@@ -601,8 +601,8 @@
     "reason": "[Priority 3] Operator diagrams",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:57.790Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:25:08.859Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "3099c812",
@@ -612,8 +612,8 @@
     "reason": "[Priority 3] Operator diagrams",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:57.920Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:30:28.569Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "cdc6a0c6",
@@ -623,8 +623,8 @@
     "reason": "[Priority 3] Operator diagrams",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:58.041Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T12:57:00.156Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "5d296095",
@@ -634,8 +634,8 @@
     "reason": "[Priority 3] Sorting from a table — (hand-written)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:58.187Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T13:43:25.321Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "f90a6084",
@@ -645,8 +645,8 @@
     "reason": "[Priority 3] Sorting from a table",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:58.329Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:22:40.338Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "e01d96a0",
@@ -656,8 +656,8 @@
     "reason": "[Priority 3] Sorting from a table",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:58.465Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:26:22.050Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "7ac5b440",
@@ -667,8 +667,8 @@
     "reason": "[Priority 3] × and ÷ by 10, 100, 1 000 (CM2)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:58.601Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:30:06.075Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "75e69a25",
@@ -678,8 +678,8 @@
     "reason": "[Priority 3] × and ÷ by 10, 100, 1 000 (CM2)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:58.742Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:29:03.336Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "27ec4e3d",
@@ -689,8 +689,8 @@
     "reason": "[Priority 4] Sorting decimals, the type became drag-sort",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:58.867Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-01T05:30:45.546Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "bfbe6dfb",
@@ -700,8 +700,8 @@
     "reason": "[Priority 4] Sorting decimals, the type became drag-sort",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:59.002Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-02T07:28:45.743Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "0f0aa8f4",
@@ -711,7 +711,1118 @@
     "reason": "[Priority 4] Solids, « Mélimée » (the accent was missing)",
     "source": "claude",
     "createdAt": "2026-09-29T09:27:59.126Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-09-30T11:57:19.331Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "251bea91",
+    "seriesId": "da73b97f",
+    "url": "/fr/exercices/da73b97f/#2",
+    "title": "Grilles logiques",
+    "reason": "Grille : 2e indice remplacé par « Chloé ne joue pas au tennis. » (l'ancien laissait 2 solutions)",
+    "source": "claude",
+    "createdAt": "2026-09-30T12:07:30.854Z",
+    "resolvedAt": "2026-09-30T12:56:21.228Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "4df95c37",
+    "seriesId": "da73b97f",
+    "url": "/fr/exercices/da73b97f/#3",
+    "title": "Grilles logiques",
+    "reason": "Grille : 2e indice remplacé par « Emma n'a pas de chat. » (l'ancien laissait 2 solutions)",
+    "source": "claude",
+    "createdAt": "2026-09-30T12:07:32.274Z",
+    "resolvedAt": "2026-09-30T12:56:21.228Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "605925b7",
+    "seriesId": "da73b97f",
+    "url": "/fr/exercices/da73b97f/#5",
+    "title": "Grilles logiques",
+    "reason": "Grille : indices « Tom n'aime ni la banane ni la fraise. » puis « Adam n'aime pas la fraise. » (l'ancien laissait 2 solutions)",
+    "source": "claude",
+    "createdAt": "2026-09-30T12:07:33.724Z",
+    "resolvedAt": "2026-09-30T12:56:21.228Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "db1f9c04",
+    "seriesId": "b8ac9e59",
+    "url": "/fr/applications/b8ac9e59/",
+    "title": "Schémas d'opérateurs : défis",
+    "reason": "Niveau revu : décimaux limités à 1 chiffre (× 10 / 100 / 1 000) et paires × 4 × 25, × 2 × 50, × 5 × 20 en entiers (2 à 20), séparées en 2 fichiers",
+    "source": "claude",
+    "createdAt": "2026-09-30T12:55:36.152Z",
+    "resolvedAt": "2026-09-30T12:57:00.156Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "e566b7c4",
+    "seriesId": "faf3eab7",
+    "url": "/fr/exercices/faf3eab7/#3",
+    "title": "Écritures d'un nombre",
+    "reason": "Simplifié : « ? : 5 » → « ? : 2 » (720), « 2 880 : ? » → « 720 : ? » (2)",
+    "source": "claude",
+    "createdAt": "2026-10-01T05:41:08.731Z",
+    "resolvedAt": "2026-10-02T07:19:21.133Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "a3dc2855",
+    "seriesId": "faf3eab7",
+    "url": "/fr/exercices/faf3eab7/#4",
+    "title": "Écritures d'un nombre",
+    "reason": "Simplifié : « ? × 0,5 » → « ? × 4 » (250)",
+    "source": "claude",
+    "createdAt": "2026-10-01T05:41:09.908Z",
+    "resolvedAt": "2026-10-02T07:19:21.133Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "39e789a8",
+    "seriesId": "ca8c7c81",
+    "url": "/fr/exercices/ca8c7c81/",
+    "title": "Les nombres décimaux",
+    "reason": "[LLM claude-haiku-4-5] 01-definitions.md · true-false « Vrai ou faux ? Les décimaux » : L'affirmation 5 est fausse (un décimal n'a pas toujours les deux parties), donc la réponse V est incorrecte",
+    "source": "llm",
+    "createdAt": "2026-10-01T15:24:04.247Z",
+    "resolvedAt": "2026-10-02T05:54:31.603Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "ef28f45a",
+    "seriesId": "de94e77b",
+    "url": "/fr/exercices/de94e77b/",
+    "title": "Nombre mystérieux",
+    "reason": "Nombre mystérieux : indices des #2 à #5 réécrits (les anciens donnaient une autre réponse ou aucune — trouvé par Haiku). Chaque devinette a une seule solution, vérifiée par force brute",
+    "source": "claude",
+    "createdAt": "2026-10-02T07:39:09.537Z",
+    "resolvedAt": "2026-10-02T14:27:24.999Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "476c8490",
+    "seriesId": "afba8bfd",
+    "url": "/fr/exercices/afba8bfd/",
+    "title": "Nombre mystérieux",
+    "reason": "Nombre mystérieux CM1 : indices des #2, #3, #5 corrigés (#2 donnait 2762, #3 avait deux solutions, #5 aucune). Solution unique vérifiée par force brute",
+    "source": "claude",
+    "createdAt": "2026-10-02T07:39:48.103Z",
+    "resolvedAt": "2026-10-03T08:16:49.929Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f666cb1a",
+    "seriesId": "bdb2667e",
+    "url": "/fr/exercices/bdb2667e/",
+    "title": "Trouver l'erreur: comparaison",
+    "reason": "[LLM claude-haiku-4-5] 03-billes-referent.md · error-analysis « Luc et Léa — erreur A3.3 » : L'étape 4 n'est pas fausse. Le raisonnement est entièrement correct: Luc a 3 billes de plus que Léa, donc Léa = 10 - 3 = 7. Il n'y a pas d'erreur.",
+    "source": "llm",
+    "createdAt": "2026-10-02T10:29:15.780Z",
+    "resolvedAt": "2026-10-02T16:31:00.383Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "238bf57f",
+    "seriesId": "b75e323a",
+    "url": "/fr/applications/b75e323a/",
+    "title": "Combien de chiffres",
+    "reason": "Générateur nombreChiffresSelect corrigé : les nombres ≥ 10 000 s'écrivaient mal en lettres (« huit mille trois mille soixante-trois » au lieu de « quatre-vingt-trois mille soixante-trois »)",
+    "source": "claude",
+    "createdAt": "2026-10-02T12:35:39.037Z",
+    "resolvedAt": "2026-10-03T12:44:50.704Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "4647b365",
+    "seriesId": "abad7b97",
+    "url": "/fr/applications/abad7b97/",
+    "title": "Combien de chiffres",
+    "reason": "Générateur nombreChiffresSelect corrigé : les nombres ≥ 10 000 s'écrivaient mal en lettres (« huit mille trois mille soixante-trois » au lieu de « quatre-vingt-trois mille soixante-trois »)",
+    "source": "claude",
+    "createdAt": "2026-10-02T12:35:40.401Z",
+    "resolvedAt": "2026-10-03T10:02:22.217Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "81cee05e",
+    "seriesId": "b349d233",
+    "url": "/fr/applications/b349d233/",
+    "title": "Fractions en lettres",
+    "reason": "Générateur fractionEnLettres corrigé : pour un numérateur de 21 à 24, l'énoncé disait « trente », « quarante »… (ex. « trente centièmes » avec réponse attendue 21/100)",
+    "source": "claude",
+    "createdAt": "2026-10-02T13:55:19.163Z",
+    "resolvedAt": "2026-10-03T10:00:57.071Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "98c47cc4",
+    "seriesId": "c0e4e4d2",
+    "url": "/fr/applications/c0e4e4d2/",
+    "title": "Fractions en lettres",
+    "reason": "Générateur fractionEnLettres corrigé : pour un numérateur de 21 à 24, l'énoncé disait « trente », « quarante »… (ex. « trente centièmes » avec réponse attendue 21/100)",
+    "source": "claude",
+    "createdAt": "2026-10-02T13:55:20.527Z",
+    "resolvedAt": "2026-10-03T10:01:12.457Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "dfeb1f4d",
+    "seriesId": "d958cb61",
+    "url": "/fr/applications/d958cb61/",
+    "title": "QCM décimaux",
+    "reason": "Générateur mcqDecimaux : faute corrigée « dixèmes » → « dixièmes »",
+    "source": "claude",
+    "createdAt": "2026-10-02T13:55:22.664Z",
+    "resolvedAt": "2026-10-02T14:44:21.375Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f19b2bc6",
+    "seriesId": "d58dd91f",
+    "url": "/fr/applications/d58dd91f/",
+    "title": "QCM décimaux variés",
+    "reason": "Générateur mcqDecimaux : faute corrigée « dixèmes » → « dixièmes »",
+    "source": "claude",
+    "createdAt": "2026-10-02T13:55:24.195Z",
+    "resolvedAt": "2026-10-02T14:45:30.244Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "dfca9e6f",
+    "seriesId": "d7edac36",
+    "url": "/fr/exercices/d7edac36/",
+    "title": "Reconnais les formes",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. svg-tiles",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:07.070Z",
+    "resolvedAt": "2026-10-02T14:22:50.648Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "00d4c133",
+    "seriesId": "df12040a",
+    "url": "/fr/exercices/df12040a/",
+    "title": "Lecture sur la règle graduée",
+    "reason": "[MV] Non vérifiée par machine (ni oracle, ni LLM) : vérifie les réponses. ruler",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:07.227Z",
+    "resolvedAt": "2026-10-02T14:29:26.724Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "4c40ff94",
+    "seriesId": "eb65ece0",
+    "url": "/fr/exercices/eb65ece0/",
+    "title": "Colorie la fraction",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. fraction-paint",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:07.371Z",
+    "resolvedAt": "2026-10-02T14:43:11.000Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "be77e62b",
+    "seriesId": "f9ee2a66",
+    "url": "/fr/exercices/f9ee2a66/",
+    "title": "Propriétés des figures",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. svg-tiles",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:07.517Z",
+    "resolvedAt": "2026-10-02T14:25:22.422Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "d984e941",
+    "seriesId": "f1c290dd",
+    "url": "/fr/exercices/f1c290dd/",
+    "title": "Colorie la fraction",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. fraction-paint",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:07.662Z",
+    "resolvedAt": "2026-10-02T14:46:08.526Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "c6945106",
+    "seriesId": "e8f38b61",
+    "url": "/fr/exercices/e8f38b61/",
+    "title": "Axe de symétrie",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. tile-select",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:07.796Z",
+    "resolvedAt": "2026-10-02T14:27:57.590Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "09b25eb1",
+    "seriesId": "b0622bd1",
+    "url": "/fr/exercices/b0622bd1/",
+    "title": "Axe de symétrie Moyen",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. tile-select",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:07.928Z",
+    "resolvedAt": "2026-10-02T14:28:21.899Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "c6b29d94",
+    "seriesId": "c337bf90",
+    "url": "/fr/exercices/c337bf90/",
+    "title": "Axe de symétrie",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. tile-select",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:08.060Z",
+    "resolvedAt": "2026-10-02T14:46:35.361Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "81fb8660",
+    "seriesId": "e7f3a891",
+    "url": "/fr/exercices/e7f3a891/",
+    "title": "Comparer les durées",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. compare",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:08.199Z",
+    "resolvedAt": "2026-10-02T16:23:44.973Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "c18c034d",
+    "seriesId": "adea4758",
+    "url": "/fr/exercices/adea4758/",
+    "title": "Périmètre de figures composées",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. number-check",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:08.340Z",
+    "resolvedAt": "2026-10-03T09:59:01.963Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "432a7991",
+    "seriesId": "b4f9c3a2",
+    "url": "/fr/exercices/b4f9c3a2/",
+    "title": "Périmètre sur quadrillage",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. number-check",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:08.480Z",
+    "resolvedAt": "2026-10-02T14:50:16.297Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "ab1efeec",
+    "seriesId": "ee2325b2",
+    "url": "/fr/exercices/ee2325b2/",
+    "title": "Périmètre sur quadrillage 2",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. number-check",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:08.670Z",
+    "resolvedAt": "2026-10-02T16:31:39.445Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "e9eff36c",
+    "seriesId": "cfec2046",
+    "url": "/fr/exercices/cfec2046/",
+    "title": "Lecture sur la règle graduée",
+    "reason": "[MV] Non vérifiée par machine (ni oracle, ni LLM) : vérifie les réponses. ruler",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:08.811Z",
+    "resolvedAt": "2026-10-02T16:31:59.946Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "24a8a01c",
+    "seriesId": "b0c846aa",
+    "url": "/fr/applications/b0c846aa/",
+    "title": "Coloriage magique: araignée",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. magic-color (magicColorGrid)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:08.942Z",
+    "resolvedAt": "2026-10-04T04:58:36.054Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "4850212b",
+    "seriesId": "e028e272",
+    "url": "/fr/applications/e028e272/",
+    "title": "Comparer des groupes",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. compare-groups (comparerGroupes)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:09.085Z",
+    "resolvedAt": "2026-10-03T08:18:10.698Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "89dfe28b",
+    "seriesId": "d226ef83",
+    "url": "/fr/applications/d226ef83/",
+    "title": "Lecture sur la règle graduée",
+    "reason": "[MV] Non vérifiée par machine (ni oracle, ni LLM) : vérifie les réponses. ruler (ruler)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:09.266Z",
+    "resolvedAt": "2026-10-03T08:06:10.857Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f7df0762",
+    "seriesId": "b30fee39",
+    "url": "/fr/applications/b30fee39/",
+    "title": "Diagramme de Venn",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. venn (vennEmojis)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:09.411Z",
+    "resolvedAt": "2026-10-02T14:52:46.540Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "d8189f5d",
+    "seriesId": "a661b064",
+    "url": "/fr/applications/a661b064/",
+    "title": "Diagramme de Venn Figures",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. venn (vennFormes)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:09.543Z",
+    "resolvedAt": "2026-10-03T08:07:05.698Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "68f335b1",
+    "seriesId": "a8b9c0d1",
+    "url": "/fr/applications/a8b9c0d1/",
+    "title": "Lire l'heure pile et demie",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. matching (lireHeureMatching)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:09.686Z",
+    "resolvedAt": "2026-10-03T09:59:31.224Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "2c261ede",
+    "seriesId": "b9c0d1e2",
+    "url": "/fr/applications/b9c0d1e2/",
+    "title": "Lire l'heure quarts",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. matching (lireHeureMatching)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:09.825Z",
+    "resolvedAt": "2026-10-03T09:59:54.971Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "3b209bd9",
+    "seriesId": "c0d1e2f3",
+    "url": "/fr/applications/c0d1e2f3/",
+    "title": "Lire l'heure 5 minutes",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. matching (lireHeureMatching)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:09.971Z",
+    "resolvedAt": "2026-10-03T10:00:22.711Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "b60d0e8c",
+    "seriesId": "a52b0d54",
+    "url": "/fr/applications/a52b0d54/",
+    "title": "Unites mesure cm m",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. tile-select (unitesMesure)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:10.103Z",
+    "resolvedAt": "2026-10-03T10:04:36.460Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "6a4e5804",
+    "seriesId": "a9d8ada8",
+    "url": "/fr/applications/a9d8ada8/",
+    "title": "Unites mesure mm cm m",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. tile-select (unitesMesure)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:10.241Z",
+    "resolvedAt": "2026-10-03T12:41:55.507Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "a43a0cc2",
+    "seriesId": "ddbc0889",
+    "url": "/fr/applications/ddbc0889/",
+    "title": "Unites mesure mm cm m km",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. tile-select (unitesMesure)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:10.374Z",
+    "resolvedAt": "2026-10-03T12:42:12.915Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "188351e6",
+    "seriesId": "d27d7b31",
+    "url": "/fr/applications/d27d7b31/",
+    "title": "Coloriage magique étoile",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. magic-color (magicColorGrid)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:10.512Z",
+    "resolvedAt": "2026-10-03T12:44:29.389Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "400ad04f",
+    "seriesId": "c4e7b2d9",
+    "url": "/fr/applications/c4e7b2d9/",
+    "title": "Coloriage tables",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. magic-color (magicColorGrid)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:10.652Z",
+    "resolvedAt": "2026-10-03T12:51:59.901Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "a5b1f43d",
+    "seriesId": "f445e75c",
+    "url": "/fr/applications/f445e75c/",
+    "title": "Diagramme de Venn",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. venn (vennEmojis)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:10.788Z",
+    "resolvedAt": "2026-10-03T10:02:51.513Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "6576dfce",
+    "seriesId": "c48887ae",
+    "url": "/fr/applications/c48887ae/",
+    "title": "Diagramme de Venn Figures",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. venn (vennFormes)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:10.929Z",
+    "resolvedAt": "2026-10-03T08:08:11.512Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "a19d0abb",
+    "seriesId": "a8db1da0",
+    "url": "/fr/applications/a8db1da0/",
+    "title": "Périmètres côtés manquants",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. number-check",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:11.059Z",
+    "resolvedAt": "2026-10-03T16:03:43.861Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "6ccb69c6",
+    "seriesId": "f31bec2f",
+    "url": "/fr/applications/f31bec2f/",
+    "title": "Convertir les périmètres",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. number-check",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:11.209Z",
+    "resolvedAt": "2026-10-03T12:49:01.140Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "94ae70ec",
+    "seriesId": "b48ed308",
+    "url": "/fr/applications/b48ed308/",
+    "title": "Diagramme de Venn",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. venn (vennEmojis)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:11.347Z",
+    "resolvedAt": "2026-10-02T16:50:34.209Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "12c692a8",
+    "seriesId": "ad392f11",
+    "url": "/fr/applications/ad392f11/",
+    "title": "Diagramme de Venn Figures",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. venn (vennFormes)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:11.483Z",
+    "resolvedAt": "2026-10-02T16:49:39.343Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f2afe274",
+    "seriesId": "e8cc9784",
+    "url": "/fr/applications/e8cc9784/",
+    "title": "Coloriage nombres pairs",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. magic-color (magicColorGrid)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:11.647Z",
+    "resolvedAt": "2026-10-03T12:47:48.258Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "8ad763a2",
+    "seriesId": "d1ee8411",
+    "url": "/fr/applications/d1ee8411/",
+    "title": "Comparer des groupes",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. compare-groups (comparerGroupes)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:11.780Z",
+    "resolvedAt": "2026-10-02T16:36:47.719Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "109aee8d",
+    "seriesId": "bc279f80",
+    "url": "/fr/applications/bc279f80/",
+    "title": "Comparer des groupes",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. compare-groups (comparerGroupes)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:11.922Z",
+    "resolvedAt": "2026-10-02T16:36:23.016Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "d206ec37",
+    "seriesId": "cd396ab8",
+    "url": "/fr/applications/cd396ab8/",
+    "title": "Compléter jusqu'à 10",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. count-objects (complementA10Emoji)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:12.057Z",
+    "resolvedAt": "2026-10-02T16:36:02.491Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "a9e1c2cb",
+    "seriesId": "c2082e0e",
+    "url": "/fr/applications/c2082e0e/",
+    "title": "Compter des objets",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. count-objects (compterObjets)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:12.200Z",
+    "resolvedAt": "2026-10-02T16:35:41.014Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "295c4414",
+    "seriesId": "d51139ca",
+    "url": "/fr/applications/d51139ca/",
+    "title": "Compter des objets",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. count-objects (compterObjets)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:12.328Z",
+    "resolvedAt": "2026-10-02T16:35:20.451Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "91281f41",
+    "seriesId": "dc242a5a",
+    "url": "/fr/applications/dc242a5a/",
+    "title": "Compter des objets",
+    "reason": "[MV] Visuel — aucune machine ne peut vérifier (figure, image, dessin) : vérifie la réponse à l'œil. count-objects (compterObjets)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:12.466Z",
+    "resolvedAt": "2026-10-02T16:34:50.451Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "78617c8a",
+    "seriesId": "bb9d74ac",
+    "url": "/fr/applications/bb9d74ac/",
+    "title": "La règle graduée",
+    "reason": "[MV] Non vérifiée par machine (ni oracle, ni LLM) : vérifie les réponses. ruler (ruler)",
+    "source": "mv",
+    "createdAt": "2026-10-02T14:11:12.597Z",
+    "resolvedAt": "2026-10-02T16:34:07.416Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "58b8ccfb",
+    "seriesId": "d958cb61",
+    "url": "/fr/applications/d958cb61/",
+    "title": "QCM décimaux",
+    "reason": "Générateur mcqDecimaux : deux boutons identiques pouvaient apparaître (« 5 » et « 5 »), le second était refusé comme faux — corrigé",
+    "source": "claude",
+    "createdAt": "2026-10-02T14:37:18.710Z",
+    "resolvedAt": "2026-10-02T14:44:21.375Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "78107877",
+    "seriesId": "d58dd91f",
+    "url": "/fr/applications/d58dd91f/",
+    "title": "QCM décimaux variés",
+    "reason": "Générateur mcqDecimaux : deux boutons identiques pouvaient apparaître (« 5 » et « 5 »), le second était refusé comme faux — corrigé",
+    "source": "claude",
+    "createdAt": "2026-10-02T14:37:20.122Z",
+    "resolvedAt": "2026-10-02T14:45:30.244Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "eaeb55c5",
+    "seriesId": "eb65ece0",
+    "url": "/fr/exercices/eb65ece0/",
+    "title": "Colorie la fraction",
+    "reason": "Coloriage de fractions : la consigne (« Colorie 1/2 de la bande ») n'était pas affichée — elle l'est maintenant",
+    "source": "claude",
+    "createdAt": "2026-10-02T14:37:21.367Z",
+    "resolvedAt": "2026-10-02T14:43:11.000Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "7b464c92",
+    "seriesId": "bdb2667e",
+    "url": "/fr/exercices/bdb2667e/",
+    "title": "Trouver l'erreur : « de plus », « de moins »",
+    "reason": "Réécrite : corrections en nombre (90, 12, 7) au lieu d'une phrase impossible à taper, nombres simplifiés (120/30), « Luc et Léa » contient maintenant une vraie erreur (10 + 3 = 13), titres sans code",
+    "source": "claude",
+    "createdAt": "2026-10-02T16:31:40.316Z",
+    "resolvedAt": "2026-10-03T12:38:02.463Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "4e775cd2",
+    "seriesId": "f3d50061",
+    "url": "/fr/exercices/f3d50061/",
+    "title": "Trouver l'erreur : retrouver le départ",
+    "reason": "Réécrite : correction en nombre pour « Les billes » (43) au lieu d'une phrase, étape fausse du « loyer » = le raisonnement, titres sans code",
+    "source": "claude",
+    "createdAt": "2026-10-02T16:31:41.687Z",
+    "resolvedAt": "2026-10-03T08:17:36.743Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "903f0b69",
+    "seriesId": "a5f99073",
+    "url": "/fr/exercices/a5f99073/",
+    "title": "Trouver l'erreur : « fois plus »",
+    "reason": "Réécrite : corrections en nombre (10, 20) au lieu de phrases, « La production » sans division par 1,35 (hors CM1) → 2 400 = 6 fois plus, titres sans code",
+    "source": "claude",
+    "createdAt": "2026-10-02T16:31:43.082Z",
+    "resolvedAt": "2026-10-02T16:49:20.241Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f4a1496e",
+    "seriesId": "a661b064",
+    "url": "/fr/applications/a661b064/",
+    "title": "Diagramme de Venn Figures",
+    "reason": "Figures dessinées en SVG (triangle quelconque visiblement non équilatéral, losange ≠ carré) — vérifier lisibilité",
+    "source": "claude",
+    "createdAt": "2026-10-02T16:56:04.592Z",
+    "resolvedAt": "2026-10-03T08:07:05.698Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "cca1e960",
+    "seriesId": "c48887ae",
+    "url": "/fr/applications/c48887ae/",
+    "title": "Diagramme de Venn Figures",
+    "reason": "Figures dessinées en SVG (triangle quelconque visiblement non équilatéral, losange ≠ carré) — vérifier lisibilité",
+    "source": "claude",
+    "createdAt": "2026-10-02T16:56:05.874Z",
+    "resolvedAt": "2026-10-03T08:08:11.512Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f22a524c",
+    "seriesId": "ad392f11",
+    "url": "/fr/applications/ad392f11/",
+    "title": "Diagramme de Venn Figures",
+    "reason": "Figures dessinées en SVG (triangle quelconque visiblement non équilatéral, losange ≠ carré) — vérifier lisibilité",
+    "source": "claude",
+    "createdAt": "2026-10-02T16:56:07.187Z",
+    "resolvedAt": "2026-10-03T12:48:23.114Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "e8ca781e",
+    "seriesId": "df12040a",
+    "url": "/fr/exercices/df12040a/",
+    "title": "Lecture sur la règle graduée",
+    "reason": "CE1 : #2–#4 réécrits en entiers (0–20, règle qui commence à 10, 2 marqueurs 20–30) — vérifier lisibilité règle 0–20",
+    "source": "claude",
+    "createdAt": "2026-10-03T05:44:28.859Z",
+    "resolvedAt": "2026-10-03T08:05:04.392Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "5ce6b83f",
+    "seriesId": "c6e59754",
+    "url": "/fr/exercices/c6e59754/",
+    "title": "Lire un décimal sur la règle graduée",
+    "reason": "Nouvelle série CM1 : les 3 lectures décimales déplacées depuis CE1 df12040a",
+    "source": "claude",
+    "createdAt": "2026-10-03T05:44:30.081Z",
+    "resolvedAt": "2026-10-03T14:01:45.087Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "fd79296f",
+    "seriesId": "e1cbe4d0",
+    "url": "/fr/exercices/e1cbe4d0/",
+    "title": "Placer sur la droite graduée",
+    "reason": "CE1 #5 : quart (0,5) remplacé par placer 14 sur une droite 10–20",
+    "source": "claude",
+    "createdAt": "2026-10-03T05:44:31.306Z",
+    "resolvedAt": "2026-10-03T08:08:39.374Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "446ae97a",
+    "seriesId": "d226ef83",
+    "url": "/fr/applications/d226ef83/",
+    "title": "Lecture sur la règle graduée",
+    "reason": "Application CE1 : générateur passé de dixièmes (0–5) à entiers (0–20)",
+    "source": "claude",
+    "createdAt": "2026-10-03T05:44:32.476Z",
+    "resolvedAt": "2026-10-03T08:06:10.857Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "e1b5b902",
+    "seriesId": "adea4758",
+    "url": "/fr/exercices/adea4758/",
+    "title": "Périmètre de figures composées",
+    "reason": "Étiquettes déplacées : #3 escalier (4 cm / 2 cm se chevauchaient), #4 U (3 cm sur les parois de l'encoche)",
+    "source": "claude",
+    "createdAt": "2026-10-03T08:17:15.692Z",
+    "resolvedAt": "2026-10-03T09:59:01.963Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "50889055",
+    "seriesId": "a8b9c0d1",
+    "url": "/fr/applications/a8b9c0d1/",
+    "title": "Lire l'heure pile et demie",
+    "reason": "Titre ajouté (« Relie chaque horloge… ») + étiquettes de droite étirées à la hauteur des horloges (aussi -02, -03)",
+    "source": "claude",
+    "createdAt": "2026-10-03T08:33:57.754Z",
+    "resolvedAt": "2026-10-03T09:59:31.224Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "8a95de7c",
+    "seriesId": "c95a7c39",
+    "url": "/fr/applications/c95a7c39/",
+    "title": "Ajouter ou soustraire 9, 19… 99 : pas à pas",
+    "reason": "Nouvelle app CM2 (astuce dizaine supérieure, facile) : chaîne a → ±10k → ? → ∓1/2 → ?",
+    "source": "claude",
+    "createdAt": "2026-10-03T10:20:01.555Z",
+    "resolvedAt": "2026-10-03T15:45:42.503Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "57c4902e",
+    "seriesId": "f80b1056",
+    "url": "/fr/applications/f80b1056/",
+    "title": "Ajouter ou soustraire 9, 19… 99 : de tête",
+    "reason": "Nouvelle app CM2 (astuce dizaine supérieure, moyen) : calcul direct jusqu'à 4 chiffres, franchit souvent la centaine",
+    "source": "claude",
+    "createdAt": "2026-10-03T10:20:02.817Z",
+    "resolvedAt": "2026-10-03T15:46:11.948Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "b64e6aae",
+    "seriesId": "dec42b3f",
+    "url": "/fr/applications/dec42b3f/",
+    "title": "Ajouter 9 ou 11",
+    "reason": "Le schéma de sauts affichait la réponse au bout (27 →+10→ 37 →+1→ 38) : remplacée par « ? »",
+    "source": "claude",
+    "createdAt": "2026-10-03T10:20:04.271Z",
+    "resolvedAt": "2026-10-03T15:31:44.666Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "d562c6a8",
+    "seriesId": "d3853915",
+    "url": "/fr/applications/d3853915/",
+    "title": "Ajouter 8 ou 12",
+    "reason": "Le schéma de sauts affichait la réponse au bout (27 →+10→ 37 →+1→ 38) : remplacée par « ? »",
+    "source": "claude",
+    "createdAt": "2026-10-03T10:20:05.610Z",
+    "resolvedAt": "2026-10-03T15:31:23.282Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "b5b0fc5c",
+    "seriesId": "dc86799a",
+    "url": "/fr/applications/dc86799a/",
+    "title": "Soustraire 9 ou 11",
+    "reason": "Le schéma de sauts affichait la réponse au bout (27 →+10→ 37 →+1→ 38) : remplacée par « ? »",
+    "source": "claude",
+    "createdAt": "2026-10-03T10:20:07.082Z",
+    "resolvedAt": "2026-10-03T15:32:34.509Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "40e74033",
+    "seriesId": "b192f1e8",
+    "url": "/fr/applications/b192f1e8/",
+    "title": "Soustraire 8 ou 12",
+    "reason": "Le schéma de sauts affichait la réponse au bout (27 →+10→ 37 →+1→ 38) : remplacée par « ? »",
+    "source": "claude",
+    "createdAt": "2026-10-03T10:20:08.473Z",
+    "resolvedAt": "2026-10-03T15:32:12.525Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "24e10ec0",
+    "seriesId": "dec42b3f",
+    "url": "/fr/applications/dec42b3f/",
+    "title": "Ajouter 9 ou 11",
+    "reason": "Schéma de sauts redessiné : arcs + étiquettes ±10 / ±1 en pastilles 19px, schéma ×1,3",
+    "source": "claude",
+    "createdAt": "2026-10-03T14:01:20.421Z",
+    "resolvedAt": "2026-10-03T15:31:44.666Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "770fa25c",
+    "seriesId": "d3853915",
+    "url": "/fr/applications/d3853915/",
+    "title": "Ajouter 8 ou 12",
+    "reason": "Schéma de sauts redessiné : arcs + étiquettes ±10 / ±1 en pastilles 19px, schéma ×1,3",
+    "source": "claude",
+    "createdAt": "2026-10-03T14:01:21.647Z",
+    "resolvedAt": "2026-10-03T15:31:23.282Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f297100e",
+    "seriesId": "dc86799a",
+    "url": "/fr/applications/dc86799a/",
+    "title": "Soustraire 9 ou 11",
+    "reason": "Schéma de sauts redessiné : arcs + étiquettes ±10 / ±1 en pastilles 19px, schéma ×1,3",
+    "source": "claude",
+    "createdAt": "2026-10-03T14:01:22.943Z",
+    "resolvedAt": "2026-10-03T15:32:34.509Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "03c0971e",
+    "seriesId": "b192f1e8",
+    "url": "/fr/applications/b192f1e8/",
+    "title": "Soustraire 8 ou 12",
+    "reason": "Schéma de sauts redessiné : arcs + étiquettes ±10 / ±1 en pastilles 19px, schéma ×1,3",
+    "source": "claude",
+    "createdAt": "2026-10-03T14:01:24.234Z",
+    "resolvedAt": "2026-10-03T15:32:12.525Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "22c6946b",
+    "seriesId": "a8db1da0",
+    "url": "/fr/applications/a8db1da0/",
+    "title": "Périmètres côtés manquants",
+    "reason": "#1 forme en I redessinée à l'échelle (8×8, ailes 2, âme 2 → 44) ; #2 profondeur de l'avancée maintenant indiquée ; textes lisibles en mode sombre",
+    "source": "claude",
+    "createdAt": "2026-10-03T15:33:16.922Z",
+    "resolvedAt": "2026-10-03T16:03:43.861Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "bfcb8457",
+    "seriesId": "b1cf9293",
+    "url": "/fr/exercices/b1cf9293/",
+    "title": "Introduction à la multiplication",
+    "reason": "Sélection validation humaine : vérification machine partielle",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:00.524Z",
+    "resolvedAt": "2026-10-04T04:49:12.320Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "866008fd",
+    "seriesId": "d3d2ea1b",
+    "url": "/fr/exercices/d3d2ea1b/",
+    "title": "Écrire une multiplication",
+    "reason": "Sélection validation humaine : vérification machine partielle",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:01.690Z",
+    "resolvedAt": "2026-10-04T04:48:41.603Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "7bac4ac4",
+    "seriesId": "d8bcb382",
+    "url": "/fr/exercices/d8bcb382/",
+    "title": "Conversions de mesures",
+    "reason": "Sélection validation humaine : vérification machine partielle",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:02.915Z",
+    "resolvedAt": "2026-10-04T04:52:02.353Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "7a8b3ceb",
+    "seriesId": "ed716734",
+    "url": "/fr/exercices/ed716734/",
+    "title": "Grilles logiques",
+    "reason": "Sélection validation humaine : grille à indices rédigés, unicité de la solution non prouvée (Haiku seul)",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:04.049Z",
+    "resolvedAt": "2026-10-04T04:44:59.528Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "69fa389f",
+    "seriesId": "df35f048",
+    "url": "/fr/exercices/df35f048/",
+    "title": "Grilles logiques: Loisirs du week-end",
+    "reason": "Sélection validation humaine : grille à indices rédigés, unicité de la solution non prouvée (Haiku seul)",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:05.184Z",
+    "resolvedAt": "2026-10-04T04:55:56.355Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "0ac63ecb",
+    "seriesId": "cb08a792",
+    "url": "/fr/exercices/cb08a792/",
+    "title": "Grilles logiques: Sports",
+    "reason": "Sélection validation humaine : grille à indices rédigés, unicité de la solution non prouvée (Haiku seul)",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:06.317Z",
+    "resolvedAt": "2026-10-04T04:52:44.981Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "48d4651a",
+    "seriesId": "c049ad32",
+    "url": "/fr/exercices/c049ad32/",
+    "title": "Grilles logiques: Sports",
+    "reason": "Sélection validation humaine : même titre que cb08a792 « Grilles logiques : Sports » — doublon ?",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:07.623Z",
+    "resolvedAt": "2026-10-04T04:52:08.823Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "431d8537",
+    "seriesId": "c07b4a03",
+    "url": "/fr/exercices/c07b4a03/",
+    "title": "De plus, de moins...",
+    "reason": "Sélection validation humaine : problème à piège (de plus / de moins, départ), vérifié par Haiku seul",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:08.772Z",
+    "resolvedAt": "2026-10-04T04:45:40.691Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "0bcd5739",
+    "seriesId": "f59c7a36",
+    "url": "/fr/exercices/f59c7a36/",
+    "title": "Problèmes inverses",
+    "reason": "Sélection validation humaine : problème à piège (de plus / de moins, départ), vérifié par Haiku seul",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:09.908Z",
+    "resolvedAt": "2026-10-04T04:46:40.554Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "a136caf8",
+    "seriesId": "c4d5e6f7",
+    "url": "/fr/exercices/c4d5e6f7/",
+    "title": "Trouver le référent",
+    "reason": "Sélection validation humaine : problème à piège (de plus / de moins, départ), vérifié par Haiku seul",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:11.212Z",
+    "resolvedAt": "2026-10-04T04:59:49.677Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "ea58104a",
+    "seriesId": "f3a4b5c6",
+    "url": "/fr/exercices/f3a4b5c6/",
+    "title": "Quel était le début ?",
+    "reason": "Sélection validation humaine : problème à piège (de plus / de moins, départ), vérifié par Haiku seul",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:12.405Z",
+    "resolvedAt": "2026-10-04T05:00:53.833Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "b1881108",
+    "seriesId": "b2c3d4e5",
+    "url": "/fr/exercices/b2c3d4e5/",
+    "title": "Deux changements, quel bilan ?",
+    "reason": "Sélection validation humaine : problème à piège (de plus / de moins, départ), vérifié par Haiku seul",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:13.541Z",
+    "resolvedAt": "2026-10-04T05:01:40.815Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "aef5a25c",
+    "seriesId": "e2bfbe35",
+    "url": "/fr/exercices/e2bfbe35/",
+    "title": "Problèmes variés I",
+    "reason": "Sélection validation humaine : problème à piège (de plus / de moins, départ), vérifié par Haiku seul",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:14.674Z",
+    "resolvedAt": "2026-10-04T04:49:58.989Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "871a60da",
+    "seriesId": "e00d4ed5",
+    "url": "/fr/exercices/e00d4ed5/",
+    "title": "Mesurer avec une règle",
+    "reason": "Sélection validation humaine : figure / repérage, le dessin n'est pas vérifié par machine",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:15.791Z",
+    "resolvedAt": "2026-10-04T04:58:59.403Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "d0b54dc9",
+    "seriesId": "c8ef203b",
+    "url": "/fr/exercices/c8ef203b/",
+    "title": "Lire les coordonnées d'un point",
+    "reason": "Sélection validation humaine : figure / repérage, le dessin n'est pas vérifié par machine",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:16.962Z",
+    "resolvedAt": "2026-10-04T04:44:22.009Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f2982a24",
+    "seriesId": "f2686b6b",
+    "url": "/fr/exercices/f2686b6b/",
+    "title": "Les angles",
+    "reason": "Sélection validation humaine : figure / repérage, le dessin n'est pas vérifié par machine",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:18.182Z",
+    "resolvedAt": "2026-10-04T04:47:31.189Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "a439cd4a",
+    "seriesId": "efda52db",
+    "url": "/fr/exercices/efda52db/",
+    "title": "La symétrie",
+    "reason": "Sélection validation humaine : figure / repérage, le dessin n'est pas vérifié par machine",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:19.318Z",
+    "resolvedAt": "2026-10-04T05:02:13.323Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "cd3fe1c4",
+    "seriesId": "d50051b7",
+    "url": "/fr/exercices/d50051b7/",
+    "title": "Placer un point sur le quadrillage",
+    "reason": "Sélection validation humaine : figure / repérage, le dessin n'est pas vérifié par machine",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:54:20.456Z",
+    "resolvedAt": "2026-10-04T04:48:03.266Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "707f80da",
+    "seriesId": "c86997d0",
+    "url": "/fr/exercices/c86997d0/",
+    "title": "Trouve l'erreur",
+    "reason": "Sélection validation humaine : « Trouver l'erreur » CE2, vérification machine partielle (les séries CM1 du même type étaient fausses)",
+    "source": "claude",
+    "createdAt": "2026-10-03T16:55:26.566Z",
+    "resolvedAt": "2026-10-04T04:54:38.123Z",
+    "resolvedBy": "validated"
   }
 ]

@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Les tenues (M3.2)"
+title: "Les tenues"
 story: "Emma a **3 t-shirts** et **4 shorts**. En combinant un t-shirt et un short, combien de **tenues différentes** peut-elle former ?"
 steps:
   - kind: keywords

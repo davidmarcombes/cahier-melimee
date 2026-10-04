@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Les sacs de billes (M1.3 — groupement)"
+title: "Les sacs de billes"
 story: "J'ai **20 billes**. Je les mets dans des **sacs de 5**. Combien de **sacs** puis-je faire ?"
 steps:
   - kind: keywords

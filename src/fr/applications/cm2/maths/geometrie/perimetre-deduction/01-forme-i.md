@@ -5,7 +5,7 @@ svg:
   gen: file
   par:
     name: i-shape-perim.svg
-answer: "32"
+answer: "44"
 unit: cm
 ---
 

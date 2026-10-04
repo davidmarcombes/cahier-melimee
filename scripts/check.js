@@ -120,6 +120,10 @@ else if (changedContent.length)
     `Spelling (${changedContent.length} changed file(s))`,
     `npx cspell --no-progress --no-summary ${changedContent.map((f) => `"${f}"`).join(' ')}`
   );
+// …and of the text the generators produce, which no content file contains (~6 s): when a generator
+// or a content file changed (new params), and with --full
+if (FULL || changedContent.length || files.some((f) => f.startsWith('src/assets/js/generators/')))
+  step('Spelling (generated text)', 'node scripts/spell-generators.js');
 
 // Own output folder and port: `npm start` (writes _site/, serves :8080) can keep running meanwhile —
 // sharing _site/ let each overwrite the other (dev pages in the tests, test builds under the dev server).

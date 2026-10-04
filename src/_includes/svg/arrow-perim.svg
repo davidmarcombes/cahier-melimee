@@ -3,10 +3,10 @@
     fill="color-mix(in srgb, #2a85bf 10%, transparent)" 
     stroke="#2a85bf" stroke-width="2"/>
 
-  <text x="110" y="160" font-family="monospace" font-size="14" text-anchor="middle">120 mm</text>
+  <text fill="var(--ct, #334155)" x="110" y="160" font-family="monospace" font-size="14" text-anchor="middle">120 mm</text>
   
-  <text x="35" y="100" font-family="monospace" font-size="14" transform="rotate(-90, 35, 100)" text-anchor="middle">4 cm</text>
-  <text x="175" y="160" font-family="monospace" font-size="14" transform="rotate(-90, 175, 160)" text-anchor="middle">2 cm</text>
+  <text fill="var(--ct, #334155)" x="35" y="100" font-family="monospace" font-size="14" transform="rotate(-90, 35, 100)" text-anchor="middle">4 cm</text>
+  <text fill="var(--ct, #334155)" x="175" y="160" font-family="monospace" font-size="14" transform="rotate(-90, 175, 160)" text-anchor="middle">2 cm</text>
 
-  <text x="235" y="60" font-family="monospace" font-size="14" transform="rotate(38, 245, 55)">75 mm</text>
+  <text fill="var(--ct, #334155)" x="235" y="60" font-family="monospace" font-size="14" transform="rotate(38, 245, 55)">75 mm</text>
 </svg>

@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Les deux cols (A3.3)"
+title: "Les deux cols"
 story: "Le col A est à **1 870 m**. Il est **215 m plus haut** que le col B. À quelle **altitude** est le col B ?"
 steps:
   - kind: keywords

@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "L'argent de Léa (M2.3)"
+title: "L'argent de Léa"
 story: "Luc a **30 €**. C'est **3 fois plus** que Léa. Combien Léa a-t-elle d'**argent** ?"
 steps:
   - kind: keywords

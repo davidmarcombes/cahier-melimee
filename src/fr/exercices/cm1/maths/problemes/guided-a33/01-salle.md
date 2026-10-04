@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Les deux salles (A3.3)"
+title: "Les deux salles"
 story: "La salle A accueille **312 personnes**, soit **48 de plus** que la salle B. Quelle est la **capacité** de la salle B ?"
 steps:
   - kind: keywords

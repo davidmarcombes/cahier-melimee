@@ -21,33 +21,8 @@ const SITE = path.join(ROOT, process.env.SITE_OUT || '_site', 'fr');
 const GEN_RUNS = 20;
 const VERBOSE = process.argv.includes('--verbose');
 
-const { Unparseable, clean, tokenize, evaluate, num, same, fmt } = require('./lib/arith.js');
-
-// "a op ? = c", "? + 3 = 8", "8 = ? + 3", "47 + 38" … with answers substituted into the ?
-function checkEquation(operation, answers) {
-  const tokens = tokenize(operation);
-  const holes = tokens.filter((t) => t.t === '?').length;
-  const eq = tokens.findIndex((t) => t.t === '=');
-  if (tokens.filter((t) => t.t === '=').length > 1) throw new Unparseable('several =');
-  const vals = answers.map(num);
-  if (eq < 0) {
-    if (holes) throw new Unparseable('? without =');
-    const v = evaluate(tokens);
-    return vals.some((a) => same(a, v)) ? null : `${clean(operation)} = ${fmt(v)}, declared ${answers.join(' / ')}`;
-  }
-  const lhs = tokens.slice(0, eq),
-    rhs = tokens.slice(eq + 1);
-  const lh = lhs.filter((t) => t.t === '?').length;
-  const tryWith = (vs) => same(evaluate(lhs, vs.slice(0, lh)), evaluate(rhs, vs.slice(lh)));
-  if (holes === 0) throw new Unparseable('= without ?');
-  if (holes === 1) {
-    return vals.some((a) => tryWith([a])) ? null : `${clean(operation)} is false with ? = ${answers.join(' / ')}`;
-  }
-  if (vals.length < holes) throw new Unparseable('fewer answers than ?');
-  return tryWith(vals.slice(0, holes))
-    ? null
-    : `${clean(operation)} is false with ? = ${answers.slice(0, holes).join(', ')}`;
-}
+const { Unparseable, clean, tokenize, evaluate, num, same, fmt, checkEquation } = require('./lib/arith.js');
+const { GEN_CHECKS } = require('./lib/gen-checks.js');
 
 // ─── Units ────────────────────────────────────────────────────────────────────
 
@@ -350,19 +325,36 @@ CHECKS['compare-expressions'] = CHECKS.compare;
 const stats = {}; // type → { ok, unchecked, errors }
 const errors = [];
 const unparsed = {};
+// Per series, per exercise ("unit": a static exercise, or a generated file and all its draws):
+// true when every answer of the unit was recomputed and correct → reports/oracle-coverage.json
+const coverage = {}; // seriesId → { unitKey → boolean }
 
-function run(item, where) {
+function run(item, where, unit) {
   const t = item.type || 'number-check';
   const st = (stats[t] ??= { ok: 0, unchecked: 0, errors: 0 });
-  const check = CHECKS[t];
-  if (!check) return;
+  // A generator check (by name) recomputes what the type check cannot read
+  const genCheck = unit && unit.gen && GEN_CHECKS[unit.gen];
+  const check = genCheck ? (it) => genCheck(it, unit.params || {}) : CHECKS[t];
+  // Static exercise: one run. Generated file: verified when at least one of its draws was
+  // recomputed (a wrong draw fails the whole run anyway) — keeps the file stable across random draws
+  const mark = (ok) => {
+    if (!unit || !unit.series) return;
+    const cov = (coverage[unit.series] ??= {});
+    cov[unit.key] = unit.generated ? Boolean(cov[unit.key]) || ok : (cov[unit.key] ?? true) && ok;
+  };
+  if (!check) return mark(false);
   try {
     const err = check(item);
     if (err) {
       st.errors++;
       errors.push(`${where} (${t}): ${err}`);
-    } else st.ok++;
+      mark(false);
+    } else {
+      st.ok++;
+      mark(true);
+    }
   } catch (e) {
+    mark(false);
     if (!(e instanceof Unparseable)) {
       st.errors++;
       errors.push(`${where} (${t}): oracle crashed — ${e.message}`);
@@ -386,6 +378,8 @@ for (const sec of ['exercices', 'applications', 'defis']) {
   }
 }
 
+const dirToId = Object.fromEntries(Object.entries(idToDir).map(([id, dir]) => [dir, id]));
+
 // 1. Static exercises, from the built pages
 if (!fs.existsSync(SITE)) {
   console.error('No _site/ — run npm run build:e2e first.');
@@ -401,7 +395,7 @@ for (const sec of ['exercices', 'applications', 'defis']) {
     const m = fs.readFileSync(f, 'utf8').match(PAYLOAD);
     if (!m) continue;
     JSON.parse(m[1]).forEach((ex, i) => {
-      if (!ex._gen) run(ex, `${idToDir[id] || sec + '/' + id} #${i + 1}`);
+      if (!ex._gen) run(ex, `${idToDir[id] || sec + '/' + id} #${i + 1}`, { series: id, key: `#${i}` });
     });
   }
 }
@@ -417,8 +411,15 @@ for (const sec of ['exercices', 'applications', 'defis']) {
     const gen = d.generator && generators[d.generator];
     if (!gen) continue;
     const rel = path.relative(ROOT, f).split(path.sep).join('/');
+    const unit = {
+      series: dirToId[path.dirname(rel)],
+      key: rel,
+      generated: true,
+      gen: d.generator,
+      params: d.params || {},
+    };
     for (let k = 0; k < GEN_RUNS; k++)
-      run(gen.generate(JSON.parse(JSON.stringify(d.params || {}))), `${rel} [${d.generator} draw ${k + 1}]`);
+      run(gen.generate(JSON.parse(JSON.stringify(d.params || {}))), `${rel} [${d.generator} draw ${k + 1}]`, unit);
   }
 }
 
@@ -453,4 +454,13 @@ if (errors.length) {
   for (const e of uniq) console.error('  - ' + e);
   process.exit(1);
 }
+// Coverage per series, for the admin dashboard's « MV » (machine-verified) column. Written only
+// when every recomputed answer is correct. Sorted keys, no timestamp: the file only changes when
+// coverage does.
+const covOut = {};
+for (const id of Object.keys(coverage).sort()) {
+  const units = Object.values(coverage[id]);
+  covOut[id] = { verified: units.filter(Boolean).length, total: units.length };
+}
+fs.writeFileSync(path.join(ROOT, 'reports', 'oracle-coverage.json'), JSON.stringify(covOut, null, 1) + '\n');
 console.log(`✓ Answer oracle: ${tot.ok} answers recomputed and correct (${tot.unchecked} not machine-checkable)`);

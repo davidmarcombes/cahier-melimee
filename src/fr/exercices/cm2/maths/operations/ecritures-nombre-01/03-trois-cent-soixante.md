@@ -6,8 +6,8 @@ target: 360
 forms:
   - "? × 4 × 9"
   - "? + 145"
-  - "? : 5"
-  - "2 880 : ?"
+  - "? : 2"
+  - "720 : ?"
 ---
 
 Écris le nombre qui manque pour que chaque calcul soit égal au nombre de gauche.

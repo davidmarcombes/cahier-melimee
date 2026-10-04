@@ -1,6 +1,6 @@
 ---
 type: bar-model
-title: "L'écart d'âge (A3.1)"
+title: "L'écart d'âge"
 body: "Tom a **8 ans**. Julie a **11 ans**. Quel est l'**écart** entre leurs âges ?"
 bm:
   mode: comparison

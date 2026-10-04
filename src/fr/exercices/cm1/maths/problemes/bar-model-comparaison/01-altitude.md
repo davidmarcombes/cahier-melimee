@@ -1,6 +1,6 @@
 ---
 type: bar-model
-title: "Deux sommets (A3.1)"
+title: "Deux sommets"
 body: "Le sommet A culmine à **1 540 m**. Le sommet B est à **1 200 m**. Quel est le dénivelé entre les deux sommets ?"
 bm:
   mode: comparison

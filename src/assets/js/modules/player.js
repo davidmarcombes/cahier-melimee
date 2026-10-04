@@ -2,6 +2,20 @@ import { localStore } from './store.js';
 import { renderOpShorthands, normalizeAnswer } from './utils.js';
 import { SETTINGS } from './constants.js';
 
+// Value of a sort / drag-sort item: "3 050", "4,5", "3/4", an HTML fraction. NaN for pictures, which keep
+// their listed order (the comparator then returns NaN, treated as equal by the stable sort).
+// Mirrored in tests/e2e/solve.spec.js and scripts/validate-llm.js.
+export function sortValue(s) {
+  // HTML fraction <span class="fn">3</span><span class="fd">4</span> → "3/4"
+  const html = String(s).replace(/<span class="fn">([^<]*)<\/span><span class="fd">([^<]*)<\/span>/g, '$1/$2');
+  const t = html
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s/g, '')
+    .replace(',', '.');
+  const frac = t.match(/^(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
+  return frac ? Number(frac[1]) / Number(frac[2]) : parseFloat(t);
+}
+
 export function seriesPlayer(exercises, seriesId) {
   return {
     exercises,
@@ -821,6 +835,11 @@ export function seriesPlayer(exercises, seriesId) {
     },
 
     /* Venn — select an item from the bank */
+    // A Venn item is a drawing (figures: the property must be visible) or a character (numbers, emojis)
+    vennLabel(it) {
+      if (it.svg) return it.svg;
+      return String(it.char ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
+    },
     vennSelect(i) {
       if (this.solved) return;
       this.vennSelected = this.vennSelected === i ? null : i;
@@ -978,7 +997,7 @@ export function seriesPlayer(exercises, seriesId) {
         // Derive correct permutation from tile values + direction
         const tiles = _e.tiles || [];
         const correctOrder = tiles
-          .map((v, i) => ({ v: parseFloat(String(v).replace(',', '.')), i }))
+          .map((v, i) => ({ v: sortValue(v), i }))
           .sort((a, b) => (_e.direction === 'desc' ? b.v - a.v : a.v - b.v))
           .map((x) => x.i);
         const errors = this.dragTilesOrder
@@ -1303,11 +1322,12 @@ export function seriesPlayer(exercises, seriesId) {
 
       if (_e.type === 'sort') {
         const userOrder = this.sortPicked.map((i) => this.sortShuffled[i]);
-        const toNum = (s) => parseFloat(String(s).replace(/\s/g, '').replace(',', '.'));
         // sortKeepOrder: items are labels (e.g. fruit names) already listed in the correct order
         const correctOrder = _e.sortKeepOrder
           ? [...(_e.items || [])]
-          : [...(_e.items || [])].sort((a, b) => (_e.direction === 'desc' ? toNum(b) - toNum(a) : toNum(a) - toNum(b)));
+          : [...(_e.items || [])].sort((a, b) =>
+              _e.direction === 'desc' ? sortValue(b) - sortValue(a) : sortValue(a) - sortValue(b)
+            );
         const wrong = userOrder.map((v, i) => (v !== correctOrder[i] ? i : -1)).filter((i) => i !== -1);
         if (wrong.length === 0) {
           this.sortErrors = [];

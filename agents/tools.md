@@ -23,6 +23,7 @@ All available commands (run `npm run help` for a live list):
 2. Unit tests (vitest)
 3. `validate:exercises` — static schemas + runs every generator 20× with its file's `params`
 4. French spelling (cspell) of the changed content files — front matter included (titles, choices, statements). Add proper nouns to `words` in `cspell.json`
+   - and the text the **generators** produce (`check:spell:generated`: 20 draws per content file, HTML stripped, same cspell.json) — when a generator or content changed, and with `--full`
 5. Build — fresh `_site-check/` (`SITE_OUT` env var; defaults to `_site/` for every other script) `_site/` (never tests a stale build)
 6. `check:answers` — **answer oracle**: recomputes expected answers (operations incl. blanks, sequences, pyramids, conversions, comparisons, clocks…) on the built pages and on 20 draws of each generator. Blocking. `--verbose` for coverage per type, `--unchecked=<type>` to see what it cannot parse
 7. `minify` — e2e runs on the production (minified) output
@@ -83,11 +84,13 @@ The e2e per-page specs:
 | `npm run generate:report` | Generate `exercises-report.csv` — one row per exercise with id, path, type, title, etc. |
 | `npm run stats:svg` | Analyze SVG files: count, size, CSS variable usage |
 | `npm run validate:llm` | LLM answer checker — caches results in `reports/validate-llm-cache.csv` by file hash |
+| `npm run validate:llm -- --export` / `--import` | Same checker with **Claude Code subagents (Haiku)** instead of Ollama: `--export` writes prompt batches (`--batch=30`) to `.scratch/llm-batches/` with a README for the agent; one Haiku subagent per `batch-NNN.json` writes `batch-NNN.result.jsonl`; `--import` records verdicts in the cache (column `claude-haiku-4-5`, files changed since the export are ignored) and flags every INCORRECT (🚩 in /admin/, source `llm`). Useful filters: `--type=a,b`, `--dir=a,b`, `--count=N` (files spread over the site). Prompts carry the data of generated figures (`Figure: gen {params}`); spot-check a few prompts per pass — a CORRECT is only worth the data the prompt contains. A human who checked an LLM failure sets `manual=ok` in the cache: the dashboard then shows the series ✓ |
 | `npm run review:failures` | Interactive review of LLM-flagged failures — opens browser, prompts y/n/s per file |
 | `npm run sync:human-validations` | Dry-run: show which exercise files are new/changed vs `reports/human-validate.csv` |
 | `npm run sync:human-validations:write` | Apply: update `human-validate.csv` (add new files, rehash unvalidated ones; validated-then-changed files are kept and reported as stale) |
 | `npm run flag -- <id or URL> "<reason>"` | Flag an exercise for a human to check (🚩 in the /admin/ « À vérifier » column; `--list`, `--resolve <id>`) |
 | `npm run list:human-validations` | Display the human-validate.csv as a table with progress summary |
+| `reports/oracle-coverage.json` | Written by `check:answers` (every `check` / `build`): per series, how many exercises the oracle recomputed (`verified`/`total`; a generated file counts once). Feeds the /admin/ **MV** column (machine verified) with the LLM verdicts: « Haiku », « Oracle », « Oracle n/m », or both |
 | `npm run validate:cross` | Join human + LLM validation CSVs — shows conflicts, gaps, stale hashes (`--verbose`, `--cat=`) |
 
 ### Data & environment
@@ -172,6 +175,20 @@ npm start                      # dev server (the API below only exists in serve 
 npm run check                  # ends with a reminder: stale series, touched unvalidated series, open flags
 ```
 
+### Validate · unvalidate · re-validate
+
+| Situation | What to do | Result |
+|---|---|---|
+| You played the whole series, it is right | `/admin/` ☐ tick, or « ✓ Valider la série » at the end of the series | `✓ date` — fingerprints recorded, the series' open flags closed |
+| You just ticked the wrong row | « Annuler » in the toast (5 s) | back exactly to the previous state, closed flags reopened |
+| A validated series is wrong, or was validated by mistake (any time later) | `npm run unvalidate -- <id \| URL> "<why>"` | `○ à faire` + a 🚩 flag « Dévalidée : why » in « À vérifier » |
+| You (or an agent) fixed a validated series | nothing: the edit changes its fingerprint | `↻ à revérifier` (stale), sorted first — play it again and tick |
+| A generator of a validated series changed | nothing: its code is part of the fingerprint | `↻ à revérifier` |
+| A doubt, nothing to change yet | `npm run flag -- <id \| URL> "<what>"` (stays validated) | 🚩 in « À vérifier » until « Fait ✓ » or re-validation |
+
+`npm run unvalidate` without a reason is refused: the flag is the trace of why. Re-validating the series closes that flag.
+The records are `reports/human-validate.csv` and `reports/human-flags.json`: **commit them** — they are the regression baseline.
+
 ### Flagging something for the human (agents: use this, not a markdown list)
 
 ```bash
@@ -199,6 +216,32 @@ npm run flag -- --resolve <flag id>
 - `sync:human-validations:write` (also run by `generate:commit`) never clears a validation: a validated file that changed stays recorded and is reported as stale.
 - The right-click **debug panel** (on any series page) copies an agent-ready prompt for the current exercise.
 - The CSV can be joined with `reports/validate-llm-cache.csv` on `path` (`npm run validate:cross`).
+
+## Checkpoints and regression (`snapshot` / `regress`)
+
+A human or an agent picks its own reference points: take a checkpoint, work, then compare.
+
+```bash
+npm run snapshot -- avant-refacto      # build the site as it is now (committed or not) → .snapshots/avant-refacto/
+# … edit content, generators, svg.js, templates …
+npm run regress -- avant-refacto       # what changed, screenshots before / now, pixel diff → HTML report
+npm run regress                        # against the latest checkpoint
+npm run snapshot -- --list             # checkpoints on disk ; --delete <name> removes one
+```
+
+**What `regress` compares** (`scripts/regress.js`, logic in `scripts/lib/snapshot.js`):
+
+1. **Built pages**: a hash per page — content, templates and build-time code show up here. New / removed pages too.
+2. **Code run in the browser, per unit**: each generator (not each file — `_shared` code of a file or `_core.js` counts for all its generators) and each top-level function of `svg.js`. A page is affected when its payload uses a changed generator or SVG helper, directly (`svg.gen`) or through a generator that calls it (`jumpArrowSvg` → the 4 series of `add9ou11`, `sub8ou12`…).
+3. **Global code** (`player.js`, `app.js`, CSS…): one page per exercise type + the main pages (`--all`: every page).
+
+Then it screenshots both versions of the affected pages — light and dark, every exercise `#1…#n` (max 12) — and compares the pixels (`pixelmatch`). Report: `.snapshots/<name>/reports/<time>/index.html` (checkpoint / now / difference, per exercise) and `summary.json` for agents. `--e2e` also runs `layout-health` and `solve` on the affected series; `--strict` exits 1 on any difference; `--limit=N` (default 80) caps the screenshots; `--reuse` skips rebuilding the current site.
+
+**Why it is reliable**: builds are deterministic — build-time shuffles (QCM choices, matching pairs, Venn items, random variables) are seeded by the exercise's path in `seriesPayload` (`.eleventy.js`), so two builds of the same code are byte-identical. Screenshots seed `Math.random` per URL (generated exercises draw the same numbers), disable animations, wait for the layout to settle (`fitSvg` rescales figures asynchronously) and load each page twice (the web font must be there before figures are measured). Measured: 234 / 234 screenshots identical over three runs.
+
+**Storage**: `.snapshots/` (git-ignored), ~14 MB per checkpoint (the built site, unminified). Screenshots of the checkpoint are taken from that saved copy when first needed and cached in `shots/` — identical to screenshots taken at checkpoint time; `snapshot --shots` takes them all upfront (~3 min). The current build goes to `.snapshots/_current/` (never served by `npm start`, which can keep running).
+
+**Limits**: a change in `player.js` or the CSS is sampled (one page per type), not exhaustive, unless `--all`. A difference is not an error: the report shows what moved, a human (or the agent) judges whether it was intended.
 
 ## E2E Testing (Playwright)
 

@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Les paquets d'images (M1.1)"
+title: "Les paquets d'images"
 story: "Chaque paquet contient **6 images**. J'achète **3 paquets**. Combien d'images ai-je **en tout** ?"
 steps:
   - kind: keywords

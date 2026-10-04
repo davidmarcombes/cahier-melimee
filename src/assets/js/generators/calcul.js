@@ -366,6 +366,59 @@
       },
     },
 
+    // astuceDizaineSup: add / subtract 8, 9, 18, 19 … 98, 99 by going to the next ten, then correcting
+    //   467 + 99 → 467 + 100 − 1 ; 329 − 98 → 329 − 100 + 2  (CM2 « astuce » lesson)
+    // params: level ('facile' → calc-chain with the two steps shown, 3-digit numbers |
+    //   'moyen' → direct calculation, up to 4 digits, half the draws cross a hundred), op ('add'|'sub'|'mix')
+    astuceDizaineSup: {
+      generate(params = {}) {
+        const level = params.level ?? 'facile';
+        const opKind = params.op ?? 'mix';
+        const add = opKind === 'add' || (opKind === 'mix' && Math.random() < 0.5);
+        const fmtNum = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        const tens = rand(1, 10); // 9 … 99 → next ten 10 … 100
+        const fix = randItem([1, 1, 2]); // ends in 9 more often than in 8
+        const b = tens * 10 - fix;
+        let a;
+        if (level === 'moyen') {
+          const lo = 120;
+          const hi = rand(0, 1) ? 999 : 9899;
+          a = rand(lo, hi);
+          // Half the time the units of a are small enough that the result crosses a hundred
+          if (Math.random() < 0.5) {
+            const r = a % 100;
+            if (add && r + b < 100) a += 100 - r - rand(1, 9);
+            if (!add && r >= b) a -= r - rand(0, b - 1);
+          }
+        } else {
+          a = add ? rand(101, 899) : rand(b + 101, 999);
+        }
+        const op = add ? '+' : '−';
+        const result = add ? a + b : a - b;
+        if (level === 'moyen') {
+          return {
+            type: 'number-check',
+            title: 'Calcule de tête avec l’astuce.',
+            operation: `${fmtNum(a)} ${op} ${b}`,
+            answers: [String(result)],
+          };
+        }
+        const round = tens * 10;
+        const mid = add ? a + round : a - round;
+        return {
+          type: 'calc-chain',
+          title: `Calcule ${a} ${op} ${b} avec l’astuce`,
+          chain: {
+            start: a,
+            steps: [
+              { op: `${op} ${round}`, answer: String(mid) },
+              { op: `${add ? '−' : '+'} ${fix}`, answer: String(result) },
+            ],
+          },
+        };
+      },
+    },
+
     // groupeA10: addition using the "make 10 first" strategy with &box() highlighting
     // params: level ('facile'|'moyen'|'difficile')
     groupeA10: {

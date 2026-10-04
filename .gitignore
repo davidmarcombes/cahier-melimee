@@ -77,3 +77,6 @@ pocketbase/pb_public/
 reports/playwright/
 test-results/
 _site-check/
+
+# Checkpoints of the built site (npm run snapshot / npm run regress)
+.snapshots/

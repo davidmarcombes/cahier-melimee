@@ -114,7 +114,10 @@
     "Numberlink",
     "KenKen",
     "Kenken",
-    "décommenter"
+    "décommenter",
+    "Malo",
+    "Robo",
+    "Temp"
   ],
   "ignoreWords": [
     "true",

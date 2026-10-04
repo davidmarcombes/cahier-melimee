@@ -1,10 +1,6 @@
 {
   "fr": [
     {
-      "text": "Se lancer",
-      "url": "/fr/onboarding/"
-    },
-    {
       "text": "Exercices",
       "url": "/fr/exercices/"
     },
@@ -13,8 +9,8 @@
       "url": "/fr/blog/"
     },
     {
-      "text": "Connexion",
-      "url": "/fr/connexion/"
+      "text": "Mon cahier",
+      "url": "/fr/cahiers/"
     }
   ]
 }

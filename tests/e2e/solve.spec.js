@@ -183,7 +183,16 @@ function solveAll() {
   }
 
   // Correct order of sort / drag-sort items, mirroring check()
-  const toNum = (s) => parseFloat(String(s).replace(/\s/g, '').replace(',', '.'));
+  const toNum = (s) => {
+    // = sortValue() in modules/player.js: "3 050", "4,5", "3/4", HTML fractions
+    const html = String(s).replace(/<span class="fn">([^<]*)<\/span><span class="fd">([^<]*)<\/span>/g, '$1/$2');
+    const t = html
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s/g, '')
+      .replace(',', '.');
+    const frac = t.match(/^(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
+    return frac ? Number(frac[1]) / Number(frac[2]) : parseFloat(t);
+  };
   const sortedIdx = (list, desc) =>
     list
       .map((v, i) => ({ v: toNum(v), i }))

@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Le réservoir (A2.2)"
+title: "Le réservoir"
 story: "Un réservoir contient **60 litres** d'eau. Suite à une fuite, il **perd 12 litres**. Combien de litres reste-t-il dans le réservoir ?"
 steps:
   - kind: keywords

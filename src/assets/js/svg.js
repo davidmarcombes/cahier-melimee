@@ -12,8 +12,55 @@ const SVG = {
     `<svg width="${SVG.f(w)}" height="${SVG.f(h)}" viewBox="0 0 ${SVG.f(w)} ${SVG.f(h)}" xmlns="http://www.w3.org/2000/svg" ${attr}>${content}</svg>`,
 };
 
+// Hand-drawn SVG files (svg: { gen: file }): fixed small sizes and hand-written viewBoxes that cut
+// labels off. Marked here, then fitted once displayed (see fitSvg below).
 function embedSvg(svg) {
-  return svg;
+  return String(svg).replace(/<svg\b/, '<svg data-fit');
+}
+
+// Fit a marked SVG to what is actually drawn (labels included): viewBox = drawing's bounding box
+// + padding, and small drawings scaled up — up to FIT_MAX px wide, ×FIT_SCALE at most, never down.
+const FIT_MAX = 380,
+  FIT_SCALE = 2.5,
+  FIT_PAD = 4;
+function fitSvg(el) {
+  let b;
+  try {
+    b = el.getBBox();
+  } catch {
+    return false;
+  }
+  if (!b || !b.width || !b.height) return false; // not displayed yet (x-show)
+  const w = b.width + 2 * FIT_PAD,
+    h = b.height + 2 * FIT_PAD;
+  el.setAttribute('viewBox', `${SVG.f(b.x - FIT_PAD)} ${SVG.f(b.y - FIT_PAD)} ${SVG.f(w)} ${SVG.f(h)}`);
+  const natural = parseFloat(el.getAttribute('width')) || w;
+  const target = Math.max(natural, Math.min(natural * FIT_SCALE, FIT_MAX));
+  el.removeAttribute('width');
+  el.removeAttribute('height');
+  el.style.width = `min(100%, ${Math.round(target)}px)`;
+  el.style.height = 'auto';
+  el.removeAttribute('data-fit');
+  return true;
+}
+// Marked SVGs are fitted as soon as they have a size: inserted visible, or shown later by x-show
+if (typeof window !== 'undefined' && window.ResizeObserver && window.MutationObserver) {
+  const sizes = new ResizeObserver((entries) => {
+    for (const { target } of entries) if (fitSvg(target)) sizes.unobserve(target);
+  });
+  const watch = (root) => {
+    const list =
+      root.matches && root.matches('svg[data-fit]')
+        ? [root]
+        : root.querySelectorAll
+          ? root.querySelectorAll('svg[data-fit]')
+          : [];
+    for (const el of list) if (!fitSvg(el)) sizes.observe(el);
+  };
+  new MutationObserver((muts) => muts.forEach((m) => m.addedNodes.forEach(watch))).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+  });
 }
 
 function mathGridSvg(cols, rows, filled, color = 'var(--p)') {
@@ -1031,44 +1078,54 @@ function partagerSvg(emoji, total, parts) {
 }
 
 /* Two-step jump arrow diagram — shows the "pass through the ten" strategy.
-   step1 is always ±10, step2 is the ±1 correction.
+   step1 is always ±10, step2 is the ±1 correction. The end of the jump is the answer, so it
+   shows « ? » (it used to print the result right above the input).
    Uses palette vars: var(--p) for the big jump, var(--a) for the small correction. */
 function jumpArrowSvg(start, step1, step2) {
   const mid = start + step1;
-  const end = mid + step2;
   const lbl = (n) => (n > 0 ? `+${n}` : `\u2212${Math.abs(n)}`);
 
-  const W = 300,
-    H = 72;
+  const W = 340,
+    H = 112;
   // Three node x-centres; leave room for 3-digit numbers
-  const nx = [46, 150, 254];
-  const ny = 54; // number baseline
-  const ay = 32; // arrow y
+  const nx = [50, 170, 290];
+  const ny = 100; // number baseline
+  const footY = 74; // where a hop leaves / lands, just above the numbers
+  const ctrlY = 18; // Bézier control point: the hop peaks at (footY + ctrlY) / 2
 
+  // A hop drawn as an arc (like the lesson's « 467 ⤻ 567 »), its label in a pill on top —
+  // big enough that the pupil reads « +10 » then « −1 » (13px plain text went unnoticed)
   const arrow = (x1, x2, label, color) => {
-    const ax = x1 + 22,
-      bx = x2 - 22;
-    const mx = (ax + bx) / 2;
+    const ax = x1 + 10,
+      bx = x2 - 10,
+      mx = (x1 + x2) / 2;
+    // Arrowhead along the tangent at the end of the curve (control point → end point)
+    const ang = Math.atan2(footY - ctrlY, bx - mx);
+    const head = (a, r) => `${bx - r * Math.cos(ang + a)},${footY - r * Math.sin(ang + a)}`;
+    const pillW = 22 + 11 * label.length;
     return `
-      <line x1="${ax}" y1="${ay}" x2="${bx - 8}" y2="${ay}"
-            stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
-      <polygon points="${bx},${ay} ${bx - 9},${ay - 5} ${bx - 9},${ay + 5}" fill="${color}"/>
-      <text x="${mx}" y="${ay - 6}" text-anchor="middle"
-            font-family="system-ui,sans-serif" font-size="13" font-weight="700"
+      <path d="M${ax},${footY} Q${mx},${ctrlY} ${bx},${footY}" fill="none"
+            stroke="${color}" stroke-width="3" stroke-linecap="round"/>
+      <polygon points="${bx},${footY} ${head(0.45, 12)} ${head(-0.45, 12)}" fill="${color}"/>
+      <rect x="${mx - pillW / 2}" y="4" width="${pillW}" height="30" rx="15"
+            fill="${color}" fill-opacity="0.15" stroke="${color}" stroke-width="2"/>
+      <text x="${mx}" y="26" text-anchor="middle"
+            font-family="system-ui,sans-serif" font-size="19" font-weight="800"
             fill="${color}">${label}</text>`;
   };
 
   const num = (x, val) =>
     `<text x="${x}" y="${ny}" text-anchor="middle"
-           font-family="system-ui,sans-serif" font-size="22" font-weight="800"
+           font-family="system-ui,sans-serif" font-size="26" font-weight="800"
            fill="var(--ct)">${val}</text>`;
 
-  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+  // Drawn 1.3× its viewBox so the hops weigh about as much as the « 32 + 12 = ? » below
+  return `<svg width="${W * 1.3}" height="${H * 1.3}" viewBox="0 0 ${W} ${H}" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
     ${num(nx[0], start)}
     ${arrow(nx[0], nx[1], lbl(step1), 'var(--p)')}
     ${num(nx[1], mid)}
     ${arrow(nx[1], nx[2], lbl(step2), 'var(--a)')}
-    ${num(nx[2], end)}
+    ${num(nx[2], '?')}
   </svg>`;
 }
 

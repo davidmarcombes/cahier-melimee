@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "L'avion (A2.1)"
+title: "L'avion"
 story: "Un avion transporte **120 passagers**. À l'escale, **45 nouveaux passagers montent**. Combien y a-t-il de passagers **au total** après l'escale ?"
 steps:
   - kind: keywords

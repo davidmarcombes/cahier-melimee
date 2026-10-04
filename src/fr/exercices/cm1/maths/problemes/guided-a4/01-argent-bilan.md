@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Bilan de la journée (A4.1)"
+title: "Bilan de la journée"
 story: "Ce matin, j'ai **perdu 15 €**. Cet après-midi, j'ai **gagné 20 €**. Quel est le **bilan** de la journée ?"
 steps:
   - kind: keywords

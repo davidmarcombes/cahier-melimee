@@ -166,4 +166,30 @@ const same = (a, b) =>
   Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
 const fmt = (v) => String(Math.round(v * 1e6) / 1e6);
 
-module.exports = { Unparseable, clean, tokenize, evaluate, num, same, fmt };
+// "a op ? = c", "? + 3 = 8", "8 = ? + 3", "47 + 38" … with answers substituted into the ?
+function checkEquation(operation, answers) {
+  const tokens = tokenize(operation);
+  const holes = tokens.filter((t) => t.t === '?').length;
+  const eq = tokens.findIndex((t) => t.t === '=');
+  if (tokens.filter((t) => t.t === '=').length > 1) throw new Unparseable('several =');
+  const vals = answers.map(num);
+  if (eq < 0) {
+    if (holes) throw new Unparseable('? without =');
+    const v = evaluate(tokens);
+    return vals.some((a) => same(a, v)) ? null : `${clean(operation)} = ${fmt(v)}, declared ${answers.join(' / ')}`;
+  }
+  const lhs = tokens.slice(0, eq),
+    rhs = tokens.slice(eq + 1);
+  const lh = lhs.filter((t) => t.t === '?').length;
+  const tryWith = (vs) => same(evaluate(lhs, vs.slice(0, lh)), evaluate(rhs, vs.slice(lh)));
+  if (holes === 0) throw new Unparseable('= without ?');
+  if (holes === 1) {
+    return vals.some((a) => tryWith([a])) ? null : `${clean(operation)} is false with ? = ${answers.join(' / ')}`;
+  }
+  if (vals.length < holes) throw new Unparseable('fewer answers than ?');
+  return tryWith(vals.slice(0, holes))
+    ? null
+    : `${clean(operation)} is false with ? = ${answers.slice(0, holes).join(', ')}`;
+}
+
+module.exports = { Unparseable, clean, tokenize, evaluate, num, same, fmt, checkEquation };

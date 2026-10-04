@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Le chiffre d'affaires (A3.3)"
+title: "Le chiffre d'affaires"
 story: "En mars, le chiffre d'affaires est de **63 200 €**, soit **14 450 € de plus** qu'en janvier. Quel était le chiffre d'affaires de **janvier** ?"
 steps:
   - kind: keywords

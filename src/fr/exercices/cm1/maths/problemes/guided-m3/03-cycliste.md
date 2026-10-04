@@ -1,6 +1,6 @@
 ---
 type: guided-problem
-title: "Le cycliste (M3.3)"
+title: "Le cycliste"
 story: "Un cycliste roule à **15 km/h** pendant **2 heures**. Quelle **distance** a-t-il parcourue ?"
 steps:
   - kind: keywords
