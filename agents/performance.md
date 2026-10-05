@@ -2,9 +2,9 @@
 
 ## Page Size Budgets
 
-- **Exercise pages:** target ≤ 18 KB HTML (currently ~17 KB)
-- **CSS bundle:** target ≤ 60 KB minified (currently ~55 KB — grown with new exercise types; all 499 classes are actively used, no dead CSS)
-- Audit with: `wc -c _site/path/to/page.html` and `wc -c _site/assets/css/style.css`
+- **Pages:** ≤ 10 KB gzip each (what LWS sends; `.htaccess` gzips HTML). Today: median 4.4 KB, largest 6.2 KB (raw 15 / 30 KB). Enforced by `npm run release:verify`. Raw size is not the budget: mixed-type series repeat partial markup that gzip removes.
+- **CSS bundle:** target ≤ 60 KB minified (currently ~48 KB, 10 KB gzip). Tailwind color-opacity plugins are off (`corePlugins` in `scripts/generate-tailwind-from-tokens.js`): use alpha modifiers (`bg-white/80`), never `bg-opacity-*`.
+- Audit with: `npm run release:verify` (largest page in its summary line), `gzip -9c _site/fr/exercices/<id>/index.html | wc -c`, `wc -c _site/css/styles.css`
 
 ## Build-Time Conditional Includes (critical)
 

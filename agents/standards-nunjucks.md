@@ -24,7 +24,7 @@
   - *Good:* `{{ title | default('Cahier de Melimee') }}`
 
 ## 4. Build-Time Conditional Includes (Critical for Performance)
-- Exercise pages must target ≤ 18 KB HTML payload. They MUST ONLY ship HTML for the types they actually use.
+- Exercise pages must stay ≤ 10 KB gzip (`npm run release:verify` enforces it, see agents/performance.md). They MUST ONLY ship HTML for the types they actually use.
 - Utilize the `extractTypes` filter to include type blocks conditionally.
   ```njk
   {% set usedTypes = exercises | extractTypes %}

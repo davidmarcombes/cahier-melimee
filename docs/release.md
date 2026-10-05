@@ -14,6 +14,7 @@ Everything runs locally; there is no CI. `_site/` is the artifact, uploaded by h
    - **No dev content:** no `/admin/`, dashboard data, `dev.js` or `/api/human-*`, and no `localhost` URLs (if there are, `.env` is not on prod).
    - **Sitemap:** every URL is on `https://www.melimee.fr` and `/admin/` isn't listed.
    - **Links:** every local `href` / `src` / `srcset` of every page points to a file of the artifact.
+   - **Page budget:** every HTML page ≤ 10 KB gzip.
    - **Series:** compares with the live `data.csv` and lists the series that disappear. While we are in pre-release it's a warning, and no redirects are needed. Once the site is public, use `--strict-ids` and add `Redirect 301` lines to `src/.htaccess`.
    - `--offline` skips the live comparison.
 7. **Local smoke test** — `npm run serve:local`: home page, one exercise per level, `/404.html`.

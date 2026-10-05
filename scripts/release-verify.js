@@ -9,12 +9,14 @@
  *   3. Series    — series live today that this version removes (their URLs would 404 and the
  *                  students' progress would be orphaned). Pre-release: a warning; --strict-ids once
  *                  the site is public (then add redirects to src/.htaccess)
+ *   4. Budgets   — every HTML page ≤ 10 KB gzip (what LWS sends), see agents/performance.md
  *
  *   npm run release:verify                       checks _site/ (SITE_OUT to check another folder)
  *   npm run release:verify -- --offline          skip the comparison with the live site
  *   npm run release:verify -- --strict-ids       removed series are errors
  */
 const fs = require('fs');
+const zlib = require('zlib');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
@@ -172,6 +174,26 @@ async function checkSeries() {
   return `${next.size} series: ${added} new, ${removed.length} removed, vs ${live.size} live`;
 }
 
+// ─── 4. Page budget ───────────────────────────────────────────────────────────
+
+const PAGE_GZIP_MAX = 10 * 1024; // agents/performance.md
+
+function checkBudgets(files) {
+  const sizes = files
+    .filter((f) => f.endsWith('.html'))
+    .map((f) => ({ f: rel(f), gz: zlib.gzipSync(fs.readFileSync(f), { level: 9 }).length }))
+    .sort((a, b) => b.gz - a.gz);
+  const over = sizes.filter((x) => x.gz > PAGE_GZIP_MAX);
+  if (over.length)
+    errors.push(
+      `${over.length} page(s) over ${PAGE_GZIP_MAX / 1024} KB gzip, e.g. ${over
+        .slice(0, 3)
+        .map((x) => `${x.f} (${(x.gz / 1024).toFixed(1)} KB)`)
+        .join(', ')}`
+    );
+  return sizes.length ? `largest page ${(sizes[0].gz / 1024).toFixed(1)} KB gzip` : 'no pages';
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 (async () => {
@@ -183,9 +205,10 @@ async function checkSeries() {
   checkArtifact(files);
   const links = checkLinks(files);
   const series = await checkSeries();
+  const budget = checkBudgets(files);
 
   console.log(`${C.bold}Release verify${C.reset} ${C.dim}${path.relative(ROOT, SITE)}/ → ${PROD}${C.reset}`);
-  console.log(`  ${files.length} files · ${links} links checked · ${series}`);
+  console.log(`  ${files.length} files · ${links} links checked · ${series} · ${budget}`);
   for (const w of warnings) console.log(`  ${C.yellow}⚠ ${w}${C.reset}`);
   for (const e of errors) console.log(`  ${C.red}✗ ${e}${C.reset}`);
   if (errors.length) {
