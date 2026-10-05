@@ -130,7 +130,12 @@ const example = (() => {
   for (const lv of order)
     for (const f of probFiles(lv)) {
       const s = fs.readFileSync(f, 'utf8');
-      if (new RegExp(`^type: "?${type}"?$`, 'm').test(s) && s.length < 2500)
+      // a `problem` example must show the `operation` field rule 6 asks for
+      if (
+        new RegExp(`^type: "?${type}"?$`, 'm').test(s) &&
+        s.length < 2500 &&
+        (type !== 'problem' || /^operation:/m.test(s))
+      )
         return { path: path.relative(ROOT, f).split(path.sep).join('/'), text: s.trim() };
     }
   return null;
