@@ -362,6 +362,8 @@ src/fr/applications/cm2/maths/calcul/comparer-ops-nombre/comparer-ops-nombre.md,
 src/fr/applications/cm2/maths/calcul/decodage-emojis/decodage-emojis.md,be6bb77f,c167933a1b20d314,
 src/fr/applications/cm2/maths/calcul/decodage-monstres/decodage-monstres.md,e7def21d,921229140e4cfcfd,
 src/fr/applications/cm2/maths/calcul/div-puissances-10-01/div-puissances-10-01.md,bd4c42a2,47c7cde3b810ec6f,2026-10-02T07:29:03.336Z
+src/fr/applications/cm2/maths/calcul/diviser-decimal-entier-01/01-un-chiffre.md,d93affd7,8a17ebeb7ce38a86,
+src/fr/applications/cm2/maths/calcul/diviser-decimal-entier-01/02-deux-decimales.md,d93affd7,2901a63431e5f458,
 src/fr/applications/cm2/maths/calcul/division-deux-chiffres-01/01-division.md,aa30b89e,cc51d6c619241240,
 src/fr/applications/cm2/maths/calcul/division-deux-chiffres-02/01-division.md,e8b97d4e,ed268d45636e82cf,
 src/fr/applications/cm2/maths/calcul/division-simple/01-division.md,d240646a,d7a2393c73245d1c,
@@ -374,6 +376,7 @@ src/fr/applications/cm2/maths/calcul/machine-fonctions/01-compute.md,feb5f319,df
 src/fr/applications/cm2/maths/calcul/mult-puissances-10-01/mult-puissances-10-01.md,dba70bab,63cbfd881332b7a0,2026-10-02T07:30:06.075Z
 src/fr/applications/cm2/maths/calcul/multi-decimal-pow10-difficile/multi-decimal-pow10-difficile.md,aca4a3b9,70e841eb72397d3b,
 src/fr/applications/cm2/maths/calcul/multiplication-tables/01-tables.md,ec2a1126,3da8ede49aaeb84b,
+src/fr/applications/cm2/maths/calcul/quotient-decimal-01/01-quotient-decimal.md,a00ad54a,002c3d023eb748fc,
 src/fr/applications/cm2/maths/calcul/schemas-operateurs-01/01-multiplier-decimaux.md,fe1fb044,cd1efbdb36d73dc9,2026-10-02T07:30:28.569Z
 src/fr/applications/cm2/maths/calcul/schemas-operateurs-01/02-diviser.md,fe1fb044,5279eed0586d6c8d,2026-10-02T07:30:28.569Z
 src/fr/applications/cm2/maths/calcul/schemas-operateurs-02/01-melange.md,b8ac9e59,8c3e9cd6c9df8f0b,2026-09-30T12:57:00.156Z
@@ -403,6 +406,10 @@ src/fr/applications/cm2/maths/mesures/classer-tableaux-01/03-durees-unites.md,c1
 src/fr/applications/cm2/maths/mesures/comparer-longueurs/01-comparer.md,f2f5b01e,894b8b5229b97f38,
 src/fr/applications/cm2/maths/mesures/comparer-volumes/01-comparer.md,b1dc5d23,d7b6b4b7eee7fb0e,
 src/fr/applications/cm2/maths/mesures/compter-porte-monnaie/01-porte-monnaie.md,e215c0cd,90accf26d7f24452,2026-10-04T16:28:56.681Z
+src/fr/applications/cm2/maths/mesures/convertir-contenances-01/01-entiers.md,b02ba7f0,08e4dbfe8112325a,
+src/fr/applications/cm2/maths/mesures/convertir-contenances-01/02-decimaux.md,b02ba7f0,7f1266c73d07efd5,
+src/fr/applications/cm2/maths/mesures/convertir-masses-01/01-entiers.md,dad13ab9,53d6c25e6253dea6,
+src/fr/applications/cm2/maths/mesures/convertir-masses-01/02-decimaux.md,dad13ab9,89dd705ecd97058c,
 src/fr/applications/cm2/maths/mesures/perimetre-deduction/01-forme-i.md,a8db1da0,7a9884f7ab479fa7,2026-10-03T16:03:43.861Z
 src/fr/applications/cm2/maths/mesures/perimetre-deduction/02-forme-h.md,a8db1da0,fe670122b65ebde5,2026-10-03T16:03:43.861Z
 src/fr/applications/cm2/maths/mesures/perimetre-deduction/03-croix.md,a8db1da0,a312129f031c11a1,2026-10-03T16:03:43.861Z

@@ -536,6 +536,58 @@
       },
     },
 
+    // convertirMesure: « 3,5 kg = ? g », « 750 mL = ? L » (CM1–CM2) — exact, string arithmetic.
+    // params: family ('masses' | 'contenances' | 'longueurs'), units (subset of the family),
+    //         decimals (false — true: 1–2 decimals in the given value), maxDigits (6, answer size)
+    convertirMesure: {
+      generate(params = {}) {
+        // exponent of each unit in the family's smallest unit
+        const FAMILIES = {
+          masses: { t: 9, kg: 6, hg: 5, dag: 4, g: 3, dg: 2, cg: 1, mg: 0 },
+          contenances: { hL: 5, daL: 4, L: 3, dL: 2, cL: 1, mL: 0 },
+          longueurs: { km: 6, hm: 5, dam: 4, m: 3, dm: 2, cm: 1, mm: 0 },
+        };
+        const DEFAULT_UNITS = {
+          masses: ['t', 'kg', 'g', 'mg'],
+          contenances: ['L', 'dL', 'cL', 'mL'],
+          longueurs: ['km', 'm', 'cm', 'mm'],
+        };
+        const family = params.family ?? 'masses';
+        const E = FAMILIES[family];
+        const units = params.units ?? DEFAULT_UNITS[family];
+        const maxDigits = params.maxDigits ?? 6;
+        // integer m shifted by 10^s → « 3,5 » / « 3500 » (trailing zeros dropped, French comma)
+        const fmt = (m, s) => {
+          if (s >= 0) return String(m) + '0'.repeat(s);
+          const str = String(m).padStart(-s + 1, '0');
+          return `${str.slice(0, s)},${str.slice(s)}`.replace(/0+$/, '').replace(/,$/, '');
+        };
+        const decimalsOf = (str) => (str.split(',')[1] || '').length;
+        let from, to, given, answer;
+        for (let tries = 0; tries < 200; tries++) {
+          [from, to] = shuffle([...units]).slice(0, 2);
+          const k = params.decimals ? rand(1, 2) : 0; // decimals of the given value
+          const m = rand(1, 999);
+          if (k && m % 10 === 0) continue;
+          given = fmt(m, -k);
+          answer = fmt(m, E[from] - E[to] - k);
+          const intPart = answer.split(',')[0];
+          if (decimalsOf(answer) <= 3 && intPart.length <= maxDigits && (k === 0 || given.includes(','))) break;
+        }
+        // « 1__250 »: __ keeps a number and its unit on one unbreakable line
+        const group = (s) => {
+          const [i, d] = s.split(',');
+          const gi = i.length >= 5 ? i.replace(/\B(?=(\d{3})+$)/g, '__') : i;
+          return d ? `${gi},${d}` : gi;
+        };
+        return {
+          type: 'number-check',
+          operation: `${group(given)}__${from}__=__?__${to}`,
+          answers: [answer],
+        };
+      },
+    },
+
     // porteMonnaie: count a wallet drawn with moneySvg — euros first, then centimes, then the total
     // (centimes ≥ 100 make an extra euro: 1 € 20 c of small coins + 18 € = 19 € 20 c).
     // params: notes ([500, 1000, 2000, 5000] cents), minNotes (1), maxNotes (2),

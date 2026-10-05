@@ -1120,3 +1120,42 @@ describe('centimesEnEuros', () => {
     }
   });
 });
+
+describe('diviserDecimalParEntier', () => {
+  const num = (s) => parseFloat(s.replace(',', '.'));
+  it('quotient × divisor = dividend, decimal dividend by default', () => {
+    for (let i = 0; i < 200; i++) {
+      const r = generators.diviserDecimalParEntier.generate();
+      const [a, rest] = r.operation.split(' ÷ ');
+      const d = parseInt(rest, 10);
+      expect(a).toContain(',');
+      expect(num(r.answers[0]) * d).toBeCloseTo(num(a), 9);
+    }
+  });
+  it('intDividend gives a whole dividend and a decimal quotient', () => {
+    for (let i = 0; i < 100; i++) {
+      const r = generators.diviserDecimalParEntier.generate({ intDividend: true, divisors: [2, 4, 5, 8] });
+      expect(r.operation.split(' ÷ ')[0]).not.toContain(',');
+      expect(r.answers[0]).toContain(',');
+    }
+  });
+});
+
+describe('convertirMesure', () => {
+  const E = { t: 9, kg: 6, g: 3, mg: 0, L: 3, dL: 2, cL: 1, mL: 0 };
+  for (const p of [
+    { family: 'masses' },
+    { family: 'masses', decimals: true },
+    { family: 'contenances' },
+    { family: 'contenances', decimals: true },
+  ])
+    it(`exact conversions (${p.family}${p.decimals ? ', decimals' : ''})`, () => {
+      for (let i = 0; i < 200; i++) {
+        const r = generators.convertirMesure.generate(p);
+        const [, v, from, to] = r.operation.replace(/__/g, ' ').match(/^([\d ,]+) (\w+) = \? (\w+)$/);
+        const expected = parseFloat(v.replace(/ /g, '').replace(',', '.')) * 10 ** (E[from] - E[to]);
+        expect(parseFloat(r.answers[0].replace(',', '.'))).toBeCloseTo(expected, 6);
+        expect((r.answers[0].split(',')[1] || '').length).toBeLessThanOrEqual(3);
+      }
+    });
+});

@@ -632,6 +632,39 @@
     // divDecimales: decimal ÷ power-of-10 (CM1) — twin of multDecimales
     // Generate the RESULT first (nice decimal), compute dividend = result × power.
     // params: powers, maxDec (decimal places in result), wholeMin (0), wholeMax (99)
+    // diviserDecimalParEntier: « 12,6 ÷ 3 = ? » (CM2) — exact, computed in integers.
+    // The quotient has 1..maxDec decimals (last one ≠ 0); the dividend is quotient × divisor.
+    // params: divisors ([2..9]), maxDec (2), quotientMax (50),
+    //         intDividend (false — true: whole dividend, decimal quotient « 9 ÷ 4 = 2,25 »)
+    diviserDecimalParEntier: {
+      generate(params = {}) {
+        const divisors = params.divisors ?? [2, 3, 4, 5, 6, 7, 8, 9];
+        const maxDec = params.maxDec ?? 2;
+        const qMax = params.quotientMax ?? 50;
+        // n / 10^dec → « 12,6 » (trailing zeros dropped, French comma)
+        const fmt = (n, dec) => {
+          const s = String(n).padStart(dec + 1, '0');
+          const out = dec ? `${s.slice(0, -dec)},${s.slice(-dec)}` : s;
+          return out.includes(',') ? out.replace(/0+$/, '').replace(/,$/, '') : out;
+        };
+        let d, dec, q, a;
+        for (let tries = 0; tries < 200; tries++) {
+          d = randItem(divisors);
+          dec = rand(1, maxDec);
+          q = rand(1, qMax * 10 ** dec);
+          if (q % 10 === 0) continue; // the quotient really has `dec` decimals
+          a = q * d; // dividend × 10^dec
+          const wholeDividend = a % 10 ** dec === 0;
+          if (params.intDividend ? wholeDividend : !wholeDividend) break;
+        }
+        return {
+          type: 'number-check',
+          operation: `${fmt(a, dec)} ÷ ${d} = ?`,
+          answers: [fmt(q, dec)],
+        };
+      },
+    },
+
     divDecimales: {
       generate(params = {}) {
         const powers = params.powers ?? [10, 100, 1000];
