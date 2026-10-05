@@ -15,7 +15,7 @@
         'border-slate-200 dark:border-slate-700 bg-surface-subtle': !cmpErrors.includes(i) && !solved
       }"
     >
-      <span class="text-lg font-mono text-content-default flex-1 text-right" x-text="c.left"></span>
+      <span class="text-lg font-mono text-content-default flex-1 text-right" x-text="groupDigits(c.left)"></span>
 
       <button
         type="button"
@@ -32,7 +32,7 @@
         x-text="cmpInputs[i] || '?'"
       ></button>
 
-      <span class="text-lg font-mono text-content-default flex-1 text-left" x-text="c.right"></span>
+      <span class="text-lg font-mono text-content-default flex-1 text-left" x-text="groupDigits(c.right)"></span>
     </div>
   </template>
 

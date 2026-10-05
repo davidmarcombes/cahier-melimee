@@ -1,5 +1,5 @@
 import { localStore } from './store.js';
-import { renderOpShorthands, normalizeAnswer } from './utils.js';
+import { renderOpShorthands, normalizeAnswer, groupDigits } from './utils.js';
 import { SETTINGS } from './constants.js';
 
 // Value of a sort / drag-sort item: "3 050", "4,5", "3/4", an HTML fraction. NaN for pictures, which keep
@@ -155,6 +155,7 @@ export function seriesPlayer(exercises, seriesId) {
     get operationHtml() {
       return renderOpShorthands(this.cur.operation || '');
     },
+    groupDigits,
 
     /* Fraction Helpers */
     get fractionShapes() {

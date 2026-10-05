@@ -716,3 +716,17 @@ describe('sortValue — HTML fractions', () => {
     ]);
   });
 });
+
+import { groupDigits } from '../src/assets/js/modules/utils.js';
+
+describe('groupDigits', () => {
+  it('groups whole numbers of 5+ digits by 3 with a narrow no-break space', () => {
+    expect(groupDigits('2561137182')).toBe('2 561 137 182');
+    expect(groupDigits(100000)).toBe('100 000');
+  });
+  it('leaves 4 digits, decimals and text unchanged', () => {
+    expect(groupDigits('9999')).toBe('9999');
+    expect(groupDigits('12345,5')).toBe('12345,5');
+    expect(groupDigits('3/4')).toBe('3/4');
+  });
+});

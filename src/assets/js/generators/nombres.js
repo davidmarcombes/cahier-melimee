@@ -36,6 +36,46 @@
       },
     },
 
+    // arrondirGrandNombre: « Arrondis au million le plus proche. 34 567 891 ≈ ? » (CM1–CM2).
+    // Number shown with digit groups; the rounding place is in the title. The deciding digit is
+    // never 5 (no halfway case).
+    // params: places (['millier', 'dizaine de mille', 'centaine de mille', 'million']),
+    //         minDigits (6), maxDigits (9)
+    arrondirGrandNombre: {
+      generate: (params = {}) => {
+        const PLACES = {
+          dizaine: [1, 'à la dizaine la plus proche'],
+          centaine: [2, 'à la centaine la plus proche'],
+          millier: [3, 'au millier le plus proche'],
+          'dizaine de mille': [4, 'à la dizaine de mille la plus proche'],
+          'centaine de mille': [5, 'à la centaine de mille la plus proche'],
+          million: [6, 'au million le plus proche'],
+          'dizaine de millions': [7, 'à la dizaine de millions la plus proche'],
+          'centaine de millions': [8, 'à la centaine de millions la plus proche'],
+          milliard: [9, 'au milliard le plus proche'],
+        };
+        const [order, label] =
+          PLACES[randItem(params.places ?? ['millier', 'dizaine de mille', 'centaine de mille', 'million'])];
+        const digits = rand(Math.max(params.minDigits ?? 6, order + 1), Math.max(params.maxDigits ?? 9, order + 1));
+        let num = rand(1, 9);
+        for (let i = 1; i < digits; i++) {
+          let d = rand(0, 9);
+          if (i === digits - order) d = randItem([0, 1, 2, 3, 4, 6, 7, 8, 9]); // deciding digit, never 5
+          num = num * 10 + d;
+        }
+        const p = 10 ** order;
+        const rounded = Math.round(num / p) * p;
+        // « 34__567__891 »: __ keeps the number, ≈ and the blank on one unbreakable line
+        const grouped = String(num).replace(/\B(?=(\d{3})+$)/g, '__');
+        return {
+          type: 'number-check',
+          title: `Arrondis ${label}.`,
+          operation: `${grouped}__≈__?`,
+          answers: [String(rounded)],
+        };
+      },
+    },
+
     complementNombre: {
       generate: (params = {}) => {
         const target = params.target ?? 10 ** rand(1, 4);

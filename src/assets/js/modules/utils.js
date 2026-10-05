@@ -39,3 +39,12 @@ export function normalizeAnswer(s) {
   }
   return v;
 }
+
+/**
+ * French digit grouping for display: whole numbers of 5+ digits get a narrow no-break space
+ * every 3 digits (« 2 561 137 182 »). Anything else (decimals, text, 4 digits) is unchanged.
+ */
+export function groupDigits(v) {
+  const s = String(v ?? '');
+  return /^-?\d{5,}$/.test(s) ? s.replace(/\B(?=(\d{3})+$)/g, '\u202f') : s;
+}
