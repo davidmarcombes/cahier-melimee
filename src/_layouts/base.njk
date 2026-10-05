@@ -23,7 +23,7 @@
     <meta name="twitter:card" content="summary_large_image" />
 
 
-    <link rel="stylesheet" href="{{ '/css/styles.css' | url }}">
+    <link rel="stylesheet" href="{{ '/css/styles.css' | url }}?v={{ site.version }}">
     {% if preloadCsv %}<script>if(!sessionStorage.getItem('ex4')){var _l=document.createElement('link');_l.rel='preload';_l.as='fetch';_l.crossOrigin='anonymous';_l.href='{{ '/fr/exercices/data.csv' | url }}';document.head.appendChild(_l);}</script>{% endif %}
     <style>[x-cloak] { display: none !important; }</style>
 
@@ -47,8 +47,8 @@
 
     {% include "components/footer.njk" %}
 
-    <script defer type="module" src="{{ '/assets/js/app.js' | url }}"></script>
-    <script defer src="{{ '/assets/js/alpine.min.js' | url }}"></script>
+    <script defer type="module" src="{{ '/assets/js/app.js' | url }}?v={{ site.version }}"></script>
+    <script defer src="{{ '/assets/js/alpine.min.js' | url }}?v={{ site.version }}"></script>
     <script>
       if ('serviceWorker' in navigator) {
         {% if site.devMode %}

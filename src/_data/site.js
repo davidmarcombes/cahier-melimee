@@ -1,7 +1,9 @@
+const { version } = require('../../package.json');
+
 module.exports = {
-  version: '1.0',
+  version,
   title: 'Le Cahier de Mélimée',
-  description: 'Exercices éducatifs du CP à la 3e',
+  description: "Des maths pour s'entraîner, du CP au CM2",
   url: process.env.SITE_URL || 'http://localhost:8080',
   devMode: process.env.ELEVENTY_RUN_MODE === 'serve',
   repo: 'https://github.com/davidmarcombes/cahier-melimee',

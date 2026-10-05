@@ -18,13 +18,13 @@ isSeriesPage: true
 {% endfor %}
 
 {% if needsSvgJs %}
-<script src="{{ '/assets/js/svg.js' | url }}"></script>
+<script src="{{ '/assets/js/svg.js' | url }}?v={{ site.version }}"></script>
 {% endif %}
 {% if site.devMode %}
-<script src="{{ '/assets/js/dev.js' | url }}"></script>
+<script src="{{ '/assets/js/dev.js' | url }}?v={{ site.version }}"></script>
 {% endif %}
 {% for src in exercises | generatorScripts %}
-<script src="{{ src | url }}"></script>
+<script src="{{ src | url }}?v={{ site.version }}"></script>
 {% endfor %}
 
 

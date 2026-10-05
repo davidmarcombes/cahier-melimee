@@ -57,12 +57,19 @@ async function processHtml(filePath) {
   }
 }
 
+// Pages load JS/CSS with ?v=<version> (cached 1 year by .htaccess); the ES-module imports
+// inside the JS need it too, else app.js@new would import modules/player.js@old.
+// Every file gets the same suffix, so a module imported from two places stays one instance.
+const { version } = require('../package.json');
+const versionImports = (code) =>
+  code.replace(/((?:\bfrom|\bimport)\s*\(?\s*['"])(\.{1,2}\/[^'"?]+\.js)(['"])/g, `$1$2?v=${version}$3`);
+
 async function processJs(filePath) {
   const name = path.basename(filePath);
   if (JS_SKIP.has(name)) return;
   const original = fs.readFileSync(filePath, 'utf8');
   try {
-    const result = await minifyJs(original, JS_OPTIONS);
+    const result = await minifyJs(versionImports(original), JS_OPTIONS);
     if (result.code) {
       fs.writeFileSync(filePath, result.code, 'utf8');
       jsSaved += original.length - result.code.length;

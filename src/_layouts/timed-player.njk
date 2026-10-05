@@ -3,9 +3,9 @@ layout: base
 isSeriesPage: true
 ---
 {% set exercises = collections.defis | seriesExercises(series) %}
-<script src="{{ '/assets/js/svg.js' | url }}"></script>
+<script src="{{ '/assets/js/svg.js' | url }}?v={{ site.version }}"></script>
 {% for src in exercises | generatorScripts %}
-<script src="{{ src | url }}"></script>
+<script src="{{ src | url }}?v={{ site.version }}"></script>
 {% endfor %}
 
 <div

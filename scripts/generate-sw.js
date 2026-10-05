@@ -151,7 +151,8 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   event.respondWith((async () => {
-    const cached = await caches.match(event.request);
+    // Static site: a query string never changes the file (?v=<version> on JS/CSS, ?user= on pages)
+    const cached = await caches.match(event.request, { ignoreSearch: true });
     if (cached) return maybeDecompress(cached);
     try {
       return await fetch(event.request);
