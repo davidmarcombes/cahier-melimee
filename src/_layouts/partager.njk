@@ -3,7 +3,7 @@ layout: base
 ---
 {# Share page: QR code to show in class, share/copy buttons, and an A4 poster on print.
    The QR code points to https://www.melimee.fr/ — regenerate src/_includes/svg/qr-melimee.svg
-   (and assets/images/qr-code.png) if the address changes. #}
+   if the address changes (originals in .scratch/, not committed). #}
 <div x-data="{ url: 'https://www.melimee.fr/', canShare: !!navigator.share, copied: false }" class="max-w-xl mx-auto text-center print:max-w-none print:pt-[15mm]">
 
   <h1 class="text-3xl font-extrabold text-content-default mb-3 print:hidden">{{ title }}</h1>
