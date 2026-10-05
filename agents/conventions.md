@@ -7,6 +7,7 @@
 - Custom prose styles replace `@tailwindcss/typography` (~20 rules vs 14 KB plugin)
 - Dark mode: class-based with `.dark` on `<html>`
 - Responsive: mobile-first with Tailwind breakpoints (sm, md, lg)
+- Short screens: `short:` variant = `(max-height: 800px)` (laptop 768p at 100 %). Use it for vertical spacing only, so « Vérifier » stays above the fold; tall screens keep the normal look. Type partials are tightened in one place: the `@media (max-height: 800px)` block scoped to `.js-player` at the end of `src/css/input.css` (`mb-8`, `mb-6`, `mt-6`, `p-8`, `p-6`, `space-y-6`).
 - No hardcoded colors/fonts — always use token values
 - SVG files use CSS custom properties with fallbacks: `var(--green, #3a9a55)`
 

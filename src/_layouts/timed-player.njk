@@ -11,7 +11,7 @@ isSeriesPage: true
 <div
   x-data='timedPlayer({{ exercises | seriesPayload | safe }}, "{{ id }}", { duration: {{ duration or 60 }} })'
   x-cloak
-  class="max-w-xl mx-auto py-8 px-4"
+  class="js-player max-w-xl mx-auto py-8 short:py-2 px-4"
 >
 
   {# ── READY SCREEN ───────────────────────────────────── #}

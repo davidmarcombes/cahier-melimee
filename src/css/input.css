@@ -231,6 +231,32 @@
   }
 }
 
+/* Short screens (laptop 768p at 100 %): the type partials' spacing tightened in one place,
+   so « Vérifier » stays above the fold. Tall screens keep the normal look.
+   (.js-player .x beats the single-class utility, sm: variants included.) */
+@media (max-height: 800px) {
+  .js-player .mb-8 {
+    margin-bottom: 1rem;
+  }
+  .js-player .mb-6 {
+    margin-bottom: 0.75rem;
+  }
+  .js-player .mt-6 {
+    margin-top: 0.75rem;
+  }
+  .js-player .p-8,
+  .js-player .sm\:p-8 {
+    padding: 1.25rem;
+  }
+  .js-player .p-6,
+  .js-player .sm\:p-6 {
+    padding: 1rem;
+  }
+  .js-player .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem;
+  }
+}
+
 body {
   @apply font-sans bg-surface-default text-content-default;
 }

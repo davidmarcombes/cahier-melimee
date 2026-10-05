@@ -1,5 +1,5 @@
 <header class="border-b bg-surface-chrome print:hidden" x-data="{ mobileOpen: false, cahierUser: (window.localStore && window.localStore.getUser()) || null }">
-  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+  <div class="max-w-6xl mx-auto px-4 py-4 short:py-2 flex items-center justify-between">
     <a href="{{ '/fr' | url }}" class="flex items-center gap-2 shrink-0">
       {% image "src/assets/images/logo.png", site.title + " logo", "2rem", "h-8 w-8", "eager" %}
       <span class="font-semibold text-sm sm:text-base">{{ site.title }}</span>

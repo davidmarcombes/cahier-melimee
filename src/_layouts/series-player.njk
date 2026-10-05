@@ -34,16 +34,16 @@ isSeriesPage: true
 <div
   x-data='seriesPlayer({{ exercises | seriesPayload | safe }}, "{{ id }}")'
   @hashchange.window="syncFromHash()" @resize.window.debounce="updateMatchLines()"
-  x-cloak class="max-w-xl mx-auto py-8"
+  x-cloak class="js-player max-w-xl mx-auto py-8 short:py-2"
 >
   {# Series header #}
-  <div class="flex items-center justify-between mb-4 text-sm">
+  <div class="flex items-center justify-between mb-4 short:mb-2 text-sm">
     <a href="{{ '/fr/exercices/' | url }}" class="text-slate-400 hover:text-primary-500 transition-colors" aria-label="Retour au menu des exercices"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
     <span class="text-slate-500 dark:text-slate-400" x-text="(currentIndex + 1) + ' / ' + exercises.length"></span>
   </div>
 
   {# Progress bar #}
-  <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mb-6 overflow-hidden">
+  <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mb-6 short:mb-3 overflow-hidden">
     <div class="h-full bg-primary-500 rounded-full transition-all duration-500"
          :style="'width:' + Math.round((solvedCount / exercises.length) * 100) + '%'"></div>
   </div>
@@ -52,7 +52,7 @@ isSeriesPage: true
   <div x-show="_ready">
 
   {# Exercise title #}
-  <h1 class="exercise-title text-2xl font-bold text-content-default mb-4 text-center" x-html="cur.title || ''"></h1>
+  <h1 class="exercise-title text-2xl font-bold text-content-default mb-4 short:mb-2 text-center" x-html="cur.title || ''"></h1>
 
   {# Type-specific visual blocks (only included when the series uses that type) #}
   {% if 'number-check' in usedTypes %}{% include "types/number-check.njk" %}{% endif %}

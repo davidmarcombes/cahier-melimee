@@ -108,11 +108,11 @@ module.exports = {
       colors: ${JSON.stringify(tailwindColors, null, 2)},
       fontFamily: ${JSON.stringify(tokens.typography?.fonts || {}, null, 2)},
       fontSize: ${JSON.stringify(tokens.typography?.sizes || {}, null, 2)},
-      spacing: ${JSON.stringify(tokens.spacing || {}, null, 2)}
+      spacing: ${JSON.stringify(tokens.spacing || {}, null, 2)},
+      // Short screens (laptop 768p at 100 %): tighter vertical spacing, see agents/conventions.md
+      screens: { short: { raw: "(max-height: 800px)" } }
     }
   },
-  plugins: []
-};
   // CSS budget: no --tw-*-opacity variables on every color utility (~12 KB).
   // Alpha modifiers (bg-white/80) still work; bg-opacity-* classes do not.
   corePlugins: {
@@ -124,6 +124,8 @@ module.exports = {
   },
   // « x-show="!dark" » in theme-toggle.njk would emit an !important copy of the .dark tokens
   blocklist: ['!dark'],
+  plugins: []
+};
 `;
 
 const markerStart = '/* BEGIN:design-tokens */';
