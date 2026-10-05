@@ -1912,5 +1912,148 @@
     "createdAt": "2026-10-04T16:24:20.536Z",
     "resolvedAt": "2026-10-04T16:29:14.592Z",
     "resolvedBy": "validated"
+  },
+  {
+    "id": "70fb695a",
+    "seriesId": "ae309459",
+    "url": "/fr/exercices/ae309459/#4",
+    "title": "Problèmes en deux étapes",
+    "reason": "« Les tâches ménagères » : 120 € ÷ 7 = 17,14 € ; réponse attendue 17 (euros entiers ?) — préciser « en euros entiers » ou accepter 17,14",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:05:23.601Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "45b73380",
+    "seriesId": "d51b178a",
+    "url": "/fr/exercices/d51b178a/",
+    "title": "Retrouver puis partager",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:36.850Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "0c22e35b",
+    "seriesId": "d5b0a2f3",
+    "url": "/fr/exercices/d5b0a2f3/",
+    "title": "Multiplier puis comparer",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:38.147Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "a652cf92",
+    "seriesId": "ad07d298",
+    "url": "/fr/exercices/ad07d298/",
+    "title": "Proportionnalité et reste",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:39.393Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "5864fc2c",
+    "seriesId": "a9230fd2",
+    "url": "/fr/exercices/a9230fd2/",
+    "title": "Problèmes à trois étapes",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:40.607Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "00f48c94",
+    "seriesId": "c6ce612f",
+    "url": "/fr/exercices/c6ce612f/",
+    "title": "Une étape, plusieurs situations",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:41.811Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "5c82aed3",
+    "seriesId": "f6936255",
+    "url": "/fr/exercices/f6936255/",
+    "title": "Modéliser un problème",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:43.019Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "b1b8bf3e",
+    "seriesId": "f17331cc",
+    "url": "/fr/exercices/f17331cc/",
+    "title": "Comparer: trouver le référent (guidé)",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:44.389Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "e2ad9293",
+    "seriesId": "b51fca37",
+    "url": "/fr/exercices/b51fca37/",
+    "title": "Transformations: perdre et chercher",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:45.621Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "b3b67783",
+    "seriesId": "dea9511e",
+    "url": "/fr/exercices/dea9511e/",
+    "title": "Bilans : gagner et perdre",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:46.853Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "8d192ddd",
+    "seriesId": "e4145811",
+    "url": "/fr/exercices/e4145811/",
+    "title": "Groupes et fois plus",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:48.081Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "76d1dd1c",
+    "seriesId": "df650e80",
+    "url": "/fr/exercices/df650e80/",
+    "title": "Calculer puis partager",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:49.428Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "56e8b771",
+    "seriesId": "c02d230a",
+    "url": "/fr/exercices/c02d230a/",
+    "title": "Bilans et proportionnalité",
+    "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-05T17:08:50.642Z",
+    "resolvedAt": null,
+    "resolvedBy": null
   }
 ]
