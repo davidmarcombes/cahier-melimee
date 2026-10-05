@@ -113,6 +113,17 @@ module.exports = {
   },
   plugins: []
 };
+  // CSS budget: no --tw-*-opacity variables on every color utility (~12 KB).
+  // Alpha modifiers (bg-white/80) still work; bg-opacity-* classes do not.
+  corePlugins: {
+    backgroundOpacity: false,
+    textOpacity: false,
+    borderOpacity: false,
+    divideOpacity: false,
+    placeholderOpacity: false,
+  },
+  // « x-show="!dark" » in theme-toggle.njk would emit an !important copy of the .dark tokens
+  blocklist: ['!dark'],
 `;
 
 const markerStart = '/* BEGIN:design-tokens */';
