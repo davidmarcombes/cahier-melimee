@@ -49,7 +49,6 @@ module.exports = [
       globals: {
         ...globals.browser,
         Alpine: 'readonly',
-        PocketBase: 'readonly',
         module: 'readonly', // dual-export pattern in generators/*.js
         require: 'readonly', // generators/*.js load ./_core.js when running under Node
         // SVG globals (browser only)

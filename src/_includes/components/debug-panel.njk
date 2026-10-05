@@ -1,7 +1,7 @@
 {#
   Debug panel — right-click anywhere on a series page to open.
   Builds an agent-ready prompt from the current exercise state and copies it to clipboard.
-  No dependency on testEnabled / PocketBase — always present on series pages.
+  Dev only (npm start): included by series-player.njk when site.devMode.
 #}
 <div x-data="debugPanel()" x-init="init()" x-cloak>
 

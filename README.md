@@ -1,6 +1,6 @@
 # Le Cahier de Mélimée
 
-Plateforme d'exercices scolaires **gratuite**, **anonyme** et **souveraine** pour les élèves du CP à la 3e.
+Plateforme d'exercices scolaires **gratuite**, **anonyme** et **souveraine** pour les élèves du CP au CM2.
 
 Pas de compte, pas de pub, pas de tracking. L'élève choisit un pseudonyme, résout des exercices, et progresse à son rythme.
 
@@ -20,7 +20,6 @@ Pas de compte, pas de pub, pas de tracking. L'élève choisit un pseudonyme, ré
 | [Alpine.js 3](https://alpinejs.dev/) | Interactivité côté client (validation, navigation) |
 | [Nunjucks](https://mozilla.github.io/nunjucks/) | Templating |
 | [@11ty/eleventy-img](https://www.11ty.dev/docs/plugins/image/) | Optimisation d'images (AVIF, WebP) |
-| [PocketBase](https://pocketbase.io/) | Backend pour identité anonyme et progression |
 
 ## Architecture
 
@@ -83,7 +82,6 @@ src/
 
 - Node.js 18+
 - npm
-- pocketbase
 
 ### Installation
 
@@ -100,7 +98,6 @@ npm run dev        # Serveur local avec live reload (http://localhost:8080)
 npm run build      # Build de production
 npm run clean      # Supprimer _site/
 npm run generate:tokens  # Regénérer tailwind.config.js depuis design-tokens.json
-npm run db:start   # Lancer PocketBase (http://localhost:8090)
 npm run gennames   # Générer les identités 3 mots (CSV vers stdout)
 ```
 

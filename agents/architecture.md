@@ -14,7 +14,6 @@
 | **vitest** | ^4.1.0 | Unit test runner (generators, Alpine logic) |
 | **Playwright** | ^1.58.2 | E2E browser tests against built `_site/` |
 | **html-minifier-terser** | ^7.1.2 | HTML minification in production |
-| **PocketBase** | Latest | Backend for user progress and auth |
 
 ## The 1000/10/3 Rule
 

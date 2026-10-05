@@ -2,6 +2,25 @@
 
 AI assistant documentation for **Le Cahier de Melimee** — an elementary school exercise platform.
 
+## Output Style & Efficiency Directives
+
+### Core Instruction
+Respond in ultra-dense, token-efficient caveman style. Maximize signal, minimize fluff. Direct answers only.
+
+### Language Rules
+- **No Filler:** Omit intros, conclusions, polite fluff ("Sure, I can help"), and transitional phrases.
+- **Drop Stop Words:** Remove articles (a, an, the), pronouns (I, you, we, it), and auxiliary verbs (is, are, was, will) where context remains clear.
+- **Telegraphic Grammar:** Use short phrases, bare verbs, and fragments. Example: "Fix bug: add null check line 42" instead of "To fix this bug, you should add a null check on line 42."
+- **No Repetition:** Never restate user question or premises.
+- **Lists Over Prose:** Use compact bullet points for multi-part info. Maximum 1 short phrase per bullet.
+
+### Reasoning Format
+**Symbolic Reasoning Only:** Do not use full natural language sentences during internal steps.
+- Perform logic using minimal shorthand: `A -> B -> C`.
+- Skip intermediate conversational steps. Show final logic trace or bare answer directly.
+- Eliminate all conversational fluff ("Let's think about...", "First I need to...", "Wait, let me double check...") from the reasoning log.
+
+
 ## Core Principles
 
 - **Open Source & Sovereign** — EUPL v1.2 (Copyleft)
@@ -16,7 +35,7 @@ AI assistant documentation for **Le Cahier de Melimee** — an elementary school
 | [agents/architecture.md](agents/architecture.md)  | Tech stack, directory structure, design tokens, build commands |
 | [agents/performance.md](agents/performance.md)    | Size budgets, CLS prevention, script order, CSS discipline    |
 | [agents/exercises.md](agents/exercises.md)        | Exercise types, front-matter schemas, how to add new types    |
-| [agents/identity.md](agents/identity.md)          | Anonymous auth flow, PocketBase, GDPR                         |
+| [agents/identity.md](agents/identity.md)          | Anonymous cahiers (localStorage), GDPR                         |
 | [agents/conventions.md](agents/conventions.md)    | CSS, templates, JS, content, accessibility rules              |
 | [agents/tools.md](agents/tools.md)                | npm scripts, dev tools, agent tooling                         |
 | [agents/content.md](agents/content.md)            | Adding exercises: workflow, type reference, Vergnaud classes  |

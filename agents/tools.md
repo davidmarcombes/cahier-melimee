@@ -63,7 +63,6 @@ The e2e per-page specs:
 | `npm run lint:fix` | Auto-fix what can be: `eslint --fix` + `prettier --write` |
 | `npm run format` | Auto-format with Prettier |
 | `npm run check:spell` | Spellcheck markdown files with cspell |
-| `npm run check:duplicates` | Check for duplicate exercise entries |
 | `npm run test:a11y` | Accessibility audit (WCAG2AA) on built `_site/` — requires `npm run build` first |
 | `npm run test:lighthouse` | Lighthouse audit (perf/a11y/best-practices/SEO) on built `_site/` — requires `npm run build` first |
 | `npm run test:lighthouse:report` | Same + saves HTML reports to `reports/lighthouse/` |
@@ -100,10 +99,6 @@ The e2e per-page specs:
 | `npm run env:dev` | Switch to dev environment |
 | `npm run env:prod` | Switch to prod environment |
 | `npm run env:test` | Switch to test environment |
-| `npm run db:start` | Start PocketBase server |
-| `npm run db:admin` | Open PocketBase admin UI |
-| `npm run import:identities` | Import identities into PocketBase |
-| `npm run test:auth` | Test PocketBase auth flow |
 | `npm run serve:sim` | Start simulation server |
 
 ### Maintenance
@@ -138,7 +133,6 @@ All scripts are in `scripts/`. Key files:
 | `compress.js` | Post-build compression of output files. |
 | `serve-subpath.js` | Local HTTP server for testing subpath deployment. |
 | `set-env.js` | Switches `.env` between dev/prod/test environments. |
-| `check-duplicates.js` | Finds duplicate exercise entries. |
 | `clean-yaml.js` | Normalizes YAML formatting. |
 | `clean-index-yaml.js` | Cleans up `index.yaml` files specifically. |
 | `inspect-payload.js` | Debug tool for inspecting series JSON payloads. |
@@ -146,9 +140,7 @@ All scripts are in `scripts/`. Key files:
 | `init-project.js` | Project initialization script. |
 | `validate-config.js` | Validates project configuration files. |
 | `generate-names.js` | Generates triple-name identities for students. |
-| `import-identities.js` | Imports generated identities into PocketBase. |
 | `sim-server.js` | Simulation server for testing. |
-| `test-auth.js` | Tests PocketBase authentication flow. |
 
 ## Human Validation Workflow
 

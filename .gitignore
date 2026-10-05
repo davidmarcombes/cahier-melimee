@@ -68,10 +68,6 @@ coverage/
 # Debug
 debug/
 .pnpm-debug.log
-# PocketBase
-pocketbase/pocketbase
-pocketbase/pb_data/
-pocketbase/pb_public/
 
 # Test outputs (regenerated on every run)
 reports/playwright/

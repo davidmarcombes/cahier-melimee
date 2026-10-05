@@ -40,12 +40,12 @@ Applied to: `series-player.njk`, `challenge-player.njk`, `exercices-list.njk`.
 ## Script Loading Order
 
 In `base.njk`, scripts load in this order:
-1. **PocketBase SDK** — sync (no defer), because inline `<script>` blocks in onboarding/connexion pages instantiate `PocketBase` at Alpine init time
-2. **app.js** — `defer`
-3. **Alpine.js CDN** — `defer`
-4. **Health check** — inline async IIFE using plain `fetch` (no SDK dependency), stores promise in `window.__pbAvailable`
+1. **Inline, in `<head>`** — `window.__pathPrefix`, then the dark-mode class (before paint, no theme flash)
+2. **app.js** — `type="module"`, `defer`; it registers the Alpine components on `window`
+3. **alpine.min.js** — `defer`, after app.js so the components exist when Alpine starts
+4. **Service worker registration** — inline, on `load` (unregistered in dev mode)
 
-**Do NOT add `defer` to the PocketBase SDK** — it breaks pages that reference `PocketBase` in component init functions.
+Page-specific scripts (`svg.js`, generator modules) are plain classic scripts in `series-player.njk` / `timed-player.njk`. Every JS/CSS URL carries `?v={{ site.version }}` (see `docs/release.md`).
 
 ## CSS Discipline
 

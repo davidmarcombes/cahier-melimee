@@ -11,7 +11,6 @@
     "tests/**/*.{js,mjs}",
     "src/_data/*.js",
     "src/**/*.11tydata.js",
-    "pocketbase/pb_migrations/*.js",
     "marp.config.mjs"
   ],
   "project": ["**/*.{js,mjs,ts}"],
