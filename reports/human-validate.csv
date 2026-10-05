@@ -215,6 +215,7 @@ src/fr/applications/cm1/maths/logique/numberlink-5x5/01-puzzle.md,d8f2a4c6,b15da
 src/fr/applications/cm1/maths/logique/venn-emojis/01-venn.md,f445e75c,d9664b17a0689ec1,2026-10-03T10:02:51.513Z
 src/fr/applications/cm1/maths/logique/venn-formes/01-venn.md,c48887ae,2098b713c0fb8d1d,2026-10-03T08:08:11.512Z
 src/fr/applications/cm1/maths/logique/venn-nombres/01-venn.md,ecb15971,e5d86e7ef52a6409,
+src/fr/applications/cm1/maths/mesures/centimes-en-euros/01-centimes-en-euros.md,a8829d9a,2172771c2743c378,2026-10-04T16:26:42.256Z
 src/fr/applications/cm1/maths/mesures/classer-tableaux-01/01-prix.md,aeafbbf3,f1a23f5f94bb43ca,2026-10-02T07:22:40.338Z
 src/fr/applications/cm1/maths/mesures/classer-tableaux-01/02-distances.md,aeafbbf3,d74ccbcc6e2bff32,2026-10-02T07:22:40.338Z
 src/fr/applications/cm1/maths/mesures/classer-tableaux-01/03-durees.md,aeafbbf3,1a76fa32eea7b79a,2026-10-02T07:22:40.338Z
@@ -333,11 +334,14 @@ src/fr/applications/cm2/maths/logique/labyrinthe-impairs/01-maze.md,39ca90e4,1c5
 src/fr/applications/cm2/maths/logique/venn-emojis/01-venn.md,b48ed308,f3d4b9416a73dafe,2026-10-02T16:50:34.209Z
 src/fr/applications/cm2/maths/logique/venn-formes/01-venn.md,ad392f11,6aeae5a0973267aa,2026-10-03T12:48:23.114Z
 src/fr/applications/cm2/maths/logique/venn-nombres/01-venn.md,d7e6b5c8,c7782f27bbba019e,
+src/fr/applications/cm2/maths/mesures/centimes-en-euros/01-centimes-en-euros.md,dd7c9a99,3e02e14d56ea597c,2026-10-04T16:28:28.643Z
 src/fr/applications/cm2/maths/mesures/classer-tableaux-01/01-prix-proches.md,c1b8ee38,6a164a0c4f472c55,2026-10-02T07:26:22.050Z
 src/fr/applications/cm2/maths/mesures/classer-tableaux-01/02-distances-unites.md,c1b8ee38,fc6f0d9ec9ff4c68,2026-10-02T07:26:22.050Z
 src/fr/applications/cm2/maths/mesures/classer-tableaux-01/03-durees-unites.md,c1b8ee38,e5903ce89ec5de54,2026-10-02T07:26:22.050Z
 src/fr/applications/cm2/maths/mesures/comparer-longueurs/01-comparer.md,f2f5b01e,6566c47392c471e3,
 src/fr/applications/cm2/maths/mesures/comparer-volumes/01-comparer.md,b1dc5d23,92ce639907f34779,
+src/fr/applications/cm2/maths/mesures/compter-porte-monnaie/01-porte-monnaie.md,e215c0cd,90accf26d7f24452,2026-10-04T16:28:56.681Z
+src/fr/applications/cm2/maths/mesures/rendre-monnaie-billet/01-rendre-monnaie.md,a6689256,6fbd572d530a16b7,2026-10-04T16:29:14.592Z
 src/fr/applications/cm2/maths/mesures/suites-horaires-quart/suites-horaires-quart.md,f7adbc1a,1498c07a9a90560e,
 src/fr/applications/cm2/maths/numeration/ajouter-decimaux/01-ajouter.md,ea7f22c8,7faf7953ffd6cc55,
 src/fr/applications/cm2/maths/numeration/blocs-valeur-position-01/blocs-valeur-position-01.md,c7f3e056,5b2fe97d7e0d52f2,
@@ -1670,9 +1674,9 @@ src/fr/exercices/cm2/maths/numeration/chiffres-01/06-un-million.md,a7812abd,b80e
 src/fr/exercices/cm2/maths/numeration/comparer-01/01-grands-nombres.md,df93ac15,062647ff875cc961,
 src/fr/exercices/cm2/maths/numeration/comparer-01/02-millions.md,df93ac15,cad84cac795e9f1c,
 src/fr/exercices/cm2/maths/numeration/comparer-01/03-proches.md,df93ac15,177c9d78a41b9125,
-src/fr/exercices/cm2/maths/numeration/observer-01/01-267543109.md,f35de3a4,228f11d8147eeaf7,
-src/fr/exercices/cm2/maths/numeration/observer-01/02-804092315.md,f35de3a4,5fea0b972816bd01,
-src/fr/exercices/cm2/maths/numeration/observer-01/03-531607248.md,f35de3a4,b33ed90219c3a681,
+src/fr/exercices/cm2/maths/numeration/observer-01/01-267543109.md,f35de3a4,fd6f60adf0642182,2026-10-04T17:40:32.914Z
+src/fr/exercices/cm2/maths/numeration/observer-01/02-804092315.md,f35de3a4,b78bf672bd9c3838,2026-10-04T17:40:32.914Z
+src/fr/exercices/cm2/maths/numeration/observer-01/03-531607248.md,f35de3a4,6cc51b1fd7b50486,2026-10-04T17:40:32.914Z
 src/fr/exercices/cm2/maths/numeration/quiz-01/01-chiffre-des-milliers.md,ebee643c,8368e6ab01900d35,
 src/fr/exercices/cm2/maths/numeration/quiz-01/02-nombre-de-centaines.md,ebee643c,b430933c50d824dc,
 src/fr/exercices/cm2/maths/numeration/quiz-01/03-decomposition.md,ebee643c,deb8da4ad36ad733,

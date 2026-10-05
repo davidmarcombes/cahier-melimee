@@ -1824,5 +1824,93 @@
     "createdAt": "2026-10-03T16:55:26.566Z",
     "resolvedAt": "2026-10-04T04:54:38.123Z",
     "resolvedBy": "validated"
+  },
+  {
+    "id": "b7fa4781",
+    "seriesId": "f35de3a4",
+    "url": "/fr/exercices/f35de3a4/",
+    "title": "Observe et réponds",
+    "reason": "E2E solve.spec.js « solvable » flaky: failed once then passed on retry during npm run check (2026-10-04) — check the series plays reliably",
+    "source": "claude",
+    "createdAt": "2026-10-04T15:18:56.224Z",
+    "resolvedAt": "2026-10-04T17:40:32.914Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "56056220",
+    "seriesId": "e215c0cd",
+    "url": "/fr/applications/e215c0cd/",
+    "title": "Compter un porte-monnaie",
+    "reason": "Nouvelle série (porte-monnaie, moneySvg) : vérifier billets/pièces, les 4 questions et les retenues ≥ 1 €",
+    "source": "claude",
+    "createdAt": "2026-10-04T15:50:46.946Z",
+    "resolvedAt": "2026-10-04T16:03:32.773Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "9d27545f",
+    "seriesId": "a6689256",
+    "url": "/fr/applications/a6689256/",
+    "title": "Rendre la monnaie sur un billet",
+    "reason": "Nouvelle série (rendre la monnaie) : vérifier prénoms/objets/prix, billet affiché et réponses € / c",
+    "source": "claude",
+    "createdAt": "2026-10-04T15:50:48.086Z",
+    "resolvedAt": "2026-10-04T16:13:02.330Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "576f1536",
+    "seriesId": "a8829d9a",
+    "url": "/fr/applications/a8829d9a/",
+    "title": "Convertir des centimes en euros",
+    "reason": "Nouvelle série CM1 (centimes → € c, pas de 5 c) : vérifier niveau et cas « 305 c » / « 400 c »",
+    "source": "claude",
+    "createdAt": "2026-10-04T15:50:49.333Z",
+    "resolvedAt": "2026-10-04T16:03:41.781Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f169f510",
+    "seriesId": "dd7c9a99",
+    "url": "/fr/applications/dd7c9a99/",
+    "title": "Convertir des centimes en euros",
+    "reason": "Nouvelle série CM2 (centimes → € c, jusqu'à 9 999 c) : vérifier niveau, saisie « 08 » acceptée",
+    "source": "claude",
+    "createdAt": "2026-10-04T15:50:50.450Z",
+    "resolvedAt": "2026-10-04T16:28:28.643Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "3301da98",
+    "seriesId": "a8829d9a",
+    "url": "/fr/applications/a8829d9a/",
+    "title": "Convertir des centimes en euros",
+    "reason": "Dévalidée : Validé à 16:03 alors que le serveur de dev servait une série vide (fin immédiate) — à rejouer après redémarrage de npm start",
+    "source": "human",
+    "createdAt": "2026-10-04T16:24:16.053Z",
+    "resolvedAt": "2026-10-04T16:26:42.256Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "8f1568d9",
+    "seriesId": "e215c0cd",
+    "url": "/fr/applications/e215c0cd/",
+    "title": "Compter un porte-monnaie",
+    "reason": "Dévalidée : Nouvelle série (porte-monnaie, moneySvg) : à re-vérifier après redémarrage du serveur de dev — billets/pièces, 4 questions, retenues ≥ 1 €",
+    "source": "human",
+    "createdAt": "2026-10-04T16:24:18.018Z",
+    "resolvedAt": "2026-10-04T16:28:56.681Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f6d6d9df",
+    "seriesId": "a6689256",
+    "url": "/fr/applications/a6689256/",
+    "title": "Rendre la monnaie sur un billet",
+    "reason": "Dévalidée : Nouvelle série (rendre la monnaie) : à re-vérifier après redémarrage du serveur de dev — prénoms/objets/prix, billet, réponses € / c",
+    "source": "human",
+    "createdAt": "2026-10-04T16:24:20.536Z",
+    "resolvedAt": "2026-10-04T16:29:14.592Z",
+    "resolvedBy": "validated"
   }
 ]
