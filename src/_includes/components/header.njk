@@ -1,4 +1,4 @@
-<header class="border-b bg-surface-chrome" x-data="{ mobileOpen: false, cahierUser: (window.localStore && window.localStore.getUser()) || null }">
+<header class="border-b bg-surface-chrome print:hidden" x-data="{ mobileOpen: false, cahierUser: (window.localStore && window.localStore.getUser()) || null }">
   <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
     <a href="{{ '/fr' | url }}" class="flex items-center gap-2 shrink-0">
       {% image "src/assets/images/logo.png", site.title + " logo", "2rem", "h-8 w-8", "eager" %}
@@ -11,7 +11,7 @@
         {% if item.url == '/fr/cahiers/' %}
           <template x-if="cahierUser">
             <a :href="(window.__pathPrefix || '/') + 'fr/cahier/?user=' + cahierUser.slug"
-               class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors"><span x-text="cahierUser.sticker_id"></span> Mon cahier</a>
+               class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors"><span aria-hidden="true">📘</span> Mon cahier</a>
           </template>
           <template x-if="!cahierUser">
             <a href="{{ item.url | url }}"
@@ -64,7 +64,7 @@
         <template x-if="cahierUser">
           <a :href="(window.__pathPrefix || '/') + 'fr/cahier/?user=' + cahierUser.slug"
              @click="mobileOpen = false"
-             class="block py-3 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors"><span x-text="cahierUser.sticker_id"></span> Mon cahier</a>
+             class="block py-3 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors"><span aria-hidden="true">📘</span> Mon cahier</a>
         </template>
         <template x-if="!cahierUser">
           <a href="{{ item.url | url }}"

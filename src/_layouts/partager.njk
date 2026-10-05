@@ -1,0 +1,44 @@
+---
+layout: base
+---
+{# Share page: QR code to show in class, share/copy buttons, and an A4 poster on print.
+   The QR code points to https://www.melimee.fr/ — regenerate src/_includes/svg/qr-melimee.svg
+   (and assets/images/qr-code.png) if the address changes. #}
+<div x-data="{ url: 'https://www.melimee.fr/', canShare: !!navigator.share, copied: false }" class="max-w-xl mx-auto text-center print:max-w-none print:pt-[15mm]">
+
+  <h1 class="text-3xl font-extrabold text-content-default mb-3 print:hidden">{{ title }}</h1>
+  <p class="text-content-subtle mb-8 print:hidden">Montre ce QR code en classe ou à la maison&nbsp;: il ouvre le site directement sur un téléphone ou une tablette.</p>
+
+  {# Poster title — printed only #}
+  <div class="hidden print:block mb-[12mm]">
+    <p class="text-5xl font-extrabold text-black">Le Cahier de <span class="text-primary-600">Mélimée</span></p>
+    <p class="text-2xl text-slate-600 mt-3">Des maths pour s'entraîner, du CP au CM2</p>
+  </div>
+
+  {# QR code: vector modules + the frog on top (the code's error correction covers it) #}
+  <div class="relative mx-auto w-full max-w-[20rem] rounded-2xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-700 print:max-w-[120mm] print:shadow-none print:border-0">
+    {% include "svg/qr-melimee.svg" %}
+    <div class="absolute left-1/2 top-1/2 w-[26%] -translate-x-1/2 -translate-y-1/2 [&_img]:w-full [&_img]:h-auto">
+      {% image "src/assets/images/logo.png", "Mélimée la grenouille", "6rem", "", "eager" %}
+    </div>
+  </div>
+
+  <p class="mt-5 text-2xl font-bold text-content-default tracking-wide print:text-4xl print:mt-[10mm] print:text-black">www.melimee.fr</p>
+  <p class="hidden print:block mt-[6mm] text-xl text-slate-600">Gratuit, sans inscription, sans publicité.</p>
+
+  {# Actions — screen only #}
+  <div class="mt-6 flex justify-center gap-2 print:hidden">
+    <template x-if="canShare">
+      <button type="button" @click="navigator.share({ title: '{{ site.title }}', url }).catch(() => {})"
+        class="px-3 py-1.5 text-sm font-bold rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95">Partager</button>
+    </template>
+    <button type="button" @click="navigator.clipboard.writeText(url).then(() => { copied = true; setTimeout(() => copied = false, 2000) })"
+      class="px-3 py-1.5 text-sm font-bold rounded-lg border border-slate-300 dark:border-slate-600 text-content-default hover:bg-surface-subtle transition-all active:scale-95">
+      <span x-show="!copied">Copier</span><span x-show="copied" x-cloak>Copié&nbsp;✓</span>
+    </button>
+    <button type="button" @click="window.print()"
+      class="px-3 py-1.5 text-sm font-bold rounded-lg border border-slate-300 dark:border-slate-600 text-content-default hover:bg-surface-subtle transition-all active:scale-95">Imprimer</button>
+  </div>
+
+  {{ content | safe }}
+</div>
