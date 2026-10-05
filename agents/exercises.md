@@ -281,6 +281,7 @@ Functions in `src/assets/js/svg.js` (loaded on series pages that need SVG):
 | `embedSvg(svg)` | Identity function — returns its argument. Used for build-time embedded SVGs. |
 | `mathGridSvg(cols, rows, filled, color)` | Rectangular grid with filled/empty cells. |
 | `slicedPieSvg(n, k, size, color)` | Pie chart with `k` of `n` slices filled. Optimized: 2dp rounding, `<g>` wrapper for shared stroke. |
+| `moneySvg(items)` | Euro notes (5–200 €) and coins (1 c–2 €), `items` in cents, any order: notes row(s) then coins, real colours and proportions, `aria-label` listing the content. Used by generator `porteMonnaie` (`multi-question`: euros, centimes, total; params `notes`, `euroCoins`, `cents` in cents, `minNotes`/`maxNotes`, `maxEuroCoins`, `minCents`/`maxCents`, `carryRate`) and `rendreMonnaie` (`number-check` `? € ? c`: « Léa a acheté … pour 8 € 20 c, elle paye avec un billet de 10 € » — names and items are fixed lists in the generator; params `notes`, `step`, `smallestNote`). Related, no SVG: `centimesEnEuros` (`number-check` `240 c = ? € ? c`; params `min`, `max`, `step`, `trickyRate` — share of « 305 c » / « 400 c » cases). |
 
 Note: `.eleventy.js` has a build-time duplicate of `slicedPieSvg` for pre-rendering. Keep both in sync.
 

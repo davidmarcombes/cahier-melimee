@@ -1053,3 +1053,70 @@ describe('positionChiffre', () => {
     }
   });
 });
+
+describe('porteMonnaie', () => {
+  it('answers match the wallet drawn (euros, centimes, total with carry)', () => {
+    for (let i = 0; i < 50; i++) {
+      const r = generators.porteMonnaie.generate();
+      expect(r.type).toBe('multi-question');
+      expect(r.svg.gen).toBe('moneySvg');
+      const items = r.svg.par.items;
+      const euros = items.filter((v) => v >= 100).reduce((s, v) => s + v, 0) / 100;
+      const cents = items.filter((v) => v < 100).reduce((s, v) => s + v, 0);
+      const total = euros * 100 + cents;
+      expect(r.mqQuestions.map((q) => q.answer)).toEqual([
+        String(euros),
+        String(cents),
+        String(Math.floor(total / 100)),
+        String(total % 100),
+      ]);
+    }
+  });
+  it('carryRate 1 always gives 1 € or more of centimes', () => {
+    for (let i = 0; i < 20; i++) {
+      const r = generators.porteMonnaie.generate({ carryRate: 1, maxCents: 5 });
+      expect(Number(r.mqQuestions[1].answer)).toBeGreaterThanOrEqual(100);
+    }
+  });
+});
+
+describe('rendreMonnaie', () => {
+  it('change = note − price, paid with a note that covers it, price never whole euros', () => {
+    for (let i = 0; i < 100; i++) {
+      const r = generators.rendreMonnaie.generate();
+      expect(r.type).toBe('number-check');
+      const [note] = r.svg.par.items;
+      const [, e, c] = r.title.match(/pour <strong>(\d+)&nbsp;€&nbsp;(\d+)&nbsp;c/);
+      const price = +e * 100 + +c;
+      expect(+c).toBeGreaterThan(0);
+      expect(note).toBeGreaterThan(price);
+      expect(r.answers).toEqual([String(Math.floor((note - price) / 100)), String((note - price) % 100)]);
+    }
+  });
+  it('respects the notes param', () => {
+    for (let i = 0; i < 30; i++) {
+      expect(generators.rendreMonnaie.generate({ notes: [1000] }).svg.par.items).toEqual([1000]);
+    }
+  });
+});
+
+describe('centimesEnEuros', () => {
+  const parse = (r) => Number(r.operation.split('__c__')[0].replace(/__/g, ''));
+  it('answers are euros and remaining centimes, within range and step', () => {
+    for (let i = 0; i < 100; i++) {
+      const r = generators.centimesEnEuros.generate({ min: 100, max: 999, step: 5 });
+      const v = parse(r);
+      expect(v).toBeGreaterThanOrEqual(100);
+      expect(v).toBeLessThanOrEqual(999);
+      expect(v % 5).toBe(0);
+      expect(r.answers).toEqual([String(Math.floor(v / 100)), String(v % 100)]);
+    }
+  });
+  it('groups thousands and gives tricky cases (< 10 c) when asked', () => {
+    for (let i = 0; i < 30; i++) {
+      const r = generators.centimesEnEuros.generate({ min: 1000, max: 9999, step: 1, trickyRate: 1 });
+      expect(r.operation).toMatch(/^\d__\d{3}__c__=__\? € \? c$/);
+      expect(parse(r) % 100).toBeLessThan(10);
+    }
+  });
+});

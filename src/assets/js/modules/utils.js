@@ -27,5 +27,9 @@ export function normalizeAnswer(s) {
   if (/^-?\d+\.\d+$/.test(v)) {
     v = parseFloat(v).toString();
   }
+  // Strip leading zeros of whole numbers: "08" → "8" (5 408 c = 54 € 8 c, typed « 08 »)
+  else if (/^-?\d+$/.test(v)) {
+    v = v.replace(/^(-?)0+(?=\d)/, '$1');
+  }
   return v;
 }

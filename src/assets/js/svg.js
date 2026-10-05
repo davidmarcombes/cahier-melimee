@@ -1129,6 +1129,122 @@ function jumpArrowSvg(start, step1, step2) {
   </svg>`;
 }
 
+/* Euro notes and coins — e.g. a wallet's content: notes on the first row(s), coins below.
+   items: values in cents, any order (2000 = billet de 20 €, 50 = pièce de 50 c).
+   Fixed colours, not palette vars: money looks the same in light and dark modes.
+   Real proportions within each kind — notes at 0.8 px/mm, coins at 1.6 px/mm (twice the
+   notes' scale, else a 1 c coin would be too small to read). */
+const MONEY_NOTES = {
+  // value: [width mm, height mm, fill, ink]
+  500: [120, 62, '#e4e8e2', '#56635a'],
+  1000: [127, 67, '#f8dbd8', '#b3261e'],
+  2000: [133, 72, '#d8e5f6', '#1d5aa6'],
+  5000: [140, 77, '#fde3c6', '#b45309'],
+  10000: [147, 77, '#d6edd7', '#2e7d32'],
+  20000: [153, 77, '#f4e8bb', '#7c6200'],
+};
+const MONEY_METAL = {
+  cu: ['#d9825b', '#8c3b18', '#3d1403'], // copper: fill, rim, ink
+  au: ['#efc94c', '#9a7400', '#4a3b00'], // Nordic gold
+  ag: ['#d5d9dd', '#6b7280', '#1f2937'], // silver
+};
+const MONEY_COINS = {
+  // value: [diameter mm, centre metal, ring metal (bimetallic coins)]
+  1: [16.25, 'cu'],
+  2: [18.75, 'cu'],
+  5: [21.25, 'cu'],
+  10: [19.75, 'au'],
+  20: [22.25, 'au'],
+  50: [24.25, 'au'],
+  100: [23.25, 'ag', 'au'],
+  200: [25.75, 'au', 'ag'],
+};
+const moneyLabel = (v) => (v >= 100 ? `${v / 100} €` : `${v} c`);
+
+function moneySvg(items) {
+  const vals = items
+    .map(Number)
+    .filter((v) => v in MONEY_NOTES || v in MONEY_COINS)
+    .sort((a, b) => b - a);
+  const MAX_W = 360,
+    GAP = 8,
+    PAD = 4,
+    font = `font-family="${SVG.font}" font-weight="800" text-anchor="middle"`;
+
+  const note = (v) => {
+    const [wmm, hmm, fill, ink] = MONEY_NOTES[v];
+    const w = wmm * 0.8,
+      h = hmm * 0.8;
+    return {
+      w,
+      h,
+      draw: (x, y) =>
+        `<rect x="${SVG.f(x)}" y="${SVG.f(y)}" width="${SVG.f(w)}" height="${SVG.f(h)}" rx="4" fill="${fill}" stroke="${ink}" stroke-width="1.5"/>` +
+        `<rect x="${SVG.f(x + 6)}" y="${SVG.f(y + 4)}" width="${SVG.f(w * 0.14)}" height="${SVG.f(h - 8)}" rx="2" fill="${ink}" opacity=".2"/>` +
+        `<text x="${SVG.f(x + w * 0.58)}" y="${SVG.f(y + h * 0.64)}" font-size="${SVG.f(h * 0.42)}" fill="${ink}" ${font}>${moneyLabel(v)}</text>`,
+    };
+  };
+  const coin = (v) => {
+    const [dmm, centre, ring] = MONEY_COINS[v];
+    const r = (dmm * 1.6) / 2;
+    const [fill, rim, ink] = MONEY_METAL[centre];
+    return {
+      w: 2 * r,
+      h: 2 * r,
+      draw: (x, y) => {
+        const cx = SVG.f(x + r),
+          cy = SVG.f(y + r);
+        const disc = ring
+          ? `<circle cx="${cx}" cy="${cy}" r="${SVG.f(r - 0.75)}" fill="${MONEY_METAL[ring][0]}" stroke="${MONEY_METAL[ring][1]}" stroke-width="1.5"/>` +
+            `<circle cx="${cx}" cy="${cy}" r="${SVG.f(r * 0.7)}" fill="${fill}" stroke="${rim}" stroke-width=".75"/>`
+          : `<circle cx="${cx}" cy="${cy}" r="${SVG.f(r - 0.75)}" fill="${fill}" stroke="${rim}" stroke-width="1.5"/>`;
+        return `${disc}<text x="${cx}" y="${SVG.f(y + r * 1.32)}" font-size="${SVG.f(r * 0.72)}" fill="${ink}" ${font}>${moneyLabel(v)}</text>`;
+      },
+    };
+  };
+
+  // Lay out: wrap at MAX_W; coins always start a new row below the notes
+  const rows = [];
+  let row = null,
+    prevNote = null;
+  for (const v of vals) {
+    const isNote = v in MONEY_NOTES;
+    const s = isNote ? note(v) : coin(v);
+    if (!row || isNote !== prevNote || row.w + GAP + s.w > MAX_W - 2 * PAD) {
+      row = { items: [], w: -GAP, h: 0 };
+      rows.push(row);
+    }
+    row.items.push(s);
+    row.w += GAP + s.w;
+    row.h = Math.max(row.h, s.h);
+    prevNote = isNote;
+  }
+
+  // Rows centred on the widest one
+  const W = Math.max(...rows.map((r) => r.w)) + 2 * PAD;
+  let body = '',
+    y = PAD;
+  for (const r of rows) {
+    let x = (W - r.w) / 2;
+    for (const s of r.items) {
+      body += s.draw(x, y + (r.h - s.h) / 2);
+      x += s.w + GAP;
+    }
+    y += r.h + GAP;
+  }
+  const H = y - GAP + PAD;
+
+  // Spoken description: « 2 billets de 10 €, 1 pièce de 50 c »
+  const counts = new Map();
+  for (const v of vals) counts.set(v, (counts.get(v) || 0) + 1);
+  const label = [...counts]
+    .map(([v, n]) => `${n} ${v in MONEY_NOTES ? 'billet' : 'pièce'}${n > 1 ? 's' : ''} de ${moneyLabel(v)}`)
+    .join(', ');
+
+  // Drawn 1.6× its viewBox: coin labels stay readable on a tablet
+  return `<svg width="${SVG.f(W * 1.6)}" height="${SVG.f(H * 1.6)}" viewBox="0 0 ${SVG.f(W)} ${SVG.f(H)}" role="img" aria-label="${label}" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
+}
+
 /* Balance scale SVG — shows a balanced or tilted two-pan scale.
    leftItems / rightItems: arrays of values — numbers render as weight blocks,
    strings render as emoji. Items stack side-by-side on their pan.

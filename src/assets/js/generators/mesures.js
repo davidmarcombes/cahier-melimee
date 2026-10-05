@@ -535,6 +535,142 @@
         };
       },
     },
+
+    // porteMonnaie: count a wallet drawn with moneySvg — euros first, then centimes, then the total
+    // (centimes ≥ 100 make an extra euro: 1 € 20 c of small coins + 18 € = 19 € 20 c).
+    // params: notes ([500, 1000, 2000, 5000] cents), minNotes (1), maxNotes (2),
+    //         euroCoins ([100, 200]), maxEuroCoins (2), cents ([5, 10, 20, 50]), minCents (2), maxCents (4),
+    //         carryRate (0.4 — share of wallets whose centimes reach 1 € or more)
+    porteMonnaie: {
+      generate(params = {}) {
+        const notes = params.notes ?? [500, 1000, 2000, 5000];
+        const euroCoins = params.euroCoins ?? [100, 200];
+        const cents = params.cents ?? [5, 10, 20, 50];
+        const pick = (pool, n) => Array.from({ length: n }, () => randItem(pool));
+        const sum = (a) => a.reduce((s, v) => s + v, 0);
+        const wantCarry = Math.random() < (params.carryRate ?? 0.4);
+
+        let items, euros, centimes;
+        for (let tries = 0; tries < 50; tries++) {
+          const big = [
+            ...pick(notes, rand(params.minNotes ?? 1, params.maxNotes ?? 2)),
+            ...pick(euroCoins, rand(0, params.maxEuroCoins ?? 2)),
+          ];
+          const small = pick(cents, rand(params.minCents ?? 2, params.maxCents ?? 4));
+          items = [...big, ...small];
+          euros = sum(big) / 100;
+          centimes = sum(small);
+          if (centimes >= 100 === wantCarry) break;
+        }
+        const total = euros * 100 + centimes;
+
+        return {
+          type: 'multi-question',
+          mqSequential: true,
+          svg: { gen: 'moneySvg', par: { items } },
+          mqQuestions: [
+            { text: 'Les billets et les pièces en euros font… (en €)', answer: String(euros) },
+            { text: 'Les pièces en centimes font… (en c)', answer: String(centimes) },
+            { text: 'Somme totale : combien d’euros ?', answer: String(Math.floor(total / 100)) },
+            { text: '… et combien de centimes ?', answer: String(total % 100) },
+          ],
+        };
+      },
+    },
+
+    // rendreMonnaie: « Léa a acheté une trousse pour 8 € 20 c. Elle paye avec un billet de 10 €. »
+    // → Monnaie rendue : ? € ? c (note drawn with moneySvg). Prices never end in 0 c, so the
+    // change always needs the two jumps: to the next euro, then to the note.
+    // params: notes ([500, 1000, 2000, 5000] cents), step (5 — price granularity in cents),
+    //         smallestNote (0.7 — share paid with the smallest note that covers the price)
+    rendreMonnaie: {
+      generate(params = {}) {
+        const NAMES = [
+          ['Léa', 'Elle'],
+          ['Inès', 'Elle'],
+          ['Nora', 'Elle'],
+          ['Jade', 'Elle'],
+          ['Chloé', 'Elle'],
+          ['Lina', 'Elle'],
+          ['Tom', 'Il'],
+          ['Hugo', 'Il'],
+          ['Sami', 'Il'],
+          ['Malo', 'Il'],
+          ['Yanis', 'Il'],
+          ['Noé', 'Il'],
+        ];
+        // [article + item, min price, max price] in cents
+        const ITEMS = [
+          ['un cahier', 150, 450],
+          ['une gomme', 80, 300],
+          ['une trousse', 350, 1200],
+          ['un livre de contes', 450, 1800],
+          ['une bande dessinée', 900, 1600],
+          ['un jeu de cartes', 250, 900],
+          ['une boîte de feutres', 300, 1400],
+          ['une gourde', 500, 1500],
+          ['une casquette', 800, 2200],
+          ['un ballon', 600, 2500],
+          ['un puzzle', 700, 2900],
+          ['un maillot de sport', 1500, 4500],
+          ['un sac à dos', 1800, 4800],
+        ];
+        const notes = [...(params.notes ?? [500, 1000, 2000, 5000])].sort((a, b) => a - b);
+        const step = params.step ?? 5;
+        const top = notes[notes.length - 1];
+
+        const usable = ITEMS.filter(([, lo]) => lo < top);
+        const [item, lo, hi] = randItem(usable);
+        let price;
+        for (let tries = 0; tries < 50; tries++) {
+          price = rand(Math.ceil(lo / step), Math.floor(Math.min(hi, top - 1) / step)) * step;
+          if (price % 100) break;
+        }
+
+        const covering = notes.filter((n) => n > price);
+        const note = Math.random() < (params.smallestNote ?? 0.7) ? covering[0] : randItem(covering);
+        const change = note - price;
+        const [name, pronoun] = randItem(NAMES);
+        const eurC = (c) => `${Math.floor(c / 100)}&nbsp;€&nbsp;${c % 100}&nbsp;c`;
+
+        return {
+          type: 'number-check',
+          title: `${name} a acheté ${item} pour <strong>${eurC(price)}</strong>. ${pronoun} paye avec un billet de <strong>${note / 100}&nbsp;€</strong>. Combien lui rend-on&nbsp;?`,
+          svg: { gen: 'moneySvg', par: { items: [note] } },
+          operation: '? € ? c',
+          answers: [String(Math.floor(change / 100)), String(change % 100)],
+        };
+      },
+    },
+
+    // centimesEnEuros: 240 c = ? € ? c (answers 2 and 40).
+    // params: min (100), max (999), step (5 — granularity in cents),
+    //         trickyRate (0.2 — share of « 305 c » / « 400 c » cases: fewer than 10 c, or none)
+    centimesEnEuros: {
+      generate(params = {}) {
+        const min = params.min ?? 100;
+        const max = params.max ?? 999;
+        const step = params.step ?? 5;
+        let v;
+        if (Math.random() < (params.trickyRate ?? 0.2)) {
+          const small = [0];
+          for (let c = step; c < 10; c += step) small.push(c);
+          v = rand(Math.ceil(min / 100), Math.floor(max / 100)) * 100 + randItem(small);
+        } else {
+          for (let tries = 0; tries < 50; tries++) {
+            v = rand(Math.ceil(min / step), Math.floor(max / step)) * step;
+            if (v % 100 >= 10) break;
+          }
+        }
+        // 1250 → « 1__250 »: __ glues the number, « c » and « = » into one unbreakable part
+        const grouped = String(v).replace(/\B(?=(\d{3})+$)/g, '__');
+        return {
+          type: 'number-check',
+          operation: `${grouped}__c__=__? € ? c`,
+          answers: [String(Math.floor(v / 100)), String(v % 100)],
+        };
+      },
+    },
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = generators;

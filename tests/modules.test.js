@@ -18,6 +18,14 @@ describe('Modules Utilities', () => {
       expect(normalizeAnswer('10\u00a0000')).toBe('10000');
     });
 
+    it('should strip leading zeros of whole numbers only', () => {
+      expect(normalizeAnswer('08')).toBe('8');
+      expect(normalizeAnswer('0')).toBe('0');
+      expect(normalizeAnswer('00')).toBe('0');
+      expect(normalizeAnswer('8:05')).toBe('8:05');
+      expect(normalizeAnswer('11h05')).toBe('11h05');
+    });
+
     it('should handle undefined or null', () => {
       expect(normalizeAnswer(undefined)).toBe('');
       expect(normalizeAnswer(null)).toBe('');

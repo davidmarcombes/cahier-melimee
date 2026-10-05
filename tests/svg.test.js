@@ -479,3 +479,23 @@ describe('SVGO bloat check (threshold: <75% reducible)', () => {
     expect(svgoBloat(tetrahedronSvg(80))).toBeLessThan(BLOAT_THRESHOLD);
   });
 });
+
+// ─── moneySvg ─────────────────────────────────────────────────────────────────
+const { moneySvg } = new Function(appSrc + '\nreturn { moneySvg };')();
+
+describe('moneySvg', () => {
+  it('draws every euro note and coin as valid XML', () => {
+    const all = [500, 1000, 2000, 5000, 10000, 20000, 200, 100, 50, 20, 10, 5, 2, 1];
+    const out = moneySvg(all);
+    expect(validateXml(out).valid).toBe(true);
+    expect(out.match(/<text/g)).toHaveLength(all.length);
+  });
+  it('describes the content for screen readers, counted and sorted', () => {
+    expect(moneySvg([50, 1000, 1000, 200])).toContain(
+      'aria-label="2 billets de 10 €, 1 pièce de 2 €, 1 pièce de 50 c"'
+    );
+  });
+  it('skips unknown values', () => {
+    expect(moneySvg([2000, 3])).not.toContain('3 c');
+  });
+});
