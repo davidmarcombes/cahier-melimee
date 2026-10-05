@@ -4,6 +4,19 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const VALID_DIFFICULTIES = ['facile', 'moyen', 'difficile'];
+// Topic = the folder after maths/ (listing filter). Fixed list, see agents/content.md « Topics »
+const VALID_TOPICS = [
+  'numeration',
+  'calcul',
+  'fractions',
+  'decimaux',
+  'proportions',
+  'mesures',
+  'geometrie',
+  'problemes',
+  'logique',
+  'donnees',
+];
 // French number words — a title made only of these spells a number (and may be the answer)
 const NUMBER_WORDS = new Set(
   'zéro un une deux trois quatre cinq six sept huit neuf dix onze douze treize quatorze quinze seize vingt vingts trente quarante cinquante soixante cent cents mille et'.split(
@@ -226,6 +239,13 @@ function validateSeries(seriesDir, errors) {
   }
 
   if (!meta.title) errors.push(`${rel}/index.yaml: missing "title"`);
+  // src/fr/{folder}/{level}/maths/{topic}/{leaf}: known topic, series in its own leaf folder
+  const parts = rel.split('/');
+  const topic = parts[parts.indexOf('maths') + 1];
+  if (!VALID_TOPICS.includes(topic))
+    errors.push(`${rel}: unknown topic "${topic}" (expected: ${VALID_TOPICS.join(', ')})`);
+  else if (parts.length < parts.indexOf('maths') + 3)
+    errors.push(`${rel}: series sits directly on the topic folder — move it into its own folder`);
   if (!meta.difficulty) {
     errors.push(`${rel}/index.yaml: missing "difficulty"`);
   } else if (!VALID_DIFFICULTIES.includes(meta.difficulty)) {

@@ -256,7 +256,7 @@ operation: `6__dizaines__et__5__unités__=__?`
 
 ## Adding a New Generator
 
-1. Add the generator to the topic module in `src/assets/js/generators/` that matches the content folder it serves (e.g. `operations.js` for `maths/operations/`). Shared helpers come from `_core.js` — add a helper there only if several modules need it, and list it in the module destructuring at the top. A new module must be added to `MODULES` in `generators/index.js` (load order).
+1. Add the generator to the topic module in `src/assets/js/generators/` that matches the content folder it serves (e.g. `operations.js` for written operations in `maths/calcul/`; module names predate the 2026-10 topic list). Shared helpers come from `_core.js` — add a helper there only if several modules need it, and list it in the module destructuring at the top. A new module must be added to `MODULES` in `generators/index.js` (load order).
 2. Generators must return seriesPlayer-compatible items:
    ```javascript
    { type: 'number-check', operation: '5 + 3', answers: ['8'] }

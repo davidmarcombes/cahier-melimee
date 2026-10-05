@@ -17,7 +17,7 @@ node scripts/show-type.js problem
 node scripts/show-type.js multi-question
 
 # 3. Create the series folder
-#    src/fr/exercices/{level}/maths/{category}/{slug}/
+#    src/fr/exercices/{level}/maths/{topic}/{slug}/   (topic: see « Topics » below)
 #    slug = kebab-case, ends with -01 (first series of that topic)
 
 # 4. Create index.yaml (NO id — generate:ids assigns it)
@@ -42,7 +42,7 @@ npm run validate:exercises
 src/fr/exercices/
 └── {level}/              # cp | ce1 | ce2 | cm1 | cm2
     └── maths/
-        └── {category}/   # see Categories below
+        └── {topic}/      # see Topics below
             └── {slug}-01/
                 ├── index.yaml
                 ├── 01-{description}.md
@@ -50,21 +50,24 @@ src/fr/exercices/
                 └── ...
 ```
 
-### Categories
+### Topics
+
+Fixed list (2026-10-05), enforced by `npm run validate:exercises` (`VALID_TOPICS`). The folder name is the listing's topic filter, so one notion = one topic. Each series sits in its own `{slug}/` folder, never directly on the topic folder. Same rules for `applications/` and `defis/`.
 
 | Folder | Contents |
 |--------|----------|
-| `numeration` | Reading/writing/decomposing numbers |
-| `operations` | Addition, subtraction, multiplication, division |
-| `calcul` | Mental arithmetic, calc-chain |
-| `nombres` | Comparing, ordering, rounding |
-| `fractions` | Fractions (all types) |
-| `mesures` | Lengths, masses, volumes, temperatures |
-| `grandeurs` | Time, money, calendar |
-| `geometrie` | Shapes, angles, symmetry, coordinates |
-| `problemes` | Word problems (Vergnaud classes) |
-| `logique` | Logic grids, sequences, patterns |
-| `donnees` | Data, charts, statistics |
+| `numeration` | Whole numbers: read, write, decompose, place value, compare, order, round, frame, number lines, sequences, even/odd, multiples and divisors, Roman numerals |
+| `calcul` | Every computation, whole or decimal: mental and reasoned calculation, tables, written (posé) operations, missing-term operations, estimation, ×/÷ 10 100 1 000, doubles/halves, number pyramids, calc chains |
+| `fractions` | Fractions: parts of a whole / of a group, representations, compare, order, equivalent, on a number line, fraction of a quantity, operations on fractions, decimal fractions |
+| `decimaux` | Decimal numbers as numbers: write, decompose, place value, compare, order, place on a line, convert writings (computing with decimals → `calcul`) |
+| `proportions` | Proportionality tables, percentages (word problems → `problemes`) |
+| `mesures` | Lengths, masses, capacities, volumes, durations, telling time, calendar, money, temperature, perimeters, areas |
+| `geometrie` | Plane figures, solids, angles, lines (parallel, perpendicular), symmetry, coordinates, constructions |
+| `problemes` | Word problems (Vergnaud classes), including proportionality and money problems |
+| `logique` | Logic grids, puzzles (futoshiki, kenken, mazes…), Venn diagrams, figure sequences, emoji equations |
+| `donnees` | Reading and building tables and charts |
+
+Placement rule: pick the notion the pupil practises, not the context (« Additions de décimaux » → `calcul`, « Comparer des décimaux » → `decimaux`, « Périmètre » → `mesures` even with a grid).
 
 ### Naming conventions
 

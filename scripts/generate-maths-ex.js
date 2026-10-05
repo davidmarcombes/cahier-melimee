@@ -19,22 +19,18 @@ const LEVEL_CHOICES = [
   { name: '6e  — Sixième', value: '6e' },
 ];
 const LEVELS = LEVEL_CHOICES.map((c) => c.value);
+// Topics = scripts/validate-exercises.js VALID_TOPICS (see agents/content.md « Topics »)
 const CATEGORY_CHOICES = [
-  { name: 'Numération      — Écriture, lecture, décomposition des nombres', value: 'numeration' },
-  { name: 'Opérations      — Addition, soustraction, multiplication, division', value: 'operations' },
-  { name: 'Nombres         — Comparaison, rangement, encadrement', value: 'nombres' },
-  { name: 'Fractions       — Parts, partages, représentations', value: 'fractions' },
-  { name: 'Mesures         — Longueurs, masses, durées, contenances', value: 'mesures' },
-  { name: 'Géométrie       — Formes, solides, symétrie, repérage, théorèmes', value: 'geometrie' },
-  { name: 'Problèmes       — Résolution de problèmes', value: 'problemes' },
-  { name: 'Logique         — Raisonnement, suites, grilles', value: 'logique' },
-  { name: 'Algèbre         — Calcul littéral, équations, fonctions', value: 'algebre' },
-  { name: 'Espace          — Solides, volumes, repérage 3D', value: 'espace' },
-  { name: 'Transformations — Symétries, translation, rotation, homothétie', value: 'transforms' },
-  { name: 'Proportions     — Pourcentages, échelles, vitesse, ratios', value: 'proportions' },
-  { name: 'Données         — Statistiques, graphiques, probabilités', value: 'donnees' },
-  { name: 'Algorithmes     — Raisonnement, programmation', value: 'algorithmes' },
-  { name: 'Autre           — Autres type', value: 'autre' },
+  { name: 'Numération  — Lire, écrire, décomposer, comparer, ranger, encadrer, multiples', value: 'numeration' },
+  { name: 'Calcul      — Mental, posé, tables, à trou, estimation (entiers et décimaux)', value: 'calcul' },
+  { name: 'Fractions   — Parts, représentations, comparer, équivalentes, fractions décimales', value: 'fractions' },
+  { name: 'Décimaux    — Écrire, décomposer, comparer, ranger, placer des décimaux', value: 'decimaux' },
+  { name: 'Proportions — Proportionnalité, pourcentages', value: 'proportions' },
+  { name: 'Mesures     — Longueurs, masses, contenances, durées, heure, monnaie, périmètres, aires', value: 'mesures' },
+  { name: 'Géométrie   — Figures, solides, angles, droites, symétrie, repérage', value: 'geometrie' },
+  { name: 'Problèmes   — Résolution de problèmes', value: 'problemes' },
+  { name: 'Logique     — Raisonnement, grilles, suites de figures, énigmes', value: 'logique' },
+  { name: 'Données     — Tableaux, diagrammes', value: 'donnees' },
 ];
 const CATEGORIES = CATEGORY_CHOICES.map((c) => c.value).filter((v) => v !== 'Autre');
 
