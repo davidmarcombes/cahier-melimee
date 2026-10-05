@@ -75,7 +75,8 @@
     "serve:local": "node scripts/serve-subpath.js",
     "serve:sim": "node scripts/sim-server.js",
     "init": "node scripts/init-project.js",
-    "generate:sw": "node scripts/generate-sw.js"
+    "generate:sw": "node scripts/generate-sw.js",
+    "prompt:problems": "node scripts/prompt-problems.js"
   },
   "keywords": [
     "eleventy",

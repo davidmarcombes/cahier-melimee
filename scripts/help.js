@@ -26,6 +26,7 @@ const desc = {
   'generate:names': 'Generate student names',
   'generate:ids': 'Generate student identities',
   'generate:maths': 'Generate math exercises',
+  'prompt:problems': 'Build an LLM prompt that writes word problems (--level --classes --count --type)',
   'generate:report': 'Generate exercises coverage report (CSV)',
   'generate:commit': 'Pre-commit: assign IDs + rebuild report + sync validation hashes',
   'validate:config': 'Validate project config',

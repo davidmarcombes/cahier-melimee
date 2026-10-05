@@ -74,6 +74,7 @@ The e2e per-page specs:
 | `npm run generate:tokens` | Regenerate `tailwind.config.js` + CSS vars from `design-tokens.json` |
 | `npm run generate:ids` | Assign 8-char hex IDs to series missing an `id` in `index.yaml` |
 | `npm run generate:maths` | Interactive CLI to scaffold new math exercises |
+| `npm run prompt:problems -- --level cm2 --classes A2.4+M1.2 --count 5` | Build a ready-to-paste LLM prompt that writes a series of word problems in the site format. Reads the level curriculum, the Vergnaud table, a real example file of the type (`--type problem | multi-question | guided-problem`) and the titles already used at that level. `--classes`: « + » = steps of one problem, « , » = mix. Also `--theme`, `--difficulty`, `--slug`. Writes `.scratch/prompts/<level>-<slug>.md`. Then: save files → `generate:ids` → `validate:exercises` → `check` → replay. |
 | `npm run generate:names` | Generate student identity names |
 
 ### Reports & analysis
