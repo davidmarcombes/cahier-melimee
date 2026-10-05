@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Les classeurs et les cahiers"
-class: S1.1.1
+class: "A3.1"
 body: |
   Une école achète **8 classeurs à 4,50 € chacun** et **15 cahiers à 1,20 € chacun**.
 

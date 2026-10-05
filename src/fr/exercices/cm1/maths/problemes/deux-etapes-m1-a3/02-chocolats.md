@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Les chocolats"
-class: S1.1.1
+class: "A3.1"
 body: |
   Une boîte contient **6 rangées de 9 chocolats**.
   

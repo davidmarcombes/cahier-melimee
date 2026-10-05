@@ -1,5 +1,6 @@
 ---
 type: multi-question
+class: "A2.1"
 title: "Les bonbons de Léonie"
 context: "Léonie a 20 bonbons. Elle en mange 5, puis en reçoit 8 de sa mamie."
 questions:

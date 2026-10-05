@@ -1,5 +1,6 @@
 ---
 type: multi-question
+class: "A2.1"
 title: "Le jeu de points"
 context: "Nina a 12 points. Elle gagne 9 points au premier tour, puis 7 points au deuxième tour."
 questions:

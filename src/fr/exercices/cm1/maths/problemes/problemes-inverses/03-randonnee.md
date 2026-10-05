@@ -1,6 +1,6 @@
 ---
 type: inverse-problem
-class: S1.1.1
+class: "S2.2.2"
 title: "La randonnée"
 ipBase:
   text: "Un randonneur marche à **4** km/h pendant **5** heures. Quelle distance parcourt-il ?"

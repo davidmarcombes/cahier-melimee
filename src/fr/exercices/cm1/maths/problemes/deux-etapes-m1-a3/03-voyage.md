@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Le voyage scolaire"
-class: S1.1.1
+class: "A1.2"
 body: |
   Un car transporte **4 classes de 27 élèves**.
   

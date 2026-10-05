@@ -1,5 +1,6 @@
 ---
 type: multi-question
+class: "A2.1"
 title: "Les crayons de la classe"
 context: "La classe a 30 crayons. La maîtresse en distribue 12, puis en rachète 6 au magasin."
 questions:

@@ -1,6 +1,6 @@
 ---
 type: inverse-problem
-class: S1.1.1
+class: "S2.2.2"
 title: "La recette"
 ipBase:
   text: "Une recette pour **4** personnes nécessite **0,6 kg** de farine. Quelle quantité faut-il pour **10** personnes ?"

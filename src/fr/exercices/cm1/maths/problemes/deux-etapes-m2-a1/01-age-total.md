@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "L'âge du père et du fils"
-class: S1.1.1
+class: "A1.1"
 body: |
   Le fils a **8 ans**. Son père est **5 fois plus vieux**.
   

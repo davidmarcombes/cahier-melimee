@@ -1,6 +1,6 @@
 ---
 type: inverse-problem
-class: S1.1.1
+class: "S2.2.2"
 title: "Au marché"
 ipBase:
   text: "Un kilo de tomates coûte **2,50 €**. Lucas achète **4** kg. Combien paie-t-il ?"

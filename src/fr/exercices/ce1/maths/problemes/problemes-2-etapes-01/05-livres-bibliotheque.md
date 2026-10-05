@@ -1,5 +1,6 @@
 ---
 type: multi-question
+class: "A2.2"
 title: "Les livres de la bibliothèque"
 context: "La bibliothèque a 25 livres. Elle en prête 8 le matin, puis 6 l'après-midi."
 questions:

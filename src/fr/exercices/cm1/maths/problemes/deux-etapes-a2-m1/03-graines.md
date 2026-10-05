@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Les graines"
-class: S1.1.1
+class: "M1.2"
 body: |
   Un jardinier avait **315 graines**. Après un accident, il en a **perdu 75**.
   

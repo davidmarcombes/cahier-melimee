@@ -1,6 +1,6 @@
 ---
 type: inverse-problem
-class: S1.1.1
+class: "S2.2.2"
 title: "La piscine"
 ipBase:
   text: "Un nageur parcourt **1,5 km** par jour pendant **6** jours. Quelle distance totale nage-t-il ?"

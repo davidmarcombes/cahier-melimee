@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Les deux capitaux"
-class: S1.1.1
+class: "A2.1"
 body: |
   Léa a **240 €** sur son compte. C'est **4 fois plus** que son frère.
   

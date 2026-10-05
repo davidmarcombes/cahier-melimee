@@ -1,6 +1,6 @@
 ---
 type: inverse-problem
-class: S1.1.1
+class: "S2.2.2"
 title: "Les livres"
 ipBase:
   text: "Une bibliothèque dispose de **9** étagères de **35** livres chacune. Combien de livres y a-t-il en tout ?"

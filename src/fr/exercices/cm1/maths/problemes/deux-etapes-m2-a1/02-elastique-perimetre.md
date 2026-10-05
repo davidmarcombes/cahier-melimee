@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Le rectangle et l'élastique"
-class: S1.1.1
+class: "A1.1"
 body: |
   Un élastique au repos mesure **12 cm**. Étiré, il mesure **3 fois plus**.
   

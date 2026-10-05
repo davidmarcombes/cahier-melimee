@@ -1,6 +1,6 @@
 ---
 type: inverse-problem
-class: S1.1.1
+class: "S2.2.2"
 title: "Le ruban"
 ipBase:
   text: "On coupe un ruban de **2,4 m** en morceaux de **0,3 m**. Combien de morceaux obtient-on ?"

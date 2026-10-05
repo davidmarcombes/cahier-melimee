@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Les gâteaux"
-class: S1.1.1
+class: "M1.3"
 body: |
   Une boulangère avait **120 gâteaux** le matin.
   

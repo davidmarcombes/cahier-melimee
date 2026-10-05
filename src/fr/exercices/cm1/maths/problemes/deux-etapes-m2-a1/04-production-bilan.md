@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Les deux usines"
-class: S1.1.1
+class: "A2.2"
 body: |
   L'usine A produit **360 pièces** par jour. C'est **3 fois plus** que l'usine B.
   

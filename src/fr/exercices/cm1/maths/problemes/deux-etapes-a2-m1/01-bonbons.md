@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Les bonbons"
-class: S1.1.1
+class: "M1.2"
 body: |
   Théo avait **48 bonbons**. Il en a **reçu 12** pour son anniversaire.
   

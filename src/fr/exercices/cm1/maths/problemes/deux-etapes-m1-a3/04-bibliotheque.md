@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "La bibliothèque"
-class: S1.1.1
+class: "A3.1"
 body: |
   Une bibliothèque a **12 étagères de 35 livres**.
   

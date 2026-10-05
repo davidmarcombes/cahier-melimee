@@ -1,5 +1,6 @@
 ---
 type: multi-question
+class: "A2.2"
 title: "Les billes de Tom"
 context: "Tom a 14 billes. Il gagne 6 billes, puis en perd 4."
 questions:

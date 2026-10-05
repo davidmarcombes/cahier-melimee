@@ -1,6 +1,6 @@
 ---
 type: inverse-problem
-class: S1.1.1
+class: "S2.2.2"
 title: "Les tablettes de chocolat"
 ipBase:
   text: "Une tablette de chocolat contient **7** rangées de **6** carrés. Combien de carrés y a-t-il en tout ?"

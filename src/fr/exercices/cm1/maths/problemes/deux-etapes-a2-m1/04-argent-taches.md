@@ -1,7 +1,7 @@
 ---
 type: problem
 title: "Les tâches ménagères"
-class: S1.1.1
+class: "M1.2"
 body: |
   Emma avait économisé **85 €**. Elle a **gagné 35 €** supplémentaires en faisant des tâches ménagères.
   

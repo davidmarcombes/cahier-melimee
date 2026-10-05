@@ -1,6 +1,6 @@
 ---
 type: inverse-problem
-class: S1.1.1
+class: "S2.2.2"
 title: "Les vélos"
 ipBase:
   text: "Un magasin reçoit **6** caisses de **8** vélos. Combien de vélos reçoit-il en tout ?"
