@@ -31,5 +31,11 @@ export function normalizeAnswer(s) {
   else if (/^-?\d+$/.test(v)) {
     v = v.replace(/^(-?)0+(?=\d)/, '$1');
   }
+  // Times: "16h30", "16 h 30", "16h30min", "16:30", "16h", "09h05" → "16:30" / "16:00" / "9:05".
+  // Colon form needs two-digit minutes, so a division like "12:3" is left alone.
+  const t = v.match(/^(\d{1,2})(?:h(\d{2})?(?:min)?|:(\d{2}))$/);
+  if (t && +t[1] <= 24 && +(t[2] ?? t[3] ?? 0) < 60) {
+    v = `${+t[1]}:${t[2] ?? t[3] ?? '00'}`;
+  }
   return v;
 }

@@ -23,7 +23,23 @@ describe('Modules Utilities', () => {
       expect(normalizeAnswer('0')).toBe('0');
       expect(normalizeAnswer('00')).toBe('0');
       expect(normalizeAnswer('8:05')).toBe('8:05');
-      expect(normalizeAnswer('11h05')).toBe('11h05');
+      expect(normalizeAnswer('11h05')).toBe('11:05');
+    });
+
+    it('should accept every way of writing a time', () => {
+      for (const s of ['16:30', '16h30', '16 h 30', '16H30', '16h30min', '16 h 30 min'])
+        expect(normalizeAnswer(s)).toBe('16:30');
+      expect(normalizeAnswer('16h')).toBe('16:00');
+      expect(normalizeAnswer('16:00')).toBe('16:00');
+      expect(normalizeAnswer('09h05')).toBe(normalizeAnswer('9:05'));
+      expect(normalizeAnswer('11h45')).toBe(normalizeAnswer('11:45'));
+    });
+
+    it('should not read divisions or other values as times', () => {
+      expect(normalizeAnswer('12:3')).toBe('12:3');
+      expect(normalizeAnswer('16:75')).toBe('16:75');
+      expect(normalizeAnswer('30h')).toBe('30h');
+      expect(normalizeAnswer('16')).toBe('16');
     });
 
     it('should handle undefined or null', () => {
