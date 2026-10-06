@@ -254,6 +254,20 @@ operation: `6__dizaines__et__5__unités__=__?`
 
 `__` is replaced with `&nbsp;` and the whole segment is kept atomic. Use it whenever a number appears mid-phrase (e.g. unit phrases, equality statements).
 
+## Answer matching (`normalizeAnswer`, `modules/utils.js`)
+
+Typed answers and expected answers both go through `normalizeAnswer`, so write the expected answer in its simplest form; these are accepted as equal:
+
+| Rule | Examples treated as equal |
+|------|---------------------------|
+| Case, spaces (incl. no-break) | `Jeudi` = `jeudi`, `12 500` = `12500` |
+| Decimal comma, trailing zeros | `4,50` = `4.5` = `4,5` |
+| Leading zeros of whole numbers | `08` = `8` |
+| Times | `16:30` = `16h30` = `16 h 30` = `16h30min`; `16h` = `16:00`; `09h05` = `9:05` |
+| Operations (whole answer) | `soustraction` = `moins` = `-` = `−` · `multiplication` = `fois` = `x` = `*` = `×` · `division` = `:` = `/` = `÷` · `addition` = `plus` = `+` (« une … » / « la … » ignored) |
+
+Not covered (keep answers away from it): multi-word phrases — one unambiguous word at most.
+
 ## Adding a New Generator
 
 1. Add the generator to the topic module in `src/assets/js/generators/` that matches the content folder it serves (e.g. `operations.js` for written operations in `maths/calcul/`; module names predate the 2026-10 topic list). Shared helpers come from `_core.js` — add a helper there only if several modules need it, and list it in the module destructuring at the top. A new module must be added to `MODULES` in `generators/index.js` (load order).

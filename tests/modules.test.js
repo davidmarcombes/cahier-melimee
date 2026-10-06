@@ -35,6 +35,20 @@ describe('Modules Utilities', () => {
       expect(normalizeAnswer('11h45')).toBe(normalizeAnswer('11:45'));
     });
 
+    it('should accept an operation by name or sign', () => {
+      for (const [expected, typed] of [
+        ['soustraction', ['moins', '-', '−', 'Soustraction', 'une soustraction']],
+        ['multiplication', ['x', 'X', '*', '×', 'fois']],
+        ['division', [':', '/', '÷', 'une division']],
+        ['addition', ['+', 'plus']],
+        ['−', ['soustraction', '-']],
+      ])
+        for (const t of typed) expect(normalizeAnswer(t)).toBe(normalizeAnswer(expected));
+      expect(normalizeAnswer('soustraction')).not.toBe(normalizeAnswer('addition'));
+      expect(normalizeAnswer('-5')).toBe('-5');
+      expect(normalizeAnswer('12:30')).toBe('12:30');
+    });
+
     it('should not read divisions or other values as times', () => {
       expect(normalizeAnswer('12:3')).toBe('12:3');
       expect(normalizeAnswer('16:75')).toBe('16:75');

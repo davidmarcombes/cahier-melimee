@@ -12,6 +12,16 @@ export function renderOpShorthands(str) {
     );
 }
 
+// Every way a pupil names an operation → its sign (whole answer only)
+const OPERATIONS = Object.fromEntries(
+  [
+    ['+', ['+', 'plus', 'addition', 'additionner']],
+    ['−', ['-', '−', '–', 'moins', 'soustraction', 'soustraire']],
+    ['×', ['×', 'x', '*', 'fois', 'multiplication', 'multiplier']],
+    ['÷', ['÷', ':', '/', 'divisé', 'diviser', 'division']],
+  ].flatMap(([sign, words]) => words.map((w) => [w, sign]))
+);
+
 /**
  * Standard normalizer for answer checking (ignores case, spaces, and commas/dots).
  */
@@ -37,7 +47,9 @@ export function normalizeAnswer(s) {
   if (t && +t[1] <= 24 && +(t[2] ?? t[3] ?? 0) < 60) {
     v = `${+t[1]}:${t[2] ?? t[3] ?? '00'}`;
   }
-  return v;
+  // Operations, by name or sign: « soustraction », « moins », « - » → « − » (« une division » too)
+  const op = OPERATIONS[v.replace(/^(une|la|l')/, '')];
+  return op ?? v;
 }
 
 /**
