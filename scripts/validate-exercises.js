@@ -271,7 +271,11 @@ function validateSeries(seriesDir, errors) {
       continue;
     }
 
-    const bodyText = statementOf(mdPath);
+    // The statement: Markdown under the front matter, else a front-matter `body:` (the build shows either)
+    const bodyText = statementOf(mdPath) || String(data.body || '').trim();
+    // A word problem with no statement renders an empty card (CE1 comparaisons-01, 2026-10-06)
+    if (['problem', 'bar-model'].includes(data.type) && !data.generator && !bodyText)
+      errors.push(`${relMd}: ${data.type} has no statement — write it under the front matter`);
     // The matching template shows no prompt of its own: without a title or statement the pupil sees
     // two columns and no instruction (« Relie chaque horloge… » was missing in lire-heure-matching)
     if ((data.type || 'number-check') === 'matching' && !data.title && !bodyText && !data.generator)

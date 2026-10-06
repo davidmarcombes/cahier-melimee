@@ -448,7 +448,13 @@ module.exports = async function (eleventyConfig) {
           title: md.renderInline(interpolate(ex.data.title || '')),
           type: ex.data.type || 'number-check',
           operation: interpolate(ex.data.operation || ''),
-          body: interpolate((ex.templateContent || '').trim()),
+          // Statement: the Markdown under the front matter, else a front-matter `body:` (90 problem /
+          // bar-model files use it; it was silently dropped before 2026-10-06)
+          body: (ex.templateContent || '').trim()
+            ? interpolate(ex.templateContent.trim())
+            : ex.data.body
+              ? md.render(interpolate(String(ex.data.body))).trim()
+              : '',
         };
         // Only render operation as math if it doesn't have gaps, to preserve trouParts logic
         if (item.operation && !item.operation.includes('?')) {
