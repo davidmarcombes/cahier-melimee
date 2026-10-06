@@ -2055,5 +2055,137 @@
     "createdAt": "2026-10-05T17:08:50.642Z",
     "resolvedAt": null,
     "resolvedBy": null
+  },
+  {
+    "id": "55199248",
+    "seriesId": "cab46caf",
+    "url": "/fr/exercices/cab46caf/",
+    "title": "La classe",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:32.484Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "e1b9c9e6",
+    "seriesId": "c1b361bd",
+    "url": "/fr/exercices/c1b361bd/",
+    "title": "Problèmes de comparaison",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:34.187Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "861ffab2",
+    "seriesId": "c73a8773",
+    "url": "/fr/exercices/c73a8773/",
+    "title": "Comparaisons et collections",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:36.038Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "c6e767b8",
+    "seriesId": "fa34016d",
+    "url": "/fr/exercices/fa34016d/",
+    "title": "Problèmes en deux étapes",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:37.752Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "ad384e0b",
+    "seriesId": "d1e0168d",
+    "url": "/fr/exercices/d1e0168d/",
+    "title": "Retrouver l'état initial",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:39.667Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "5c640c89",
+    "seriesId": "b09a4133",
+    "url": "/fr/exercices/b09a4133/",
+    "title": "La kermesse de l'école",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:41.387Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "4874fd18",
+    "seriesId": "c7923815",
+    "url": "/fr/exercices/c7923815/",
+    "title": "Problèmes de courses et prix",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:43.185Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "0a73fdb9",
+    "seriesId": "f3d15644",
+    "url": "/fr/exercices/f3d15644/",
+    "title": "Problèmes en trois étapes",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:44.964Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "abff46c3",
+    "seriesId": "e0a80a47",
+    "url": "/fr/exercices/e0a80a47/",
+    "title": "Une sortie au zoo",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:46.622Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "47c2860b",
+    "seriesId": "a9c5c662",
+    "url": "/fr/exercices/a9c5c662/",
+    "title": "Problèmes guidés : autant de fois plus",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:48.283Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "5810f7a4",
+    "seriesId": "a2bb055c",
+    "url": "/fr/exercices/a2bb055c/",
+    "title": "Les soldes et réductions",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:49.973Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "fe1e0dce",
+    "seriesId": "f62895bd",
+    "url": "/fr/exercices/f62895bd/",
+    "title": "Problèmes complexes en plusieurs étapes",
+    "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
+    "source": "claude",
+    "createdAt": "2026-10-06T12:19:51.635Z",
+    "resolvedAt": null,
+    "resolvedBy": null
   }
 ]
