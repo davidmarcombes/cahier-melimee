@@ -7,7 +7,7 @@ questions:
   - text: "Combien de kilogrammes de viande la lionne et le tigre mangent-ils en tout par jour ?"
     answer: "22"
   - text: "Quelle est la quantité totale de viande distribuée aux 4 fauves en kilogrammes ?"
-    answer: "52"
+    answer: "50"
 ---
 
 Pendant la visite, la classe assiste au repas des animaux. Voici la ration quotidienne de chaque fauve :
