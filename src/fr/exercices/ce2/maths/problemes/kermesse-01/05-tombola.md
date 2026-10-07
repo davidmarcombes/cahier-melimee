@@ -5,7 +5,7 @@ context: "À la tombola, **5 carnets de tickets** coûtent **15 €**. La famill
 questions:
   - text: "Combien coûte **1 carnet** en euros ?"
     answer: "3"
-  - text: "Combien dépensent-ils en **euros** ?"
+  - text: "Combien la famille paie-t-elle pour les **20 carnets**, en euros ?"
     answer: "60"
 ---
 
