@@ -33,4 +33,4 @@ Everything runs locally; there is no CI. `_site/` is the artifact, uploaded by h
 
 - Cahiers (2026-10-03): `/fr/connexion/` replaced by `/fr/cahiers/` (several children per browser, import from a file); the onboarding lost its secret link and visual key; `/fr/anon/` rewritten to match. Visitors who already created a cahier keep it (the store migrates v1 data). See `agents/identity.md`.
 - Cache: `.htaccess` caches CSS/JS for 1 year. Since v1.1.0 every JS/CSS URL carries `?v=<package version>` (templates + `minify` for module imports) and the service worker matches its cache with `ignoreSearch`, so a version bump reaches visitors with or without a service worker.
-- The live site dates from 2026-04-25: 747 series live, 768 in this version (39 new, 18 IDs renamed by `generate:ids`).
+- Live = **v1.1.0**, deployed 2026-10-07 (tag `v1.1.0`): 813 series (84 new vs the 2026-04-25 site, 18 renamed IDs removed — accepted in pre-release). Upload done as a mirror sync (remote files absent from `_site/` deleted): use the same mode next time.
