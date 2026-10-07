@@ -1921,8 +1921,8 @@
     "reason": "« Les tâches ménagères » : 120 € ÷ 7 = 17,14 € ; réponse attendue 17 (euros entiers ?) — préciser « en euros entiers » ou accepter 17,14",
     "source": "claude",
     "createdAt": "2026-10-05T17:05:23.601Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T16:22:00.741Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "45b73380",
@@ -1932,8 +1932,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:36.850Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T04:50:41.484Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "0c22e35b",
@@ -1943,8 +1943,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:38.147Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T16:25:50.985Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "a652cf92",
@@ -1954,8 +1954,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:39.393Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T05:09:02.659Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "5864fc2c",
@@ -1965,8 +1965,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:40.607Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T05:07:26.130Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "00f48c94",
@@ -1976,8 +1976,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:41.811Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T05:14:08.745Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "5c82aed3",
@@ -1987,8 +1987,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:43.019Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T05:05:56.734Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b1b8bf3e",
@@ -1998,8 +1998,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:44.389Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T04:54:52.652Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "e2ad9293",
@@ -2009,8 +2009,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:45.621Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T16:29:45.458Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b3b67783",
@@ -2020,8 +2020,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:46.853Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T14:49:11.633Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "8d192ddd",
@@ -2031,8 +2031,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:48.081Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T14:50:39.283Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "76d1dd1c",
@@ -2042,8 +2042,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:49.428Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T15:30:40.033Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "56e8b771",
@@ -2053,8 +2053,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:50.642Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T15:26:08.367Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "55199248",
@@ -2064,8 +2064,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:32.484Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T16:31:43.088Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "e1b9c9e6",
@@ -2075,8 +2075,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:34.187Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T16:32:58.513Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "861ffab2",
@@ -2086,8 +2086,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:36.038Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T15:00:41.784Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "c6e767b8",
@@ -2097,8 +2097,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:37.752Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T15:19:12.149Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "ad384e0b",
@@ -2108,8 +2108,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:39.667Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T15:20:55.706Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "5c640c89",
@@ -2119,8 +2119,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:41.387Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T04:37:56.775Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "4874fd18",
@@ -2130,8 +2130,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:43.185Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-06T16:24:01.397Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "0a73fdb9",
@@ -2141,8 +2141,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:44.964Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T04:40:31.918Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "abff46c3",
@@ -2152,8 +2152,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:46.622Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T04:49:03.150Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "47c2860b",
@@ -2163,8 +2163,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:48.283Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T05:10:48.848Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "5810f7a4",
@@ -2174,8 +2174,8 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:49.973Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T04:52:01.150Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "fe1e0dce",
@@ -2185,7 +2185,7 @@
     "reason": "Nouvelle série de problèmes écrite par Gemini (prompt:problems), relue et corrigée : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-06T12:19:51.635Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-07T05:12:56.407Z",
+    "resolvedBy": "validated"
   }
 ]
