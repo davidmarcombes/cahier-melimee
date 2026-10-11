@@ -168,7 +168,7 @@ if (filterCat) filtered = filtered.filter((s) => s.category === filterCat);
 
 // ── Sort: level, category, slug ───────────────────────────────────────────────
 
-const LEVEL_ORDER = ['cp', 'ce1', 'ce2', 'cm1', 'cm2', '6e'];
+const LEVEL_ORDER = ['gs', 'cp', 'ce1', 'ce2', 'cm1', 'cm2', '6e'];
 filtered.sort((a, b) => {
   const li = LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level);
   if (li !== 0) return li;

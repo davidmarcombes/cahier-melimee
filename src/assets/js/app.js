@@ -13,7 +13,7 @@ window.renderOpShorthands = renderOpShorthands;
 
 /* Exercise store — loads CSV on demand, caches in sessionStorage */
 document.addEventListener('alpine:init', () => {
-  const LEVELS = { 1: 'CP', 2: 'CE1', 3: 'CE2', 4: 'CM1', 5: 'CM2' };
+  const LEVELS = { 0: 'GS', 1: 'CP', 2: 'CE1', 3: 'CE2', 4: 'CM1', 5: 'CM2' };
   const DIFFS = { 1: 'facile', 2: 'moyen', 3: 'difficile' };
   const FOLDERS = { e: 'exercices', a: 'applications', d: 'defis' };
   // Kept in sync with CSV_TYPES / CSV_CLASSES in .eleventy.js — add new entries at the END only.

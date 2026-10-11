@@ -294,3 +294,34 @@ body {
   background-color: #1e3a5f;
   color: #dbeafe;
 }
+
+/* Maternelle (GS, .kid on the player): big emojis, big click targets — pupils can't read yet */
+/* A pattern stays on one line: emojis shrink to fit the player width (--n = symbol count, set by mcq.njk) */
+.kid .js-mcq-opbox {
+  container-type: inline-size;
+}
+.kid .js-mcq-op {
+  font-size: min(2.75rem, calc(100cqi / (var(--n, 1) * 1.3)));
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.kid .js-mcq-choice {
+  font-size: 2.5rem;
+  line-height: 1.3;
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+.kid .js-classify-label {
+  font-size: 2rem;
+}
+.kid .js-classify-item {
+  font-size: 2.25rem;
+  padding: 0.25rem 0.5rem;
+}
+/* 8 tiles fit on one row (a necklace must not break) */
+.kid .js-tile {
+  font-size: 1.6rem;
+  padding: 0.45rem 0.5rem;
+  min-width: 0;
+}

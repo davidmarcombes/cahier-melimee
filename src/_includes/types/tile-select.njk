@@ -17,7 +17,7 @@
         type="button"
         @click="tileTap(i)"
         :disabled="solved"
-        class="min-w-[4.5rem] px-4 py-3 text-xl font-bold rounded-xl border-2
+        class="js-tile min-w-[4.5rem] px-4 py-3 text-xl font-bold rounded-xl border-2
                transition-all duration-150 select-none
                bg-white dark:bg-slate-800 text-content-default"
         :class="{
@@ -37,7 +37,8 @@
     </template>
   </div>
 
-  {# Verify button #}
+  {# Verify button — maternelle checks automatically once enough tiles are picked #}
+  {% if level !== 'GS' %}
   <button
     type="button"
     @click="check()"
@@ -49,4 +50,5 @@
     <span x-show="!solved">Vérifier</span>
     <span x-show="solved">Bravo !</span>
   </button>
+  {% endif %}
 </div>

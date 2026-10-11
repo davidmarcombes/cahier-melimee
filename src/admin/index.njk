@@ -324,7 +324,7 @@ title: Dashboard
 
 <script>
 function adminDashboard() {
-  const LEVELS  = { 1: 'CP', 2: 'CE1', 3: 'CE2', 4: 'CM1', 5: 'CM2' };
+  const LEVELS  = { 0: 'GS', 1: 'CP', 2: 'CE1', 3: 'CE2', 4: 'CM1', 5: 'CM2' };
   const DIFFS   = { 1: 'facile', 2: 'moyen', 3: 'difficile' };
   const FOLDERS = { e: 'exercices', a: 'applications', d: 'defis' };
   const KINDS   = { e: 'exercice', a: 'application', d: 'defi' };
@@ -494,7 +494,7 @@ function adminDashboard() {
     },
 
     get allLevels() {
-      return ['CP','CE1','CE2','CM1','CM2'];
+      return ['GS','CP','CE1','CE2','CM1','CM2'];
     },
 
     get allTemplates() {
@@ -504,7 +504,7 @@ function adminDashboard() {
     },
 
     get levelCounts() {
-      const order = ['CP','CE1','CE2','CM1','CM2'];
+      const order = ['GS','CP','CE1','CE2','CM1','CM2'];
       const counts = {};
       for (const lvl of order) counts[lvl] = this.rows.filter(r => r.level === lvl).length;
       return counts;
@@ -560,7 +560,7 @@ function adminDashboard() {
           return this.sort.dir === 'asc' ? d : -d;
         }
         if (this.sort.col === 'level') {
-          const order = ['CP','CE1','CE2','CM1','CM2'];
+          const order = ['GS','CP','CE1','CE2','CM1','CM2'];
           av = order.indexOf(av); bv = order.indexOf(bv);
           return this.sort.dir === 'asc' ? av - bv : bv - av;
         }

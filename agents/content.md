@@ -40,7 +40,7 @@ npm run validate:exercises
 
 ```
 src/fr/exercices/
-└── {level}/              # cp | ce1 | ce2 | cm1 | cm2
+└── {level}/              # gs | cp | ce1 | ce2 | cm1 | cm2  (gs = grande section, see exercises.md « Maternelle »)
     └── maths/
         └── {topic}/      # see Topics below
             └── {slug}-01/

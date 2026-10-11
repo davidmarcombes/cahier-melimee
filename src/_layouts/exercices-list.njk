@@ -10,7 +10,7 @@ layout: base
     '{&quot;level&quot;:&quot;&quot;,&quot;topic&quot;:&quot;&quot;,&quot;difficulty&quot;:&quot;&quot;}'), search: '',
     limit: 12, _seed: Math.random(), {% if site.devMode %}showUnvalidated: false, validatedIds: new Set(), onePerType: false,
     {% endif %}get all() { return $store.exercises.data || [] }, get options() {
-    const u = (k) => [...new Set(this.all.map(s => s[k]).filter(Boolean))].sort(); return { level: u('level'), topic:
+    const u = (k) => [...new Set(this.all.map(s => s[k]).filter(Boolean))].sort(); const lo = ['GS','CP','CE1','CE2','CM1','CM2']; return { level: u('level').sort((a, b) => lo.indexOf(a) - lo.indexOf(b)), topic:
     u('topic'), difficulty: u('difficulty') } }, get filtered() { const q = this.search.toLowerCase(); let list =
     this.all.filter(s => (!this.filters.level || s.level === this.filters.level) && (!this.filters.topic || s.topic ===
     this.filters.topic) && (!this.filters.difficulty || s.difficulty === this.filters.difficulty) && (!q || (s.title + ' ' +
@@ -124,6 +124,7 @@ layout: base
                   x-text="s.title"></h2>
                 <div class="flex items-center gap-1 shrink-0">
                   <span x-show="s.isDefi" class="text-xs" title="Défi chronométré">&#x23F1;&#xFE0F;</span>
+                  <span x-show="s.level === 'GS'" class="text-xs" title="Exercice parlant : monte le son">&#x1F50A;</span>
                   <span
                     class="text-xs"
                     x-text="s.difficulty === 'difficile' ? '&#x1F41E;' : s.difficulty === 'moyen' ? '&#x1F41D;' : '&#x1F997;'"></span>

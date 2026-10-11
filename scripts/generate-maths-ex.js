@@ -11,6 +11,7 @@ const MODES = ['exercice', 'application'];
 
 // Descriptive labels for interactive prompts
 const LEVEL_CHOICES = [
+  { name: 'GS  — Grande Section (maternelle)', value: 'gs' },
   { name: 'CP  — Cours Préparatoire', value: 'cp' },
   { name: 'CE1 — Cours Élémentaire 1', value: 'ce1' },
   { name: 'CE2 — Cours Élémentaire 2', value: 'ce2' },
