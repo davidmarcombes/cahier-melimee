@@ -32,7 +32,7 @@
           'opacity-50': solved && i !== cur.mcqAnswer
         }"
       >
-        <span x-html="choice"></span>
+        <span class="js-mcq-choice-in" :style="kid ? '--n:' + symbolCount(choice) : ''" x-html="choice"></span>
       </button>
     </template>
   </div>

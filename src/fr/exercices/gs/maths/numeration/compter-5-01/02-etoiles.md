@@ -1,7 +1,7 @@
 ---
 type: "mcq"
 title: "Combien ?"
-say: "Combien de étoiles ?"
+say: "Combien d’étoiles ?"
 operation: "⭐ ⭐"
 choices: ["1", "2", "3"]
 answer: "2"
