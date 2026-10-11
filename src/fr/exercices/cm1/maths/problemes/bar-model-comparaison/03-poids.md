@@ -1,7 +1,6 @@
 ---
 type: bar-model
 title: "Les sacs"
-body: "Un sac pèse **15 kg**. Il est **2,5 kg plus lourd** que l'autre sac. Combien pèse l'autre sac ?"
 bm:
   mode: comparison
   ref: 15
@@ -13,3 +12,5 @@ bm:
 answer: "12.5"
 unit: "kg"
 ---
+
+Un sac pèse **15 kg**. Il est **2,5 kg plus lourd** que l'autre sac. Combien pèse l'autre sac ?

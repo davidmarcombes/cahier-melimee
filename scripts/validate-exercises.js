@@ -313,6 +313,10 @@ function validateSeries(seriesDir, errors) {
     // Internal curriculum codes are for us, not for pupils (« Les salles — erreur A3.3 »)
     if (/\b[ADIMNS]\d(\.\d)+\b/.test(String(data.title || '')))
       errors.push(`${relMd}: title "${data.title}" shows an internal class code`);
+    // The player shows the Markdown under the front matter; a `body:` key is never displayed
+    // (49 statements invisible until 2026-10: bar-model series, prompt:problems output)
+    if (data.body !== undefined)
+      errors.push(`${relMd}: \`body:\` in the front matter is never shown — put the statement under the closing ---`);
     const dupStatic = duplicateChoice(data);
     if (dupStatic) errors.push(`${relMd}: the same choice appears twice (${dupStatic}) — one of them is refused`);
     if (bodyText && !typeShowsBody(type))

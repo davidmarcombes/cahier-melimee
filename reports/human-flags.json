@@ -2020,8 +2020,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:46.853Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-11T12:14:43.077Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "8d192ddd",
@@ -2031,8 +2031,8 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:48.081Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-11T12:16:36.829Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "76d1dd1c",
@@ -2053,6 +2053,193 @@
     "reason": "Nouvelle série de problèmes écrite par Sonnet (prompt:problems) : vérifier énoncés, réponses uniques et niveau",
     "source": "claude",
     "createdAt": "2026-10-05T17:08:50.642Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "40bea2d5",
+    "seriesId": "b1842540",
+    "url": "/fr/exercices/b1842540/",
+    "title": "Compter jusqu'à 5",
+    "reason": "Voix 🔊 : tester sur tes navigateurs (Chrome = voix Google en ligne, Firefox Linux souvent robotique ou muette, tablette). Ex. 1 : il faut taper 🔊, puis lecture auto. Vaut pour toutes les séries GS.",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:49.534Z",
+    "resolvedAt": "2026-10-11T13:12:53.594Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "3d7bed86",
+    "seriesId": "e5bcef11",
+    "url": "/fr/exercices/e5bcef11/",
+    "title": "Le plus, le moins",
+    "reason": "Titres ➕ / ➖ : ne veulent rien dire à 5 ans (seule la voix porte la consigne). Garder, remplacer, ou retirer le titre ?",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:49.767Z",
+    "resolvedAt": "2026-10-11T13:13:15.996Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "1f43d056",
+    "seriesId": "ff697675",
+    "url": "/fr/exercices/ff697675/",
+    "title": "Trier par couleur",
+    "reason": "Couleurs des emojis selon la police (🐳 🐋 🧢 🐬 🌲 ⭐ 🌽…) : vérifier sur tes appareils. 🦋 retiré de la boîte bleue (orange sous Chrome/Linux).",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:49.999Z",
+    "resolvedAt": "2026-10-11T13:12:31.657Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "3da40020",
+    "seriesId": "e29799a7",
+    "url": "/fr/exercices/e29799a7/",
+    "title": "Combien en tout ?",
+    "reason": "Deux paniers côte à côte (🧺🍎🍎 🧺🍎) : on comprend bien qu'il faut tout compter ? (même piège que le chapeau, mais ici voulu)",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:50.217Z",
+    "resolvedAt": "2026-10-11T13:04:46.411Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "48f01104",
+    "seriesId": "d51b1699",
+    "url": "/fr/exercices/d51b1699/",
+    "title": "Sous le chapeau",
+    "reason": "Nouvelle mise en page : total en chiffre dans le titre (« 5 🐰 ») + une seule scène (🐰🐰🎩). Lisible pour un enfant qui lit les chiffres de 1 à 10 ?",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:50.459Z",
+    "resolvedAt": "2026-10-11T13:15:13.161Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "2b492fb9",
+    "seriesId": "dc0d12c1",
+    "url": "/fr/exercices/dc0d12c1/",
+    "title": "L'intrus du collier",
+    "reason": "Intrus : rangées AB = triplet (celui du milieu est faux) ; AAB/ABB/ABC = intrus hors motif (☀️ parmi ⭐🌙), plus facile que le programme. Ok ?",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:50.694Z",
+    "resolvedAt": "2026-10-11T13:05:14.701Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "e6359d6b",
+    "seriesId": "caaff296",
+    "url": "/fr/exercices/caaff296/",
+    "title": "Des motifs qui grandissent",
+    "reason": "Ex. 2 et 5 demandent la suite au milieu d'une série (🌙, 🐶) : règle assez claire ? Sur téléphone le motif passe sur 2 lignes.",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:50.914Z",
+    "resolvedAt": "2026-10-11T13:10:06.009Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "ed72460b",
+    "seriesId": "b08cc64c",
+    "url": "/fr/exercices/b08cc64c/",
+    "title": "Un de plus",
+    "reason": "Le poisson qui arrive est seulement dit (pas dessiné) : l'enfant doit l'imaginer. Garder ou dessiner l'arrivée ?",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:51.139Z",
+    "resolvedAt": "2026-10-11T13:14:48.886Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "83745796",
+    "seriesId": "b6515fb9",
+    "url": "/fr/exercices/b6515fb9/",
+    "title": "Un de moins",
+    "reason": "L'oiseau qui s'envole est seulement dit (pas dessiné) : l'enfant doit l'imaginer. Garder ou dessiner le départ ?",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:51.361Z",
+    "resolvedAt": "2026-10-11T13:14:26.163Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "9d66fcea",
+    "seriesId": "a7dc18b7",
+    "url": "/fr/applications/a7dc18b7/",
+    "title": "Compter jusqu'à 10",
+    "reason": "Tailles mélangées (petits et gros) : lisible ? Les 3 boutons vont parfois au-delà de 10 (10 → 10 / 11 / 12).",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:51.598Z",
+    "resolvedAt": "2026-10-11T13:26:14.469Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "7ca3b253",
+    "seriesId": "bc64ce9e",
+    "url": "/fr/applications/bc64ce9e/",
+    "title": "Compter plus loin que 10",
+    "reason": "Niveau difficile 11 à 15 objets : utile en GS ou trop dur ?",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:51.831Z",
+    "resolvedAt": "2026-10-11T13:26:44.283Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "48f6766f",
+    "seriesId": "df1c71c5",
+    "url": "/fr/applications/df1c71c5/",
+    "title": "D'un coup d'œil",
+    "reason": "Image cachée après 1,5 s (👀 pour revoir) : durée trop courte / trop longue ?",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:52.050Z",
+    "resolvedAt": "2026-10-11T13:27:15.200Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "c83e5c83",
+    "seriesId": "d628b555",
+    "url": "/fr/exercices/d628b555/",
+    "title": "Modèle en barres: comparaison",
+    "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:52.263Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "1a419986",
+    "seriesId": "ae680321",
+    "url": "/fr/exercices/ae680321/",
+    "title": "Modèle en barres: parties et tout",
+    "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:52.511Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "a4e361ca",
+    "seriesId": "c5c24ada",
+    "url": "/fr/exercices/c5c24ada/",
+    "title": "Modèle en barres: comparaison",
+    "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:52.747Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "2380cf17",
+    "seriesId": "cee25c59",
+    "url": "/fr/exercices/cee25c59/",
+    "title": "Modèle en barres: parties et tout",
+    "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:52.983Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "e570d480",
+    "seriesId": "fb8839ba",
+    "url": "/fr/exercices/fb8839ba/",
+    "title": "Modèle en barres: proportionnalité",
+    "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
+    "source": "claude",
+    "createdAt": "2026-10-11T12:51:53.221Z",
     "resolvedAt": null,
     "resolvedBy": null
   }

@@ -1,7 +1,6 @@
 ---
 type: bar-model
 title: "Les classeurs"
-body: "Chaque classeur coûte **4,50 €**. L'école achète **12 classeurs**. Quel est le coût total ?"
 bm:
   mode: part-whole
   whole: "?"
@@ -11,3 +10,5 @@ bm:
 answer: "54"
 unit: "€"
 ---
+
+Chaque classeur coûte **4,50 €**. L'école achète **12 classeurs**. Quel est le coût total ?

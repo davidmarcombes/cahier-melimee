@@ -1,7 +1,6 @@
 ---
 type: bar-model
 title: "La salle B"
-body: "La salle A accueille **312 personnes**, soit **48 de plus** que la salle B. Quelle est la capacité de la salle B ?"
 bm:
   mode: comparison
   ref: 312
@@ -13,3 +12,5 @@ bm:
 answer: "264"
 unit: "places"
 ---
+
+La salle A accueille **312 personnes**, soit **48 de plus** que la salle B. Quelle est la capacité de la salle B ?

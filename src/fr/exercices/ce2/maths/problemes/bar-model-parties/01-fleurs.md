@@ -1,7 +1,6 @@
 ---
 type: bar-model
 title: "Le bouquet"
-body: "Un bouquet contient **45 fleurs**. Il y a **28 roses**. Combien y a-t-il d'autres fleurs ?"
 bm:
   mode: part-whole
   whole: 45
@@ -11,3 +10,5 @@ bm:
 answer: "17"
 unit: "fleurs"
 ---
+
+Un bouquet contient **45 fleurs**. Il y a **28 roses**. Combien y a-t-il d'autres fleurs ?
