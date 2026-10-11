@@ -2,8 +2,10 @@
    Local progress store — sole persistence layer (no server).
    Key: 'melimee_v1'
      { version: 2, current: slug | null,
-       pupils: { [slug]: { slug, username, sticker_id, createdAt, progress: { [seriesId]: {...} } } },
-       progress: { [seriesId]: {...} } }   ← work done before any cahier exists (guest)
+       pupils: { [slug]: { slug, username, sticker_id, createdAt, progress: { [seriesId]: {...} },
+                           settings: { onlineVoice } } },
+       progress: { [seriesId]: {...} },    ← work done before any cahier exists (guest)
+       settings: {} }                      ← guest preferences
    Several children can share one browser: each has a cahier, `current` is who is working.
    A cahier can be exported to a JSON file and imported on another device.
    Version 1 ({ user, progress }) is migrated on first read.
@@ -39,6 +41,13 @@ export const localStore = (() => {
   }
   const pick = (p) => ({ slug: p.slug, username: p.username, sticker_id: p.sticker_id });
   const progressOf = (d) => (d.current && d.pupils[d.current] ? d.pupils[d.current].progress : d.progress);
+  // Preferences of the current cahier, or of the guest when nobody has a cahier (created on demand)
+  const settingsOf = (d) => {
+    const owner = d.current && d.pupils[d.current] ? d.pupils[d.current] : d;
+    return (owner.settings = owner.settings || {});
+  };
+  // Only known preferences, with their type: a cahier file is outside input
+  const cleanSettings = (s) => (s && s.onlineVoice === true ? { onlineVoice: true } : {});
   // Two children may pick the same animal + sticker: keep slugs unique
   const freeSlug = (d, slug) => {
     let s = slug,
@@ -75,8 +84,12 @@ export const localStore = (() => {
         ...pick({ ...p, slug }),
         createdAt: new Date().toISOString(),
         progress: first ? d.progress || {} : {},
+        settings: first ? d.settings || {} : {},
       };
-      if (first) d.progress = {};
+      if (first) {
+        d.progress = {};
+        d.settings = {};
+      }
       d.current = slug;
       save(d);
       return slug;
@@ -121,6 +134,15 @@ export const localStore = (() => {
     countDone() {
       return Object.keys(this.getProgress()).length;
     },
+    /** Preferences of the current cahier (guest preferences when nobody has a cahier) */
+    getSettings() {
+      return { ...settingsOf(load()) };
+    },
+    setSetting(key, value) {
+      const d = load();
+      settingsOf(d)[key] = value;
+      save(d);
+    },
     /** The file content for one cahier (current one by default) */
     exportUser(slug) {
       const d = load();
@@ -130,7 +152,7 @@ export const localStore = (() => {
         format: EXPORT_FORMAT,
         version: 1,
         exportedAt: new Date().toISOString(),
-        pupil: { ...pick(p), createdAt: p.createdAt, progress: p.progress || {} },
+        pupil: { ...pick(p), createdAt: p.createdAt, progress: p.progress || {}, settings: cleanSettings(p.settings) },
       };
     },
     /**
@@ -149,9 +171,15 @@ export const localStore = (() => {
           progress[id] = { done: true, completedAt: typeof v.completedAt === 'string' ? v.completedAt : null };
       const d = load();
       const merged = Boolean(d.pupils[p.slug]);
+      // An existing cahier keeps this device's preferences; a new one takes the file's
       d.pupils[p.slug] = merged
         ? { ...d.pupils[p.slug], progress: mergeProgress(d.pupils[p.slug].progress, progress) }
-        : { ...pick(p), createdAt: typeof p.createdAt === 'string' ? p.createdAt : null, progress };
+        : {
+            ...pick(p),
+            createdAt: typeof p.createdAt === 'string' ? p.createdAt : null,
+            progress,
+            settings: cleanSettings(p.settings),
+          };
       d.current = p.slug;
       save(d);
       return { slug: p.slug, merged };

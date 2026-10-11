@@ -6,7 +6,126 @@
   const { rand, randItem, shuffle, toRoman } =
     typeof module !== 'undefined' && module.exports ? require('./_core.js') : root.GenCore;
 
+  // French number names, for read-aloud (spoken, never displayed: spelling details do not matter here)
+  const UNITS = 'zéro un deux trois quatre cinq six sept huit neuf dix onze douze treize quatorze quinze seize'.split(
+    ' '
+  );
+  const TENS = { 2: 'vingt', 3: 'trente', 4: 'quarante', 5: 'cinquante', 6: 'soixante' };
+  function sous100(n) {
+    if (n <= 16) return UNITS[n];
+    if (n < 20) return 'dix-' + UNITS[n - 10];
+    const t = Math.floor(n / 10),
+      u = n % 10;
+    if (t === 7) return 'soixante' + (u === 1 ? ' et ' : '-') + sous100(10 + u); // 71 soixante et onze
+    if (t === 8) return u ? 'quatre-vingt-' + UNITS[u] : 'quatre-vingts';
+    if (t === 9) return 'quatre-vingt-' + sous100(10 + u);
+    return TENS[t] + (u === 0 ? '' : u === 1 ? ' et un' : '-' + UNITS[u]);
+  }
+  function sous1000(n) {
+    const c = Math.floor(n / 100),
+      r = n % 100;
+    if (!c) return sous100(r);
+    const head = c === 1 ? 'cent' : UNITS[c] + (r ? ' cent' : ' cents');
+    return r ? head + ' ' + sous100(r) : head;
+  }
+  // Whole number < 1 000 000 000, or a decimal string « 3,05 » (→ « trois virgule zéro cinq »)
+  function nombreEnMots(x) {
+    const [ent, dec] = String(x).replace('.', ',').split(',');
+    let n = Number(ent);
+    const parts = [];
+    if (n === 0) parts.push('zéro');
+    const m = Math.floor(n / 1e6),
+      k = Math.floor(n / 1000) % 1000;
+    n %= 1000;
+    if (m) parts.push(m === 1 ? 'un million' : sous1000(m) + ' millions');
+    if (k)
+      parts.push(
+        k === 1
+          ? 'mille'
+          : sous1000(k)
+              .replace(/cents$/, 'cent')
+              .replace(/vingts$/, 'vingt') + ' mille'
+      );
+    if (n) parts.push(sous1000(n));
+    let words = parts.join(' ');
+    if (dec) words += ' virgule ' + (dec.match(/^0+/)?.[0] || '').replace(/0/g, 'zéro ') + sous100(Number(dec));
+    return words;
+  }
+  // Numbers that sound alike or are written alike: 16 / 60, 17 / 71, 72 / 62, 97 / 87, 13 / 30…
+  function confusables(n, max) {
+    const out = [];
+    const s = String(n);
+    if (s.length > 1) out.push(Number(s.split('').reverse().join(''))); // 17 ↔ 71
+    const r = n % 100,
+      base = n - r;
+    if (r >= 70 && r < 80) out.push(base + r - 10); // soixante-douze ↔ 62
+    if (r >= 90) out.push(base + r - 10); // quatre-vingt-dix-sept ↔ 87
+    if (r >= 60 && r < 70) out.push(base + r + 10);
+    if (r >= 80 && r < 90) out.push(base + r + 10);
+    if (r >= 12 && r <= 16) out.push(base + (r - 10) * 10); // treize ↔ 30
+    if (r % 10 === 0 && r >= 20 && r <= 60) out.push(base + 10 + r / 10);
+    out.push(n + 10, n - 10, n + 1, n - 1, n * 10);
+    return [...new Set(out)].filter((c) => c >= 1 && c <= max && c !== n);
+  }
+  // A number to hear: whole numbers in [min, max], about half of them « tricky » (11–16, 70–99 in the last hundred)
+  function nombreADire(params) {
+    const min = params.min ?? 1,
+      max = params.max ?? 20;
+    if (params.decimals) {
+      const ent = rand(min, max),
+        d = params.decimals;
+      const dec =
+        String(rand(1, 10 ** d - 1))
+          .padStart(d, '0')
+          .replace(/0+$/, '') || '5';
+      return `${ent},${dec}`;
+    }
+    for (let t = 0; t < 30 && Math.random() < (params.tricky ?? 0.5); t++) {
+      const n = rand(min, max);
+      const r = n % 100;
+      if ((r >= 11 && r <= 16) || r >= 70) return String(n);
+    }
+    return String(rand(min, max));
+  }
+
   const generators = {
+    // dicteeNombre: hear a number, write it in digits (voice exercise: speaks by itself at every level)
+    // params: min (1), max (20), decimals (0), tricky (0.5 — share of 11–16 / 70–99)
+    dicteeNombre: {
+      generate: (params = {}) => {
+        const x = nombreADire(params);
+        return {
+          type: 'number-check',
+          title: 'Écris le nombre que tu entends.',
+          say: nombreEnMots(x),
+          voice: true,
+          answers: [x],
+        };
+      },
+    },
+
+    // ecouteNombre: hear a number, tap it among numbers that sound or look alike (voice exercise)
+    // params: min (1), max (20), choices (3), tricky (0.5)
+    ecouteNombre: {
+      generate: (params = {}) => {
+        const max = params.max ?? 20;
+        const n = Number(nombreADire(params));
+        const near = confusables(n, max).slice(0, (params.choices ?? 3) - 1);
+        for (let d = 2; near.length < (params.choices ?? 3) - 1; d++) if (n + d <= max) near.push(n + d);
+        const choices = shuffle([n, ...near]).map(String);
+        return {
+          type: 'mcq',
+          title: params.title ?? 'Clique sur le nombre que tu entends.',
+          say: nombreEnMots(n),
+          voice: true,
+          mcqChoices: choices,
+          mcqAnswer: choices.indexOf(String(n)),
+          mcqCompact: true,
+          answers: [String(n)],
+        };
+      },
+    },
+
     decompositionBase10: {
       generate: (params = {}) => {
         const t = rand(params.minTens ?? 1, params.maxTens ?? 9);

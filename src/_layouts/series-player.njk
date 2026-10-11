@@ -35,7 +35,7 @@ isSeriesPage: true
 
 <div
   x-data='seriesPlayer({{ exercises | seriesPayload | safe }}, "{{ id }}")'
-  @hashchange.window="syncFromHash()" @resize.window.debounce="updateMatchLines()"
+  @hashchange.window="syncFromHash()" @resize.window.debounce="updateMatchLines()" @voice-pref.window="voicePrefChanged($event.detail)"
   x-cloak class="js-player max-w-xl mx-auto py-8 short:py-2{% if kid %} kid relative{% endif %}"{% if kid %} data-kid="1"{% endif %}
 >
   {# Series header #}
@@ -72,8 +72,25 @@ isSeriesPage: true
     <h1 x-show="cur.title" class="exercise-title text-3xl font-bold text-content-default text-center" x-html="cur.title || ''"></h1>
   </div>
   {% else %}
-  <h1 class="exercise-title text-2xl font-bold text-content-default mb-4 short:mb-2 text-center" x-html="cur.title || ''"></h1>
+  {# 🔊 next to a statement: opt-in voice help (automatic with the header toggle) — hidden without a usable French voice #}
+  <div class="flex items-center justify-center gap-2 mb-4 short:mb-2">
+    <h1 class="exercise-title text-2xl font-bold text-content-default text-center" x-html="cur.title || ''"></h1>
+    <button type="button" x-show="hasVoice && !cur.voice && (cur.say || cur.body)" @click="sayCurrent()" aria-label="Écouter l’énoncé" title="Écouter l’énoncé"
+      class="shrink-0 w-9 h-9 rounded-full text-lg hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">🔊</button>
+  </div>
+  {# Voice exercise (dictée): the number is only heard — big replay button #}
+  <div x-show="cur.voice && hasVoice" class="flex justify-center mb-6">
+    <button type="button" @click="sayCurrent()" aria-label="Écouter le nombre"
+      class="relative w-24 h-24 rounded-full bg-primary-500 hover:bg-primary-600 text-5xl shadow-lg transition-transform active:scale-95">
+      <span class="relative">🔊</span>
+    </button>
+  </div>
   {% endif %}
+  {# No usable French voice (none installed, online not opted in): explain how to install one, or opt in #}
+  <a x-show="voiceMissing && (kid || cur.voice || voicePref)" href="{{ '/fr/voix/' | url }}"
+    class="block mb-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-center text-sm">
+    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline -mt-0.5 mr-1"><path d="M11 5 6 9H3v6h3l5 4zm5 4 5 6m0-6-5 6"/></svg>Pas de voix française sur cet appareil. <span class="underline">Comment faire ?</span>
+  </a>
 
   {# Type-specific visual blocks (only included when the series uses that type) #}
   {% if 'number-check' in usedTypes %}{% include "types/number-check.njk" %}{% endif %}

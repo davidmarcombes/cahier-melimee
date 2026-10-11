@@ -42,6 +42,8 @@ Notre traitement repose sur l'**intérêt légitime** (article 6.1.f du RGPD) : 
 
 Aucune donnée n'est transmise à des tiers, des régies publicitaires ou des services d'analyse.
 
+Les exercices qui parlent utilisent par défaut une voix installée sur votre appareil : le texte lu n'est envoyé à aucun service de synthèse vocale en ligne. Si aucune voix n'est installée, un adulte peut choisir d'utiliser une voix en ligne : le navigateur envoie alors les phrases à lire à son fournisseur (Google, Microsoft…). Ce choix est gardé dans le cahier et peut être retiré à tout moment. Voir [La voix du Cahier](../voix/).
+
 ## Cookies et stockage local
 
 Ce site n'utilise **aucun cookie**. Un stockage local est utilisé uniquement pour les préférences d'affichage et les données de progression.

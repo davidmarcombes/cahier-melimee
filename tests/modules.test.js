@@ -260,6 +260,24 @@ describe('localStore Persistence', () => {
     expect(Object.keys(localStore.getProgress()).sort()).toEqual(['s1', 's2']); // nothing lost
   });
 
+  it('keeps preferences per cahier, guest ones go to the first cahier, travel in the file', () => {
+    localStore.setSetting('onlineVoice', true); // guest
+    const a = localStore.addUser({ slug: 'chat-1', username: 'chat', sticker_id: '⭐' });
+    expect(localStore.getSettings()).toEqual({ onlineVoice: true });
+    localStore.addUser({ slug: 'chien-1', username: 'chien', sticker_id: '🎈' });
+    expect(localStore.getSettings()).toEqual({}); // another child: not opted in
+    localStore.switchUser(a);
+    const file = JSON.parse(JSON.stringify(localStore.exportUser()));
+    expect(file.pupil.settings).toEqual({ onlineVoice: true });
+    localStorage.clear();
+    localStore.importUser(file);
+    expect(localStore.getSettings()).toEqual({ onlineVoice: true });
+    // Unknown or ill-typed preferences in a file are dropped
+    localStorage.clear();
+    localStore.importUser({ ...file, pupil: { ...file.pupil, settings: { onlineVoice: 'yes', x: 1 } } });
+    expect(localStore.getSettings()).toEqual({});
+  });
+
   it('refuses a file that is not a cahier', () => {
     expect(() => localStore.importUser({ hello: 1 })).toThrow(/pas un cahier/);
     expect(() => localStore.importUser({ format: 'cahier-melimee', pupil: { slug: '' } })).toThrow();

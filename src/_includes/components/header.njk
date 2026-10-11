@@ -24,11 +24,13 @@
              class="text-sm hover:text-primary-500 transition-colors">{{ item.text }}</a>
         {% endif %}
       {% endfor %}
+      {% include "components/voice-toggle.njk" %}
       {% include "components/theme-toggle.njk" %}
     </nav>
 
     {# Mobile: theme toggle + hamburger #}
     <div class="flex items-center gap-1 md:hidden">
+      {% include "components/voice-toggle.njk" %}
       {% include "components/theme-toggle.njk" %}
       <button
         type="button"

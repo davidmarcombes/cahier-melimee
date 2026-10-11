@@ -1,6 +1,7 @@
 import { localStore } from './store.js';
 import { renderOpShorthands, normalizeAnswer, groupDigits } from './utils.js';
 import { SETTINGS } from './constants.js';
+import { readVoicePref, frenchVoice } from './voice.js';
 
 // Value of a sort / drag-sort item: "3 050", "4,5", "3/4", an HTML fraction. NaN for pictures, which keep
 // their listed order (the comparator then returns NaN, treated as equal by the stable sort).
@@ -16,6 +17,10 @@ export function sortValue(s) {
   return frac ? Number(frac[1]) / Number(frac[2]) : parseFloat(t);
 }
 
+// French voice for read-aloud (modules/voice.js: installed first, online only if the cahier opted in).
+// Kept out of Alpine's reactive state: `utterance.voice` refuses a Proxy.
+let ttsVoice = null;
+
 export function seriesPlayer(exercises, seriesId) {
   return {
     exercises,
@@ -24,6 +29,9 @@ export function seriesPlayer(exercises, seriesId) {
     _ready: false,
     kid: false, // maternelle (GS): instructions and feedback read aloud
     kidStarted: false, // maternelle: the 🔊 start screen was tapped (that click also unlocks speech)
+    voicePref: false, // header toggle: read statements aloud automatically (opt-in, see modules/voice.js)
+    hasVoice: false, // a usable French voice exists (installed, or online if the cahier opted in)
+    voiceMissing: false, // none after loading → link to /fr/voix/
     countChoices: [], // count-objects (maternelle): number buttons instead of the input
     countWrong: null, // count-objects: wrong number just tapped
     countHidden: false, // count-objects with `flash`: picture hidden after a short look
@@ -281,6 +289,8 @@ export function seriesPlayer(exercises, seriesId) {
 
     init() {
       this.kid = this.$el.dataset.kid === '1';
+      this.voicePref = readVoicePref();
+      this._pickVoice();
       this.regenerateAll();
       this.syncFromHash();
       this._setupCurrentExercise();
@@ -305,7 +315,7 @@ export function seriesPlayer(exercises, seriesId) {
       this.$watch('currentIndex', () => {
         this._setupCurrentExercise();
         requestAnimationFrame(_focusFirst);
-        if (this.kid && this.kidStarted) this.sayCurrent();
+        if (this.autoVoice && (!this.kid || this.kidStarted)) this.sayCurrent();
       });
       this.$watch('solvedCount', (count) => {
         if (count === this.exercises.length && this.exercises.length > 0) {
@@ -1928,13 +1938,43 @@ export function seriesPlayer(exercises, seriesId) {
       return '';
     },
 
-    /* Maternelle read-aloud (speechSynthesis, fr-FR voice when the system has one) */
+    /* Read-aloud (speechSynthesis) — voice choice in modules/voice.js (`frenchVoice`) */
+    _pickVoice() {
+      const synth = window.speechSynthesis;
+      const pick = () => {
+        ttsVoice = frenchVoice();
+        this.hasVoice = !!ttsVoice;
+        if (ttsVoice) this.voiceMissing = false;
+      };
+      pick();
+      if (synth && synth.addEventListener) synth.addEventListener('voiceschanged', pick);
+      // Voices arrive late (Chrome) or never (Firefox without speech-dispatcher)
+      setTimeout(() => {
+        if (!ttsVoice) this.voiceMissing = true;
+      }, 1500);
+    },
+
+    // Speech starts by itself only in GS, on an exercise built around the voice (dictée), or when the header
+    // toggle is on (opt-in) — and then only on exercises with something to read (a statement or a `say:`)
+    get autoVoice() {
+      const c = this.cur;
+      return this.kid || !!c.voice || (this.voicePref && !!(c.say || c.body));
+    },
+
+    // Header toggle flipped: its click unlocks speech, so turning it on reads the current exercise
+    voicePrefChanged(on) {
+      this.voicePref = on;
+      if (on && this.autoVoice) this.sayCurrent();
+      else if (!on && window.speechSynthesis) window.speechSynthesis.cancel();
+    },
+
     speak(text) {
       const synth = window.speechSynthesis;
-      if (!synth || !text) return;
+      if (!synth || !text || !ttsVoice) return;
       synth.cancel();
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'fr-FR';
+      u.voice = ttsVoice;
+      u.lang = ttsVoice.lang;
       u.rate = 0.9;
       synth.speak(u);
     },
@@ -1946,19 +1986,27 @@ export function seriesPlayer(exercises, seriesId) {
     },
 
     // Width of a string in « symbols » (an emoji with its variation selector or skin tone counts once,
-    // a space about a third) — sizes a maternelle picture row so it fits on one line
+    // a plain space about a third) — sizes a maternelle picture row so it fits on one line
     symbolCount(s) {
       const str = String(s || '');
       const all = Intl.Segmenter ? [...new Intl.Segmenter().segment(str)].map((g) => g.segment) : [...str];
-      const spaces = all.filter((g) => /\s/.test(g)).length;
+      const spaces = all.filter((g) => g === ' ').length; // an em space (group separator) is a full symbol wide
       return all.length - spaces + spaces * 0.35;
     },
 
-    // Spoken instruction: `say` from the front-matter, else the title without its markup
+    // Spoken text: `say` from the front-matter, else the title (maternelle) or title + statement, without markup
     sayCurrent() {
+      const c = this.cur;
       const tmp = document.createElement('div');
-      tmp.innerHTML = this.cur.say || this.cur.title || '';
-      this.speak(tmp.textContent.trim());
+      const text = (html) => {
+        tmp.innerHTML = html || '';
+        return tmp.textContent.replace(/\s+/g, ' ').trim();
+      };
+      if (c.say || this.kid) return this.speak(text(c.say || c.title));
+      // Title then statement, with a pause between them (« Les billes. Mia a 9 billes… »)
+      const title = text(c.title);
+      const body = text(c.body);
+      this.speak(title && body ? title + (/[.?!:…]$/.test(title) ? ' ' : '. ') + body : title || body);
     },
 
     _kidFeedback(ok) {
