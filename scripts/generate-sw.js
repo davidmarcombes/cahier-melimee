@@ -4,11 +4,15 @@
 /**
  * generate-sw.js — post-build step
  *
- * Scans _site/, builds a URL list, computes a cache-version hash, then
- * writes _site/sw.js containing the full service-worker code with the
- * precache list embedded.
+ * Writes _site/sw.js. Precaches only the shell (JS, CSS, fonts, icons, manifest);
+ * pages and other files are cached the first time they are visited.
+ * Precaching every page (874 URLs at v1.1.0) on each first visit and each deploy
+ * tripped the host's request limit.
  *
- * Run after `eleventy` + `build:css` so every file is present.
+ * Cache version = content hash of the shell, so a deploy that only changes
+ * pages leaves sw.js byte-identical: no reinstall, no re-download.
+ *
+ * Run after `eleventy` + `build:css` + `minify` so every file is final.
  */
 
 const fs = require('fs');
@@ -38,27 +42,30 @@ function fileToUrl(filePath) {
   return base;
 }
 
-const SKIP_FILES = new Set(['sw.js', '.gitkeep']);
-const SKIP_EXTS = new Set(['.map']);
+// Shell: what every page needs. Everything else is cached on visit.
+const SHELL = [
+  /^\/assets\/js\/.+\.js$/,
+  /^\/css\/.+\.css$/,
+  /^\/assets\/fonts\/.+\.woff2$/,
+  /^\/assets\/images\/IJYXr3zhT1-256\.avif$/, // header logo
+  /^\/favicon\.ico$/,
+  /^\/manifest\.json$/,
+];
+const SKIP_FILES = new Set(['dev.js']);
 
-const allFiles = scanDir(SITE_DIR);
-
-const entries = allFiles
+const entries = scanDir(SITE_DIR)
   .map((f) => ({ file: f, url: fileToUrl(f) }))
-  .filter(({ file }) => {
+  .filter(({ file, url }) => {
     if (SKIP_FILES.has(path.basename(file))) return false;
-    if (SKIP_EXTS.has(path.extname(file))) return false;
-    return true;
-  });
+    return SHELL.some((re) => re.test(url.slice(PATH_PREFIX.length)));
+  })
+  .sort((a, b) => a.url.localeCompare(b.url));
 
 // ── cache version ─────────────────────────────────────────────────────────────
-// Hash over sorted (path, size, mtime) — changes whenever any file changes.
+// Content hash of the shell (not mtime: every build touches every file).
 
 const hash = crypto.createHash('sha1');
-for (const { file } of [...entries].sort((a, b) => a.file.localeCompare(b.file))) {
-  const s = fs.statSync(file);
-  hash.update(`${file}:${s.size}:${s.mtimeMs}`);
-}
+for (const { file, url } of entries) hash.update(url).update(fs.readFileSync(file));
 const cacheVersion = hash.digest('hex').slice(0, 10);
 
 const urlList = entries.map((e) => e.url);
@@ -106,20 +113,23 @@ async function maybeDecompress(res) {
   return new Response(ds.readable, { status: res.status, statusText: res.statusText, headers });
 }
 
-// Fetch one URL and store it in the cache (compressing text content).
+// Store a response under url (compressing text content).
+async function store(cache, url, res) {
+  if (shouldCompress(url)) {
+    const { buffer, compressed } = await compress(await res.arrayBuffer());
+    const headers = new Headers(res.headers);
+    if (compressed) headers.set('X-SW-Compressed', '1');
+    await cache.put(url, new Response(buffer, { status: res.status, statusText: res.statusText, headers }));
+  } else {
+    await cache.put(url, res);
+  }
+}
+
+// Fetch one URL and store it in the cache.
 async function fetchAndCache(cache, url) {
   try {
     const res = await fetch(url, { cache: 'no-cache' });
-    if (!res.ok) return;
-    if (shouldCompress(url)) {
-      const body = await res.arrayBuffer();
-      const { buffer, compressed } = await compress(body);
-      const headers = new Headers(res.headers);
-      if (compressed) headers.set('X-SW-Compressed', '1');
-      await cache.put(url, new Response(buffer, { status: res.status, statusText: res.statusText, headers }));
-    } else {
-      await cache.put(url, res);
-    }
+    if (res.ok) await store(cache, url, res);
   } catch (e) {
     console.warn('[SW] cache miss:', url, e.message);
   }
@@ -146,19 +156,34 @@ self.addEventListener('activate', event => {
   })());
 });
 
-// ── fetch strategy: cache-first, network fallback ─────────────────────────────
+// ── fetch strategy ────────────────────────────────────────────────────────────
+// Shell: cache-first. Pages: stale-while-revalidate (cached copy now, fresh copy
+// stored for next visit). Anything else: cached on first fetch. Same origin only.
+
+const SHELL = new Set(PRECACHE_URLS);
+const OFFLINE = () =>
+  new Response('Hors-ligne', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  // Static site: a query string never changes the file (?v=<version> on JS/CSS, ?user= on pages)
+  const key = url.pathname;
   event.respondWith((async () => {
-    // Static site: a query string never changes the file (?v=<version> on JS/CSS, ?user= on pages)
-    const cached = await caches.match(event.request, { ignoreSearch: true });
-    if (cached) return maybeDecompress(cached);
-    try {
-      return await fetch(event.request);
-    } catch {
-      return new Response('Hors-ligne', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+    const cache = await caches.open(CACHE_NAME);
+    const cached = await cache.match(key);
+    const refresh = () =>
+      fetch(req).then(async (res) => {
+        if (res.ok && res.type === 'basic') await store(cache, key, res.clone());
+        return res;
+      });
+    if (cached) {
+      if (req.mode === 'navigate' && !SHELL.has(key)) event.waitUntil(refresh().catch(() => {}));
+      return maybeDecompress(cached);
     }
+    return refresh().catch(OFFLINE);
   })());
 });
 `;

@@ -15,6 +15,7 @@ _site/
 _zsite/
 _docs/
 dist/
+visuals/
 
 # Environment variables
 .env

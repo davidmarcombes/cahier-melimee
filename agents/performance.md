@@ -43,7 +43,7 @@ In `base.njk`, scripts load in this order:
 1. **Inline, in `<head>`** — `window.__pathPrefix`, then the dark-mode class (before paint, no theme flash)
 2. **app.js** — `type="module"`, `defer`; it registers the Alpine components on `window`
 3. **alpine.min.js** — `defer`, after app.js so the components exist when Alpine starts
-4. **Service worker registration** — inline, on `load` (unregistered in dev mode)
+4. **Service worker registration** — inline, on `load` (unregistered in dev mode). `scripts/generate-sw.js` precaches the shell only (JS, CSS, fonts, logo, manifest); pages are cached on visit (stale-while-revalidate). Never precache pages: 874 URLs per first visit tripped the host's request limit.
 
 Page-specific scripts (`svg.js`, generator modules) are plain classic scripts in `series-player.njk` / `timed-player.njk`. Every JS/CSS URL carries `?v={{ site.version }}` (see `docs/release.md`).
 
