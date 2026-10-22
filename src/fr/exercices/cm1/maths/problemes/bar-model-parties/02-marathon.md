@@ -1,7 +1,6 @@
 ---
 type: bar-model
 title: "Le marathon"
-body: "Un marathon mesure **42 km**. Un coureur a parcouru **27 km**. Quelle distance lui reste-t-il à courir ?"
 bm:
   mode: part-whole
   whole: 42
@@ -11,3 +10,5 @@ bm:
 answer: "15"
 unit: "km"
 ---
+
+Un marathon mesure **42 km**. Un coureur a parcouru **27 km**. Quelle distance lui reste-t-il à courir ?

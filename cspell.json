@@ -10,7 +10,7 @@
     "/(?<!\\p{L})\\p{Lu}{2,}(?!\\p{L})/gu",
     "/class=\\\"[^\\\"]*\\\"/g",
     "/^[ \\-]*[A-Za-z_]+:/gm",
-    "/^[ \\-]*(type|generator|gen|name|class|id|svg|shape|direction|mode|theme|op|rule|unit|level):.*$/gm"
+    "/^[ \\-]*(type|generator|gen|name|class|id|svg|shape|direction|mode|theme|op|rule|unit|level|layouts):.*$/gm"
   ],
   "words": [
     "Alpine",
@@ -121,7 +121,13 @@
     "trapèze",
     "unités",
     "Vérifier",
-    "Yara"
+    "Yara",
+    "Chromebook",
+    "espeak",
+    "Chromium",
+    "RHVoice",
+    "Piper",
+    "Edge"
   ],
   "ignoreWords": [
     "true",

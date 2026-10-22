@@ -19,7 +19,7 @@ export const SETTINGS = {
   SESSION_STORAGE_EX_KEY: 'ex',
 
   // Levels & Categories
-  LEVELS_MAP: { 1: 'CP', 2: 'CE1', 3: 'CE2', 4: 'CM1', 5: 'CM2' },
+  LEVELS_MAP: { 0: 'GS', 1: 'CP', 2: 'CE1', 3: 'CE2', 4: 'CM1', 5: 'CM2' },
   DIFFS_MAP: { 1: 'facile', 2: 'moyen', 3: 'difficile' },
   FOLDERS_MAP: { e: 'exercices', a: 'applications', d: 'defis' },
 };

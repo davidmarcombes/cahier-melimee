@@ -1,0 +1,12 @@
+{# /fr/voix/ bottom — online-voice opt-in, kept in the cahier (modules/voice.js voiceSettings) #}
+<div x-data="voiceSettings()" class="not-prose my-6 p-4 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 text-sm">
+  <label x-show="!hasLocal" class="flex items-start gap-2 cursor-pointer">
+    <input type="checkbox" x-model="online" @change="save()" class="mt-1">
+    <span>
+      J'accepte d'utiliser une <strong>voix en ligne</strong> : le navigateur envoie les phrases à lire à son fournisseur.
+      <span x-show="cahier" class="block mt-1 text-content-subtle">Ce choix est gardé dans le cahier <strong x-text="cahier && cahier.username"></strong>, et le suit dans son fichier de sauvegarde.</span>
+      <span x-show="!cahier" class="block mt-1 text-content-subtle">Aucun cahier ouvert : ce choix est gardé sur cet appareil, et passera au premier cahier créé.</span>
+    </span>
+  </label>
+  <p x-show="hasLocal" class="text-content-subtle">Une voix française est installée sur cet appareil : c'est elle qui parle, les voix en ligne ne servent pas.</p>
+</div>

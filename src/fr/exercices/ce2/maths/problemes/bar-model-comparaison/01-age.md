@@ -1,7 +1,6 @@
 ---
 type: bar-model
 title: "L'écart d'âge"
-body: "Tom a **8 ans**. Julie a **11 ans**. Quel est l'**écart** entre leurs âges ?"
 bm:
   mode: comparison
   ref: 11
@@ -13,3 +12,5 @@ bm:
 answer: "3"
 unit: "ans"
 ---
+
+Tom a **8 ans**. Julie a **11 ans**. Quel est l'**écart** entre leurs âges ?

@@ -1,7 +1,6 @@
 ---
 type: bar-model
 title: "Les livres"
-body: "Anna a **24 livres**. Malik en a **8 de plus** qu'Anna. Combien Malik a-t-il de livres ?"
 bm:
   mode: comparison
   ref: 24
@@ -13,3 +12,5 @@ bm:
 answer: "32"
 unit: "livres"
 ---
+
+Anna a **24 livres**. Malik en a **8 de plus** qu'Anna. Combien Malik a-t-il de livres ?

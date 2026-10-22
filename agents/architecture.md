@@ -64,7 +64,7 @@ project-root/
     └── fr/              # French content — ONLY .md/.yaml files (no templates)
         ├── exercices/   # Static exercises: many hand-written .md per series
         │   ├── exercices.json   # Data cascade (tags, permalink: false)
-        │   └── {level}/maths/   # CP, CE1, CE2, CM1, CM2
+        │   └── {level}/maths/   # GS, CP, CE1, CE2, CM1, CM2
         ├── applications/ # Generated exercises: .md with generator + repeat
         │   ├── applications.json # Data cascade
         │   └── {level}/maths/   # Same nested structure

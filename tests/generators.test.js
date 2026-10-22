@@ -1159,3 +1159,29 @@ describe('convertirMesure', () => {
       }
     });
 });
+
+// Voice exercises speak numbers from words (never digits): the classic French traps
+describe('dicteeNombre — spoken number names', () => {
+  const say = (n) => generators.dicteeNombre.generate({ min: n, max: n }).say;
+  it.each([
+    [21, 'vingt et un'],
+    [71, 'soixante et onze'],
+    [80, 'quatre-vingts'],
+    [81, 'quatre-vingt-un'],
+    [91, 'quatre-vingt-onze'],
+    [200, 'deux cents'],
+    [201, 'deux cent un'],
+    [1000, 'mille'],
+    [21000, 'vingt et un mille'],
+    [80000, 'quatre-vingt mille'],
+    [200000, 'deux cent mille'],
+    [2000000, 'deux millions'],
+    [1200000, 'un million deux cent mille'],
+  ])('%i → %s', (n, words) => expect(say(n)).toBe(words));
+  it('decimals: « virgule », leading zeros spoken', () => {
+    const r = generators.dicteeNombre.generate({ min: 3, max: 3, decimals: 2 });
+    const dec = r.answers[0].split(',')[1];
+    expect(r.say.startsWith('trois virgule ')).toBe(true);
+    if (dec.startsWith('0')) expect(r.say).toContain('virgule zéro');
+  });
+});

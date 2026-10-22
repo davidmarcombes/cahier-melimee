@@ -456,6 +456,8 @@ module.exports = async function (eleventyConfig) {
               ? md.render(interpolate(String(ex.data.body))).trim()
               : '',
         };
+        // Spoken instruction (maternelle read-aloud), when the title alone is too short to read out
+        if (ex.data.say) item.say = interpolate(String(ex.data.say));
         // Only render operation as math if it doesn't have gaps, to preserve trouParts logic
         if (item.operation && !item.operation.includes('?')) {
           item.operation = md.renderInline(item.operation);
@@ -683,6 +685,19 @@ module.exports = async function (eleventyConfig) {
           item.mcqChoices = choices;
           item.mcqAnswer = choices.indexOf(md.renderInline(correct));
           if (ex.data.compact || ex.data.mcqCompact) item.mcqCompact = true;
+        }
+
+        if (ex.data.type === 'classify' && ex.data.categories && ex.data.items) {
+          item.categories = ex.data.categories.map((c) => ({ id: String(c.id), label: interpolate(String(c.label)) }));
+          const items = ex.data.items.map((it) => ({
+            html: md.renderInline(interpolate(String(it.html))),
+            cat: String(it.cat),
+          }));
+          for (let i = items.length - 1; i > 0; i--) {
+            const j = Math.floor(random() * (i + 1));
+            [items[i], items[j]] = [items[j], items[i]];
+          }
+          item.items = items;
         }
 
         if (ex.data.type === 'compare' && ex.data.comparisons) {
@@ -1280,7 +1295,7 @@ module.exports = async function (eleventyConfig) {
   });
 
   // Convert seriesMeta to compact CSV for the listing page
-  const LEVEL_CODES = { CP: '1', CE1: '2', CE2: '3', CM1: '4', CM2: '5' };
+  const LEVEL_CODES = { GS: '0', CP: '1', CE1: '2', CE2: '3', CM1: '4', CM2: '5' };
   const DIFF_CODES = { facile: '1', moyen: '2', difficile: '3' };
   const DISAMBIG_EMOJIS = [
     '🐶',

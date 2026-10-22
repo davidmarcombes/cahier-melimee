@@ -1,7 +1,6 @@
 ---
 type: bar-model
 title: "Les billes"
-body: "Léa a **36 billes** en tout. Elle en a **? bleues** et **15 rouges**. Combien de billes bleues a-t-elle ?"
 bm:
   mode: part-whole
   whole: 36
@@ -11,3 +10,5 @@ bm:
 answer: "21"
 unit: "billes bleues"
 ---
+
+Léa a **36 billes** en tout. Elle en a **? bleues** et **15 rouges**. Combien de billes bleues a-t-elle ?

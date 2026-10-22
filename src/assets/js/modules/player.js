@@ -1,6 +1,7 @@
 import { localStore } from './store.js';
 import { renderOpShorthands, normalizeAnswer, groupDigits } from './utils.js';
 import { SETTINGS } from './constants.js';
+import { readVoicePref, frenchVoice } from './voice.js';
 
 // Value of a sort / drag-sort item: "3 050", "4,5", "3/4", an HTML fraction. NaN for pictures, which keep
 // their listed order (the comparator then returns NaN, treated as equal by the stable sort).
@@ -16,12 +17,25 @@ export function sortValue(s) {
   return frac ? Number(frac[1]) / Number(frac[2]) : parseFloat(t);
 }
 
+// French voice for read-aloud (modules/voice.js: installed first, online only if the cahier opted in).
+// Kept out of Alpine's reactive state: `utterance.voice` refuses a Proxy.
+let ttsVoice = null;
+
 export function seriesPlayer(exercises, seriesId) {
   return {
     exercises,
     seriesId: seriesId || '',
     currentIndex: 0,
     _ready: false,
+    kid: false, // maternelle (GS): instructions and feedback read aloud
+    kidStarted: false, // maternelle: the 🔊 start screen was tapped (that click also unlocks speech)
+    voicePref: false, // header toggle: read statements aloud automatically (opt-in, see modules/voice.js)
+    hasVoice: false, // a usable French voice exists (installed, or online if the cahier opted in)
+    voiceMissing: false, // none after loading → link to /fr/voix/
+    countChoices: [], // count-objects (maternelle): number buttons instead of the input
+    countWrong: null, // count-objects: wrong number just tapped
+    countHidden: false, // count-objects with `flash`: picture hidden after a short look
+    _countTimer: null,
     userInput: '',
     trouInputs: [],
     showError: false,
@@ -274,6 +288,9 @@ export function seriesPlayer(exercises, seriesId) {
     },
 
     init() {
+      this.kid = this.$el.dataset.kid === '1';
+      this.voicePref = readVoicePref();
+      this._pickVoice();
       this.regenerateAll();
       this.syncFromHash();
       this._setupCurrentExercise();
@@ -298,14 +315,21 @@ export function seriesPlayer(exercises, seriesId) {
       this.$watch('currentIndex', () => {
         this._setupCurrentExercise();
         requestAnimationFrame(_focusFirst);
+        if (this.autoVoice && (!this.kid || this.kidStarted)) this.sayCurrent();
       });
       this.$watch('solvedCount', (count) => {
-        if (count === this.exercises.length && this.exercises.length > 0) localStore.markDone(this.seriesId);
+        if (count === this.exercises.length && this.exercises.length > 0) {
+          localStore.markDone(this.seriesId);
+          if (this.kid) this.speak('Bravo, tu as tout réussi !');
+        }
       });
     },
 
     _setupCurrentExercise() {
       const _e = this.cur;
+      this.countWrong = null;
+      this.countChoices = this.kid && _e.type === 'count-objects' ? this._nearChoices(Number(_e.answers?.[0])) : [];
+      this.countShow();
       const _blanks = String(_e.operation ?? '').split('?').length - 1;
       const _colOpBlanks = _e.colOp ? (_e.colOp.result || []).filter((d) => d === '?').length : 0;
       this.trouInputs = _blanks + _colOpBlanks > 0 ? Array(_blanks + _colOpBlanks).fill('') : [];
@@ -595,6 +619,8 @@ export function seriesPlayer(exercises, seriesId) {
       const idx = this.tileSelected.indexOf(i);
       this.tileSelected = idx === -1 ? [...this.tileSelected, i] : this.tileSelected.filter((s) => s !== i);
       this.tileErrors = [];
+      // Maternelle: no « Vérifier » step — check once as many tiles as answers are picked
+      if (this.kid && this.tileSelected.length === (this.cur.tileAnswers || []).length) this.check();
     },
 
     mcPaint(i) {
@@ -872,6 +898,8 @@ export function seriesPlayer(exercises, seriesId) {
       this.classifyPlacements = updated;
       this.classifySelected = null;
       this.classifyErrors = [];
+      // Maternelle: no « Vérifier » step — check as soon as everything is placed
+      if (this.kid && Object.keys(updated).length === this.cur.items.length) this.check();
     },
 
     /* Classify — pick an already-placed item back to the bank */
@@ -1074,6 +1102,8 @@ export function seriesPlayer(exercises, seriesId) {
         } else {
           this.tileErrors = this.tileSelected.filter((i) => !expected.includes(i));
           this._flashError(() => {
+            // Maternelle: wrong tiles let go, so the pupil can tap again
+            if (this.kid) this.tileSelected = this.tileSelected.filter((i) => !this.tileErrors.includes(i));
             this.tileErrors = [];
           });
         }
@@ -1908,9 +1938,87 @@ export function seriesPlayer(exercises, seriesId) {
       return '';
     },
 
+    /* Read-aloud (speechSynthesis) — voice choice in modules/voice.js (`frenchVoice`) */
+    _pickVoice() {
+      const synth = window.speechSynthesis;
+      const pick = () => {
+        ttsVoice = frenchVoice();
+        this.hasVoice = !!ttsVoice;
+        if (ttsVoice) this.voiceMissing = false;
+      };
+      pick();
+      if (synth && synth.addEventListener) synth.addEventListener('voiceschanged', pick);
+      // Voices arrive late (Chrome) or never (Firefox without speech-dispatcher)
+      setTimeout(() => {
+        if (!ttsVoice) this.voiceMissing = true;
+      }, 1500);
+    },
+
+    // Speech starts by itself only in GS, on an exercise built around the voice (dictée), or when the header
+    // toggle is on (opt-in) — and then only on exercises with something to read (a statement or a `say:`)
+    get autoVoice() {
+      const c = this.cur;
+      return this.kid || !!c.voice || (this.voicePref && !!(c.say || c.body));
+    },
+
+    // Header toggle flipped: its click unlocks speech, so turning it on reads the current exercise
+    voicePrefChanged(on) {
+      this.voicePref = on;
+      if (on && this.autoVoice) this.sayCurrent();
+      else if (!on && window.speechSynthesis) window.speechSynthesis.cancel();
+    },
+
+    speak(text) {
+      const synth = window.speechSynthesis;
+      if (!synth || !text || !ttsVoice) return;
+      synth.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.voice = ttsVoice;
+      u.lang = ttsVoice.lang;
+      u.rate = 0.9;
+      synth.speak(u);
+    },
+
+    // Browsers refuse speech before a click: the start screen's tap is that click
+    kidStart() {
+      this.kidStarted = true;
+      this.sayCurrent();
+    },
+
+    // Width of a string in « symbols » (an emoji with its variation selector or skin tone counts once,
+    // a plain space about a third) — sizes a maternelle picture row so it fits on one line
+    symbolCount(s) {
+      const str = String(s || '');
+      const all = Intl.Segmenter ? [...new Intl.Segmenter().segment(str)].map((g) => g.segment) : [...str];
+      const spaces = all.filter((g) => g === ' ').length; // an em space (group separator) is a full symbol wide
+      return all.length - spaces + spaces * 0.35;
+    },
+
+    // Spoken text: `say` from the front-matter, else the title (maternelle) or title + statement, without markup
+    sayCurrent() {
+      const c = this.cur;
+      const tmp = document.createElement('div');
+      const text = (html) => {
+        tmp.innerHTML = html || '';
+        return tmp.textContent.replace(/\s+/g, ' ').trim();
+      };
+      if (c.say || this.kid) return this.speak(text(c.say || c.title));
+      // Title then statement, with a pause between them (« Les billes. Mia a 9 billes… »)
+      const title = text(c.title);
+      const body = text(c.body);
+      this.speak(title && body ? title + (/[.?!:…]$/.test(title) ? ' ' : '. ') + body : title || body);
+    },
+
+    _kidFeedback(ok) {
+      if (!this.kid) return;
+      const praise = ['Bravo !', 'Super !', 'Génial !', 'Très bien !'];
+      this.speak(ok ? praise[Math.floor(Math.random() * praise.length)] : 'Essaie encore !');
+    },
+
     _markSolvedAndAdvance() {
       this.solvedFlags[this.currentIndex] = true;
       this.showError = false;
+      if (this.solvedCount < this.exercises.length) this._kidFeedback(true);
       if (this.currentIndex < this.exercises.length - 1) {
         setTimeout(() => this.goTo(this.currentIndex + 1), SETTINGS.SUCCESS_ADVANCE_DELAY);
       }
@@ -1918,6 +2026,7 @@ export function seriesPlayer(exercises, seriesId) {
 
     _flashError(cleanup) {
       this.showError = true;
+      this._kidFeedback(false);
       setTimeout(() => {
         this.showError = false;
         if (cleanup) cleanup();
@@ -2022,10 +2131,46 @@ export function seriesPlayer(exercises, seriesId) {
         this._markSolvedAndAdvance();
       } else {
         this.cmpGroupWrong = i;
+        this._kidFeedback(false);
         setTimeout(() => {
           this.cmpGroupWrong = null;
         }, SETTINGS.MCQ_WRONG_DELAY);
       }
+    },
+
+    // 3 big choices around the answer, never below 1 (« 1 2 3 » for 1, « 4 5 6 » or « 5 6 7 »… for 6)
+    _nearChoices(n) {
+      if (!(n >= 1)) return [];
+      const lo = Math.max(1, n - Math.floor(Math.random() * 3));
+      const c = [lo, lo + 1, lo + 2];
+      for (let i = c.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [c[i], c[j]] = [c[j], c[i]];
+      }
+      return c;
+    },
+
+    countTap(n) {
+      if (this.solved) return;
+      this.userInput = String(n);
+      this.check();
+      if (!this.solved) {
+        this.countWrong = n;
+        setTimeout(() => {
+          this.countWrong = null;
+        }, SETTINGS.MCQ_WRONG_DELAY);
+      }
+    },
+
+    // Show the picture; with `flash` (ms) it hides again — « combien d'un coup d'œil ? »
+    countShow() {
+      clearTimeout(this._countTimer);
+      this.countHidden = false;
+      const ms = this.cur.flash;
+      if (ms > 0)
+        this._countTimer = setTimeout(() => {
+          if (!this.solved) this.countHidden = true;
+        }, ms);
     },
 
     mcqTap(i) {
@@ -2037,6 +2182,7 @@ export function seriesPlayer(exercises, seriesId) {
       } else {
         this.mcqWrong = i;
         this.mcqSelected = null;
+        this._kidFeedback(false);
         setTimeout(() => {
           this.mcqWrong = null;
         }, SETTINGS.SUCCESS_ADVANCE_DELAY);

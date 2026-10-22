@@ -99,10 +99,11 @@ async function runHealthChecks(page, url) {
   //    overflow horizontally (checked per exercise: content width varies from one to the next)
   const walk = await page.evaluate(async () => {
     const root = document.querySelector('[x-data^="seriesPlayer"]');
-    if (!root || !window.Alpine) return { out: [], overflow: [] };
+    if (!root || !window.Alpine) return { out: [], overflow: [], empty: [] };
     const p = window.Alpine.$data(root);
     const out = [];
     const overflow = [];
+    const empty = [];
     const frame = () => new Promise((r) => setTimeout(r, 50));
     for (let i = 0; i < p.exercises.length; i++) {
       p.currentIndex = i; // not goTo(): no URL-hash navigation while the test walks the exercises
@@ -118,6 +119,15 @@ async function runHealthChecks(page, url) {
       }
       if (!shown) out.push(`#${i + 1} (${t})`);
       if (root.innerText.includes('Erreur de génération')) out.push(`#${i + 1} generator error`);
+      // A word problem without its statement: the pupil gets an empty card and an answer box
+      // (49 statements hidden in a front-matter `body:` until 2026-10 — the solver never noticed)
+      if (
+        (t === 'problem' || t === 'bar-model') &&
+        !String(p.cur.body || '')
+          .replace(/<[^>]+>/g, '')
+          .trim()
+      )
+        empty.push(`#${i + 1} (${t})`);
       const doc = document.documentElement;
       if (doc.scrollWidth > doc.clientWidth + 5)
         overflow.push(`#${i + 1} (${t}, ${doc.scrollWidth}px > ${doc.clientWidth}px)`);
@@ -149,10 +159,11 @@ async function runHealthChecks(page, url) {
         );
     }
 
-    return { out, overflow };
+    return { out, overflow, empty };
   });
   if (walk.out.length) issues.push(`exercises with no visible type block: ${walk.out.join(', ')}`);
   if (walk.overflow.length) issues.push(`horizontal overflow on exercise ${walk.overflow.join(', ')}`);
+  if (walk.empty.length) issues.push(`word problem with no statement: ${walk.empty.join(', ')}`);
 
   // Errors collected during load and the walk
   if (jsErrors.length) issues.push(`JS error: ${[...new Set(jsErrors)].slice(0, 5).join(' | ')}`);

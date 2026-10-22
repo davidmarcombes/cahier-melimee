@@ -1,0 +1,18 @@
+{# /fr/voix/ top — French voices found on this device + test button (modules/voice.js voiceSettings) #}
+<div x-data="voiceSettings()" @online-voice.window="online = $event.detail" class="not-prose my-6 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-surface-subtle space-y-3 text-sm">
+  <p class="font-bold text-content-default">Voix françaises sur cet appareil</p>
+  <ul class="space-y-1">
+    <template x-for="v in voices" :key="v.name">
+      <li class="flex items-center gap-2">
+        <span x-text="v.local ? '✅' : '🌐'"></span>
+        <span x-text="v.name"></span>
+        <span class="text-content-subtle" x-text="v.local ? 'installée' : 'en ligne'"></span>
+      </li>
+    </template>
+    <li x-show="voices.length === 0" class="text-content-subtle">Aucune voix française trouvée par le navigateur.</li>
+  </ul>
+  <div class="flex items-center gap-3 pt-1">
+    <button type="button" @click="test()" :disabled="!current" class="px-4 py-2 rounded-xl bg-primary-500 text-white font-bold disabled:opacity-40">🔊 Essayer</button>
+    <span class="text-content-subtle" x-text="current ? 'Voix utilisée : ' + current : 'Aucune voix utilisable pour l’instant.'"></span>
+  </div>
+</div>

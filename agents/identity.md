@@ -34,7 +34,7 @@ if the cahier already exists on the device, both progressions are merged (union,
 
 ## GDPR & Privacy
 
-- **Data minimization:** Only pseudonym, sticker and finished series are stored
+- **Data minimization:** Only pseudonym, sticker, finished series and preferences are stored
 - **Zero PII:** No names, IPs, or contact info linked to identity
 - **Local only:** All data lives in `localStorage` on the user's device — nothing sent to a server
 - **Risk level:** Low — worst case is losing math progress if localStorage is cleared (hence the file export), or a sibling opening another child's cahier
@@ -53,15 +53,20 @@ if the cahier already exists on the device, both progressions are merged (union,
       username: 'petit-renard-roux',
       sticker_id: '🎈',
       createdAt: '2026-10-03T10:00:00.000Z',
-      progress: { 'series-id': { done: true, completedAt: '2026-10-03T10:20:00.000Z' } }
+      progress: { 'series-id': { done: true, completedAt: '2026-10-03T10:20:00.000Z' } },
+      settings: { onlineVoice: true }      // preferences (only known keys survive an import)
     }
   },
-  progress: {}                             // guest work, before any cahier exists
+  progress: {},                            // guest work, before any cahier exists
+  settings: {}                             // guest preferences, adopted by the first cahier
 }
 ```
 
 API: `src/assets/js/modules/store.js` (`getUser`, `listUsers`, `addUser`, `switchUser`, `clearUser`,
-`removeUser`, `markDone`, `getProgress`, `exportUser`, `importUser`), tested in `tests/modules.test.js`.
+`removeUser`, `markDone`, `getProgress`, `getSettings`, `setSetting`, `exportUser`, `importUser`), tested in `tests/modules.test.js`.
+
+Settings: `onlineVoice` — an adult accepted an online voice on `/fr/voix/` (the browser sends the sentences to its
+provider); used only when no French voice is installed. Exported in the cahier file (`pupil.settings`).
 
 ## Pages
 

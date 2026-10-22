@@ -23,12 +23,12 @@ Le site ne charge **aucune ressource d'un autre serveur** (polices, scripts, ima
 
 Tout est conservé **localement**, dans le navigateur, et ne nous est jamais transmis :
 
-- **Les cahiers** (stockage local) : pour chaque enfant, un identifiant anonyme choisi parmi des propositions (ex : *petit-renard-roux*), un autocollant, et la liste des séries terminées avec leur date. Plusieurs enfants peuvent avoir chacun leur cahier sur le même appareil.
-- **La préférence d'affichage** clair ou sombre (stockage local).
+- **Les cahiers** (stockage local) : pour chaque enfant, un identifiant anonyme choisi parmi des propositions (ex : *petit-renard-roux*), un autocollant, la liste des séries terminées avec leur date, et le choix d'utiliser ou non une voix en ligne. Plusieurs enfants peuvent avoir chacun leur cahier sur le même appareil.
+- **La préférence d'affichage** clair ou sombre, et la **lecture à voix haute** activée ou non (stockage local).
 - **La liste des exercices et les filtres choisis** (stockage de session) : effacés automatiquement à la fermeture de l'onglet.
 - **Une copie du site pour le hors-ligne** (cache du navigateur) : les fichiers communs du site et les pages déjà ouvertes, pour qu'elles fonctionnent sans connexion. Elle ne contient aucune donnée sur l'enfant.
 
-Sur demande, un cahier peut être enregistré dans un **fichier de sauvegarde** (bouton « Télécharger le fichier »), par exemple pour le reprendre sur un autre appareil. Ce fichier, créé sur votre appareil, contient l'identifiant anonyme, l'autocollant et la liste des séries terminées ; il ne nous est jamais envoyé.
+Sur demande, un cahier peut être enregistré dans un **fichier de sauvegarde** (bouton « Télécharger le fichier »), par exemple pour le reprendre sur un autre appareil. Ce fichier, créé sur votre appareil, contient l'identifiant anonyme, l'autocollant, la liste des séries terminées et le choix de voix ; il ne nous est jamais envoyé.
 
 ## Ce que voit le serveur
 
@@ -55,10 +55,12 @@ Pour toute question concernant les journaux techniques, écrivez-nous (voir « C
 
 Aucune donnée n'est transmise à des tiers, des régies publicitaires ou des services d'analyse. Le seul prestataire est l'hébergeur, LWS (société française, Paris).
 
+Les exercices qui parlent utilisent par défaut une voix installée sur votre appareil : le texte lu n'est envoyé à aucun service de synthèse vocale en ligne. Si aucune voix n'est installée, un adulte peut choisir d'utiliser une voix en ligne : le navigateur envoie alors les phrases à lire à son fournisseur (Google, Microsoft…). Ce choix est gardé dans le cahier et peut être retiré à tout moment. Voir [La voix du Cahier](../voix/).
+
 ## Contact
 
 Pour toute question relative à cette politique : contact@melimee.fr
 
 ## Mise à jour
 
-Cette politique peut être mise à jour. La date de dernière modification est le 7 octobre 2026.
+Cette politique peut être mise à jour. La date de dernière modification est le 22 octobre 2026.

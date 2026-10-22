@@ -1,0 +1,16 @@
+{# Voice opt-in: statements read aloud automatically (see modules/voice.js) #}
+<button type="button"
+  x-data="voiceToggle()"
+  @click="toggle()"
+  :class="on ? 'text-primary-600 dark:text-primary-400' : 'text-content-subtle hover:text-content-default'" class="p-2 rounded-lg hover:bg-surface-subtle transition-colors"
+  :aria-pressed="on"
+  :aria-label="on ? 'Ne plus lire les énoncés à voix haute' : 'Lire les énoncés à voix haute'"
+  :title="on ? 'Lecture à voix haute : activée' : 'Lecture à voix haute : désactivée'"
+>
+  {# Line icons in the text colour (the 🔇 emoji is a red « forbidden » sign in most fonts) #}
+  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="block">
+    <path d="M11 5 6 9H3v6h3l5 4z"/>
+    <g x-show="!on"><path d="m16 9 5 6M21 9l-5 6"/></g>
+    <g x-show="on" x-cloak><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></g>
+  </svg>
+</button>

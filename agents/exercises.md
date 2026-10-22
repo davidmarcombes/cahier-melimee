@@ -66,7 +66,7 @@ Generators live in `src/assets/js/generators/`, one module per topic (`numeratio
 | `checkbox` | `types/checkbox.njk` | Tick all valid statements — multi-select with a verify button. Fields: `statements[]` (HTML strings), `checkedAnswers[]` (integer indices). Supports `cur.svg`. |
 | `select` | `types/select.njk` | Complete sentences by choosing a word from a dropdown. Fields: `statements[]` (each with `template` using `___` placeholder, `answer`, and optional per-statement `choices[]`), global `choices[]` (optional fallback). Dropdowns start empty. |
 | `svg-tiles` | `types/svg-tiles.njk` | Display grids of SVGs. User clicks on correct ones. Fields: `tiles[]` (Array of objects with `gen` and `par`), `answers[]` (integer indices). |
-| `tile-select` | `types/tile-select.njk` | Click to select all correct tiles (multi-select). Fields: `tiles[]` (HTML strings), `tileAnswers[]` (0-indexed correct indices). Supports `svg:` field for SVG rendering. |
+| `tile-select` | `types/tile-select.njk` | Click to select all correct tiles (multi-select). Fields: `tiles[]` (HTML strings), `tileAnswers[]` (0-indexed correct indices). Supports `svg:` field for SVG rendering. Tiles keep their order; `positional: true` allows identical tiles when the answer is a place in the row (odd one out in a pattern). In GS pages it checks itself once as many tiles as answers are picked. |
 | `fraction` | `types/fraction.njk` | Visual fraction representation — shade a shape. Fields: `shape` (`circle`/`rect`), `numerator`, `denominator`, `answer`. |
 | `fraction-check` | `types/fraction-check.njk` | Stacked fraction input (numerator/denominator boxes). Fields: `answers[]` (two strings: numerator, denominator). Supports `cur.operation` and `cur.svg`. |
 | `base-10` | `types/base-10.njk` | Base-10 blocks visual — decompose a number into hundreds/tens/ones. Fields: `answer`, plus either `number` or `hundreds`+`tens`+`ones`. |
@@ -87,10 +87,33 @@ Generators live in `src/assets/js/generators/`, one module per topic (`numeratio
 | `compare-groups` | `types/compare-groups.njk` | Two scattered emoji groups — click Autant / Plus / Moins. Fields: `groupA`, `groupB`, `answer`. Supports generators. |
 | `magic-color` | `types/magic-color.njk` | Pixel-art coloriage magique — paint cells matching a rule (e.g. multiples). Fields: `grid`, `palette`. Supports generators. |
 | `tri-arith` | `types/tri-arith.njk` | Arithmetic triangle — vertices and edges are linked by addition; fill in the missing values. Fields: `givenV[]`, `givenE[]`, `answers[]`. Supports generators. |
+| `classify` | `types/classify.njk` | Click an item, then click its box. Fields: `categories[]` (`{id, label}`), `items[]` (`{html, cat}`, shuffled at build time; `cat` must be a category id). Supports generators. In GS pages it checks itself once every item is placed (no « Vérifier »). |
 | `decimal-triple` | `types/decimal-triple.njk` | Three-way decimal representation — fraction décimale, tableau de chiffres (place values), nombre décimal. One representation is shown as given; student fills in the other two. Fields: `dtGiven` (`fraction`/`decimal`/`places`), `dtFrac` (`{num, den}`), `dtDecimal` (string, comma notation), `dtPlaces` (5-element array `[dizaines, unites, dixiemes, centiemes, milliemes]`, null = column hidden). Supports generators. |
 
 Shared verify button for sequence/bounding/convert: `types/seq-verify.njk`.
 Templates without exercise files yet (not covered by layout-health): `fraction-paint`, `svg-tiles`.
+
+## Maternelle (GS)
+
+Series under `src/fr/exercices/gs/` (level code `0` in the CSV) switch the player to « kid » mode (`level === 'GS'` in `series-player.njk` → `.kid` class + `data-kid="1"`): pupils are 5 and can't read.
+
+- **Read aloud** — see « Voice » below. A 🔊 start screen covers the first exercise (its tap unlocks speech); then each exercise is read automatically, and the 🔊 next to the title reads it again. GS cards in the list show a 🔊 badge (« monte le son »). Spoken feedback on right/wrong answers.
+- **Minimal text** — title = an emoji or two words (« Combien ? », « 🎨 »); the instruction goes in `say:`. Buttons, feedback (🎉 / 🤔) and the end screen (🏆 🔁 🏠) are emoji-only.
+- **Click only** — no text input: use `mcq` (`compact: true` for numbers/emoji choices), `classify`, `compare-groups`, `tile-select`, `sort`. Quantities ≤ 10, no + − < > signs.
+- **One picture = one scene** — never draw « before » and « after » as two rows of the same objects: pupils count them all together. Give a total as a digit (« 5 🐰 ») and draw only the current scene.
+- **Sizes** — `.kid` rules at the end of `src/css/input.css` enlarge emojis and click targets.
+- **Difficulty** — GS is the lowest level (no screens before 5, never PS/MS). The programme's age columns: « avant 4 ans » and « 4 ans » → `facile`, « 5 ans » → `moyen`, « voire au-delà » → `difficile`.
+- **Programme** — what to build next and the cycle 1 rules (no zero, shapes in every orientation, no solids in perspective…): [docs/maths_gs.md](../docs/maths_gs.md).
+
+## Voice (read-aloud)
+
+Web Speech API (`speechSynthesis`), code in `player.js` (`_pickVoice`, `speak`, `sayCurrent`, `autoVoice`).
+
+- **Installed voices first** — `frenchVoice()` in `modules/voice.js`: a French voice with `localService === true`. A network voice (« Google français »: the browser sends the text to its provider) only if the cahier opted in on `/fr/voix/` (store setting `onlineVoice`, per cahier, exported with it) — and never when an installed voice exists. No usable voice → nothing is spoken, and GS pages / voice exercises / the header toggle show a « Pas de voix française » link to `/fr/voix/` (install a voice, or opt in).
+- **When it speaks by itself** (`autoVoice`) — in GS, on exercises built around the voice (`voice: true`) at every level, and when the reader turned on the header toggle (speaker line icon, `modules/voice.js`, `localStorage.voice`, off by default; then only exercises with a statement or a `say:`). Otherwise voice help is **opt-in** per exercise: a small 🔊 next to the title, shown when the exercise has a statement (`body`) or a `say:`. Turning the toggle on reads the current exercise (its click unlocks speech).
+- **Spoken text** — front-matter (or generator) `say:`, else the title (GS) or title + statement, markup stripped.
+- **Browsers refuse speech before a click** on the page: GS has a 🔊 start screen; elsewhere the first exercise needs a tap on 🔊.
+- **Voice exercises** — generators `dicteeNombre` (`number-check`: hear, type the digits; params `min`, `max`, `decimals`, `tricky` = share of 11–16 / 70–99) and `ecouteNombre` (`mcq`: hear, tap among numbers that sound or look alike — 16/60, 17/71, 72/62, 97/87; params `min`, `max`, `choices`, `tricky`, `title`). Numbers are spoken from words (`nombreEnMots` in `generators/numeration.js`), never digits, so every voice reads « 1 000 » or « 3,05 » the same way. They set `voice: true`: big 🔊 replay button, no number on screen (`number-check` hides its empty card).
 
 ## Timed Challenges (Défis)
 

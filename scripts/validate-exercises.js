@@ -37,6 +37,11 @@ const TYPE_SCHEMAS = {
   compare: { required: ['comparisons'], arrays: ['comparisons'], arrayFields: { comparisons: ['left', 'right'] } },
   'multi-question': { required: ['questions'], arrays: ['questions'], arrayFields: { questions: ['text', 'answer'] } },
   mcq: { required: ['answer', 'choices'], arrays: ['choices'] },
+  classify: {
+    required: ['categories', 'items'],
+    arrays: ['categories', 'items'],
+    arrayFields: { categories: ['id', 'label'], items: ['html', 'cat'] },
+  },
   fraction: { required: ['shape', 'numerator', 'denominator', 'answer'] },
   'base-10': { required: ['answer'], requireOneOf: [['number'], ['hundreds', 'tens', 'ones']] },
   clock: { required: ['hour', 'minute', 'answer'] },
@@ -138,6 +143,7 @@ const svgHelperExists = (name) =>
   name === 'embedSvg' || svgSource.includes(`function ${name}(`) || svgSource.includes(`${name} =`);
 
 // Two identical buttons / tiles: the pupil clicks the « other » right value and is refused
+// (`positional: true` on a tile-select opts out: the tile's place is the answer, not its value)
 function duplicateChoice(item) {
   const plain = (s) =>
     String(typeof s === 'object' ? JSON.stringify(s) : s)
@@ -146,6 +152,8 @@ function duplicateChoice(item) {
       .replace(/\s+/g, ' ')
       .trim();
   for (const key of ['mcqChoices', 'choices', 'tiles']) {
+    // positional: the answer is a place in the row (odd one out in a pattern, rank) — repeats are the point
+    if (key === 'tiles' && item.positional) continue;
     const list = item[key];
     if (!Array.isArray(list) || list.length < 2) continue;
     const seen = new Set();
@@ -296,6 +304,11 @@ function validateSeries(seriesDir, errors) {
 
     // A statement the type's template never displays is invisible to the pupil
     // (« Colorie 3/5 de la bande » under fraction-paint, hidden until 2026-10)
+    if (type === 'classify' && Array.isArray(data.categories) && Array.isArray(data.items)) {
+      const ids = new Set(data.categories.map((c) => String(c.id)));
+      for (const it of data.items)
+        if (!ids.has(String(it.cat))) errors.push(`${relMd}: classify item "${it.html}" has unknown cat "${it.cat}"`);
+    }
     // The pupil types the correction: a sentence can never be matched (« « de plus » → c'est A qui… »)
     if (type === 'error-analysis' && /\p{L}{3,}.*\s.*\p{L}{3,}/u.test(String(data.correction ?? '')))
       errors.push(
@@ -304,6 +317,10 @@ function validateSeries(seriesDir, errors) {
     // Internal curriculum codes are for us, not for pupils (« Les salles — erreur A3.3 »)
     if (/\b[ADIMNS]\d(\.\d)+\b/.test(String(data.title || '')))
       errors.push(`${relMd}: title "${data.title}" shows an internal class code`);
+    // The player shows the Markdown under the front matter; a `body:` key is never displayed
+    // (49 statements invisible until 2026-10: bar-model series, prompt:problems output)
+    if (data.body !== undefined)
+      errors.push(`${relMd}: \`body:\` in the front matter is never shown — put the statement under the closing ---`);
     const dupStatic = duplicateChoice(data);
     if (dupStatic) errors.push(`${relMd}: the same choice appears twice (${dupStatic}) — one of them is refused`);
     if (bodyText && !typeShowsBody(type))

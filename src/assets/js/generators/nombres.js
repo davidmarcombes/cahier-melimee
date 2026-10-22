@@ -501,6 +501,93 @@
       },
     },
 
+    // compterGS: maternelle counting — emoji scattered, in a row or as dice patterns (2 dice above 6),
+    // sizes optionally mixed (« même nombre, objets différents »). Answered by tapping a number in kid mode.
+    // params: min (1), max (6), layouts (['scattered', 'row', 'dice']), mixSizes (false), flash (ms, 0 = always shown)
+    compterGS: {
+      generate(params = {}) {
+        // Labels start with a consonant: « Combien de … ? » never needs « d' »
+        const SETS = [
+          ['🐭', 'souris'],
+          ['🐟', 'poissons'],
+          ['🐞', 'coccinelles'],
+          ['🍎', 'pommes'],
+          ['🍓', 'fraises'],
+          ['🦆', 'canards'],
+          ['🎈', 'ballons'],
+          ['🌸', 'fleurs'],
+          ['🦋', 'papillons'],
+          ['🐢', 'tortues'],
+          ['🐰', 'lapins'],
+          ['🍒', 'cerises'],
+          ['🐥', 'poussins'],
+          ['🍬', 'bonbons'],
+          ['🚗', 'voitures'],
+          ['🐱', 'chats'],
+        ];
+        const [emoji, label] = randItem(SETS);
+        const count = rand(params.min ?? 1, params.max ?? 6);
+        const layouts = (params.layouts ?? ['scattered', 'row', 'dice']).filter((l) => l !== 'dice' || count <= 10);
+        const layout = randItem(layouts.length ? layouts : ['scattered']);
+        const W = 320,
+          H = 200;
+        const items = []; // { x, y, size }
+
+        if (layout === 'row') {
+          const step = Math.min(56, (W - 16) / count);
+          const size = Math.min(36, Math.floor(step * 0.85));
+          const x0 = (W - step * (count - 1)) / 2;
+          for (let i = 0; i < count; i++) items.push({ x: x0 + i * step, y: H / 2, size });
+        } else if (layout === 'dice') {
+          // Pip spots on a 3 × 3 grid, numbered 0..8 row by row
+          const PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+          const faces = count <= 6 ? [count] : [Math.ceil(count / 2), Math.floor(count / 2)];
+          const side = 120,
+            gap = 24;
+          const left = (W - (faces.length * side + (faces.length - 1) * gap)) / 2;
+          faces.forEach((n, f) => {
+            const fx = left + f * (side + gap),
+              fy = (H - side) / 2;
+            items.push({ face: true, x: fx, y: fy, side });
+            for (const spot of PIPS[n])
+              items.push({ x: fx + 24 + (spot % 3) * 36, y: fy + 24 + Math.floor(spot / 3) * 36, size: 26 });
+          });
+        } else {
+          const SIZES = params.mixSizes ? [22, 32, 46] : [32];
+          for (let i = 0; i < count; i++) {
+            const size = randItem(SIZES);
+            let spot = null;
+            for (let t = 0; t < 400 && !spot; t++) {
+              const x = size / 2 + 6 + Math.random() * (W - size - 12);
+              const y = size / 2 + 6 + Math.random() * (H - size - 12);
+              if (items.every((p) => Math.hypot(p.x - x, p.y - y) >= ((p.size + size) / 2) * 1.3))
+                spot = { x, y, size };
+            }
+            items.push(spot || { x: 30 + (i % 6) * 50, y: 30 + Math.floor(i / 6) * 50, size: 28 });
+          }
+        }
+
+        const body = items
+          .map((it) =>
+            it.face
+              ? `<rect x="${it.x}" y="${it.y}" width="${it.side}" height="${it.side}" rx="18" fill="none" stroke="var(--cs, #94a3b8)" stroke-width="3"/>`
+              : `<text x="${Math.round(it.x)}" y="${Math.round(it.y)}" text-anchor="middle" dominant-baseline="central" font-size="${it.size}">${emoji}</text>`
+          )
+          .join('');
+        const svgHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${label}">${body}</svg>`;
+
+        const item = {
+          type: 'count-objects',
+          title: 'Combien ?',
+          say: `Combien de ${label} ?`,
+          svgHtml,
+          answers: [String(count)],
+        };
+        if (params.flash > 0) item.flash = params.flash;
+        return item;
+      },
+    },
+
     // compterObjets: count scattered emoji, type the number
     // params: min (2), max (12)
     compterObjets: {
