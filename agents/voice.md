@@ -22,6 +22,8 @@ uv run --with piper-tts --with imageio-ffmpeg npm run generate:voice-pilot
 
 Le modèle et sa configuration sont épinglés à une révision Hugging Face et vérifiés par SHA-256 dans `scripts/synthesize-piper.py`. Ne pas enlever ces vérifications ni remplacer le modèle sans mettre à jour les empreintes et vérifier l'attribution/licence.
 
+Le manifeste `reports/voice-generation.json` conserve les empreintes des paramètres et des fichiers produits. Une génération ne réencode que les clips absents ou modifiés; les fichiers inchangés gardent ainsi leur contenu Git. Après ajout d'un clip déjà généré avant l'existence du manifeste, initialiser celui-ci une seule fois avec `VOICE_ADOPT_EXISTING=1 uv run --with piper-tts --with imageio-ffmpeg npm run generate:voice-pilot`.
+
 ## Sources des phrases et fichiers produits
 
 `scripts/generate-voice-pilot.js` :
@@ -29,6 +31,7 @@ Le modèle et sa configuration sont épinglés à une révision Hugging Face et 
 - Lit le champ `say` des métadonnées YAML des exercices et applications GS.
 - Si GS `say` est absent, utilise le titre comme consigne parlée.
 - Normalise les espaces et supprime les phrases en double; le nom de chaque clip d'instruction est dérivé de son SHA-256.
+- Sépare les consignes « … Quel nombre vient après ? » en deux clips réutilisables; le lecteur marque une pause de 500 ms avant la question et de 180 ms entre les autres clips composés.
 - Génère les clips numériques 0–999, plus le clip « mille » (1 000). Les dictées composent les nombres jusqu'à 999 999 999 avec clips de groupes (`millions`, `mille`, unités); les décimaux ajoutent « virgule » et lisent chaque chiffre.
 - Génère un clip pour chacun des 16 types d'objets du générateur CP `compterObjets`.
 - Ajoute les segments « mille », « million(s) », « virgule ».

@@ -47,6 +47,30 @@ test('GS counting prompt separates the number sequence from its question', async
   expect(clips.every((clip) => clip.startsWith('instructions/'))).toBe(true);
 });
 
+test('new GS exercise instructions are generated, built, and playable', async ({ page }) => {
+  const responses = [];
+  page.on('response', (response) => {
+    if (response.url().includes('/assets/audio/voice-pilot/instructions/')) {
+      responses.push({ url: response.url(), status: response.status() });
+    }
+  });
+
+  await page.goto('/fr/exercices/b21930ba/');
+  await waitForPlayer(page);
+  const prompts = await page
+    .locator('[x-data*="seriesPlayer"]')
+    .evaluate((el) => Alpine.$data(el).exercises.map((exercise) => exercise.voiceAudio));
+  expect(prompts).toHaveLength(2);
+  expect(prompts.every((clip) => typeof clip === 'string' && clip.startsWith('instructions/'))).toBe(true);
+
+  await page.getByRole('button', { name: 'Commencer, avec le son' }).click();
+  await expect.poll(() => responses.length).toBe(1);
+  await page.locator('[x-data*="seriesPlayer"]').evaluate((el) => Alpine.$data(el).goTo(1));
+  await page.getByRole('button', { name: 'Écouter la consigne' }).click();
+  await expect.poll(() => responses.length).toBe(2);
+  expect(responses.every(({ status }) => status === 200)).toBe(true);
+});
+
 test('CP object-count prompt has a prerecorded clip', async ({ page }) => {
   let clipResponse;
   page.on('response', (response) => {

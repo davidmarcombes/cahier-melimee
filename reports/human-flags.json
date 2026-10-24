@@ -3012,5 +3012,16 @@
     "createdAt": "2026-10-24T12:00:13.309Z",
     "resolvedAt": "2026-10-24T12:37:56.329Z",
     "resolvedBy": "validated"
+  },
+  {
+    "id": "4859ec0a",
+    "seriesId": "b21930ba",
+    "url": "/fr/exercices/b21930ba/",
+    "title": "On ajoute des animaux",
+    "reason": "À vérifier : écouter les consignes préenregistrées des deux nouveaux exercices GS.",
+    "source": "claude",
+    "createdAt": "2026-10-24T13:59:13.136Z",
+    "resolvedAt": "2026-10-24T14:11:28.985Z",
+    "resolvedBy": "validated"
   }
 ]

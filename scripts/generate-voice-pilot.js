@@ -118,5 +118,5 @@ for (const oldFile of Object.values(previousInstructions).flatMap((files) =>
 }
 fs.writeFileSync(manifestPath, JSON.stringify(instructionManifest, null, 2) + '\n');
 console.log(
-  `${utterances.length} clips Piper générés : ${instructions.size} consignes, 1 001 nombres, 16 objets, 4 segments, 6 retours.`
+  `${utterances.length} clips dans l'inventaire : ${instructions.size} consignes, 1 001 nombres, 16 objets, 4 segments, 6 retours.`
 );
