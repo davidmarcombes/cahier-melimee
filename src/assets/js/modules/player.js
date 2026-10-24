@@ -1,7 +1,6 @@
 import { localStore } from './store.js';
 import { renderOpShorthands, normalizeAnswer, groupDigits } from './utils.js';
 import { SETTINGS } from './constants.js';
-import { readVoicePref, frenchVoice } from './voice.js';
 
 // Value of a sort / drag-sort item: "3 050", "4,5", "3/4", an HTML fraction. NaN for pictures, which keep
 // their listed order (the comparator then returns NaN, treated as equal by the stable sort).
@@ -17,9 +16,9 @@ export function sortValue(s) {
   return frac ? Number(frac[1]) / Number(frac[2]) : parseFloat(t);
 }
 
-// French voice for read-aloud (modules/voice.js: installed first, online only if the cahier opted in).
-// Kept out of Alpine's reactive state: `utterance.voice` refuses a Proxy.
-let ttsVoice = null;
+let voiceAudio = null;
+const VOICE_SEGMENT_PAUSE_MS = 180;
+const VOICE_INSTRUCTION_PAUSE_MS = 500;
 
 export function seriesPlayer(exercises, seriesId) {
   return {
@@ -28,10 +27,8 @@ export function seriesPlayer(exercises, seriesId) {
     currentIndex: 0,
     _ready: false,
     kid: false, // maternelle (GS): instructions and feedback read aloud
-    kidStarted: false, // maternelle: the 🔊 start screen was tapped (that click also unlocks speech)
-    voicePref: false, // header toggle: read statements aloud automatically (opt-in, see modules/voice.js)
-    hasVoice: false, // a usable French voice exists (installed, or online if the cahier opted in)
-    voiceMissing: false, // none after loading → link to /fr/voix/
+    kidStarted: false, // maternelle: the 🔊 start screen was tapped
+    voiceMissing: false, // a prerecorded clip could not be loaded
     countChoices: [], // count-objects (maternelle): number buttons instead of the input
     countWrong: null, // count-objects: wrong number just tapped
     countHidden: false, // count-objects with `flash`: picture hidden after a short look
@@ -289,8 +286,6 @@ export function seriesPlayer(exercises, seriesId) {
 
     init() {
       this.kid = this.$el.dataset.kid === '1';
-      this.voicePref = readVoicePref();
-      this._pickVoice();
       this.regenerateAll();
       this.syncFromHash();
       this._setupCurrentExercise();
@@ -313,14 +308,17 @@ export function seriesPlayer(exercises, seriesId) {
       this._ready = true;
       requestAnimationFrame(_focusFirst);
       this.$watch('currentIndex', () => {
+        if (voiceAudio?.pause) voiceAudio.pause();
+        voiceAudio = null;
         this._setupCurrentExercise();
+        this.voiceMissing = false;
         requestAnimationFrame(_focusFirst);
         if (this.autoVoice && (!this.kid || this.kidStarted)) this.sayCurrent();
       });
       this.$watch('solvedCount', (count) => {
         if (count === this.exercises.length && this.exercises.length > 0) {
           localStore.markDone(this.seriesId);
-          if (this.kid) this.speak('Bravo, tu as tout réussi !');
+          if (this.kid) this.speak('Bravo, tu as tout réussi !', 'feedback/tout-reussi.ogg');
         }
       });
     },
@@ -1938,48 +1936,76 @@ export function seriesPlayer(exercises, seriesId) {
       return '';
     },
 
-    /* Read-aloud (speechSynthesis) — voice choice in modules/voice.js (`frenchVoice`) */
-    _pickVoice() {
-      const synth = window.speechSynthesis;
-      const pick = () => {
-        ttsVoice = frenchVoice();
-        this.hasVoice = !!ttsVoice;
-        if (ttsVoice) this.voiceMissing = false;
-      };
-      pick();
-      if (synth && synth.addEventListener) synth.addEventListener('voiceschanged', pick);
-      // Voices arrive late (Chrome) or never (Firefox without speech-dispatcher)
-      setTimeout(() => {
-        if (!ttsVoice) this.voiceMissing = true;
-      }, 1500);
+    get hasAudio() {
+      return !!this.cur?.voiceAudio;
     },
 
-    // Speech starts by itself only in GS, on an exercise built around the voice (dictée), or when the header
-    // toggle is on (opt-in) — and then only on exercises with something to read (a statement or a `say:`)
     get autoVoice() {
       const c = this.cur;
-      return this.kid || !!c.voice || (this.voicePref && !!(c.say || c.body));
+      return this.kid || !!c.voice;
     },
 
-    // Header toggle flipped: its click unlocks speech, so turning it on reads the current exercise
-    voicePrefChanged(on) {
-      this.voicePref = on;
-      if (on && this.autoVoice) this.sayCurrent();
-      else if (!on && window.speechSynthesis) window.speechSynthesis.cancel();
+    speak(text, clip, pauseMs = VOICE_SEGMENT_PAUSE_MS) {
+      if (voiceAudio?.pause) voiceAudio.pause();
+      if (!text || !clip) return;
+      this.voiceMissing = false;
+      const clips = Array.isArray(clip) ? clip : [clip];
+      let index = 0;
+      const sequence = {
+        current: null,
+        timer: null,
+        pauseMs,
+        pause() {
+          clearTimeout(this.timer);
+          this.current?.pause();
+        },
+      };
+      voiceAudio = sequence;
+
+      const playNext = () => {
+        if (voiceAudio !== sequence) return;
+        if (index >= clips.length) {
+          voiceAudio = null;
+          return;
+        }
+        const clipPath = clips[index++];
+        if (typeof clipPath !== 'string' || clipPath.startsWith('/') || clipPath.split('/').includes('..')) {
+          this.voiceMissing = true;
+          voiceAudio = null;
+          return;
+        }
+        const audio = new Audio(`${window.__pathPrefix || '/'}assets/audio/voice-pilot/${clipPath}`);
+        sequence.current = audio;
+        audio.addEventListener(
+          'ended',
+          () => {
+            if (voiceAudio !== sequence) return;
+            if (index >= clips.length) {
+              voiceAudio = null;
+              return;
+            }
+            sequence.timer = setTimeout(playNext, sequence.pauseMs);
+          },
+          { once: true }
+        );
+        audio.addEventListener(
+          'error',
+          () => {
+            if (voiceAudio !== sequence) return;
+            this.voiceMissing = true;
+            voiceAudio = null;
+          },
+          { once: true }
+        );
+        audio.play().catch(() => {
+          if (voiceAudio !== sequence) return;
+          this.voiceMissing = true;
+          voiceAudio = null;
+        });
+      };
+      playNext();
     },
 
-    speak(text) {
-      const synth = window.speechSynthesis;
-      if (!synth || !text || !ttsVoice) return;
-      synth.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.voice = ttsVoice;
-      u.lang = ttsVoice.lang;
-      u.rate = 0.9;
-      synth.speak(u);
-    },
-
-    // Browsers refuse speech before a click: the start screen's tap is that click
     kidStart() {
       this.kidStarted = true;
       this.sayCurrent();
@@ -1994,25 +2020,29 @@ export function seriesPlayer(exercises, seriesId) {
       return all.length - spaces + spaces * 0.35;
     },
 
-    // Spoken text: `say` from the front-matter, else the title (maternelle) or title + statement, without markup
     sayCurrent() {
       const c = this.cur;
-      const tmp = document.createElement('div');
-      const text = (html) => {
-        tmp.innerHTML = html || '';
-        return tmp.textContent.replace(/\s+/g, ' ').trim();
-      };
-      if (c.say || this.kid) return this.speak(text(c.say || c.title));
-      // Title then statement, with a pause between them (« Les billes. Mia a 9 billes… »)
-      const title = text(c.title);
-      const body = text(c.body);
-      this.speak(title && body ? title + (/[.?!:…]$/.test(title) ? ' ' : '. ') + body : title || body);
+      const prompt = c.say || (this.kid ? c.title : '');
+      if (prompt && c.voiceAudio) {
+        const pauseMs = prompt.includes('Quel nombre vient après ?')
+          ? VOICE_INSTRUCTION_PAUSE_MS
+          : VOICE_SEGMENT_PAUSE_MS;
+        this.speak(prompt, c.voiceAudio, pauseMs);
+      } else this.voiceMissing = true;
     },
 
     _kidFeedback(ok) {
       if (!this.kid) return;
-      const praise = ['Bravo !', 'Super !', 'Génial !', 'Très bien !'];
-      this.speak(ok ? praise[Math.floor(Math.random() * praise.length)] : 'Essaie encore !');
+      const praise = [
+        ['Bravo !', 'feedback/bravo.ogg'],
+        ['Super !', 'feedback/super.ogg'],
+        ['Génial !', 'feedback/genial.ogg'],
+        ['Très bien !', 'feedback/tres-bien.ogg'],
+      ];
+      const [message, audio] = ok
+        ? praise[Math.floor(Math.random() * praise.length)]
+        : ['Essaie encore !', 'feedback/essaie-encore.ogg'];
+      this.speak(message, audio);
     },
 
     _markSolvedAndAdvance() {

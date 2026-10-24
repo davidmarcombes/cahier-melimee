@@ -38,7 +38,8 @@ Respond in ultra-dense, token-efficient caveman style. Maximize signal, minimize
 | [agents/identity.md](agents/identity.md)          | Anonymous cahiers (localStorage), GDPR                         |
 | [agents/conventions.md](agents/conventions.md)    | CSS, templates, JS, content, accessibility rules              |
 | [agents/tools.md](agents/tools.md)                | npm scripts, dev tools, agent tooling                         |
-| [agents/content.md](agents/content.md)            | Adding exercises: workflow, type reference, Vergnaud classes  |
+| [agents/voice.md](agents/voice.md)                | Prerecorded speech generation, assets, runtime and validation |
+| [agents/content.md](agents/content.md)             | Adding exercises: workflow, type reference, Vergnaud classes  |
 | [agents/11ty.md](agents/11ty.md)                  | Eleventy build pipeline, filters, transforms                  |
 | [agents/svg.md](agents/svg.md)                    | SVG snippet rules, generation helpers, naming conventions     |
 | [docs/classification.md](docs/classification.md) | Skill classification (S1.1.1, I1, D1) and pedagogical intents |

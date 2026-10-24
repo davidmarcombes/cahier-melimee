@@ -105,15 +105,16 @@ Series under `src/fr/exercices/gs/` (level code `0` in the CSV) switch the playe
 - **Difficulty** — GS is the lowest level (no screens before 5, never PS/MS). The programme's age columns: « avant 4 ans » and « 4 ans » → `facile`, « 5 ans » → `moyen`, « voire au-delà » → `difficile`.
 - **Programme** — what to build next and the cycle 1 rules (no zero, shapes in every orientation, no solids in perspective…): [docs/maths_gs.md](../docs/maths_gs.md).
 
-## Voice (read-aloud)
+## Voice
 
-Web Speech API (`speechSynthesis`), code in `player.js` (`_pickVoice`, `speak`, `sayCurrent`, `autoVoice`).
+Speech is prerecorded; do not use browser `speechSynthesis` or online voice APIs. Generation and playback details: [agents/voice.md](voice.md).
 
-- **Installed voices first** — `frenchVoice()` in `modules/voice.js`: a French voice with `localService === true`. A network voice (« Google français »: the browser sends the text to its provider) only if the cahier opted in on `/fr/voix/` (store setting `onlineVoice`, per cahier, exported with it) — and never when an installed voice exists. No usable voice → nothing is spoken, and GS pages / voice exercises / the header toggle show a « Pas de voix française » link to `/fr/voix/` (install a voice, or opt in).
-- **When it speaks by itself** (`autoVoice`) — in GS, on exercises built around the voice (`voice: true`) at every level, and when the reader turned on the header toggle (speaker line icon, `modules/voice.js`, `localStorage.voice`, off by default; then only exercises with a statement or a `say:`). Otherwise voice help is **opt-in** per exercise: a small 🔊 next to the title, shown when the exercise has a statement (`body`) or a `say:`. Turning the toggle on reads the current exercise (its click unlocks speech).
-- **Spoken text** — front-matter (or generator) `say:`, else the title (GS) or title + statement, markup stripped.
-- **Browsers refuse speech before a click** on the page: GS has a 🔊 start screen; elsewhere the first exercise needs a tap on 🔊.
-- **Voice exercises** — generators `dicteeNombre` (`number-check`: hear, type the digits; params `min`, `max`, `decimals`, `tricky` = share of 11–16 / 70–99) and `ecouteNombre` (`mcq`: hear, tap among numbers that sound or look alike — 16/60, 17/71, 72/62, 97/87; params `min`, `max`, `choices`, `tricky`, `title`). Numbers are spoken from words (`nombreEnMots` in `generators/numeration.js`), never digits, so every voice reads « 1 000 » or « 3,05 » the same way. They set `voice: true`: big 🔊 replay button, no number on screen (`number-check` hides its empty card).
+- GS instructions use front-matter `say:` or the exercise title when `say:` is absent. Every spoken phrase must map to a generated clip.
+- Voice exercises set `voice: true` and provide `say` + `voiceAudio`; player reads clips on navigation and offers a 🔊 replay button.
+- `dicteeNombre` supports integers to 999,999,999 and decimals by composing clips for number groups, scale words and decimal digits. `ecouteNombre` uses prerecorded clips for the bounded target numbers.
+- `compterObjets` keeps its 16 object types; every generated prompt has a matching `objets/*.ogg` clip.
+- Missing clip: show an audio error link; never fall back to browser speech.
+- General title/statement read-aloud is intentionally unavailable.
 
 ## Timed Challenges (Défis)
 

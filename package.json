@@ -33,6 +33,7 @@
     "build:slides": "npx @marp-team/marp-cli docs/slides.md --pdf --theme docs/marp_melimee.css -o docs/slides.pdf",
     "build:e2e": "npm run clean && npm run generate:tokens && eleventy && npm run build:css && npm run generate:sw",
     "generate:tokens": "node scripts/generate-tailwind-from-tokens.js",
+    "generate:voice-pilot": "node scripts/generate-voice-pilot.js",
     "generate:names": "node scripts/generate-names.js",
     "generate:ids": "node scripts/generate-ids.js",
     "generate:maths": "node scripts/generate-maths-ex.js",

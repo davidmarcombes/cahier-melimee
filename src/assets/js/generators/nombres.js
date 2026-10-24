@@ -593,22 +593,22 @@
     compterObjets: {
       generate(params = {}) {
         const SETS = [
-          { emoji: '🐭', label: 'souris' },
-          { emoji: '🧀', label: 'fromages' },
-          { emoji: '🐸', label: 'grenouilles' },
-          { emoji: '🍎', label: 'pommes' },
-          { emoji: '🐝', label: 'abeilles' },
-          { emoji: '🌸', label: 'fleurs' },
-          { emoji: '🐠', label: 'poissons' },
-          { emoji: '🦋', label: 'papillons' },
-          { emoji: '🍄', label: 'champignons' },
-          { emoji: '⭐', label: 'étoiles' },
-          { emoji: '🐞', label: 'coccinelles' },
-          { emoji: '🥕', label: 'carottes' },
-          { emoji: '🐢', label: 'tortues' },
-          { emoji: '🍓', label: 'fraises' },
-          { emoji: '🐌', label: 'escargots' },
-          { emoji: '🌻', label: 'tournesols' },
+          { emoji: '🐭', label: 'souris', audio: 'souris' },
+          { emoji: '🧀', label: 'fromages', audio: 'fromages' },
+          { emoji: '🐸', label: 'grenouilles', audio: 'grenouilles' },
+          { emoji: '🍎', label: 'pommes', audio: 'pommes' },
+          { emoji: '🐝', label: 'abeilles', audio: 'abeilles' },
+          { emoji: '🌸', label: 'fleurs', audio: 'fleurs' },
+          { emoji: '🐠', label: 'poissons', audio: 'poissons' },
+          { emoji: '🦋', label: 'papillons', audio: 'papillons' },
+          { emoji: '🍄', label: 'champignons', audio: 'champignons' },
+          { emoji: '⭐', label: 'étoiles', audio: 'etoiles' },
+          { emoji: '🐞', label: 'coccinelles', audio: 'coccinelles' },
+          { emoji: '🥕', label: 'carottes', audio: 'carottes' },
+          { emoji: '🐢', label: 'tortues', audio: 'tortues' },
+          { emoji: '🍓', label: 'fraises', audio: 'fraises' },
+          { emoji: '🐌', label: 'escargots', audio: 'escargots' },
+          { emoji: '🌻', label: 'tournesols', audio: 'tournesols' },
         ];
         const min = params.min ?? 2;
         const max = params.max ?? 12;
@@ -649,6 +649,9 @@
         return {
           type: 'count-objects',
           title: `Combien y a-t-il de <strong>${set.label}</strong> ?`,
+          say: `Combien y a-t-il de ${set.label} ?`,
+          voiceAudio: `objets/${set.audio}.ogg`,
+          voice: true,
           svgHtml,
           answers: [String(count)],
         };

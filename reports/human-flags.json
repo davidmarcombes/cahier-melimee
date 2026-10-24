@@ -2383,8 +2383,8 @@
     "reason": "Sens du train : la locomotive 🚂 est à gauche et regarde à gauche selon la police (Noto). On compte bien les wagons depuis la locomotive ? Le 🚂 est cliquable (faux).",
     "source": "claude",
     "createdAt": "2026-10-11T13:53:40.404Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-24T13:30:48.365Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b566205d",
@@ -2394,8 +2394,8 @@
     "reason": "File de 9 cases (🏠 + 8 🐧) : sur téléphone les emojis descendent à 14 px. « avant-dernier », « septième » : assez clair à l'oral ?",
     "source": "claude",
     "createdAt": "2026-10-11T13:53:40.643Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-24T13:30:16.345Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "2c784cfc",
@@ -2405,8 +2405,8 @@
     "reason": "Choix de 9, 10, 11 coccinelles alignées : dur à compter en ligne. Garder, ou passer à des groupes plus courts / en paquets ?",
     "source": "claude",
     "createdAt": "2026-10-11T13:53:40.889Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-24T13:09:13.346Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "da8e4b60",
@@ -2416,8 +2416,8 @@
     "reason": "Le contenu de chaque boîte n'est que dit (pas dessiné). Ok, ou montrer une boîte ouverte ?",
     "source": "claude",
     "createdAt": "2026-10-11T13:53:41.135Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-24T13:31:19.039Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "5f9a929c",
@@ -2427,8 +2427,8 @@
     "reason": "« Il peut en rester. » : formulation ok ? L'ex. 2 (10 bonbons pour 2) n'a pas de reste et ne le dit pas.",
     "source": "claude",
     "createdAt": "2026-10-11T13:53:41.375Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-24T12:38:31.929Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "20033d58",
@@ -2438,8 +2438,8 @@
     "reason": "Les nombres 11 et 12 sont écrits en chiffres (la comptine va jusqu'à 30, l'écriture chiffrée seulement jusqu'à 10 au programme).",
     "source": "claude",
     "createdAt": "2026-10-11T13:53:41.608Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-24T13:09:39.253Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "c61d0990",
@@ -2449,8 +2449,8 @@
     "reason": "Triangles retirés : les emojis 🔺🔻 sont minuscules à côté des disques et carrés. Formes de tailles différentes = plus tard (SVG).",
     "source": "claude",
     "createdAt": "2026-10-11T13:53:41.861Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-24T12:33:51.728Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "3b9dc814",
@@ -2583,5 +2583,434 @@
     "createdAt": "2026-10-11T15:34:04.850Z",
     "resolvedAt": null,
     "resolvedBy": null
+  },
+  {
+    "id": "b253ae7f",
+    "seriesId": "a60a1ca4",
+    "url": "/fr/exercices/a60a1ca4/",
+    "title": "Les doubles",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:11.922Z",
+    "resolvedAt": "2026-10-24T12:32:05.299Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f03217b9",
+    "seriesId": "e29799a7",
+    "url": "/fr/exercices/e29799a7/",
+    "title": "Combien en tout ?",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:11.966Z",
+    "resolvedAt": "2026-10-24T12:32:45.825Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "10e500be",
+    "seriesId": "dd65841f",
+    "url": "/fr/exercices/dd65841f/",
+    "title": "Trier par forme",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.010Z",
+    "resolvedAt": "2026-10-24T12:33:51.728Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "21346786",
+    "seriesId": "dc0d12c1",
+    "url": "/fr/exercices/dc0d12c1/",
+    "title": "L'intrus du collier",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.052Z",
+    "resolvedAt": "2026-10-24T12:34:58.502Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "c0f52001",
+    "seriesId": "c8c85fe2",
+    "url": "/fr/exercices/c8c85fe2/",
+    "title": "Lequel suit la règle ?",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.090Z",
+    "resolvedAt": "2026-10-24T12:35:47.258Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "a514ed1b",
+    "seriesId": "caaff296",
+    "url": "/fr/exercices/caaff296/",
+    "title": "Des motifs qui grandissent",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.128Z",
+    "resolvedAt": "2026-10-24T12:36:53.087Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "2ff737a4",
+    "seriesId": "e0f1059c",
+    "url": "/fr/exercices/e0f1059c/",
+    "title": "Suites de dessins",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.166Z",
+    "resolvedAt": "2026-10-24T12:37:25.415Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "c72bf1ee",
+    "seriesId": "ff697675",
+    "url": "/fr/exercices/ff697675/",
+    "title": "Trier par couleur",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.205Z",
+    "resolvedAt": "2026-10-24T13:07:37.578Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "e761510c",
+    "seriesId": "c4a3c13f",
+    "url": "/fr/exercices/c4a3c13f/",
+    "title": "Autant que le modèle",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.242Z",
+    "resolvedAt": "2026-10-24T13:08:02.840Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "e385a7e2",
+    "seriesId": "b1842540",
+    "url": "/fr/exercices/b1842540/",
+    "title": "Compter jusqu'à 5",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.283Z",
+    "resolvedAt": "2026-10-24T13:08:28.660Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "ce720389",
+    "seriesId": "c5a9e6ea",
+    "url": "/fr/exercices/c5a9e6ea/",
+    "title": "Montre-moi le nombre",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.323Z",
+    "resolvedAt": "2026-10-24T13:08:50.864Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "93e2aba5",
+    "seriesId": "ffde0bee",
+    "url": "/fr/exercices/ffde0bee/",
+    "title": "Montre-moi le nombre jusqu’à 10",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.359Z",
+    "resolvedAt": "2026-10-24T13:09:13.346Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "072ec63d",
+    "seriesId": "acae5655",
+    "url": "/fr/exercices/acae5655/",
+    "title": "Quel nombre vient après ?",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.394Z",
+    "resolvedAt": "2026-10-24T13:09:39.253Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "e930f01d",
+    "seriesId": "f82bf594",
+    "url": "/fr/exercices/f82bf594/",
+    "title": "Compter jusqu’à 30",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.430Z",
+    "resolvedAt": "2026-10-24T13:13:26.041Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "15b74e3b",
+    "seriesId": "a382ea10",
+    "url": "/fr/exercices/a382ea10/",
+    "title": "Le plus grand nombre",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.465Z",
+    "resolvedAt": "2026-10-24T13:13:46.599Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "ba5ca4bb",
+    "seriesId": "e5bcef11",
+    "url": "/fr/exercices/e5bcef11/",
+    "title": "Le plus, le moins",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.501Z",
+    "resolvedAt": "2026-10-24T13:14:12.946Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f3b1b9dc",
+    "seriesId": "f2a1d97b",
+    "url": "/fr/exercices/f2a1d97b/",
+    "title": "Premier, dernier",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.536Z",
+    "resolvedAt": "2026-10-24T13:30:16.345Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "2c0d9ff2",
+    "seriesId": "fe1cd876",
+    "url": "/fr/exercices/fe1cd876/",
+    "title": "Le train",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.570Z",
+    "resolvedAt": "2026-10-24T13:30:48.365Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "54848b11",
+    "seriesId": "b6515fb9",
+    "url": "/fr/exercices/b6515fb9/",
+    "title": "Un de moins",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.604Z",
+    "resolvedAt": "2026-10-24T12:41:13.687Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "58e01fa8",
+    "seriesId": "b08cc64c",
+    "url": "/fr/exercices/b08cc64c/",
+    "title": "Un de plus",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.638Z",
+    "resolvedAt": "2026-10-24T12:41:44.229Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "c1c8513d",
+    "seriesId": "eb6e2872",
+    "url": "/fr/exercices/eb6e2872/",
+    "title": "Dans chaque boîte",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.673Z",
+    "resolvedAt": "2026-10-24T13:31:19.039Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "a64908a5",
+    "seriesId": "d51b1699",
+    "url": "/fr/exercices/d51b1699/",
+    "title": "Sous le chapeau",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.708Z",
+    "resolvedAt": "2026-10-24T13:32:24.485Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "3afa8d69",
+    "seriesId": "d8b2a117",
+    "url": "/fr/exercices/d8b2a117/",
+    "title": "Sous le chapeau jusqu’à 10",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.742Z",
+    "resolvedAt": "2026-10-24T12:40:24.622Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "b66ed1c0",
+    "seriesId": "ccb9a0ca",
+    "url": "/fr/exercices/ccb9a0ca/",
+    "title": "Il en part",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.776Z",
+    "resolvedAt": "2026-10-24T12:39:01.573Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "7a87f4a9",
+    "seriesId": "e540a5a7",
+    "url": "/fr/exercices/e540a5a7/",
+    "title": "Le partage",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.812Z",
+    "resolvedAt": "2026-10-24T12:38:47.407Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "5f7b3a2d",
+    "seriesId": "a2c4ef24",
+    "url": "/fr/exercices/a2c4ef24/",
+    "title": "Le partage, il en reste",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.848Z",
+    "resolvedAt": "2026-10-24T12:38:31.929Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "3ceccf59",
+    "seriesId": "bc3b4f5b",
+    "url": "/fr/applications/bc3b4f5b/",
+    "title": "Dictée de nombres jusqu'à 1 000",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.883Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "c7d4f292",
+    "seriesId": "ce2536bb",
+    "url": "/fr/applications/ce2536bb/",
+    "title": "Dictée de nombres jusqu'à 10 000",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.917Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "d143aba3",
+    "seriesId": "f7ed25b6",
+    "url": "/fr/applications/f7ed25b6/",
+    "title": "Dictée de grands nombres",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.953Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "c788073d",
+    "seriesId": "cf92b76d",
+    "url": "/fr/applications/cf92b76d/",
+    "title": "Dictée de nombres jusqu'au milliard",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:12.988Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "b658a9be",
+    "seriesId": "a799c32b",
+    "url": "/fr/applications/a799c32b/",
+    "title": "Dictée de nombres décimaux",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:13.023Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "b292a295",
+    "seriesId": "c2082e0e",
+    "url": "/fr/applications/c2082e0e/",
+    "title": "Compter des objets",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:13.061Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "fc8cc9b5",
+    "seriesId": "d51139ca",
+    "url": "/fr/applications/d51139ca/",
+    "title": "Compter des objets",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:13.097Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "b4109902",
+    "seriesId": "dc242a5a",
+    "url": "/fr/applications/dc242a5a/",
+    "title": "Compter des objets",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:13.133Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "b9bf9594",
+    "seriesId": "dd7e1a2d",
+    "url": "/fr/applications/dd7e1a2d/",
+    "title": "Dictée de nombres jusqu'à 20",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:13.168Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "8fc34b9c",
+    "seriesId": "bf8eb7b8",
+    "url": "/fr/applications/bf8eb7b8/",
+    "title": "Dictée de nombres jusqu'à 100",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:13.203Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "08f3b97c",
+    "seriesId": "c8700e12",
+    "url": "/fr/applications/c8700e12/",
+    "title": "Reconnaître les nombres de 11 à 20",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:13.238Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "c281fce8",
+    "seriesId": "dea8d83c",
+    "url": "/fr/applications/dea8d83c/",
+    "title": "Reconnaître les nombres de 60 à 99",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:13.274Z",
+    "resolvedAt": null,
+    "resolvedBy": null
+  },
+  {
+    "id": "7e2cae6a",
+    "seriesId": "e3cd0e1e",
+    "url": "/fr/applications/e3cd0e1e/",
+    "title": "J'entends un nombre",
+    "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
+    "source": "claude",
+    "createdAt": "2026-10-24T12:00:13.309Z",
+    "resolvedAt": "2026-10-24T12:37:56.329Z",
+    "resolvedBy": "validated"
   }
 ]

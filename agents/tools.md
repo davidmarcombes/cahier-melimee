@@ -72,6 +72,7 @@ The e2e per-page specs:
 | Command | Description |
 |---------|-------------|
 | `npm run generate:tokens` | Regenerate `tailwind.config.js` + CSS vars from `design-tokens.json` |
+| `uv run --with piper-tts --with imageio-ffmpeg npm run generate:voice-pilot` | Régénère les consignes, blocs de nombres, consignes d'objets CP et encouragements avec Piper; `uv` garde Piper et ffmpeg dans son cache, sans installation système. Télécharge le modèle vocal (~63 Mo) au premier lancement. Voir [génération vocale](voice.md) |
 | `npm run generate:ids` | Assign 8-char hex IDs to series missing an `id` in `index.yaml` |
 | `npm run generate:maths` | Interactive CLI to scaffold new math exercises |
 | `npm run prompt:problems -- --level cm2 --classes A2.4+M1.2 --count 5` | Build a ready-to-paste LLM prompt that writes a series of word problems in the site format. Reads the level curriculum, the Vergnaud table, a real example file of the type (`--type problem | multi-question | guided-problem`) and the titles already used at that level. `--classes`: « + » = steps of one problem, « , » = mix. Also `--theme`, `--difficulty`, `--slug`. Writes `.scratch/prompts/<level>-<slug>.md`. Then: save files → `generate:ids` → `validate:exercises` → `check` → replay. |

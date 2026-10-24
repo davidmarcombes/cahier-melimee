@@ -369,6 +369,11 @@ module.exports = async function (eleventyConfig) {
     return [...new Set(exercises.map((ex) => ex.data.type || 'number-check'))];
   });
 
+  const instructionClipsPath = path.join(__dirname, 'src/assets/audio/voice-pilot/instructions.json');
+  const instructionClips = fs.existsSync(instructionClipsPath)
+    ? JSON.parse(fs.readFileSync(instructionClipsPath, 'utf8'))
+    : {};
+
   // Convert exercises to a JSON payload for the Alpine.js seriesPlayer component
   eleventyConfig.addFilter('seriesPayload', function (exercises) {
     const payload = [];
@@ -457,7 +462,13 @@ module.exports = async function (eleventyConfig) {
               : '',
         };
         // Spoken instruction (maternelle read-aloud), when the title alone is too short to read out
-        if (ex.data.say) item.say = interpolate(String(ex.data.say));
+        const isGs = /[\\/]fr[\\/](?:exercices|applications)[\\/]gs[\\/]/.test(ex.inputPath || '');
+        const spokenPrompt = ex.data.say || (isGs ? ex.data.title : '');
+        if (spokenPrompt) {
+          item.say = interpolate(String(spokenPrompt));
+          const phrase = item.say.replace(/\s+/g, ' ').trim();
+          if (instructionClips[phrase]) item.voiceAudio = instructionClips[phrase];
+        }
         // Only render operation as math if it doesn't have gaps, to preserve trouParts logic
         if (item.operation && !item.operation.includes('?')) {
           item.operation = md.renderInline(item.operation);

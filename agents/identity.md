@@ -54,7 +54,7 @@ if the cahier already exists on the device, both progressions are merged (union,
       sticker_id: '🎈',
       createdAt: '2026-10-03T10:00:00.000Z',
       progress: { 'series-id': { done: true, completedAt: '2026-10-03T10:20:00.000Z' } },
-      settings: { onlineVoice: true }      // preferences (only known keys survive an import)
+      settings: {}                          // legacy settings may exist in older backups
     }
   },
   progress: {},                            // guest work, before any cahier exists
@@ -65,8 +65,7 @@ if the cahier already exists on the device, both progressions are merged (union,
 API: `src/assets/js/modules/store.js` (`getUser`, `listUsers`, `addUser`, `switchUser`, `clearUser`,
 `removeUser`, `markDone`, `getProgress`, `getSettings`, `setSetting`, `exportUser`, `importUser`), tested in `tests/modules.test.js`.
 
-Settings: `onlineVoice` — an adult accepted an online voice on `/fr/voix/` (the browser sends the sentences to its
-provider); used only when no French voice is installed. Exported in the cahier file (`pupil.settings`).
+Older cahier backups may contain an `onlineVoice` setting; it is ignored by the player and has no effect on prerecorded clips.
 
 ## Pages
 

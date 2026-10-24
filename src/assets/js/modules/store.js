@@ -3,7 +3,7 @@
    Key: 'melimee_v1'
      { version: 2, current: slug | null,
        pupils: { [slug]: { slug, username, sticker_id, createdAt, progress: { [seriesId]: {...} },
-                           settings: { onlineVoice } } },
+                           settings: {} } },
        progress: { [seriesId]: {...} },    ← work done before any cahier exists (guest)
        settings: {} }                      ← guest preferences
    Several children can share one browser: each has a cahier, `current` is who is working.

@@ -1184,4 +1184,46 @@ describe('dicteeNombre — spoken number names', () => {
     expect(r.say.startsWith('trois virgule ')).toBe(true);
     if (dec.startsWith('0')) expect(r.say).toContain('virgule zéro');
   });
+  it('uses prerecorded clips for numbers through 999,999,999', () => {
+    expect(generators.dicteeNombre.generate({ min: 0, max: 0 }).voiceAudio).toEqual(['nombres/0.ogg']);
+    expect(generators.dicteeNombre.generate({ min: 100, max: 100 }).voiceAudio).toEqual(['nombres/100.ogg']);
+    expect(generators.dicteeNombre.generate({ min: 1000, max: 1000 }).voiceAudio).toEqual(['nombres/1000.ogg']);
+    expect(generators.dicteeNombre.generate({ min: 1234567, max: 1234567 }).voiceAudio).toEqual([
+      'nombres/1.ogg',
+      'unites/million.ogg',
+      'nombres/234.ogg',
+      'unites/mille.ogg',
+      'nombres/567.ogg',
+    ]);
+    expect(generators.dicteeNombre.generate({ min: 999999999, max: 999999999 }).voiceAudio).toEqual([
+      'nombres/999.ogg',
+      'unites/millions.ogg',
+      'nombres/999.ogg',
+      'unites/mille.ogg',
+      'nombres/999.ogg',
+    ]);
+  });
+  it('composes decimal dictation from prerecorded digits', () => {
+    const result = generators.dicteeNombre.generate({ min: 3, max: 3, decimals: 2 });
+    const decimalDigits = result.answers[0].split(',')[1].split('');
+    expect(result.voiceAudio[0]).toBe('nombres/3.ogg');
+    expect(result.voiceAudio[1]).toBe('unites/virgule.ogg');
+    expect(result.voiceAudio.slice(2)).toEqual(decimalDigits.map((digit) => `nombres/${digit}.ogg`));
+  });
+  it('reuses prerecorded clips for listen-and-choose numbers through 100', () => {
+    for (let n = 1; n <= 100; n++) {
+      const exercise = generators.ecouteNombre.generate({ min: n, max: 100, choices: 1 });
+      expect(exercise.voiceAudio).toEqual([`nombres/${exercise.answers[0]}.ogg`]);
+    }
+  });
+  it('assigns prerecorded prompts to every compterObjets variation', () => {
+    const random = vi.spyOn(Math, 'random');
+    const prompts = new Set();
+    for (let i = 0; i < 16; i++) {
+      random.mockImplementationOnce(() => i / 16);
+      prompts.add(generators.compterObjets.generate().voiceAudio);
+    }
+    expect(prompts.size).toBe(16);
+    expect([...prompts]).toContain('objets/etoiles.ogg');
+  });
 });

@@ -45,6 +45,8 @@ In `base.njk`, scripts load in this order:
 3. **alpine.min.js** — `defer`, after app.js so the components exist when Alpine starts
 4. **Service worker registration** — inline, on `load` (unregistered in dev mode). `scripts/generate-sw.js` precaches the shell only (JS, CSS, fonts, logo, manifest); pages are cached on visit (stale-while-revalidate). Never precache pages: 874 URLs per first visit tripped the host's request limit.
 
+Speech clips are not part of the precached shell. `Audio` fetches each clip only when spoken; the service worker then caches it on visit.
+
 Page-specific scripts (`svg.js`, generator modules) are plain classic scripts in `series-player.njk` / `timed-player.njk`. Every JS/CSS URL carries `?v={{ site.version }}` (see `docs/release.md`).
 
 ## CSS Discipline

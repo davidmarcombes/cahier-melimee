@@ -51,6 +51,27 @@
     if (dec) words += ' virgule ' + (dec.match(/^0+/)?.[0] || '').replace(/0/g, 'zéro ') + sous100(Number(dec));
     return words;
   }
+  function nombreAudio(x) {
+    const [ent, dec] = String(x).replace('.', ',').split(',');
+    let n = Number(ent);
+    if (!Number.isInteger(n) || n < 0 || n > 999999999) return [];
+
+    const segments = [];
+    const millions = Math.floor(n / 1e6);
+    const milliers = Math.floor(n / 1000) % 1000;
+    const unites = n % 1000;
+
+    if (millions) segments.push(`nombres/${millions}.ogg`, `unites/${millions === 1 ? 'million' : 'millions'}.ogg`);
+    if (milliers === 1) segments.push('nombres/1000.ogg');
+    else if (milliers) segments.push(`nombres/${milliers}.ogg`, 'unites/mille.ogg');
+    if (unites || !segments.length) segments.push(`nombres/${unites}.ogg`);
+
+    if (dec) {
+      segments.push('unites/virgule.ogg');
+      for (const digit of dec) segments.push(`nombres/${digit}.ogg`);
+    }
+    return segments;
+  }
   // Numbers that sound alike or are written alike: 16 / 60, 17 / 71, 72 / 62, 97 / 87, 13 / 30…
   function confusables(n, max) {
     const out = [];
@@ -89,8 +110,8 @@
   }
 
   const generators = {
-    // dicteeNombre: hear a number, write it in digits (voice exercise: speaks by itself at every level)
-    // params: min (1), max (20), decimals (0), tricky (0.5 — share of 11–16 / 70–99)
+    // dicteeNombre: hear a number, write it in digits (voice exercise)
+    // params: min (1), max (999999999), decimals (0), tricky (0.5 — share of 11–16 / 70–99)
     dicteeNombre: {
       generate: (params = {}) => {
         const x = nombreADire(params);
@@ -98,6 +119,7 @@
           type: 'number-check',
           title: 'Écris le nombre que tu entends.',
           say: nombreEnMots(x),
+          voiceAudio: nombreAudio(x),
           voice: true,
           answers: [x],
         };
@@ -105,7 +127,7 @@
     },
 
     // ecouteNombre: hear a number, tap it among numbers that sound or look alike (voice exercise)
-    // params: min (1), max (20), choices (3), tricky (0.5)
+    // params: min (1), max (100), choices (3), tricky (0.5)
     ecouteNombre: {
       generate: (params = {}) => {
         const max = params.max ?? 20;
@@ -117,6 +139,7 @@
           type: 'mcq',
           title: params.title ?? 'Clique sur le nombre que tu entends.',
           say: nombreEnMots(n),
+          voiceAudio: nombreAudio(n),
           voice: true,
           mcqChoices: choices,
           mcqAnswer: choices.indexOf(String(n)),
