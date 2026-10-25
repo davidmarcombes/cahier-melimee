@@ -146,6 +146,22 @@ test.describe('fraction-check — ecrire-fraction-01 CE2', () => {
   });
 });
 
+test.describe('fraction MCQ — operations-01 CM2', () => {
+  test('fraction choices use large, centered text', async ({ page }) => {
+    await page.goto('/fr/exercices/eea77cc4/#2');
+    await waitForAlpine(page);
+    const choices = page.locator('.js-mcq-choice');
+    await expect(choices).toHaveCount(4);
+    const styles = await choices.evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        fontSize: parseFloat(getComputedStyle(node).fontSize),
+        textAlign: getComputedStyle(node).textAlign,
+      }))
+    );
+    expect(styles.every((style) => style.fontSize >= 30 && style.textAlign === 'center')).toBe(true);
+  });
+});
+
 // ─── true-false ───────────────────────────────────────────────────────────────
 // Series: angle-droit-01 CE1 (c6309e42) — ex1: answers [T,T,F,T,F]
 test.describe('true-false — angle-droit-01 CE1', () => {
@@ -308,6 +324,86 @@ test.describe('tile-select — somme-100-01 CE2', () => {
   });
 });
 
+test.describe('longueurs — comparer-longueurs-01 GS', () => {
+  test('keeps pictured lengths and answers in realistic order', async ({ page }) => {
+    await page.goto('/fr/exercices/ab350f6a/');
+    await waitForAlpine(page);
+    const exercises = await page.locator('[x-data*="seriesPlayer"]').evaluate((el) => Alpine.$data(el).exercises);
+    const lengths = Object.fromEntries(
+      exercises.flatMap((exercise) => exercise.svg.par.objects.map(({ emoji, length }) => [emoji, Number(length)]))
+    );
+
+    expect(lengths['✏️']).toBeLessThan(lengths['📏']);
+    expect(lengths['📏']).toBeLessThan(lengths['🥖']);
+    expect(lengths['🥖']).toBeLessThan(lengths['🐍']);
+    expect(lengths['🧣']).toBeGreaterThan(lengths['📏']);
+    expect(exercises[0].answers[0]).toBe('🥖');
+    expect(exercises[1].answers[0]).toBe('📏');
+    expect(exercises[3].items).toEqual(['✏️', '📏', '🥖']);
+    expect(exercises[4].items).toEqual(['📏', '🥖', '🐍']);
+  });
+});
+
+test.describe('number-strip — bande-numerique-01 GS', () => {
+  test('rejects wrong tile, then accepts the correct number and renders collections', async ({ page }) => {
+    await page.goto('/fr/exercices/dd6ed430/');
+    await waitForAlpine(page);
+    const player = page.locator('[x-data*="seriesPlayer"]');
+    await page.getByRole('button', { name: 'Commencer, avec le son' }).click();
+    const voiceAudio = await player.evaluate((el) => Alpine.$data(el).cur.voiceAudio);
+    expect(voiceAudio).toMatch(/\.ogg$/);
+    const voiceUrls = await player.evaluate((el) =>
+      Alpine.$data(el).exercises.map(
+        (exercise) => `${window.__pathPrefix || '/'}assets/audio/voice-pilot/${exercise.voiceAudio}`
+      )
+    );
+    expect(voiceUrls).toHaveLength(5);
+    const voiceResponses = await Promise.all(voiceUrls.map((url) => page.request.get(new URL(url, page.url()).href)));
+    expect(voiceResponses.every((response) => response.ok())).toBe(true);
+
+    await page.getByRole('button', { name: 'Choisir la tuile 2' }).click();
+    await page.getByRole('button', { name: 'Case 2, vide' }).click();
+    await expect.poll(() => player.evaluate((el) => Alpine.$data(el).showError)).toBe(true);
+    await expect.poll(() => player.evaluate((el) => Alpine.$data(el).stripPlacements[0])).toBe(null);
+
+    await page.getByRole('button', { name: 'Choisir la tuile 1' }).click();
+    await page.getByRole('button', { name: 'Case 2, vide' }).click();
+    await expect.poll(() => player.evaluate((el) => Alpine.$data(el).solvedFlags[0])).toBe(true);
+
+    await player.evaluate((el) => Alpine.$data(el).goTo(2));
+    const strip = player.getByRole('group', { name: 'Bande numérique' });
+    await expect(strip).toContainText('🍐');
+    const diceMetrics = await strip.locator('.js-number-strip-dice').evaluateAll((grids) =>
+      grids.map((grid) => {
+        const symbols = [...grid.querySelectorAll('.js-number-strip-die')].filter((symbol) => symbol.textContent);
+        return {
+          count: symbols.length,
+          fontSize: Number.parseFloat(getComputedStyle(symbols[0]).fontSize),
+          positions: [...grid.querySelectorAll('.js-number-strip-die')]
+            .map((symbol, index) => (symbol.textContent ? index : null))
+            .filter((index) => index !== null),
+          grid: [grid.clientWidth, grid.clientHeight, grid.scrollWidth, grid.scrollHeight],
+          parent: [grid.parentElement.clientWidth, grid.parentElement.clientHeight],
+        };
+      })
+    );
+    expect(diceMetrics.length).toBeGreaterThan(0);
+    expect(diceMetrics.every(({ count }) => count >= 1 && count <= 5)).toBe(true);
+    expect(diceMetrics.every(({ fontSize }) => fontSize >= 16)).toBe(true);
+    expect(diceMetrics.map(({ positions }) => positions)).toEqual([[4], [0, 8], [0, 2, 6, 8], [0, 2, 4, 6, 8]]);
+    expect(
+      diceMetrics.every(
+        ({ grid: [width, height, scrollWidth, scrollHeight], parent: [parentWidth, parentHeight] }) =>
+          scrollWidth <= width + 1 &&
+          scrollHeight <= height + 1 &&
+          width <= parentWidth + 1 &&
+          height <= parentHeight + 1
+      ),
+      JSON.stringify(diceMetrics)
+    ).toBe(true);
+  });
+});
+
 // ─── fill-table ───────────────────────────────────────────────────────────────
 // Series: suite-nombres-01 CE1 (06fa1711) — generated number sequence table
 test.describe('fill-table — suite-nombres-01 CE1', () => {
@@ -389,6 +485,26 @@ test.describe('bar-chart — donnees-01 CE1', () => {
     await expect(page.getByText('Chat', { exact: true })).toBeVisible();
     await expect(page.getByText('Chien', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Vérifier' })).toBeVisible();
+  });
+});
+
+test.describe('bar-model — classeurs proportionnalité CM1', () => {
+  test('unit values remain separated in the proportional bar', async ({ page }) => {
+    await page.goto('/fr/exercices/fb8839ba/');
+    await waitForAlpine(page);
+    const chart = page.locator('[x-html="cur.bmSvg"] svg');
+    const labels = await chart.locator('text').evaluateAll((nodes) =>
+      nodes
+        .filter((node) => node.textContent.trim() === '4,5')
+        .map((node) => {
+          const { x, width } = node.getBBox();
+          return { x, width };
+        })
+    );
+    expect(labels).toHaveLength(12);
+    for (let i = 1; i < labels.length; i++) {
+      expect(labels[i - 1].x + labels[i - 1].width).toBeLessThan(labels[i].x);
+    }
   });
 });
 

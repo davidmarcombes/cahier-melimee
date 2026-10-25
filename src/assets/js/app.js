@@ -80,6 +80,7 @@ document.addEventListener('alpine:init', () => {
     'emoji-equations',
     'number-forms',
     'op-triangle',
+    'number-strip',
   ];
   const CSV_CLASSES = [
     'A1.1',

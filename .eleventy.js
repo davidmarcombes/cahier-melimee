@@ -48,7 +48,7 @@ function genBarModelSvg(bm) {
     const parts = (bm.parts || []).map((p) => ({
       isUnk: String(p) === '?',
       val: String(p) === '?' ? parseFloat(ans) : parseFloat(String(p)),
-      label: String(p),
+      label: String(p).replace('.', ','),
     }));
     const hasPartLabels = bm.partLabels && bm.partLabels.length;
     const PY = 26;
@@ -87,11 +87,12 @@ function genBarModelSvg(bm) {
     const refW = (refNum / maxNum) * W;
     const compW = (compNum / maxNum) * W;
     const PY = 26;
+    const comparisonGap = 30;
     const diffH = Math.abs(refW - compW) > 10 ? 26 : 0;
-    const SVG_H = PY + BAR_H + GAP + BAR_H + diffH + PY;
+    const SVG_H = PY + BAR_H + comparisonGap + BAR_H + diffH + PY;
     let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W + PX * 2} ${SVG_H}" role="img">`;
     const y1 = PY,
-      y2 = PY + BAR_H + GAP;
+      y2 = PY + BAR_H + comparisonGap;
     if (bm.refLabel) s += `<text x="${PX}" y="${y1 - 6}" font-size="11" fill="var(--cs)" ${F}>${bm.refLabel}</text>`;
     if (bm.compLabel) s += `<text x="${PX}" y="${y2 - 6}" font-size="11" fill="var(--cs)" ${F}>${bm.compLabel}</text>`;
     // Ref bar
@@ -212,6 +213,54 @@ module.exports = async function (eleventyConfig) {
 
   // Add a simple filter
   eleventyConfig.addFilter('year', () => new Date().getFullYear());
+  eleventyConfig.addFilter('coverageByLevel', (series, challenges) => {
+    const categoryLabels = {
+      calcul: 'Calcul',
+      decimaux: 'Nombres décimaux',
+      donnees: 'Données',
+      fractions: 'Fractions',
+      geometrie: 'Géométrie',
+      logique: 'Logique',
+      mesures: 'Grandeurs et mesures',
+      numeration: 'Numération',
+      problemes: 'Problèmes',
+      proportions: 'Proportionnalité',
+    };
+    const levels = ['GS', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'];
+    const categories = Object.keys(categoryLabels);
+    const counts = Object.fromEntries(
+      levels.map((level) => [level, Object.fromEntries(categories.map((category) => [category, 0]))])
+    );
+    for (const item of [...(series || []), ...(challenges || [])]) {
+      const level = String(item.level || '').toUpperCase();
+      const category = item.subtopic;
+      if (counts[level] && Object.hasOwn(categoryLabels, category)) counts[level][category]++;
+    }
+    const categoryTotals = Object.fromEntries(categories.map((category) => [category, 0]));
+    const levelData = levels.map((level) => {
+      const total = Object.values(counts[level]).reduce((sum, count) => sum + count, 0);
+      const rows = categories.map((key) => {
+        const count = counts[level][key];
+        categoryTotals[key] += count;
+        return {
+          key,
+          label: categoryLabels[key],
+          count,
+          share: total ? Math.round((count / total) * 100) : 0,
+        };
+      });
+      return { name: level, total, categories: rows };
+    });
+    return {
+      total: levelData.reduce((sum, level) => sum + level.total, 0),
+      levels: levelData,
+      categories: categories.map((key) => ({
+        key,
+        label: categoryLabels[key],
+        count: categoryTotals[key],
+      })),
+    };
+  });
 
   // JSON-encode a value for safe embedding in <script> tags
   eleventyConfig.addFilter('dump', (value) => JSON.stringify(value));
@@ -500,6 +549,14 @@ module.exports = async function (eleventyConfig) {
           };
         }
 
+        if (ex.data.type === 'number-strip') {
+          item.stripCells = ex.data.cells.map((cell) =>
+            cell === null ? null : md.renderInline(interpolate(String(cell)))
+          );
+          item.stripChoices = ex.data.choices.map((choice) => md.renderInline(interpolate(String(choice))));
+          item.stripAnswers = ex.data.answers.map(Number);
+        }
+
         if (ex.data.hour != null) item.hour = Number(interpolate(String(ex.data.hour)));
         if (ex.data.minute != null) item.minute = Number(interpolate(String(ex.data.minute)));
 
@@ -521,23 +578,21 @@ module.exports = async function (eleventyConfig) {
             par: {},
           };
           if (dataSvg.par) {
-            for (const [k, v] of Object.entries(dataSvg.par)) {
-              if (Array.isArray(v)) {
-                svgObj.par[k] = v.map((item) => {
-                  const s = interpolate(String(item));
-                  return isNaN(s) ? s : Number(s);
-                });
-              } else if (v !== null && typeof v === 'object') {
+            const parseSvgValue = (value) => {
+              if (Array.isArray(value)) return value.map(parseSvgValue);
+              if (value !== null && typeof value === 'object') {
                 const obj = {};
-                for (const [ok, ov] of Object.entries(v)) {
-                  const key = isNaN(ok) ? ok : Number(ok);
-                  obj[key] = interpolate(String(ov));
+                for (const [key, child] of Object.entries(value)) {
+                  obj[isNaN(key) ? key : Number(key)] =
+                    child !== null && typeof child === 'object' ? parseSvgValue(child) : interpolate(String(child));
                 }
-                svgObj.par[k] = obj;
-              } else {
-                const val = interpolate(String(v));
-                svgObj.par[k] = isNaN(val) ? val : Number(val);
+                return obj;
               }
+              const parsed = interpolate(String(value));
+              return isNaN(parsed) ? parsed : Number(parsed);
+            };
+            for (const [k, v] of Object.entries(dataSvg.par)) {
+              svgObj.par[k] = parseSvgValue(v);
             }
           }
           if (svgObj.gen === 'file') {
@@ -1416,6 +1471,7 @@ module.exports = async function (eleventyConfig) {
       'emoji-equations',
       'number-forms',
       'op-triangle',
+      'number-strip',
     ];
     const CSV_CLASSES = [
       'A1.1',

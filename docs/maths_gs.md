@@ -36,7 +36,8 @@ Status: `[✓]` done and validated by hand · `[~]` exists, not validated / need
 - [~] `un-de-plus-01` Un de plus — `mcq` · `facile`
 - [~] `un-de-moins-01` Un de moins — `mcq` · `moyen`
 - [~] `plus-grand-nombre-01` Le plus grand nombre — `mcq` · `moyen`
-- [~] `chapeau-01` Sous le chapeau — `mcq`: total as « 5 🐰 » in the title, one scene (visible ones + 🎩). Never draw « before » and « after » as two rows: pupils add them up · `facile`
+- [~] `chapeau-01` Sous le chapeau — `mcq`: total as « 5 🐰 » in the title, one scene (visible ones + 🎩), find hidden part. Never draw « before » and « after » as two rows: pupils add them up · `facile`
+- [~] `partie-visible-01` Combien en vois-tu ? — find visible part from total and hidden part · `facile`
 - [~] `intrus-motif-01` L'intrus du collier — `tile-select` (`positional: true`) · `facile`. AB rows: the intruder makes a triple (the middle one is wrong); AAB/ABB/ABC rows use a symbol from outside the pattern (☀️ among ⭐🌙), because swapping in a pattern symbol always leaves two candidates.
 - [~] `motifs-evolutifs-01` Des motifs qui grandissent — `mcq` · `moyen`
 - [~] `train-rang-01` Le train — `tile-select` positional, rank ≤ 6 from the engine · `facile`
@@ -51,6 +52,9 @@ Status: `[✓]` done and validated by hand · `[~]` exists, not validated / need
 - [~] `envolent-01` Il en part — take-away, spoken · `moyen`
 - [~] `chapeau-02` Sous le chapeau jusqu'à 10 · `moyen`
 - [~] `motif-ou-pas-01` Lequel suit la règle ? — exactly one row repeats · `facile`
+- [~] `assez-pour-tous-01` Assez pour tout le monde ? — one-to-one pairing: not enough, just enough, or leftovers · `facile`
+- [~] `comparer-longueurs-01` Plus long ou plus court ? — compare two objects, then order three by length · `facile`
+- [~] `bande-numerique-01` La bande numérique — fill missing numbers and collections up to 6 with `number-strip` · `facile`
 
 ## Player / types to build
 
@@ -59,7 +63,7 @@ Status: `[✓]` done and validated by hand · `[~]` exists, not validated / need
 - [_] **Row / train picker** for ranks: a fixed row of items (no shuffle), tap the 3rd / the last / the next-to-last; start marker on the left or the right (🔵 … 🔴).
 - [_] **One-to-one pairing**: tap a 🐰 then a 🥕 to pair them; answer « autant / il en manque / il y en a trop ». Possibly `matching` in kid mode.
 - [_] **Board game (jeu de l'oie)**: pawn on a 1-to-10 strip, dice (dice pattern or digit), tap the arrival square; moving forward and backward; find the starting square.
-- [_] **Number strip (bande numérique)**: tap the empty square for a given number or picture; fill a strip with gaps by choosing from big tiles (current `sequence` needs typing).
+- [~] **Number strip (bande numérique)**: fill number or collection gaps by choosing a tile and tapping its empty square (`number-strip`); implemented, series to validate by hand.
 - [_] **Plane shapes SVG**: square, rectangle, triangle and disc drawn at random rotation, size and colour (emojis can't rotate) → used by `classify`, `tile-select` and the « shape sorter » game (tap the hole a shape fits into).
 - [_] **Roberval balance SVG**: two pans tipped toward the heavier side; « le plus lourd » and ordering 3 objects by transitivity.
 - [_] **Tap-to-build row**: tap symbols to build a row (copy a pattern, continue it, translate it to other symbols).
@@ -78,7 +82,7 @@ Status: `[✓]` done and validated by hand · `[~]` exists, not validated / need
 - [~] One more: « il y avait 3 🐟, il en arrive un, combien maintenant ? » (`un-de-plus-01`) · `facile` · One less (`un-de-moins-01`) · `moyen`
 - [~] Digit → collection (`montre-moi-01`, `-02`) · `facile` 1–6, `moyen` 1–10 — `matching` with dice patterns / fingers still to do
 - [_] Compare at a glance, big differences (×2 or more, can be large collections) — more / fewer · `facile`
-- [_] Compare by one-to-one pairing (enough carrots for every rabbit?) · `facile`
+- [~] Compare by one-to-one pairing (enough carrots for every rabbit?) (`assez-pour-tous-01`) · `facile`
 - [_] Compare by counting each collection; **as many** (autant) · `moyen`
 - [~] Compare two digits (« quel nombre est le plus grand ? »), 1 to 10 (`plus-grand-nombre-01`) · `moyen`
 - [_] Ways to make a number (« 3, c'est 1 et 2 ») with fingers / shaker box (part hidden under a hat 🎩) · `facile` ≤ 6, `moyen` ≤ 10
@@ -91,7 +95,7 @@ Status: `[✓]` done and validated by hand · `[~]` exists, not validated / need
 - [~] Rank by counting (≤ 6): « le 1er, le 2e… » (`train-rang-01`) · `facile`
 - [~] First, last, second, next-to-last, 7th (`premier-dernier-01`) · `moyen`
 - [_] Rank when the starting side changes (start at 🔴 or at 🔵) · `difficile`
-- [_] Number strip to 6: put pictures (dice pattern, fingers, digit) in the right square; fill the gaps · `facile` · Same up to 10 · `moyen`
+- [~] Number strip to 6: complete missing digits and collections (`bande-numerique-01`) · `facile` · Same up to 10 with varied representations · `moyen`
 - [_] Board game: arrival square after moving forward or back 1 or 2 · `facile` · any move ≤ 6, find the starting square · `moyen`
 
 ## Content to do — Problèmes (one step)
@@ -118,10 +122,10 @@ Status: `[✓]` done and validated by hand · `[~]` exists, not validated / need
 
 ## Content to do — Grandeurs
 
-- [_] Longest / shortest of 2 objects, very different lengths · `facile`
+- [~] Longest / shortest of 2 objects, very different lengths (`comparer-longueurs-01`) · `facile`
 - [_] Sort into 3 groups: short / medium / long · `facile`
 - [_] Longest / shortest when lengths differ a little and don't start at the same point · `moyen`
-- [_] Order 3 objects by length (staircase) · `facile` · up to 5 · `moyen`
+- [~] Order 3 objects by length (staircase) (`comparer-longueurs-01`) · `facile` · up to 5 · `moyen`
 - [_] Same length as the model (indirect comparison with a reference strip) · `moyen`
 - [_] Heavier / lighter on a Roberval balance, 2 objects · `facile` · balanced = same mass · `moyen` · order 3 objects from 2 weighings (transitivity) · `difficile`
 - [_] Mass is not size: a big light thing vs a small heavy thing (cotton bag vs sand bag, on the balance) · `moyen`

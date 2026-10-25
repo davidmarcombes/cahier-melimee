@@ -9,7 +9,7 @@ lang: fr
 permalink: "/fr/{{ s.folder }}/{{ s.id }}/"
 eleventyComputed:
   series: "{{ s.series }}"
-  title: "{{ s.title }}"
+  title: "{{ s.title | safe }}"
   folder: "{{ s.folder }}"
   level: "{{ s.level }}"
   topic: "{{ s.topic }}"

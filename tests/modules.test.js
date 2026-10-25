@@ -124,6 +124,36 @@ describe('seriesPlayer Logic', () => {
     delete window.AppGenerators;
   });
 
+  it('regenerateAll avoids consecutive ecouteNombre answers', () => {
+    globalThis.window = globalThis.window || globalThis;
+    window.AppGenerators = {
+      ecouteNombre: {
+        generate: (params) => {
+          const answer = params.exclude === undefined ? 11 : params.exclude === 20 ? 11 : 20;
+          return { type: 'mcq', answers: [String(answer)] };
+        },
+      },
+    };
+    const p = seriesPlayer(
+      [{ type: 'mcq', _gen: { name: 'ecouteNombre', params: { min: 11, max: 20 }, count: 8 } }],
+      'no-consecutive-listen-numbers'
+    );
+
+    p.regenerateAll();
+
+    expect(p.exercises.map((exercise) => exercise.answers[0])).toEqual([
+      '11',
+      '20',
+      '11',
+      '20',
+      '11',
+      '20',
+      '11',
+      '20',
+    ]);
+    delete window.AppGenerators;
+  });
+
   describe('matching — a child can undo links', () => {
     const ex = { type: 'matching', pairs: { left: ['A', 'B'], right: ['a', 'b'], answers: [0, 1] } };
     const mk = () => {

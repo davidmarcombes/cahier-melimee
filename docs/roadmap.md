@@ -1,19 +1,30 @@
 # Roadmap — Couverture du programme CP→CM2
 
-> Généré le 2026-03-19. Mis à jour le 2026-03-28. Sources : `docs/maths_*.md` (programme officiel) × `exercises-report.csv` (ce qui existe).
+> Mis à jour le 2026-10-25. Comptage des séries (exercices + applications + défis), classées par dossier de catégorie sous `maths/`.
 > Légende : ✅ couvert · ⚠️ partiel · ❌ absent · 🔥 priorité haute
 
 ---
 
-## Résumé par niveau
+## Carte des séries par niveau et catégorie
 
-| Niveau | Séries actuelles | Santé globale | Priorité |
-|--------|-----------------|---------------|----------|
-| CP     | 61              | ✅ bon socle | Soustractions posées (non prioritaire) |
-| CE1    | 110             | ✅ complet | — |
-| CE2    | 151             | ✅ le plus complet | — |
-| CM1    | 141             | ✅ très complet | — |
-| CM2    | 40              | ⚠️ lacunaire | ⏳ traité ultérieurement |
+| Niveau | Calcul | Décimaux | Données | Fractions | Géométrie | Logique | Mesures | Numération | Problèmes | Proportions | Total |
+|--------|-------:|---------:|--------:|----------:|----------:|--------:|--------:|-----------:|----------:|------------:|------:|
+| GS     | 3 | 0 | 0 | 0 | 1 | 5 | 1 | 18 | 8 | 0 | 36 |
+| CP     | 31 | 0 | 0 | 0 | 4 | 1 | 3 | 33 | 7 | 0 | 79 |
+| CE1    | 74 | 0 | 2 | 0 | 8 | 4 | 8 | 28 | 21 | 0 | 145 |
+| CE2    | 88 | 0 | 3 | 9 | 11 | 12 | 24 | 46 | 29 | 0 | 222 |
+| CM1    | 81 | 18 | 4 | 38 | 11 | 24 | 26 | 31 | 40 | 4 | 277 |
+| CM2    | 34 | 7 | 0 | 8 | 0 | 6 | 15 | 13 | 12 | 4 | 99 |
+| **Total** | **311** | **25** | **9** | **55** | **35** | **52** | **77** | **169** | **117** | **8** | **858** |
+
+| Niveau | Santé globale | Priorité |
+|--------|---------------|----------|
+| GS     | — | — |
+| CP     | ✅ bon socle | Soustractions posées (non prioritaire) |
+| CE1    | ✅ complet | — |
+| CE2    | ✅ le plus complet | — |
+| CM1    | ✅ très complet | — |
+| CM2    | ⚠️ lacunaire | ⏳ traité ultérieurement |
 
 ---
 

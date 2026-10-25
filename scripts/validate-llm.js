@@ -85,6 +85,7 @@ const LLM_TYPES = new Set([
   'select',
   'checkbox',
   'sort',
+  'number-strip',
   'drag-sort',
   'clock',
   'fraction',
@@ -836,6 +837,24 @@ function buildPrompt({ data, body }) {
         title && `Consigne: ${title}`,
         (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
         ...tiles.map((t, i) => `[${good.has(i) ? '✓' : ' '}] ${t}`),
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'number-strip': {
+      if (!Array.isArray(data.cells) || !Array.isArray(data.choices) || !Array.isArray(data.answers)) return null;
+      let blank = 0;
+      const stripCells = data.cells.map((cell) =>
+        cell === null ? `? [${data.choices[data.answers[blank++]]}]` : String(cell)
+      );
+      return [
+        `Type: bande numérique — complète les cases vides en choisissant les tuiles`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Bande proposée: ${stripCells.join(' | ')}`,
+        `Tuiles: ${data.choices.map((choice, i) => `${data.answers.includes(i) ? '[✓]' : '[ ]'} ${choice}`).join(' | ')}`,
+        `Vérifie que les réponses et la bande représentée sont correctes.`,
       ]
         .filter(Boolean)
         .join('\n');

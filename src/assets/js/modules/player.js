@@ -67,6 +67,9 @@ export function seriesPlayer(exercises, seriesId) {
     sortPicked: [],
     sortShuffled: [],
     sortErrors: [],
+    stripPlacements: [],
+    stripSelected: null,
+    stripErrors: [],
     tableInputs: [],
     tableErrors: [],
     checkSelected: [],
@@ -257,26 +260,37 @@ export function seriesPlayer(exercises, seriesId) {
       // Always expand the ORIGINAL placeholders: this.exercises is already expanded, and each item
       // still carries _gen — re-expanding it multiplied the series ("Recommencer": 10 → 58 → 370)
       const source = exercises || [];
+      let previousListenedNumber = null;
       for (const ex of source) {
         if (!ex._gen) {
           expanded.push(ex);
+          previousListenedNumber = null;
           continue;
         }
         const gen = window.AppGenerators[ex._gen.name];
         if (!gen) {
           expanded.push(ex);
+          previousListenedNumber = null;
           continue;
         }
+        if (ex._gen.name !== 'ecouteNombre') previousListenedNumber = null;
         const count = ex._gen.count || 1;
         for (let i = 0; i < count; i++) {
           try {
-            expanded.push({ ...ex, ...gen.generate(ex._gen.params || {}) });
+            const params = { ...(ex._gen.params || {}) };
+            if (ex._gen.name === 'ecouteNombre' && previousListenedNumber !== null) {
+              params.exclude = previousListenedNumber;
+            }
+            const generated = gen.generate(params);
+            expanded.push({ ...ex, ...generated });
+            previousListenedNumber = ex._gen.name === 'ecouteNombre' ? Number(generated.answers?.[0]) : null;
           } catch (e) {
             console.error(`Generator error [${ex._gen.name}]:`, e);
             expanded.push({
               ...ex,
               body: `<div class="p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl">⚠️ Erreur de génération (${ex._gen.name})</div>`,
             });
+            previousListenedNumber = null;
           }
         }
       }
@@ -376,6 +390,10 @@ export function seriesPlayer(exercises, seriesId) {
         this.sortShuffled = [];
       }
       this.sortErrors = [];
+
+      this.stripPlacements = _e.stripAnswers ? Array(_e.stripAnswers.length).fill(null) : [];
+      this.stripSelected = null;
+      this.stripErrors = [];
 
       if (_e.selectStatements) this.selectAnswers = new Array(_e.selectStatements.length).fill('');
       else this.selectAnswers = [];
@@ -1103,6 +1121,31 @@ export function seriesPlayer(exercises, seriesId) {
             // Maternelle: wrong tiles let go, so the pupil can tap again
             if (this.kid) this.tileSelected = this.tileSelected.filter((i) => !this.tileErrors.includes(i));
             this.tileErrors = [];
+          });
+        }
+        return;
+      }
+
+      if (_e.type === 'number-strip') {
+        if (this.stripPlacements.some((choice) => choice === null)) {
+          this._flashError();
+          return;
+        }
+        const expected = _e.stripAnswers || [];
+        const errors = this.stripPlacements
+          .map((choice, index) => (choice === expected[index] ? -1 : index))
+          .filter((index) => index !== -1);
+        if (errors.length === 0) {
+          this.stripErrors = [];
+          this._markSolvedAndAdvance();
+        } else {
+          this.stripErrors = errors;
+          this._flashError(() => {
+            this.stripPlacements = this.stripPlacements.map((choice, index) =>
+              errors.includes(index) ? null : choice
+            );
+            this.stripErrors = [];
+            this.stripSelected = null;
           });
         }
         return;
@@ -2284,6 +2327,57 @@ export function seriesPlayer(exercises, seriesId) {
 
     sortTap(idx) {
       if (!this.solved && !this.sortPicked.includes(idx)) this.sortPicked.push(idx);
+    },
+    stripDiceSlots(value) {
+      const symbols = String(value || '')
+        .trim()
+        .split(/\s+/);
+      if (
+        symbols.length === 0 ||
+        symbols.length > 9 ||
+        symbols.some((symbol) => !/\p{Extended_Pictographic}/u.test(symbol))
+      ) {
+        return null;
+      }
+
+      const layouts = [
+        [],
+        [4],
+        [0, 8],
+        [0, 4, 8],
+        [0, 2, 6, 8],
+        [0, 2, 4, 6, 8],
+        [0, 3, 6, 2, 5, 8],
+        [0, 3, 6, 2, 4, 5, 8],
+        [0, 3, 6, 1, 2, 4, 5, 8],
+        [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      ];
+      const slots = Array(9).fill('');
+      symbols.forEach((symbol, index) => {
+        slots[layouts[symbols.length][index]] = symbol;
+      });
+      return slots;
+    },
+    stripBlankIndex(cellIndex) {
+      return (this.cur.stripCells || []).slice(0, cellIndex).filter((cell) => cell === null).length;
+    },
+    stripChoose(choiceIndex) {
+      if (this.solved || this.stripPlacements.includes(choiceIndex)) return;
+      this.stripSelected = this.stripSelected === choiceIndex ? null : choiceIndex;
+      this.stripErrors = [];
+    },
+    stripPlace(blankIndex) {
+      if (this.solved || blankIndex < 0 || blankIndex >= this.stripPlacements.length) return;
+      const placements = [...this.stripPlacements];
+      if (this.stripSelected === null) {
+        placements[blankIndex] = null;
+      } else {
+        placements[blankIndex] = this.stripSelected;
+      }
+      this.stripPlacements = placements;
+      this.stripSelected = null;
+      this.stripErrors = [];
+      if (this.stripPlacements.every((choice) => choice !== null)) this.check();
     },
     sortUnpick(rank) {
       if (!this.solved) this.sortPicked = this.sortPicked.slice(0, rank);

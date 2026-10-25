@@ -221,6 +221,15 @@ function solveAll() {
       p.tileSelected = w ? e.tileAnswers.slice(1) : [...e.tileAnswers];
       p.check();
     },
+    'number-strip': (e, w) => {
+      const answers = e.stripAnswers || [];
+      if (w) {
+        const decoy = (e.stripChoices || []).findIndex((_, index) => !answers.includes(index));
+        if (decoy < 0) return 'no-wrong';
+        p.stripPlacements = answers.map((choice, index) => (index === 0 ? decoy : choice));
+      } else p.stripPlacements = [...answers];
+      p.check();
+    },
     'svg-tiles': (e, w) => {
       if (w && !e.answers?.length) return 'no-wrong';
       p.svgSelected = (w ? e.answers.slice(1) : e.answers).map(Number);

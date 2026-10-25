@@ -80,6 +80,38 @@ function mathGridSvg(cols, rows, filled, color = 'var(--p)') {
   );
 }
 
+function longueursSvg(objects) {
+  if (!Array.isArray(objects) || objects.length < 2 || objects.length > 3) {
+    throw new TypeError('longueursSvg expects two or three objects');
+  }
+
+  if (objects.some((object) => !Number.isFinite(Number(object.length)) || Number(object.length) <= 0)) {
+    throw new TypeError('Each object must have a positive length');
+  }
+
+  const colors = ['var(--p)', 'var(--a)', 'var(--green)'];
+  const x0 = 78;
+  const rowHeight = 64;
+  const maxLength = Math.max(...objects.map((object) => Number(object.length)));
+  const content = objects
+    .map((object, index) => {
+      const y = 35 + index * rowHeight;
+      const x1 = x0 + (Number(object.length) / maxLength) * 270;
+      const color = colors[index];
+      return `<text x="35" y="${y + 9}" text-anchor="middle" font-size="28">${object.emoji}</text>
+        <line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${color}" stroke-width="14" stroke-linecap="round"/>
+        <line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="var(--sf)" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/>`;
+    })
+    .join('');
+  const height = objects.length * rowHeight + 8;
+  return SVG.tag(
+    380,
+    height,
+    `<line x1="${x0}" y1="15" x2="${x0}" y2="${height - 8}" stroke="var(--cs)" stroke-opacity=".4" stroke-dasharray="3 4"/>${content}`,
+    'role="img" aria-label="Longueurs des objets" style="max-width:100%;height:auto"'
+  );
+}
+
 function slicedPieSvg(n, k, size = 100, color = 'var(--p)') {
   const f = SVG.f,
     c = size / 2,

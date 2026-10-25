@@ -117,6 +117,7 @@ if (showMissing) {
     'base-10',
     'clock',
     'sort',
+    'number-strip',
     'drag-sort',
     'fill-table',
     'checkbox',

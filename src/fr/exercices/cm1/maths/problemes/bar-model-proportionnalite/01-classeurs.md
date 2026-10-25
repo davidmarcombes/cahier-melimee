@@ -4,9 +4,8 @@ title: "Les classeurs"
 bm:
   mode: part-whole
   whole: "?"
-  parts: [4, 4, 4]
-  wholeLabel: "coût total ?"
-  partLabels: ["4 classeurs", "4 classeurs", "4 classeurs"]
+  parts: [4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5, 4.5]
+  wholeLabel: "coût total (€)"
 answer: "54"
 unit: "€"
 ---

@@ -48,7 +48,7 @@
       );
     if (n) parts.push(sous1000(n));
     let words = parts.join(' ');
-    if (dec) words += ' virgule ' + (dec.match(/^0+/)?.[0] || '').replace(/0/g, 'zéro ') + sous100(Number(dec));
+    if (dec) words += ' virgule ' + (dec.match(/^0+/)?.[0] || '').replace(/0/g, 'zéro ') + sous1000(Number(dec));
     return words;
   }
   function nombreAudio(x) {
@@ -68,7 +68,9 @@
 
     if (dec) {
       segments.push('unites/virgule.ogg');
-      for (const digit of dec) segments.push(`nombres/${digit}.ogg`);
+      const leadingZeros = dec.match(/^0+/)?.[0].length ?? 0;
+      for (let i = 0; i < leadingZeros; i++) segments.push('nombres/0.ogg');
+      if (leadingZeros < dec.length) segments.push(`nombres/${Number(dec)}.ogg`);
     }
     return segments;
   }
@@ -131,7 +133,15 @@
     ecouteNombre: {
       generate: (params = {}) => {
         const max = params.max ?? 20;
-        const n = Number(nombreADire(params));
+        let n = Number(nombreADire(params));
+        const excluded = Number(params.exclude);
+        if (n === excluded && Number.isFinite(excluded) && (params.min ?? 1) < max) {
+          const min = params.min ?? 1;
+          const alternatives = Array.from({ length: max - min + 1 }, (_, i) => min + i).filter(
+            (value) => value !== excluded
+          );
+          n = randItem(alternatives);
+        }
         const near = confusables(n, max).slice(0, (params.choices ?? 3) - 1);
         for (let d = 2; near.length < (params.choices ?? 3) - 1; d++) if (n + d <= max) near.push(n + d);
         const choices = shuffle([n, ...near]).map(String);

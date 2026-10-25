@@ -173,6 +173,11 @@ self.addEventListener('fetch', event => {
   const key = url.pathname;
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
+    // Media range responses (206) contain only part of a file and must never be cached as the full asset.
+    if (req.headers.has('range')) {
+      await cache.delete(key);
+      return fetch(req);
+    }
     const cached = await cache.match(key);
     const refresh = () =>
       fetch(req).then(async (res) => {

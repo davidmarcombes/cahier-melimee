@@ -95,6 +95,11 @@ const CSV_TYPES = [
   'guided-problem', // 54
   'bar-model', // 55
   'fact-family', // 56
+  'classify', // 57
+  'emoji-equations', // 58
+  'number-forms', // 59
+  'op-triangle', // 60
+  'number-strip', // 61
 ];
 
 const COLORS = {

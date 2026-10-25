@@ -46,6 +46,7 @@ const TYPE_SCHEMAS = {
   'base-10': { required: ['answer'], requireOneOf: [['number'], ['hundreds', 'tens', 'ones']] },
   clock: { required: ['hour', 'minute', 'answer'] },
   sort: { required: ['items'], arrays: ['items'] },
+  'number-strip': { required: ['cells', 'choices', 'answers'], arrays: ['cells', 'choices', 'answers'] },
   'drag-sort': { required: ['tiles'], arrays: ['tiles'] },
   'fill-table': { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
   'column-op': { required: ['top', 'operation', 'result'] },
@@ -370,6 +371,32 @@ function validateSeries(seriesDir, errors) {
           }
         }
       }
+    }
+
+    if (
+      type === 'number-strip' &&
+      Array.isArray(data.cells) &&
+      Array.isArray(data.choices) &&
+      Array.isArray(data.answers)
+    ) {
+      const blankCount = data.cells.filter((cell) => cell === null).length;
+      if (blankCount === 0) errors.push(`${relMd}: number-strip needs at least one null cell`);
+      if (blankCount !== data.answers.length)
+        errors.push(`${relMd}: number-strip has ${blankCount} blank cells but ${data.answers.length} answers`);
+      if (data.choices.length < blankCount || data.choices.length > 10)
+        errors.push(`${relMd}: number-strip needs at least one choice per blank and no more than 10 choices`);
+      const answerIndexes = data.answers.map(Number);
+      if (answerIndexes.some((idx) => !Number.isInteger(idx) || idx < 0 || idx >= data.choices.length))
+        errors.push(`${relMd}: number-strip answers must be valid zero-based choice indexes`);
+      if (new Set(answerIndexes).size !== answerIndexes.length)
+        errors.push(`${relMd}: number-strip answers must use distinct choices`);
+      const choiceLabels = data.choices.map((choice) => String(choice).replace(/\s+/g, ' ').trim().toLowerCase());
+      if (new Set(choiceLabels).size !== choiceLabels.length)
+        errors.push(`${relMd}: number-strip choices must be distinct`);
+      if (data.cells.length < 3 || data.cells.length > 10)
+        errors.push(`${relMd}: number-strip must contain between 3 and 10 cells`);
+      if (data.cells.some((cell) => cell !== null && typeof cell !== 'string' && typeof cell !== 'number'))
+        errors.push(`${relMd}: number-strip cells must be strings, numbers, or null`);
     }
 
     // The operation line is shown very large (text-5xl): it must hold the calculation only.

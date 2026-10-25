@@ -48,6 +48,10 @@ const TYPE_SCHEMAS = {
   },
   clock: { required: ['hour', 'minute', 'answer'], desc: 'Analog clock — read or write time (answer: "HH:MM")' },
   sort: { required: ['items'], desc: 'Click-to-rank — items[] in CORRECT order (shuffled at runtime)' },
+  'number-strip': {
+    required: ['cells', 'choices', 'answers'],
+    desc: 'Complete a number strip — cells[] has null gaps, choices[] are tiles, answers[] gives choice indexes per gap',
+  },
   'drag-sort': { required: ['tiles'], desc: 'Swap-to-sort — tiles[] in CORRECT order, direction: asc|desc' },
   'fill-table': {
     required: ['headers', 'rows', 'answers'],
@@ -134,6 +138,7 @@ const TEMPLATES = {
   'base-10': `type: base-10\ntitle: ""\nnumber: 34\nanswer: "34"`,
   clock: `type: clock\ntitle: ""\nhour: 10\nminute: 30\nanswer: "10:30"`,
   sort: `type: sort\ntitle: ""\ndirection: asc\nitems:\n  - "12"\n  - "35"\n  - "67"\n  - "89"`,
+  'number-strip': `type: number-strip\ntitle: ""\ncells: ["1", null, "3", "4"]\nchoices: ["2", "5", "6"]\nanswers: [0]`,
   'drag-sort': `type: drag-sort\ntitle: ""\ndirection: asc\ntiles:\n  - "12"\n  - "35"\n  - "67"`,
   'fill-table': `type: fill-table\ntitle: ""\nheaders: ["×", "3", "4", "5"]\nrows:\n  - ["2", "?", "8", "?"]\nanswers:\n  - ["6", "10"]`,
   checkbox: `type: checkbox\ntitle: ""\nstatements:\n  - "Affirmation vraie"\n  - "Affirmation fausse"\n  - "Affirmation vraie"\ncheckedAnswers: [0, 2]`,

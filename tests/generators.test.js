@@ -1203,18 +1203,59 @@ describe('dicteeNombre — spoken number names', () => {
       'nombres/999.ogg',
     ]);
   });
-  it('composes decimal dictation from prerecorded digits', () => {
-    const result = generators.dicteeNombre.generate({ min: 3, max: 3, decimals: 2 });
-    const decimalDigits = result.answers[0].split(',')[1].split('');
-    expect(result.voiceAudio[0]).toBe('nombres/3.ogg');
-    expect(result.voiceAudio[1]).toBe('unites/virgule.ogg');
-    expect(result.voiceAudio.slice(2)).toEqual(decimalDigits.map((digit) => `nombres/${digit}.ogg`));
+  it.each([
+    {
+      min: 15,
+      decimals: 2,
+      random: 0.35,
+      answer: '15,35',
+      spoken: 'quinze virgule trente-cinq',
+      clips: ['nombres/15.ogg', 'unites/virgule.ogg', 'nombres/35.ogg'],
+    },
+    {
+      min: 12,
+      decimals: 3,
+      random: 0.1232,
+      answer: '12,124',
+      spoken: 'douze virgule cent vingt-quatre',
+      clips: ['nombres/12.ogg', 'unites/virgule.ogg', 'nombres/124.ogg'],
+    },
+    {
+      min: 5,
+      decimals: 2,
+      random: 0.05,
+      answer: '5,05',
+      spoken: 'cinq virgule zéro cinq',
+      clips: ['nombres/5.ogg', 'unites/virgule.ogg', 'nombres/0.ogg', 'nombres/5.ogg'],
+    },
+    {
+      min: 5,
+      decimals: 3,
+      random: 0.0161,
+      answer: '5,017',
+      spoken: 'cinq virgule zéro dix-sept',
+      clips: ['nombres/5.ogg', 'unites/virgule.ogg', 'nombres/0.ogg', 'nombres/17.ogg'],
+    },
+  ])('composes decimal dictation clips for $answer', ({ min, decimals, random, answer, spoken, clips }) => {
+    vi.spyOn(Math, 'random').mockReturnValueOnce(0).mockReturnValueOnce(random);
+    const result = generators.dicteeNombre.generate({ min, max: min, decimals });
+    expect(result.answers[0]).toBe(answer);
+    expect(result.say).toContain(spoken);
+    expect(result.voiceAudio).toEqual(clips);
   });
   it('reuses prerecorded clips for listen-and-choose numbers through 100', () => {
     for (let n = 1; n <= 100; n++) {
       const exercise = generators.ecouteNombre.generate({ min: n, max: 100, choices: 1 });
       expect(exercise.voiceAudio).toEqual([`nombres/${exercise.answers[0]}.ogg`]);
     }
+  });
+  it('avoids the previous answer when another number is available', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    const exercise = generators.ecouteNombre.generate({ min: 11, max: 20, exclude: 11 });
+    expect(exercise.answers[0]).not.toBe('11');
+    expect(Number(exercise.answers[0])).toBeGreaterThanOrEqual(11);
+    expect(Number(exercise.answers[0])).toBeLessThanOrEqual(20);
+    expect(exercise.voiceAudio).toEqual([`nombres/${exercise.answers[0]}.ogg`]);
   });
   it('assigns prerecorded prompts to every compterObjets variation', () => {
     const random = vi.spyOn(Math, 'random');

@@ -2328,8 +2328,8 @@
     "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
     "source": "claude",
     "createdAt": "2026-10-11T12:51:52.263Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T08:37:28.105Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "1a419986",
@@ -2339,8 +2339,8 @@
     "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
     "source": "claude",
     "createdAt": "2026-10-11T12:51:52.511Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T08:32:02.386Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "a4e361ca",
@@ -2350,8 +2350,8 @@
     "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
     "source": "claude",
     "createdAt": "2026-10-11T12:51:52.747Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:47:35.122Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "2380cf17",
@@ -2361,8 +2361,8 @@
     "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
     "source": "claude",
     "createdAt": "2026-10-11T12:51:52.983Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:48:10.982Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "e570d480",
@@ -2372,8 +2372,8 @@
     "reason": "Énoncés jamais affichés jusqu'en oct. 2026 (champ body: en front-matter, page vide) : jamais relus en situation, à vérifier.",
     "source": "claude",
     "createdAt": "2026-10-11T12:51:53.221Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T16:07:55.068Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "9aa07a04",
@@ -2460,8 +2460,8 @@
     "reason": "Dictées : tester sur tes appareils (voix locale seulement). Ex. 1 : taper le gros 🔊 ; ensuite chaque nombre est dit tout seul. Sans voix locale → lien 🔇 vers /fr/voix/.",
     "source": "claude",
     "createdAt": "2026-10-11T14:30:23.842Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T07:07:12.232Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "dd945374",
@@ -2471,8 +2471,8 @@
     "reason": "Choix « qui se ressemblent » (72 / 62, 97 / 87, 17 / 71) : assez dur, ou trop piégeux pour un CP ?",
     "source": "claude",
     "createdAt": "2026-10-11T14:30:24.062Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:46:26.587Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "4df5ded7",
@@ -2493,8 +2493,8 @@
     "reason": "🔊 Voix (bouton haut-parleur de l'en-tête ou 🔊 à côté du titre) : énoncé simple de référence (CP). Lecture naturelle ? Pause entre titre et énoncé ?",
     "source": "claude",
     "createdAt": "2026-10-11T15:34:03.010Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T07:06:37.743Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "ae7e3b37",
@@ -2504,8 +2504,8 @@
     "reason": "🔊 Voix (bouton haut-parleur de l'en-tête ou 🔊 à côté du titre) : « 1 kg = 1 000 g » : comment la voix lit le « = » et « 1 000 » (mille ? un zéro zéro zéro ?).",
     "source": "claude",
     "createdAt": "2026-10-11T15:34:03.244Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T08:33:46.425Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "3d09e16a",
@@ -2515,8 +2515,8 @@
     "reason": "🔊 Voix (bouton haut-parleur de l'en-tête ou 🔊 à côté du titre) : « 3,50 € » : lu « trois euros cinquante » ou « trois virgule cinquante euros » ?",
     "source": "claude",
     "createdAt": "2026-10-11T15:34:03.463Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:47:06.054Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "354d7554",
@@ -2526,8 +2526,8 @@
     "reason": "🔊 Voix (bouton haut-parleur de l'en-tête ou 🔊 à côté du titre) : « 14h15 » collé : lu « quatorze heures quinze » ou épelé ?",
     "source": "claude",
     "createdAt": "2026-10-11T15:34:03.696Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T08:34:22.629Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "dc3ef466",
@@ -2537,8 +2537,8 @@
     "reason": "🔊 Voix (bouton haut-parleur de l'en-tête ou 🔊 à côté du titre) : « 180 km/h » et « 2 h 30 min » : unités lues correctement ?",
     "source": "claude",
     "createdAt": "2026-10-11T15:34:03.922Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T16:48:07.116Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "a114a3f7",
@@ -2548,8 +2548,8 @@
     "reason": "🔊 Voix (bouton haut-parleur de l'en-tête ou 🔊 à côté du titre) : « 2/7 + 3/7 = ? » : la fraction est-elle lue « deux septièmes » ou « deux barre sept » ?",
     "source": "claude",
     "createdAt": "2026-10-11T15:34:04.161Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T16:30:18.840Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "515486af",
@@ -2559,8 +2559,8 @@
     "reason": "🔊 Voix (bouton haut-parleur de l'en-tête ou 🔊 à côté du titre) : énoncé avec un tableau (fruits / prix) : la voix lit les cases à la suite — compréhensible, ou faut-il cacher le 🔊 sur les tableaux ?",
     "source": "claude",
     "createdAt": "2026-10-11T15:34:04.391Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T08:41:13.461Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b5d3ae94",
@@ -2570,8 +2570,8 @@
     "reason": "🔊 Voix (bouton haut-parleur de l'en-tête ou 🔊 à côté du titre) : multi-question : seul le texte commun est lu, pas les sous-questions. Suffisant ?",
     "source": "claude",
     "createdAt": "2026-10-11T15:34:04.620Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T08:31:19.267Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "dcd57d3e",
@@ -2581,8 +2581,8 @@
     "reason": "🔊 Voix (bouton haut-parleur de l'en-tête ou 🔊 à côté du titre) : « Observe le nombre ci-dessus » : le nombre lui-même n'est pas lu (il est hors énoncé). Gênant ?",
     "source": "claude",
     "createdAt": "2026-10-11T15:34:04.850Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:54:04.506Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b253ae7f",
@@ -2878,8 +2878,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:12.883Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:52:29.132Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "c7d4f292",
@@ -2889,8 +2889,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:12.917Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:52:05.075Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "d143aba3",
@@ -2900,8 +2900,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:12.953Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:51:34.695Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "c788073d",
@@ -2911,8 +2911,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:12.988Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:49:18.940Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b658a9be",
@@ -2922,8 +2922,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:13.023Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T17:09:29.875Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b292a295",
@@ -2933,8 +2933,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:13.061Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T07:08:27.951Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "fc8cc9b5",
@@ -2944,8 +2944,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:13.097Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T07:09:35.377Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b4109902",
@@ -2955,8 +2955,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:13.133Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T07:11:05.637Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "b9bf9594",
@@ -2966,8 +2966,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:13.168Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T07:07:12.232Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "8fc34b9c",
@@ -2977,8 +2977,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:13.203Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T07:07:48.144Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "08f3b97c",
@@ -2988,8 +2988,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:13.238Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T07:11:34.956Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "c281fce8",
@@ -2999,8 +2999,8 @@
     "reason": "À vérifier : écouter les audios préenregistrés (prononciation, débit et cohérence avec la consigne).",
     "source": "claude",
     "createdAt": "2026-10-24T12:00:13.274Z",
-    "resolvedAt": null,
-    "resolvedBy": null
+    "resolvedAt": "2026-10-25T15:46:26.587Z",
+    "resolvedBy": "validated"
   },
   {
     "id": "7e2cae6a",
@@ -3022,6 +3022,50 @@
     "source": "claude",
     "createdAt": "2026-10-24T13:59:13.136Z",
     "resolvedAt": "2026-10-24T14:11:28.985Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "8338b8d2",
+    "seriesId": "e5f80d40",
+    "url": "/fr/exercices/e5f80d40/",
+    "title": "Assez pour tout le monde ?",
+    "reason": "À vérifier : écouter les cinq consignes audio de la série Assez pour tout le monde ?",
+    "source": "claude",
+    "createdAt": "2026-10-24T14:35:18.473Z",
+    "resolvedAt": "2026-10-25T15:52:56.848Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f148f800",
+    "seriesId": "a0bc2538",
+    "url": "/fr/exercices/a0bc2538/",
+    "title": "Combien en vois-tu ?",
+    "reason": "À vérifier : série sur la partie visible et les quantités cachées",
+    "source": "claude",
+    "createdAt": "2026-10-24T14:46:28.771Z",
+    "resolvedAt": "2026-10-25T07:06:20.761Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "e23a6ea6",
+    "seriesId": "ab350f6a",
+    "url": "/fr/exercices/ab350f6a/",
+    "title": "Plus long ou plus court ?",
+    "reason": "À vérifier : comparer puis ranger les longueurs des objets",
+    "source": "claude",
+    "createdAt": "2026-10-24T15:04:35.544Z",
+    "resolvedAt": "2026-10-25T06:17:17.187Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "f6b7f947",
+    "seriesId": "dd6ed430",
+    "url": "/fr/exercices/dd6ed430/",
+    "title": "La bande numérique",
+    "reason": "Nouvelle série number-strip à valider par une personne.",
+    "source": "claude",
+    "createdAt": "2026-10-24T16:24:24.534Z",
+    "resolvedAt": "2026-10-25T06:17:58.735Z",
     "resolvedBy": "validated"
   }
 ]

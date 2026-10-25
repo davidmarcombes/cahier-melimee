@@ -1,0 +1,87 @@
+---
+layout: base
+title: "Nos maths, niveau par niveau"
+description: "Explorez les thèmes de mathématiques proposés du GS au CM2."
+lang: fr
+locale: fr-FR
+permalink: /fr/couverture/
+---
+
+{% set coverage = collections.seriesMeta | coverageByLevel(collections.defisMeta) %}
+{% set levelColors = ["bg-primary-500", "bg-figure-green", "bg-figure-orange", "bg-figure-purple", "bg-figure-pink", "bg-accent-500"] %}
+
+<article class="mx-auto max-w-5xl space-y-10">
+  <header class="overflow-hidden rounded-3xl bg-surface-chrome">
+    <div class="grid gap-4 p-5 sm:grid-cols-[1fr_auto] sm:items-center sm:p-7">
+      <div>
+        <p class="mb-2 font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">De la GS au CM2</p>
+        <h1 class="text-3xl font-black leading-tight sm:text-4xl">Les maths, niveau par niveau</h1>
+        <p class="mt-2 max-w-2xl text-sm text-content-subtle">
+          S’entraîner et progresser en maths, de la GS au CM2.
+        </p>
+      </div>
+      <div class="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-primary-500 text-center text-white shadow-lg sm:h-28 sm:w-28">
+        <span class="text-3xl font-black">{{ coverage.total }}</span>
+        <span class="text-sm font-semibold">séries</span>
+      </div>
+    </div>
+  </header>
+
+  <section aria-labelledby="coverage-levels-heading">
+    <div class="mb-5">
+      <h2 id="coverage-levels-heading" class="text-2xl font-extrabold">Un aperçu par niveau</h2>
+      <p class="mt-1 text-sm text-content-subtle">Nombre de séries disponibles dans chaque thème.</p>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {% for level in coverage.levels %}
+      {% set levelColor = levelColors[loop.index0] %}
+      <details class="overflow-hidden rounded-2xl border border-slate-200 bg-surface-default shadow-sm dark:border-slate-700">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-3 p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary-500">
+          <span class="flex items-center gap-3">
+            <span aria-hidden="true" class="{{ levelColor }} flex h-11 w-11 items-center justify-center rounded-xl text-xl font-black text-white">{{ ["🌱", "✏️", "📘", "🧩", "🚀", "⭐"][loop.index0] }}</span>
+            <span class="text-xl font-extrabold">{{ level.name }}</span>
+          </span>
+          <span class="rounded-full bg-surface-chrome px-3 py-1 text-sm font-bold text-content-subtle">{{ level.total }} séries</span>
+        </summary>
+
+        <ul class="space-y-3 border-t border-slate-200 px-4 py-5 dark:border-slate-700">
+          {% for category in level.categories %}
+          {% if category.count > 0 %}
+          <li>
+            <div class="mb-1 flex items-baseline justify-between gap-3 text-sm">
+              <span>{{ category.label }}</span>
+              <span class="shrink-0 font-bold tabular-nums">{{ category.count }}</span>
+            </div>
+            <div class="h-2 overflow-hidden rounded-full bg-surface-chrome" aria-hidden="true">
+              <div class="{{ levelColor }} h-full rounded-full" style="width: {{ category.share }}%"></div>
+            </div>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </details>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section aria-labelledby="coverage-topics-heading" class="rounded-2xl border border-slate-200 bg-surface-default p-5 dark:border-slate-700 sm:p-7">
+    <h2 id="coverage-topics-heading" class="text-xl font-extrabold">Les grands thèmes</h2>
+    <p class="mt-1 text-sm text-content-subtle">Séries disponibles, tous niveaux confondus.</p>
+    <ul class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      {% for category in coverage.categories %}
+      <li class="rounded-xl bg-surface-chrome p-3">
+        <span class="block text-xs font-semibold text-content-subtle">{{ category.label }}</span>
+        <span class="mt-1 block text-2xl font-black tabular-nums text-primary-600 dark:text-primary-400">{{ category.count }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <aside class="rounded-2xl border border-accent-500/30 bg-accent-500/10 p-5 text-sm text-content-subtle">
+    <h2 class="font-bold text-content-default">Comment lire ces chiffres ?</h2>
+    <p class="mt-1">
+      Une série rassemble une ou plusieurs activités sur un thème. Ces nombres donnent un aperçu de la bibliothèque, pas une mesure de maîtrise ni une couverture officielle de tout le programme.
+    </p>
+  </aside>
+</article>

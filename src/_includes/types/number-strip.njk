@@ -1,0 +1,72 @@
+<div x-show="cur.type === 'number-strip'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-8">
+  <div class="flex justify-center gap-1.5 sm:gap-2 overflow-x-auto pb-2" role="group" aria-label="Bande numérique">
+    <template x-for="(cell, i) in (cur.stripCells || [])" :key="i">
+      <div class="flex-1 min-w-[3.25rem]">
+        <template x-if="cell !== null">
+          <div class="js-number-strip-cell h-14 sm:h-16 flex items-center justify-center rounded-xl bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-xl sm:text-2xl font-bold text-content-default text-center"
+               :style="kid ? '--n:' + symbolCount(cell) : ''">
+            <template x-if="stripDiceSlots(cell)">
+              <span class="js-number-strip-dice">
+                <template x-for="(symbol, slotIndex) in stripDiceSlots(cell)" :key="slotIndex">
+                  <span class="js-number-strip-die" x-text="symbol"></span>
+                </template>
+              </span>
+            </template>
+            <template x-if="!stripDiceSlots(cell)">
+              <span class="js-number-strip-cell-content" x-html="cell"></span>
+            </template>
+          </div>
+        </template>
+        <template x-if="cell === null">
+          <button type="button" @click="stripPlace(stripBlankIndex(i))" :disabled="solved"
+            :aria-label="'Case ' + (i + 1) + (stripPlacements[stripBlankIndex(i)] === null ? ', vide' : ', remplie')"
+            :style="kid ? '--n:' + symbolCount(stripPlacements[stripBlankIndex(i)] === null ? '?' : cur.stripChoices[stripPlacements[stripBlankIndex(i)]]) : ''"
+            class="js-number-strip-cell w-full h-14 sm:h-16 flex items-center justify-center rounded-xl border-2 border-dashed text-xl sm:text-2xl font-bold transition-colors"
+            :class="{
+              'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300': solved,
+              'border-red-400 bg-red-50 dark:bg-red-900/20': stripErrors.includes(stripBlankIndex(i)),
+              'border-primary-400 bg-primary-50 dark:bg-primary-900/20 text-content-default': !solved && !stripErrors.includes(stripBlankIndex(i)) && stripPlacements[stripBlankIndex(i)] !== null,
+              'border-slate-300 dark:border-slate-600 text-content-subtle': !solved && !stripErrors.includes(stripBlankIndex(i)) && stripPlacements[stripBlankIndex(i)] === null
+            }">
+            <template x-if="stripDiceSlots(stripPlacements[stripBlankIndex(i)] === null ? '?' : cur.stripChoices[stripPlacements[stripBlankIndex(i)]])">
+              <span class="js-number-strip-dice">
+                <template x-for="(symbol, slotIndex) in stripDiceSlots(stripPlacements[stripBlankIndex(i)] === null ? '?' : cur.stripChoices[stripPlacements[stripBlankIndex(i)]])" :key="slotIndex">
+                  <span class="js-number-strip-die" x-text="symbol"></span>
+                </template>
+              </span>
+            </template>
+            <template x-if="!stripDiceSlots(stripPlacements[stripBlankIndex(i)] === null ? '?' : cur.stripChoices[stripPlacements[stripBlankIndex(i)]])">
+              <span class="js-number-strip-cell-content" x-html="stripPlacements[stripBlankIndex(i)] === null ? '?' : cur.stripChoices[stripPlacements[stripBlankIndex(i)]]"></span>
+            </template>
+          </button>
+        </template>
+      </div>
+    </template>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-3 mt-4" role="group" aria-label="Tuiles à placer">
+    <template x-for="(choice, i) in (cur.stripChoices || [])" :key="i">
+      <button type="button" @click="stripChoose(i)" :disabled="solved || stripPlacements.includes(i)"
+        :aria-label="'Choisir la tuile ' + (i + 1)"
+        class="js-number-strip-choice min-w-[4rem] min-h-[3.5rem] px-4 py-2 rounded-xl border-2 text-2xl font-bold transition-all active:scale-95"
+        :class="{
+          'border-primary-500 bg-primary-100 dark:bg-primary-900/40 ring-2 ring-primary-300': stripSelected === i,
+          'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-content-default hover:border-primary-400': stripSelected !== i,
+          'opacity-40 cursor-not-allowed': stripPlacements.includes(i)
+        }"
+        :style="kid ? '--n:' + symbolCount(choice) : ''"
+      >
+        <template x-if="stripDiceSlots(choice)">
+          <span class="js-number-strip-dice">
+            <template x-for="(symbol, slotIndex) in stripDiceSlots(choice)" :key="slotIndex">
+              <span class="js-number-strip-die" x-text="symbol"></span>
+            </template>
+          </span>
+        </template>
+        <template x-if="!stripDiceSlots(choice)">
+          <span class="js-number-strip-choice-content" x-html="choice"></span>
+        </template>
+      </button>
+    </template>
+  </div>
+</div>
