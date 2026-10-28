@@ -335,6 +335,14 @@ body {
   padding: 0.3em 0.35em;
   min-width: 0;
 }
+/* Picture tiles (trouverFormes shapes): the drawing takes its share of the row */
+.kid .js-tile:has(> svg) {
+  padding: 0.2rem;
+}
+.kid .js-tile > svg {
+  width: min(6rem, calc((100cqi - (var(--n, 1) - 1) * 0.5rem) / var(--n, 1) - 0.4rem - 4px));
+  height: auto;
+}
 .kid .js-number-strip-cell,
 .kid .js-number-strip-choice {
   container-type: inline-size;

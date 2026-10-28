@@ -1,0 +1,81 @@
+{# Grid-board — robot on a square grid: follow a program (tap the arrival), write one (arrow buttons), find the wrong instruction (debug);
+   colour the mirror image of a figure across an axis (mirror); or draw segments between grid points (draw) #}
+<div x-show="cur.type === 'grid-board'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-3 text-content-subtle" x-show="cur.body" x-html="cur.body"></div>
+  <template x-if="cur.board">
+    <div>
+      {# Program (follow / debug): chips; debug chips are the answer buttons #}
+      <div x-show="cur.board.mode !== 'write'" class="flex flex-wrap justify-center gap-2 mb-4" role="group" aria-label="Programme du robot">
+        <template x-for="(t, i) in cur.board.program || []" :key="i">
+          <button type="button" @click="cur.board.mode === 'debug' && gbTapStep(i)" :disabled="solved || cur.board.mode !== 'debug'"
+            class="js-gb-step min-w-[3rem] h-12 px-3 rounded-xl border-2 text-xl font-bold text-content-default disabled:cursor-default"
+            :class="solved && i === cur.board.bug ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : gbWrong === i ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700'"
+            x-text="gbLabel(t)"></button>
+        </template>
+      </div>
+
+      {# Draw: the model to copy, then the paper (tap two points: a segment) #}
+      <template x-if="cur.board.mode === 'draw'">
+        <div>
+          <div x-show="cur.board.task === 'copy'" class="js-gb-model mx-auto mb-3 p-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600" :style="'max-width: ' + Math.min(14, 2 + 2.5 * Math.max(...cur.board.model ? cur.board.model.flat().map((p) => p[1] + 1) : [1])) + 'rem'" x-html="gbModelSvg"></div>
+          <div class="js-gb-paper mx-auto touch-manipulation cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500" :style="'max-width: ' + Math.min(26, 3 + cur.board.cols * 2.6) + 'rem'" tabindex="0" role="application" aria-label="Quadrillage : touche un point, puis un autre, pour tracer un trait. Flèches et Entrée au clavier." @click="gbDrawClick($event)" @keydown="gbDrawKey($event)" x-html="gbDrawSvg"></div>
+          <div class="flex justify-center gap-2 mt-3">
+            <button type="button" @click="gbUndoSeg()" :disabled="solved || !gbSegs.length" aria-label="Effacer le dernier trait" class="min-w-[4rem] h-12 px-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xl text-content-default disabled:opacity-40">↶</button>
+            <button type="button" @click="gbClear()" :disabled="solved || !gbSegs.length" aria-label="Tout effacer" class="min-w-[4rem] h-12 px-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xl text-content-default disabled:opacity-40">🗑️</button>
+          </div>
+        </div>
+      </template>
+
+      {# Grid #}
+      <div x-show="cur.board.mode !== 'draw'" class="relative grid gap-1 mx-auto" :style="'grid-template-columns: repeat(' + cur.board.cols + ', minmax(0, 1fr)); max-width: ' + Math.min(24, cur.board.cols * 4) + 'rem'">
+        <template x-for="cell in gbCells" :key="cell.r + '-' + cell.c">
+          <button type="button" @click="gbTapCell(cell.r, cell.c)" :disabled="solved || cell.lock" :aria-label="cell.label"
+            class="js-gb-cell relative aspect-square rounded-lg border-2 flex items-center justify-center text-2xl sm:text-3xl leading-none disabled:cursor-default"
+            :class="cell.cls">
+            <span x-text="cell.txt"></span>
+            <span x-show="cell.txt === '🤖' && gbHeading !== null" class="absolute inset-0 z-10 pointer-events-none" :style="{ transform: 'rotate(' + gbHeading + 'deg)' }" aria-hidden="true"><span class="js-gb-heading absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 text-base sm:text-lg leading-none text-primary-600 dark:text-primary-400">▲</span></span>
+          </button>
+        </template>
+        {# Mirror: the axis (vertical / horizontal in a gap, diagonal corner to corner) #}
+        <div x-show="gbAxis" class="js-gb-axis absolute z-10 rounded-full bg-red-500 pointer-events-none" :style="gbAxis || {}" aria-hidden="true"></div>
+        <template x-if="cur.board.mode === 'mirror' && 'da'.includes(cur.board.axis)">
+          <svg class="js-gb-axis absolute inset-0 w-full h-full z-10 pointer-events-none overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <line :x1="cur.board.axis === 'd' ? -3 : 103" y1="-3" :x2="cur.board.axis === 'd' ? 103 : -3" y2="103" stroke="#ef4444" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+          </svg>
+        </template>
+      </div>
+
+      {# Write: the pupil's program and the instruction buttons #}
+      <template x-if="cur.board.mode === 'write'">
+        <div class="mt-4">
+          <div class="flex flex-wrap justify-center items-center gap-2 min-h-[3rem] mb-3" aria-live="polite">
+            <template x-for="(t, i) in gbProg" :key="i">
+              <span class="min-w-[2.5rem] h-10 px-2 rounded-lg border-2 border-primary-400 bg-primary-50 dark:bg-primary-900/20 text-lg font-bold flex items-center justify-center text-content-default" x-text="gbLabel(t)"></span>
+            </template>
+            <span x-show="!gbProg.length" class="text-content-subtle text-sm">Ton programme</span>
+            <span x-show="cur.board.maxSteps" class="text-content-subtle text-sm" x-text="gbProg.length + ' / ' + cur.board.maxSteps"></span>
+          </div>
+          <div class="flex flex-wrap justify-center gap-2" role="group" aria-label="Instructions">
+            <template x-for="t in (cur.board.dir ? ['F', 'TL', 'TR'] : ['U', 'L', 'D', 'R'])" :key="t">
+              <button type="button" @click="gbAdd(t)" :disabled="solved" :aria-label="gbLabel(t)"
+                class="js-gb-add min-w-[4rem] h-14 px-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-2xl font-bold text-content-default hover:border-primary-400 active:scale-95"
+                x-text="gbLabel(t)"></button>
+            </template>
+            <button type="button" @click="gbUndo()" :disabled="solved || !gbProg.length" aria-label="Effacer la dernière instruction"
+              class="min-w-[4rem] h-14 px-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-2xl text-content-default disabled:opacity-40">⌫</button>
+          </div>
+        </div>
+      </template>
+
+      {# Vérifier: write and mirror always, follow above maternelle (a kid's tap checks at once); debug taps check #}
+      <div x-show="cur.board.mode === 'write' || cur.board.mode === 'mirror' || cur.board.mode === 'draw' || (cur.board.mode === 'follow' && !kid)" class="flex justify-center mt-4">
+        <button type="button" @click="check()" :disabled="solved || (cur.board.mode === 'write' ? !gbProg.length : cur.board.mode === 'mirror' ? !gbPaint.length : cur.board.mode === 'draw' ? !gbSegs.length : !gbPick)"
+          class="px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+          <span x-show="!solved">Vérifier</span>
+          <span x-show="solved">Bravo !</span>
+        </button>
+      </div>
+    </div>
+  </template>
+</div>

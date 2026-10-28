@@ -1,0 +1,15 @@
+---
+type: multi-question
+title: "La température d'une journée"
+questions:
+  - text: "Quelle température fait-il à 12 h, en °C ?"
+    answer: "14"
+  - text: "À quelle heure fait-il le plus chaud ? (donne seulement le nombre d'heures)"
+    answer: "14"
+  - text: "De combien de degrés la température a-t-elle monté entre 8 h et 14 h ?"
+    answer: "11"
+---
+
+La courbe montre la température relevée toutes les deux heures.
+
+<svg viewBox="0 0 320 200" width="320" style="max-width:100%;display:block;margin:0 auto" role="img" aria-label="courbe"><line x1="36" y1="170.0" x2="308" y2="170.0" stroke="currentColor" stroke-opacity=".15"/><text x="30" y="174.0" font-size="10" text-anchor="end" fill="currentColor">0</text><line x1="36" y1="130.5" x2="308" y2="130.5" stroke="currentColor" stroke-opacity=".15"/><text x="30" y="134.5" font-size="10" text-anchor="end" fill="currentColor">5</text><line x1="36" y1="91.0" x2="308" y2="91.0" stroke="currentColor" stroke-opacity=".15"/><text x="30" y="95.0" font-size="10" text-anchor="end" fill="currentColor">10</text><line x1="36" y1="51.5" x2="308" y2="51.5" stroke="currentColor" stroke-opacity=".15"/><text x="30" y="55.5" font-size="10" text-anchor="end" fill="currentColor">15</text><line x1="36" y1="12.0" x2="308" y2="12.0" stroke="currentColor" stroke-opacity=".15"/><text x="30" y="16.0" font-size="10" text-anchor="end" fill="currentColor">20</text><line x1="36.0" y1="12" x2="36.0" y2="170" stroke="currentColor" stroke-opacity=".15"/><text x="36.0" y="184" font-size="10" text-anchor="middle" fill="currentColor">8 h</text><line x1="90.4" y1="12" x2="90.4" y2="170" stroke="currentColor" stroke-opacity=".15"/><text x="90.4" y="184" font-size="10" text-anchor="middle" fill="currentColor">10 h</text><line x1="144.8" y1="12" x2="144.8" y2="170" stroke="currentColor" stroke-opacity=".15"/><text x="144.8" y="184" font-size="10" text-anchor="middle" fill="currentColor">12 h</text><line x1="199.2" y1="12" x2="199.2" y2="170" stroke="currentColor" stroke-opacity=".15"/><text x="199.2" y="184" font-size="10" text-anchor="middle" fill="currentColor">14 h</text><line x1="253.6" y1="12" x2="253.6" y2="170" stroke="currentColor" stroke-opacity=".15"/><text x="253.6" y="184" font-size="10" text-anchor="middle" fill="currentColor">16 h</text><line x1="308.0" y1="12" x2="308.0" y2="170" stroke="currentColor" stroke-opacity=".15"/><text x="308.0" y="184" font-size="10" text-anchor="middle" fill="currentColor">18 h</text><polyline points="36.0,122.6 90.4,98.9 144.8,59.4 199.2,35.7 253.6,51.5 308.0,83.1" fill="none" stroke="#3b82f6" stroke-width="2.5"/><circle cx="36.0" cy="122.6" r="3.5" fill="#3b82f6"/><circle cx="90.4" cy="98.9" r="3.5" fill="#3b82f6"/><circle cx="144.8" cy="59.4" r="3.5" fill="#3b82f6"/><circle cx="199.2" cy="35.7" r="3.5" fill="#3b82f6"/><circle cx="253.6" cy="51.5" r="3.5" fill="#3b82f6"/><circle cx="308.0" cy="83.1" r="3.5" fill="#3b82f6"/><text x="308" y="198" font-size="10" text-anchor="end" fill="currentColor">heure</text><text x="2" y="9" font-size="10" fill="currentColor">°C</text></svg>

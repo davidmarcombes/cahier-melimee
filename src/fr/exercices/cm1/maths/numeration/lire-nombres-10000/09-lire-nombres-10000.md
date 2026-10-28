@@ -1,7 +1,8 @@
 ---
-type: number-check
-title: "Écris ce nombre en chiffres"
-answer: "8196"
+type: mcq
+title: "Quelle écriture en chiffres ?"
+choices: ["8 196", "81 096", "8 186", "800 196"]
+answer: "8 196"
 ---
 
-Écris en chiffres : **huit-mille-cent-quatre-vingt-seize**
+Choisis l'écriture en chiffres de : **huit-mille-cent-quatre-vingt-seize**

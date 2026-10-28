@@ -3,6 +3,10 @@
  * tests/gen-checks.test.js on real draws and on corrupted answers.
  */
 const { Unparseable, clean, num, same, fmt, checkEquation } = require('./arith.js');
+const { boardProblems } = require('./grid-board.js');
+const { readShape, shapeNames, turned, targetOf, readAngle, angleKind } = require('./shapes.js');
+const { readChance, readEvent, tileColour, countOf } = require('./hasard.js');
+const { readTensFrame, readDie, readBalance } = require('./manipulations.js');
 
 // Generated exercises whose answer is not an "operation = ?" the type checks can read. Each check
 // recomputes the answer from what the pupil SEES (title, labels, tiles, rule text) — never from
@@ -284,6 +288,14 @@ const GEN_CHECKS = {
     const unit = 10 ** (p.order ?? 1);
     const want = Math.round(n / unit) * unit;
     return same(num(e.answers[0]), want) ? null : `${n} rounded to ${unit} is ${want}, declared ${e.answers[0]}`;
+  },
+  // "12,7 ≈ ?" rounded to the unit, or "Partie entière de 12,7 = ?"
+  arrondirDecimal: (e) => {
+    const m = clean(e.operation).match(/\d+,\d+/);
+    if (!m) throw new Unparseable('no decimal');
+    const x = num(m[0]);
+    const want = /partie enti/i.test(clean(e.operation)) ? Math.floor(x) : Math.round(x);
+    return same(num(e.answers[0]), want) ? null : `${m[0]} → ${want}, declared ${e.answers[0]}`;
   },
   // Blocks to colour: Σ answer × value = the number of the title, one digit per place
   blocsValeurPosition: (e) => {
@@ -628,6 +640,248 @@ const GEN_CHECKS = {
     if (!parts.length) throw new Unparseable('operation');
     const want = parts.reduce((t, p) => t + Number(p[1]) * placeOf(p[2]), 0);
     return same(want, num(e.answers[0])) ? null : `${s} → ${want}, declared ${e.answers[0]}`;
+  },
+  // Robot board: replayed move by move (lib/grid-board.js) — follow stays on the grid, write is
+  // reachable within maxSteps, debug has exactly one fixable instruction and it is the declared one
+  robotGrille: (e) => {
+    const pb = boardProblems(e.board);
+    return pb.length ? pb.join('; ') : null;
+  },
+  symetrieGrille: (e) => {
+    const pb = boardProblems(e.board);
+    return pb.length ? pb.join('; ') : null;
+  },
+  // Drawing on squared paper: the board is replayed by lib/grid-board.js — the model fits, the given sides
+  // belong to the figure, the target is symmetric about the axis, the shape asked for fits the grid, the line
+  // through A has room — and its own answer (drawSolution) is accepted by its own check (drawCheck)
+  tracerGrille: (e) => {
+    const pb = boardProblems(e.board);
+    return pb.length ? pb.join('; ') : null;
+  },
+  // Shapes in any orientation: each tile read back from its polygon / circle and named from its
+  // sides and angles (lib/shapes.js); the answers are exactly the tiles that are the target
+  trouverFormes: (e, params = {}) => {
+    const target = targetOf(e.say || e.title);
+    if (!target) return `no shape name in « ${e.title} »`;
+    const out = [];
+    const shapes = e.tiles.map(readShape);
+    const named = shapes.map(shapeNames);
+    named.forEach((n, i) => n.unclear.forEach((u) => out.push(`tile ${i}: ${u}`)));
+    const want = named.map((n, i) => (n.names.has(target) ? i : -1)).filter((i) => i >= 0);
+    const got = [...e.tileAnswers].sort((a, b) => a - b);
+    if (String(want) !== String(got)) out.push(`${target} tiles are [${want}], declared [${got}]`);
+    const inclusive = /toutes les figures qui sont/.test(e.title);
+    if (!inclusive && (target === 'rectangle' || target === 'losange') && named.some((n) => n.names.has('carre')))
+      out.push('a square is drawn, but the instruction does not say it counts');
+    if (params.turn !== 'none' && target !== 'disque' && !want.some((i) => turned(shapes[i])))
+      out.push('no answer is turned');
+    if (new Set(e.tiles).size !== e.tiles.length) out.push('two tiles are the same');
+    return out.length ? out.join('; ') : null;
+  },
+  // Angles: each drawing is measured again (lib/shapes.js readAngle) — kind, order, comparison
+  trouverAngles: (e) => {
+    const m = String(e.title).match(/angles (aigus|droits|obtus)/);
+    if (!m) return `no angle kind in « ${e.title} »`;
+    const target = { aigus: 'aigu', droits: 'droit', obtus: 'obtus' }[m[1]];
+    const out = [];
+    const angles = e.tiles.map(readAngle);
+    if (angles.some((a) => !a || !a.arcOk)) return 'a tile is not an angle drawing (or its arc is off the arms)';
+    const kinds = angles.map((a) => angleKind(a.deg));
+    kinds.forEach((k, i) => k.unclear.forEach((u) => out.push(`tile ${i}: ${u}`)));
+    const want = kinds.map((k, i) => (k.kind === target ? i : -1)).filter((i) => i >= 0);
+    const got = [...e.tileAnswers].sort((a, b) => a - b);
+    if (String(want) !== String(got)) out.push(`${target} tiles are [${want}], declared [${got}]`);
+    if (!want.some((i) => angles[i].turned)) out.push('no answer has both arms off the axes');
+    if (new Set(e.tiles).size !== e.tiles.length) out.push('two tiles are the same');
+    return out.length ? out.join('; ') : null;
+  },
+  comparerAngles: (e, params = {}) => {
+    const pics = String(e.body).match(/<svg\b[\s\S]*?<\/svg>/g) || [];
+    const angles = pics.map(readAngle);
+    if (angles.length !== 2 || angles.some((a) => !a || !a.arcOk)) return 'body is not two angle drawings';
+    const [a, b] = angles.map((x) => x.deg);
+    const out = angles.flatMap((x, i) =>
+      angleKind(x.deg)
+        .unclear.filter((u) => !/right/.test(u))
+        .map((u) => `${'AB'[i]}: ${u}`)
+    );
+    const equal = Math.abs(a - b) < 1; // points are rounded to 0.1 px
+    if (!equal && Math.abs(a - b) < 8) out.push(`A ${a.toFixed(0)}° and B ${b.toFixed(0)}° too close to tell apart`);
+    const ask = /plus grand/.test(e.title) ? 'grand' : /plus petit/.test(e.title) ? 'petit' : null;
+    if (!ask) out.push(`no « plus grand / petit » in « ${e.title} »`);
+    const want = equal ? 2 : a > b === (ask === 'grand') ? 0 : 1;
+    if (!/^L'angle A$/.test(e.mcqChoices[0]) || !/^L'angle B$/.test(e.mcqChoices[1]) || !/égaux/.test(e.mcqChoices[2]))
+      out.push(`choices are ${e.mcqChoices.join(' / ')}`);
+    if (e.mcqAnswer !== want)
+      out.push(`A ${a.toFixed(0)}°, B ${b.toFixed(0)}°: answer is ${want}, declared ${e.mcqAnswer}`);
+    // The trap: the bigger angle has the shorter arms
+    if (params.trap !== false && !equal) {
+      const [big, small] = a > b ? angles : [angles[1], angles[0]];
+      if (Math.max(...big.arms) >= Math.min(...small.arms)) out.push('the bigger angle does not have the shorter arms');
+    }
+    return out.length ? out.join('; ') : null;
+  },
+  rangerAngles: (e, params = {}) => {
+    const angles = e.tiles.map(readAngle);
+    if (angles.some((a) => !a || !a.arcOk)) return 'a tile is not an angle drawing';
+    const degs = angles.map((a) => a.deg);
+    const out = degs.flatMap((d, i) =>
+      angleKind(d)
+        .unclear.filter((u) => !/right/.test(u))
+        .map((u) => `tile ${i}: ${u}`)
+    );
+    const desc = e.direction === 'desc';
+    if (desc !== /plus grand au plus petit/.test(e.title)) out.push(`direction ${e.direction} vs « ${e.title} »`);
+    // Picture tiles keep their listed order: it must be the answer, angles far enough apart to see
+    degs.slice(1).forEach((d, i) => {
+      const step = desc ? degs[i] - d : d - degs[i];
+      if (step < 8) out.push(`tiles ${i} and ${i + 1}: ${degs[i].toFixed(0)}° then ${d.toFixed(0)}°`);
+    });
+    if (params.trap !== false) {
+      const byDeg = angles.map((a, i) => i).sort((i, j) => degs[i] - degs[j]);
+      byDeg.slice(1).forEach((j, n) => {
+        if (Math.max(...angles[j].arms) > Math.max(...angles[byDeg[n]].arms) + 0.5)
+          out.push(`the ${degs[j].toFixed(0)}° angle has longer arms than the ${degs[byDeg[n]].toFixed(0)}° one`);
+      });
+    }
+    return out.length ? out.join('; ') : null;
+  },
+  // Chance: urns / spinners / dice read again from the drawing (lib/hasard.js), the event from the title
+  hasardPossible: (e) => {
+    const pics = String(e.body).match(/<svg\b[\s\S]*?<\/svg>/g) || [];
+    const r = pics.length === 1 && readChance(pics[0]);
+    if (!r) return 'body is not one chance drawing';
+    const out = [...r.problems];
+    const { items, not } = readEvent(e.title, r.source);
+    if (!items.length) return `no outcome named in « ${e.title} »`;
+    const n = r.outcomes.length;
+    const a = r.outcomes.filter((o) => items.includes(o) !== not).length;
+    const fits = {
+      Impossible: a === 0,
+      Possible: a > 0 && a < n,
+      'Peu probable': a > 0 && 4 * a <= n,
+      'Une chance sur deux': 2 * a === n,
+      'Très probable': a < n && 4 * a >= 3 * n,
+      Certain: a === n,
+    };
+    if (e.mcqChoices.some((c) => !(c in fits))) return `choices are ${e.mcqChoices.join(' / ')}`;
+    const want = e.mcqChoices.map((c, i) => (fits[c] ? i : -1)).filter((i) => i >= 0);
+    if (want.length !== 1) out.push(`${a} chances in ${n}: ${want.length} choices fit`);
+    else if (e.mcqAnswer !== want[0])
+      out.push(`${a} chances in ${n}: answer is ${e.mcqChoices[want[0]]}, declared ${e.mcqChoices[e.mcqAnswer]}`);
+    return out.length ? out.join('; ') : null;
+  },
+  hasardComparer: (e, params = {}) => {
+    const pics = String(e.body).match(/<svg\b[\s\S]*?<\/svg>/g) || [];
+    const rs = pics.map(readChance);
+    if (rs.length !== 2 || rs.some((r) => !r)) return 'body is not two chance drawings';
+    const out = rs.flatMap((r, i) => r.problems.map((p) => `${'AB'[i]}: ${p}`));
+    const { items } = readEvent(e.title, rs[0].source);
+    if (items.length !== 1) return `not one colour in « ${e.title} »`;
+    const [ca, cb] = rs.map((r) => r.outcomes.filter((o) => o === items[0]).length);
+    const [na, nb] = rs.map((r) => r.outcomes.length);
+    const ask = /le plus de chances/.test(e.title) ? 'plus' : /le moins de chances/.test(e.title) ? 'moins' : null;
+    if (!ask) out.push(`no « le plus / moins de chances » in « ${e.title} »`);
+    // a / na vs b / nb, in whole numbers
+    const [pa, pb] = [ca * nb, cb * na];
+    const want = pa === pb ? 2 : pa > pb === (ask === 'plus') ? 0 : 1;
+    if (!/ A$/.test(e.mcqChoices[0]) || !/ B$/.test(e.mcqChoices[1]) || !/^Autant/.test(e.mcqChoices[2]))
+      out.push(`choices are ${e.mcqChoices.join(' / ')}`);
+    if (e.mcqAnswer !== want) out.push(`A ${ca}/${na}, B ${cb}/${nb}: answer is ${want}, declared ${e.mcqAnswer}`);
+    if (pa !== pb && na !== nb && Math.abs(ca / na - cb / nb) < 0.1)
+      out.push(`A ${ca}/${na} and B ${cb}/${nb} too close`);
+    if (params.sameTotal && na !== nb) out.push(`${na} and ${nb} outcomes, not the same total`);
+    if (params.trap && pa !== pb && (pa > pb ? ca >= cb : cb >= ca))
+      out.push('the likelier one does not have fewer of the colour');
+    return out.length ? out.join('; ') : null;
+  },
+  hasardChances: (e) => {
+    const pics = String(e.body).match(/<svg\b[\s\S]*?<\/svg>/g) || [];
+    const r = pics.length === 1 && readChance(pics[0]);
+    if (!r) return 'body is not one chance drawing';
+    const out = [...r.problems];
+    const { items, not } = readEvent(e.title, r.source);
+    if (!items.length) return `no outcome named in « ${e.title} »`;
+    const n = r.outcomes.length;
+    const a = r.outcomes.filter((o) => items.includes(o) !== not).length;
+    const read = e.mcqChoices.map((c) => {
+      const m = String(c).match(/^(\d+) chances? sur (\d+)$/);
+      if (!m) throw new Unparseable('choice ' + c);
+      return [Number(m[1]), Number(m[2])];
+    });
+    const want = read.map(([x, y], i) => (x === a && y === n ? i : -1)).filter((i) => i >= 0);
+    if (want.length !== 1) out.push(`${a} chances in ${n}: ${want.length} choices say so`);
+    else if (e.mcqAnswer !== want[0]) out.push(`${a} chances in ${n}, declared « ${e.mcqChoices[e.mcqAnswer]} »`);
+    // No other choice with the same value (« 1 chance sur 2 » for 3 in 6)
+    read.forEach(([x, y], i) => {
+      if (!want.includes(i) && x * n === a * y) out.push(`« ${e.mcqChoices[i]} » is also right`);
+      read.slice(0, i).forEach(([u, v], j) => {
+        if (u * y === x * v) out.push(`« ${e.mcqChoices[j]} » and « ${e.mcqChoices[i]} » are the same`);
+      });
+      if ((x === 1) !== /chance sur/.test(e.mcqChoices[i])) out.push(`« ${e.mcqChoices[i]} »: chance(s)`);
+    });
+    return out.length ? out.join('; ') : null;
+  },
+  hasardRanger: (e) => {
+    const pics = String(e.body).match(/<svg\b[\s\S]*?<\/svg>/g) || [];
+    const r = pics.length === 1 && readChance(pics[0]);
+    if (!r) return 'body is not one chance drawing';
+    const out = [...r.problems];
+    const counts = countOf(r.outcomes);
+    const cols = e.tiles.map(tileColour);
+    if (cols.some((c) => !c)) return 'a tile is not one colour';
+    if (String([...cols].sort()) !== String([...counts.keys()].sort()))
+      out.push(`tiles ${cols.join(', ')} vs drawing ${[...counts.keys()].join(', ')}`);
+    const desc = e.direction === 'desc';
+    if (desc !== /de la plus probable/.test(e.title)) out.push(`direction ${e.direction} vs « ${e.title} »`);
+    // Colour tiles keep their listed order: it must be the answer, no two colours as likely
+    const c = cols.map((x) => counts.get(x) || 0);
+    c.slice(1).forEach((x, i) => {
+      if (desc ? x >= c[i] : x <= c[i]) out.push(`${cols[i]} (${c[i]}) then ${cols[i + 1]} (${x})`);
+    });
+    return out.length ? out.join('; ') : null;
+  },
+  // GS manipulations: box of 10, game track, balance — read again from the drawing (lib/manipulations.js)
+  boiteDix: (e) => {
+    const f = readTensFrame(e.svgHtml);
+    const out = [...f.problems];
+    if (f.cells !== 10) out.push(`${f.cells} cells`);
+    const manque = /remplir/.test(e.say);
+    if (manque && (f.tokens === 0 || f.tokens === 10)) out.push(`${f.tokens} tokens: nothing to fill`);
+    const want = manque ? 10 - f.tokens : f.tokens;
+    if (String(e.answers[0]) !== String(want))
+      out.push(`${f.tokens} tokens: answer is ${want}, declared ${e.answers[0]}`);
+    return out.length ? out.join('; ') : null;
+  },
+  jeuOie: (e) => {
+    const d = readDie(e.body);
+    const frogs = e.tiles.map((t, i) => (t.includes('🐸') ? i : -1)).filter((i) => i >= 0);
+    if (frogs.length !== 1) return `${frogs.length} frogs on the track`;
+    const out = [];
+    if (d < 1 || d > 6) out.push(`a die with ${d} pips`);
+    const want = frogs[0] + d;
+    if (want >= e.tiles.length) out.push(`lands on cell ${want}, the track has ${e.tiles.length}`);
+    if (e.tiles.some((t, i) => i !== frogs[0] && /<text\b/.test(t))) out.push('a cell is not blank');
+    if (String(e.tileAnswers) !== String([want]))
+      out.push(`frog ${frogs[0]} + ${d} = ${want}, declared [${e.tileAnswers}]`);
+    if (!e.positional) out.push('blank cells need positional');
+    return out.length ? out.join('; ') : null;
+  },
+  balanceGS: (e, params = {}) => {
+    const b = readBalance(e.body);
+    if (!b) return 'body is not a balance with one object on each pan';
+    if (!b.lower) return 'the balance is level';
+    const out = [];
+    if (e.tiles[0] !== b.left.o || e.tiles[1] !== b.right.o)
+      out.push(`tiles ${e.tiles} vs pans ${b.left.o} ${b.right.o}`);
+    const leger = /léger/.test(e.say);
+    if (!leger && !/lourd/.test(e.say)) out.push(`no « lourd / léger » in « ${e.say} »`);
+    const heavy = b.lower === 'left' ? 0 : 1;
+    const want = leger ? 1 - heavy : heavy;
+    if (String(e.tileAnswers) !== String([want])) out.push(`answer is tile ${want}, declared [${e.tileAnswers}]`);
+    const [h, l] = heavy === 0 ? [b.left, b.right] : [b.right, b.left];
+    if (params.trap && l.size <= h.size) out.push('trap: the lighter object is not drawn bigger');
+    return out.length ? out.join('; ') : null;
   },
   romanNumeralsReverse: (e) => {
     const r = toRoman(num(e.operation));

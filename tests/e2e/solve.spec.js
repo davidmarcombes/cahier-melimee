@@ -296,6 +296,89 @@ function solveAll() {
       p.nlkPaths = w ? {} : paths;
       p.check();
     },
+    'grid-board': (e, w) => {
+      const b = e.board;
+      if (b.mode === 'draw') {
+        const gcd = (x, y) => (y ? gcd(y, x % y) : Math.abs(x));
+        let segs;
+        if (b.task === 'copy') {
+          const [dr, dc] = b.anchor ? [b.anchor.to[0] - b.anchor.from[0], b.anchor.to[1] - b.anchor.from[1]] : [0, 0];
+          segs = b.model.map((s) => s.map(([r, c]) => [r + dr, c + dc]));
+        } else if (b.task === 'complete') {
+          // only the sides still to draw, so the wrong answer (one fewer) misses one
+          const k = (sg) => sg.map(String).sort().join('|');
+          const given = new Set(b.given.map(k));
+          segs = b.target.filter((t) => !given.has(k(t)));
+        } else if (b.task === 'shape') {
+          // Search: a side u, the next side square to it, every place on the grid
+          for (let a = -b.rows; a <= b.rows && !segs; a++)
+            for (let c = -b.cols; c <= b.cols && !segs; c++)
+              for (let t = 1; (a || c) && t <= 10 && !segs; t++) {
+                const v = [(-c / gcd(a, c)) * t, (a / gcd(a, c)) * t];
+                const P =
+                  b.want.shape === 'triangleRectangle'
+                    ? [[0, 0], [a, c], v]
+                    : [[0, 0], [a, c], [a + v[0], c + v[1]], v];
+                const r0 = -Math.min(...P.map((q) => q[0]));
+                const c0 = -Math.min(...P.map((q) => q[1]));
+                const Q = P.map(([r, k]) => [r + r0, k + c0]);
+                if (Q.some(([r, k]) => r > b.rows || k > b.cols) || !p.gbShapeOk(Q, b.want)) continue;
+                segs = Q.map((q, i) => [q, Q[(i + 1) % Q.length]]);
+              }
+          if (!segs) throw new Error('no shape found');
+        } else {
+          const d0 = [b.ref[1][0] - b.ref[0][0], b.ref[1][1] - b.ref[0][1]];
+          const d = b.task === 'perp' ? [-d0[1], d0[0]] : d0;
+          const u = [d[0] / gcd(d[0], d[1]), d[1] / gcd(d[0], d[1])];
+          const inside = ([r, c]) => r >= 0 && c >= 0 && r <= b.rows && c <= b.cols;
+          let [s0, s1] = [b.through, b.through];
+          while (inside([s0[0] - u[0], s0[1] - u[1]])) s0 = [s0[0] - u[0], s0[1] - u[1]];
+          while (inside([s1[0] + u[0], s1[1] + u[1]])) s1 = [s1[0] + u[0], s1[1] + u[1]];
+          segs = [[s0, s1]];
+        }
+        p.gbSegs = w ? segs.slice(0, -1) : segs;
+        return p.check();
+      }
+      if (b.mode === 'debug') return p.gbTapStep(w ? (b.bug + 1) % b.program.length : b.bug);
+      if (b.mode === 'mirror') {
+        const target = p.gbTarget.map((k) => k.split(',').map(Number));
+        p.gbPaint = w ? target.slice(0, -1) : target;
+        return p.check();
+      }
+      if (b.mode === 'follow') {
+        const run = p.gbRun(b.program);
+        if (!run.end) throw new Error('program leaves the grid');
+        p.gbPick = w ? [...b.start] : run.end;
+        return p.check();
+      }
+      // write: breadth-first search over the pupil's buttons (shortest program)
+      const moves = b.dir ? ['F', 'TL', 'TR'] : ['U', 'D', 'L', 'R'];
+      let frontier = [[]];
+      const seen = new Set(['']);
+      let prog = null;
+      for (let d = 0; d < 60 && !prog && frontier.length; d++) {
+        const next = [];
+        for (const pr of frontier) {
+          const run = p.gbRun(pr);
+          if (run.end && run.end[0] === b.goal[0] && run.end[1] === b.goal[1]) {
+            prog = pr;
+            break;
+          }
+          for (const m of moves) {
+            const q = [...pr, m];
+            const r = p.gbRun(q);
+            const k = r.crash ? null : r.end + ',' + r.h;
+            if (k === null || seen.has(k)) continue;
+            seen.add(k);
+            next.push(q);
+          }
+        }
+        frontier = next;
+      }
+      if (!prog) throw new Error('goal cannot be reached');
+      p.gbProg = w ? prog.slice(0, -1) : prog;
+      p.check();
+    },
     maze: (e, w) => {
       const path = mazeSolve(e.maze);
       if (!path) throw new Error('no path from start to end');
@@ -477,7 +560,7 @@ function solveAll() {
     },
     'number-line': (e, w) => {
       if (e.nl?.mode === 'place') {
-        p.nlVal = w ? -987654 : Number(e.answers[0]);
+        p.nlVal = w ? -987654 : Number(String(e.answers[0]).replace(',', '.'));
         return p.nlCheck();
       }
       return S.input(e, w);

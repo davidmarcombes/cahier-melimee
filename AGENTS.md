@@ -57,7 +57,8 @@ npm run help               # List all available npm scripts
 npm run check              # BEFORE EVERY COMMIT: lint → unit → validate → fresh build → e2e on changed series
 npm run lint:fix           # Auto-fix lint/format issues (lint is strict: 0 warnings)
 npm run check:full         # Same, e2e on every page (layout-health + solvability + type scenarios)
-npm test                   # Unit tests (vitest)
+npm test                   # Unit tests (vitest; tests/site-*.test.js excluded)
+npm run test:site          # Tests of the built site — after the build (build and check run it)
 npm run build:e2e          # Build _site/ for E2E (fast, no validation)
 npm run test:e2e           # E2E tests (Playwright, ~555 tests: player, types smoke, layout-health all pages)
 npm run validate:exercises # Validate exercise YAML front-matter

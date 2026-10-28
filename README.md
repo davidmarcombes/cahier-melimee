@@ -1,6 +1,6 @@
 # Le Cahier de Mélimée
 
-Plateforme d'exercices scolaires **gratuite**, **anonyme** et **souveraine** pour les élèves du CP au CM2.
+Plateforme d'exercices scolaires **gratuite**, **anonyme** et **souveraine** pour les élèves de la GS au CM2.
 
 Pas de compte, pas de pub, pas de tracking. L'élève choisit un pseudonyme, résout des exercices, et progresse à son rythme.
 

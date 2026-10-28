@@ -153,3 +153,95 @@
 ### La symétrie
 - Reconnaître un axe de symétrie
 - Compléter une figure par symétrie axiale
+
+
+## Programme 2025 — compléments
+
+> Source : programme de mathématiques du cycle 3, arrêté du 10 avril 2025, [BO n° 16 du 17 avril 2025](https://education.gouv.fr/bo/2025/Hebdo16/MENE2504620A) ([texte](https://cafepedagogique.net/wp-content/uploads/2025/04/Programme-de-mathematiques-pour-le-cycle-3-2025.pdf)). CM1 depuis la rentrée 2025, CM2 depuis la rentrée 2026. Ajouts seulement : objectifs du programme absents de la liste ci-dessus. Rien n'a été retiré.
+
+### Écarts avec la liste ci-dessus (à garder en tête, rien retiré)
+- Grands nombres : jusqu'à **999 999 999** ; le milliard est introduit en 6e.
+- Angles : **pas de rapporteur** au CM2 (collège). À la place : comparer, construire une somme ou un multiple d'angle, moitié par pliage, angle droit = 90°. « Mesurer / tracer des angles au rapporteur » n'est plus attendu.
+- Décimaux : « multiplier deux nombres décimaux » ne figure pas au CM2 2025 (seulement décimal × entier).
+- Aires : objectifs CM2 2025 = cm², dm², m², conversions, aire du carré et du rectangle. Le km², l'aire du triangle rectangle et le périmètre du cercle n'y figurent pas.
+- Fractions : dénominateurs ≤ 60 (fractions décimales jusqu'à 1 000).
+
+### Nombres entiers
+- Relations entre unités de numération ; intercaler
+- Placer des nombres et repérer des points sur une demi-droite graduée
+- Diviseurs d'un entier ≤ 100 ; tous les diviseurs d'un entier ≤ 30
+- Diviseurs communs à deux entiers ≤ 30 ; multiples communs à deux entiers < 15
+
+### Fractions
+- Fraction > 1 = entier + fraction < 1, et réciproquement
+- Encadrer une fraction entre deux entiers consécutifs
+- Placer / repérer une fraction ou « entier + fraction » sur une demi-droite graduée
+- Produit d'un entier et d'une fraction
+- Fraction d'une quantité ou d'une grandeur (deux tiers de 12 €, trois quarts de 100 m)
+
+### Nombres décimaux
+- Relations unités / dixièmes / centièmes / **millièmes**
+- Placer une fraction décimale sur une demi-droite graduée
+- Comparer, encadrer, intercaler, ordonner des fractions décimales
+- Partie entière et arrondi à l'entier d'un nombre décimal
+
+### Calcul mental
+- Moitié des nombres impairs jusqu'à 15
+- Relations entre fractions usuelles ; écriture décimale des fractions usuelles
+- Ajouter un entier à un décimal avec retenue
+- Ajouter deux décimaux < 10 à un chiffre après la virgule
+- Ajouter ou soustraire 8, 9, 18, 19, … 98 ou 99
+- Double et moitié d'un décimal (cas simples)
+- Diviser un entier par 4 ou par 8 ; multiplier un décimal par 5, par 50
+- Distributivité dans des cas simples
+
+### Les quatre opérations
+- Calcul contenant une ou deux paires de parenthèses
+- Poser la multiplication d'un décimal par un entier
+- Poser des divisions décimales : dividende entier ou décimal, diviseur à un chiffre
+
+### Résolution de problèmes
+- Multiplicatifs parties-tout en une étape ; comparaison multiplicative
+- Mixtes en plusieurs étapes
+- Problèmes de dénombrement ; problèmes d'optimisation
+- Problèmes préparant à l'utilisation d'algorithmes
+- Régulation : vraisemblance du résultat
+
+### Algèbre (initiation à la pensée algébrique)
+- Nombre manquant dans une égalité à trous
+- Problèmes algébriques (symboles, lettres, schémas en barre)
+- Exécuter **ou produire** un programme de calcul (jusqu'à trois instructions)
+- Règle d'une suite de nombres (« 7 ; 15 ; 31 ; 63 ; 127 »)
+- Suites de motifs évolutives ; nombre d'éléments à une étape donnée
+
+### Grandeurs et mesures
+- Aires : cm², dm², m² ; convertir ; aire du carré et du rectangle
+- Angles : lexique, notations, comparer ; construire la somme de deux angles ou un multiple d'un angle ; moitié par pliage ; angle droit = 90°
+- Heure : positionner les aiguilles en heures, minutes, secondes ; conversions h / min / s ; problèmes de durées à plusieurs étapes
+
+### Espace et géométrie
+- Outils, notations et codes usuels
+- Figures par leur définition : + **trapèze, trapèze rectangle, pentagone, hexagone**
+- Propriétés du trapèze et du trapèze rectangle (en plus des figures du CM1)
+- Élaborer un programme de construction
+- Symétrique sur quadrillage par rapport à un axe vertical, horizontal **ou diagonal**
+- Solides : identifier un solide d'après une représentation en perspective ; reconnaître un patron du pavé
+- Déplacements : vocabulaire ; suites d'instructions plus longues ; assemblages de cubes
+
+### Organisation et gestion de données
+- Recueillir des données ; produire un tableau, un diagramme en barres, un ensemble de points dans un repère
+- Lire et interpréter un tableau, un diagramme en barres, un **diagramme circulaire**, une **courbe**
+- Données prélevées dans un texte ; problèmes en une ou deux étapes
+
+### Probabilités (nouveau)
+- Toutes les issues d'une expérience simple ; issues réalisant un évènement
+- En équiprobabilité, probabilité sous la forme « a chances sur b »
+- Comparer des probabilités dans des cas simples
+- Indépendance : le dé « ne se souvient pas »
+- Expérience en deux étapes : tableau ou arbre pour recenser les issues
+
+### Initiation à la pensée informatique (nouveau)
+- Codage de déplacements, programmes plus longs
+- Suites évolutives (nombres, motifs) ; termes éloignés
+- Programmes de calcul jusqu'à trois instructions
+- Produire des programmes de construction simples

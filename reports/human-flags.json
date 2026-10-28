@@ -3067,5 +3067,60 @@
     "createdAt": "2026-10-24T16:24:24.534Z",
     "resolvedAt": "2026-10-25T06:17:58.735Z",
     "resolvedBy": "validated"
+  },
+  {
+    "id": "12593c6d",
+    "seriesId": "f2c7a7a7",
+    "url": "/fr/exercices/f2c7a7a7/#4",
+    "title": "Les solides",
+    "reason": "Patrons de cube : A, C, E doivent être justes (1-4-1 ×2, escalier 3-3), B, D, F faux (bloc 2×3, 5 en ligne, 2 carrés sur la même bande)",
+    "source": "claude",
+    "createdAt": "2026-10-26T07:42:01.046Z",
+    "resolvedAt": "2026-10-26T11:55:58.799Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "48c95d9e",
+    "seriesId": "ddbc8731",
+    "url": "/fr/exercices/ddbc8731/",
+    "title": "Polygones et quadrilatères",
+    "reason": "Définition du trapèze choisie : « deux côtés opposés parallèles » (inclusive). La série CM1 e1933f9e (quadrilateres-01 #2) dit « exactement une paire » : harmoniser ?",
+    "source": "claude",
+    "createdAt": "2026-10-26T07:42:01.285Z",
+    "resolvedAt": "2026-10-26T11:53:03.826Z",
+    "resolvedBy": "human"
+  },
+  {
+    "id": "fcf697fc",
+    "seriesId": "e1933f9e",
+    "url": "/fr/exercices/e1933f9e/",
+    "title": "Les quadrilatères",
+    "reason": "#2 « Un trapèze a exactement une paire de côtés parallèles » = vrai, alors que la série CM2 ddbc8731 utilise la définition inclusive. À trancher.",
+    "source": "claude",
+    "createdAt": "2026-10-26T07:42:01.526Z",
+    "resolvedAt": "2026-10-26T11:53:04.018Z",
+    "resolvedBy": "human"
+  },
+  {
+    "id": "b56b29b8",
+    "seriesId": "a5ab0567",
+    "url": "/fr/exercices/a5ab0567/",
+    "title": "La roue des couleurs",
+    "reason": "Couleurs : convention peintre (primaires rouge/jaune/bleu, complémentaire = mélange des deux autres). OK pour CE2 ?",
+    "source": "claude",
+    "createdAt": "2026-10-26T07:42:01.747Z",
+    "resolvedAt": "2026-10-26T11:57:36.117Z",
+    "resolvedBy": "validated"
+  },
+  {
+    "id": "dbcf0557",
+    "seriesId": "de35557e",
+    "url": "/fr/exercices/de35557e/",
+    "title": "Mélanger les couleurs",
+    "reason": "GS voix : écouter les 6 nouvelles consignes (mélanges de couleurs) et vérifier 🟠🟢🟣 bien distincts sur tablette",
+    "source": "claude",
+    "createdAt": "2026-10-26T07:42:01.992Z",
+    "resolvedAt": "2026-10-26T11:58:14.285Z",
+    "resolvedBy": "validated"
   }
 ]

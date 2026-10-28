@@ -2,7 +2,7 @@
 type: sort
 title: "Range du plus grand au plus petit"
 generator: trierFractions
-repeat: 6
+repeat: 2
 params:
   count: 4
   direction: desc

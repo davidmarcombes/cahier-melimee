@@ -9,12 +9,32 @@ layout: base
   x-data="{ filters: JSON.parse(sessionStorage.getItem('exf') ||
     '{&quot;level&quot;:&quot;&quot;,&quot;topic&quot;:&quot;&quot;,&quot;difficulty&quot;:&quot;&quot;}'), search: '',
     limit: 12, _seed: Math.random(), {% if site.devMode %}showUnvalidated: false, validatedIds: new Set(), onePerType: false,
-    {% endif %}get all() { return $store.exercises.data || [] }, get options() {
+    {% endif %}normalize(value) { return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); },
+    oneEditAway(a, b) {
+      if (Math.abs(a.length - b.length) > 1) return false;
+      let i = 0, j = 0, edits = 0;
+      while (i < a.length && j < b.length) {
+        if (a[i] === b[j]) { i++; j++; continue; }
+        if (++edits > 1) return false;
+        if (a.length === b.length && a[i] === b[j + 1] && a[i + 1] === b[j]) { i += 2; j += 2; }
+        else if (a.length > b.length) i++;
+        else if (a.length < b.length) j++;
+        else { i++; j++; }
+      }
+      return edits + (i < a.length || j < b.length ? 1 : 0) <= 1;
+    },
+    matchesSearch(terms, value) {
+      const text = this.normalize(value);
+      const words = text.split(/\s+/);
+      return terms.every(term => text.includes(term) ||
+        (term.length >= 5 && words.some(word => this.oneEditAway(term, word))));
+    },
+    get all() { return $store.exercises.data || [] }, get options() {
     const u = (k) => [...new Set(this.all.map(s => s[k]).filter(Boolean))].sort(); const lo = ['GS','CP','CE1','CE2','CM1','CM2']; return { level: u('level').sort((a, b) => lo.indexOf(a) - lo.indexOf(b)), topic:
-    u('topic'), difficulty: u('difficulty') } }, get filtered() { const q = this.search.toLowerCase(); let list =
+    u('topic'), difficulty: u('difficulty') } }, get filtered() { const terms = this.normalize(this.search).trim().split(/\s+/).filter(Boolean); let list =
     this.all.filter(s => (!this.filters.level || s.level === this.filters.level) && (!this.filters.topic || s.topic ===
-    this.filters.topic) && (!this.filters.difficulty || s.difficulty === this.filters.difficulty) && (!q || (s.title + ' ' +
-    s.topic).toLowerCase().includes(q)){% if site.devMode %} && (!this.showUnvalidated || !this.validatedIds.has(s.id)){%
+    this.filters.topic) && (!this.filters.difficulty || s.difficulty === this.filters.difficulty) && (!terms.length || this.matchesSearch(terms, s.title + ' ' +
+    s.topic)){% if site.devMode %} && (!this.showUnvalidated || !this.validatedIds.has(s.id)){%
     endif %} ); {% if site.devMode %}if (this.onePerType) { const seen = new Set(); list = list.filter(s => { const key = s.typeKey || ''; if (seen.has(key)) return false; seen.add(key); return true; }); }{% endif %} return list; }, get ordered() { const list =
     this.filtered; const seed = this._seed; if
     (this.filters.topic || this.search) return list; const arr = list.map((s, i) => ({ s, r: (Math.sin(seed * 9301 + i *

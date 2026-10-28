@@ -41,6 +41,10 @@ const SKIP_KEYS = new Set([
   'mode',
   'direction',
   'rule',
+  'paper',
+  'task',
+  'shape',
+  'axis',
 ]);
 function texts(value, key, out) {
   if (SKIP_KEYS.has(key)) return out;

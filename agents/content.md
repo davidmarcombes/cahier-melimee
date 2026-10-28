@@ -142,7 +142,7 @@ Quick table — required fields only:
 | `compare` | `comparisons[]` (left, right) | Player cycles <, >, = |
 | `multi-question` | `questions[]` (text, answer) | Body = shared context |
 | `mcq` | `answer`, `choices[]` | Choices shuffled at runtime |
-| `fraction` | `shape`, `numerator`, `denominator`, `answer` | shape: circle\|rect |
+| `fraction` | `shape`, `numerator`, `denominator`, `answer` | shape: circle\|square (rect draws nothing) |
 | `clock` | `hour`, `minute`, `answer` | answer: "HH:MM" |
 | `sort` | `items[]` | Items in CORRECT order — shuffled at runtime |
 | `drag-sort` | `tiles[]` | Tiles in CORRECT order, direction: asc\|desc |
@@ -154,6 +154,11 @@ Quick table — required fields only:
 | `ruler` | `min`, `max`, `divisions`, `markers[]` | markers[].label + .value |
 | `number-line` | `min`, `max`, `answer` | Optional: `step` |
 | `coordinate-grid` | `answer` | mode: read\|place, cols, rows, points[] |
+| `tile-select` (shapes) | `generator: trouverFormes` | Shapes in any orientation — see exercises.md `tile-select` |
+| angles (CM) | `generator: trouverAngles` / `comparerAngles` / `rangerAngles` | Angles drawn, no protractor: classify, compare, order — see exercises.md `tile-select`, `mcq`, `drag-sort` |
+| chance (CM) | `generator: hasardPossible` / `hasardComparer` / `hasardChances` / `hasardRanger` | Urn, spinner, special die drawn (donnees.js): impossible → certain, compare A / B, « a chances sur b », order colours — see exercises.md `mcq`, `drag-sort` |
+| GS manipulations | `generator: boiteDix` / `balanceGS` / `jeuOie` | Box of 10 (`count-objects`), balance and game track (`tile-select`), voice via a fixed `say` per file — see exercises.md |
+| `grid-board` | `board{}` OR `generator: robotGrille` / `symetrieGrille` | Robot: mode follow\|write\|debug; symmetry: mode mirror — see exercises.md |
 | `bar-chart` | `labels[]`, `values[]`, `yMax`, `yStep` | |
 | `calc-chain` | `start`, `steps[]` (op, value, answer) | |
 | `base-10` | `answer`, `number` OR `hundreds`+`tens`+`ones` | |

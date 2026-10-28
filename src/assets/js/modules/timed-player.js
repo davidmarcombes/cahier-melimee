@@ -49,7 +49,13 @@ export function timedPlayer(rawExercises, seriesId, opts = {}) {
       return this.ex[this.curIdx % Math.max(1, this.ex.length)] || {};
     },
 
+    // Clock items (lireHeure) show the clock face instead of an operation; answered « 8:30 » / « 8h30 »
+    get isClock() {
+      return this.cur.type === 'clock';
+    },
+
     get opHtml() {
+      if (this.isClock) return '';
       const op = this.cur.operation || '';
       return renderOpShorthands(op.includes('?') ? op : op + ' = ?');
     },

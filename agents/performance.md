@@ -3,7 +3,7 @@
 ## Page Size Budgets
 
 - **Pages:** ≤ 10 KB gzip each (what LWS sends; `.htaccess` gzips HTML). Today: median 4.4 KB, largest 6.2 KB (raw 15 / 30 KB). Enforced by `npm run release:verify`. Raw size is not the budget: mixed-type series repeat partial markup that gzip removes.
-- **CSS bundle:** target ≤ 60 KB minified (currently ~48 KB, 10 KB gzip). Tailwind color-opacity plugins are off (`corePlugins` in `scripts/generate-tailwind-from-tokens.js`): use alpha modifiers (`bg-white/80`), never `bg-opacity-*`.
+- **CSS bundle:** target ≤ 60 KB minified (currently ~49 KB, 10 KB gzip). Release CSS skips the dev-only templates (admin, debug panel, `dev.js`): `tailwind.config.js` drops them from `content` unless Tailwind runs with `--watch` (dev). Tailwind color-opacity plugins are off (`corePlugins` in `scripts/generate-tailwind-from-tokens.js`): use alpha modifiers (`bg-white/80`), never `bg-opacity-*`.
 - Audit with: `npm run release:verify` (largest page in its summary line), `gzip -9c _site/fr/exercices/<id>/index.html | wc -c`, `wc -c _site/css/styles.css`
 
 ## Build-Time Conditional Includes (critical)
@@ -23,6 +23,7 @@ Type partials live in `src/_includes/types/`. When adding a new exercise type, c
 `series-player.njk` conditionally loads JS files to minimize payload:
 
 - **`svg.js`** — loaded when any exercise has `generator:` OR `svg:` field
+- **`grid-draw.js`** — grid-board `draw` methods (~3 KB gzip), mixed into the player; loaded only when an exercise is a draw board (`generator: tracerGrille` or `board.mode: draw`). Pattern for rare, heavy type logic: a classic script setting `window.X`, merged by `seriesPlayer()` when present, so `app.js` stays small on every page
 - **`generators/_core.js` + needed topic modules** — loaded only when an exercise has `generator:` field; only the modules holding the series generators (usually one, ~6 KB gzip)
 - **KaTeX CSS** — loaded when any exercise title contains `$`
 
@@ -40,14 +41,14 @@ Applied to: `series-player.njk`, `challenge-player.njk`, `exercices-list.njk`.
 ## Script Loading Order
 
 In `base.njk`, scripts load in this order:
-1. **Inline, in `<head>`** — `window.__pathPrefix`, then the dark-mode class (before paint, no theme flash)
+1. **Inline, in `<head>`, before the stylesheet** — `window.__pathPrefix`, the dark-mode class (before paint, no theme flash), the CSV preload. An inline script waits for every stylesheet above it, so the `<link rel="stylesheet">` comes right after them, ahead of the meta/OG/JSON-LD tags. Lighthouse still flags it as render-blocking (~300 ms estimate); inlining the CSS would clear the audit but measured no FCP gain and breaks the page budget (+10 KB gzip per page)
 2. **app.js** — `type="module"`, `defer`; it registers the Alpine components on `window`
 3. **alpine.min.js** — `defer`, after app.js so the components exist when Alpine starts
 4. **Service worker registration** — inline, on `load` (unregistered in dev mode). `scripts/generate-sw.js` precaches the shell only (JS, CSS, fonts, logo, manifest); pages are cached on visit (stale-while-revalidate). Never precache pages: 874 URLs per first visit tripped the host's request limit.
 
 Speech clips are not part of the precached shell. `Audio` fetches each clip only when spoken; the service worker then caches it on visit.
 
-Page-specific scripts (`svg.js`, generator modules) are plain classic scripts in `series-player.njk` / `timed-player.njk`. Every JS/CSS URL carries `?v={{ site.version }}` (see `docs/release.md`).
+Page-specific scripts (`svg.js`, `grid-draw.js`, generator modules) are plain classic scripts in `series-player.njk` / `timed-player.njk`. Every JS/CSS URL carries `?v={{ site.version }}` (see `docs/release.md`).
 
 ## CSS Discipline
 
@@ -95,7 +96,7 @@ Both `seriesPayload` and `seriesListPayload` filters in `.eleventy.js` apply thi
 ## General
 
 - Images optimized to AVIF/WebP via `@11ty/eleventy-img`
-- Fonts loaded with `font-display: swap`
-- Minimal JS footprint: Alpine.js CDN (~15 KB) + one `app.js` file + conditional `svg.js` / `generators/*.js` (per-topic modules)
+- Inter is self-hosted (`src/assets/fonts/`, roman 37 KB) with `font-display: optional` and deliberately no preload: on a cold first page it may miss its ~100 ms window and that page stays on `system-ui` (no swap, no layout shift); later pages use the cached font. Checked 2026-10-28: layout-health on every page with the font files removed shows no overflow or broken layout, only cosmetic differences (glyph shapes, a consigne wrapping onto two lines). Font-fallback flips are therefore expected noise in `npm run regress` screenshots
+- Minimal JS footprint: Alpine.js CDN (~15 KB) + one `app.js` file + conditional `svg.js` / `grid-draw.js` / `generators/*.js` (per-topic modules)
 - Static HTML for fast initial loads and SEO
 - SVG `slicedPieSvg` optimized: floats rounded to 2dp, `<g>` wrapper for shared `stroke` attribute

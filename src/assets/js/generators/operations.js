@@ -636,6 +636,105 @@
     // The quotient has 1..maxDec decimals (last one ≠ 0); the dividend is quotient × divisor.
     // params: divisors ([2..9]), maxDec (2), quotientMax (50),
     //         intDividend (false — true: whole dividend, decimal quotient « 9 ÷ 4 = 2,25 »)
+    // multiplierDecimalParEntier: « 12,6 × 3 = ? » (CM1–CM2) — computed in integers.
+    // The decimal has 1..maxDec decimals (last one ≠ 0). factors [5, 50] gives the CM2 « × 5, × 50 » drill.
+    // params: factors ([2..9]), maxDec (2), wholeMax (50)
+    multiplierDecimalParEntier: {
+      generate(params = {}) {
+        const factors = params.factors ?? [2, 3, 4, 5, 6, 7, 8, 9];
+        const maxDec = params.maxDec ?? 2;
+        const wholeMax = params.wholeMax ?? 50;
+        // n / 10^dec → « 12,6 » (trailing zeros dropped, French comma)
+        const fmt = (n, dec) => {
+          const s = String(n).padStart(dec + 1, '0');
+          const out = dec ? `${s.slice(0, -dec)},${s.slice(-dec)}` : s;
+          return out.includes(',') ? out.replace(/0+$/, '').replace(/,$/, '') : out;
+        };
+        const dec = rand(1, maxDec);
+        let a;
+        do a = rand(10 ** dec, (wholeMax + 1) * 10 ** dec - 1);
+        while (a % 10 === 0);
+        const k = randItem(factors);
+        return {
+          type: 'number-check',
+          operation: `${fmt(a, dec)} × ${k} = ?`,
+          answers: [fmt(a * k, dec)],
+        };
+      },
+    },
+
+    // calculParentheses: « (12 + 8) × 3 = ? », « (7 × 6) − (4 × 5) = ? » (CM1–CM2) — no result below 0,
+    // divisions exact. params: pairs (1 or 2), max (20 — size of the terms)
+    calculParentheses: {
+      generate(params = {}) {
+        const pairs = params.pairs ?? 1;
+        const max = params.max ?? 20;
+        const n = () => rand(2, max);
+        const small = () => rand(2, 9);
+        const forms =
+          pairs === 2
+            ? [
+                () => {
+                  const a = n(),
+                    b = n(),
+                    c = n(),
+                    d = rand(1, c - 1 || 1);
+                  return [`(${a} + ${b}) × (${c} − ${d})`, (a + b) * (c - d)];
+                },
+                () => {
+                  let a = small(),
+                    b = small(),
+                    c = small(),
+                    d = small();
+                  if (a * b < c * d) [a, b, c, d] = [c, d, a, b];
+                  return [`(${a} × ${b}) − (${c} × ${d})`, a * b - c * d];
+                },
+                () => {
+                  const c = n(),
+                    d = n(),
+                    a = n() + c + d,
+                    b = n();
+                  return [`(${a} + ${b}) − (${c} + ${d})`, a + b - c - d];
+                },
+              ]
+            : [
+                () => {
+                  const a = n(),
+                    b = n(),
+                    c = small();
+                  return [`(${a} + ${b}) × ${c}`, (a + b) * c];
+                },
+                () => {
+                  const a = small(),
+                    b = n(),
+                    c = n();
+                  return [`${a} × (${b} + ${c})`, a * (b + c)];
+                },
+                () => {
+                  const b = n(),
+                    a = b + n(),
+                    c = small();
+                  return [`(${a} − ${b}) × ${c}`, (a - b) * c];
+                },
+                () => {
+                  const b = n(),
+                    c = n(),
+                    a = b + c + n();
+                  return [`${a} − (${b} + ${c})`, a - b - c];
+                },
+                () => {
+                  const c = small(),
+                    q = rand(2, max),
+                    s = q * c,
+                    b = rand(1, s - 1);
+                  return [`(${s - b} + ${b}) ÷ ${c}`, q];
+                },
+              ];
+        const [expr, result] = randItem(forms)();
+        return { type: 'number-check', operation: `${expr} = ?`, answers: [String(result)] };
+      },
+    },
+
     diviserDecimalParEntier: {
       generate(params = {}) {
         const divisors = params.divisors ?? [2, 3, 4, 5, 6, 7, 8, 9];

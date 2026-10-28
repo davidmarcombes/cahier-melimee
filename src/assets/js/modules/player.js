@@ -21,7 +21,7 @@ const VOICE_SEGMENT_PAUSE_MS = 180;
 const VOICE_INSTRUCTION_PAUSE_MS = 500;
 
 export function seriesPlayer(exercises, seriesId) {
-  return {
+  const player = {
     exercises,
     seriesId: seriesId || '',
     currentIndex: 0,
@@ -150,6 +150,16 @@ export function seriesPlayer(exercises, seriesId) {
     nlkErrors: [], // numberlink: [[r,c],...] error cells
     nlkColors: ['', '#ef4444', '#3b82f6', '#22c55e', '#f97316', '#8b5cf6', '#ec4899'],
 
+    gbPick: null, // grid-board follow: tapped cell [r, c]
+    gbProg: [], // grid-board write: instructions composed by the pupil
+    gbTrail: [], // grid-board: cells walked by the last run, shown after « Vérifier »
+    gbCrash: false, // grid-board: last run left the grid or hit a block
+    gbWrong: null, // grid-board: wrong cell (follow) or instruction (debug) just tapped
+    gbPaint: [], // grid-board mirror: cells coloured by the pupil
+    gbSegs: [], // grid-board draw: segments [[r, c], [r, c]] drawn by the pupil
+    gbPen: null, // grid-board draw: grid point the next segment starts from
+    gbCursor: null, // grid-board draw: keyboard cursor
+
     /* Helpers */
     get cur() {
       return this.exercises[this.currentIndex] || {};
@@ -246,7 +256,7 @@ export function seriesPlayer(exercises, seriesId) {
         W = 420,
         LY = 58;
       const mx = PAD + (this.nlVal - min) * (W / range);
-      const lbl = String(this.nlVal);
+      const lbl = String(this.nlVal).replace('.', ',');
       return (
         `<circle cx="${mx}" cy="${LY}" r="6" class="fill-primary-500"/>` +
         `<line x1="${mx}" y1="${LY - 6}" x2="${mx}" y2="${LY - 15}" stroke-width="2" class="stroke-primary-500"/>` +
@@ -543,6 +553,16 @@ export function seriesPlayer(exercises, seriesId) {
       this.nlkActive = null;
       this.nlkErrors = [];
 
+      this.gbPick = null;
+      this.gbProg = [];
+      this.gbTrail = [];
+      this.gbCrash = false;
+      this.gbWrong = null;
+      this.gbPaint = [];
+      this.gbSegs = [];
+      this.gbPen = null;
+      this.gbCursor = null;
+
       this.dtInputs =
         _e.type === 'decimal-triple'
           ? {
@@ -720,7 +740,9 @@ export function seriesPlayer(exercises, seriesId) {
       const { step = 1, subdivisions = 0 } = this.cur.nl;
       const snapStep = subdivisions > 0 ? step / subdivisions : step;
       const tol = snapStep * 0.51;
-      const isCorrect = (this.cur.answers || []).some((a) => Math.abs(Number(a) - this.nlVal) <= tol);
+      const isCorrect = (this.cur.answers || []).some(
+        (a) => Math.abs(Number(String(a).replace(',', '.')) - this.nlVal) <= tol
+      );
       if (isCorrect) {
         this.solvedFlags[this.currentIndex] = true;
         this.showError = false;
@@ -877,6 +899,188 @@ export function seriesPlayer(exercises, seriesId) {
       this.mazePath = [...path, [r, c]];
     },
 
+    /* Grid-board — a robot on a square grid. Instructions: U D L R (absolute, optional count « R3 »),
+       F (forward, optional count), TL / TR (turn left / right, needs board.dir). Rows go down. */
+    gbRun(prog) {
+      const b = this.cur.board;
+      let [r, c] = b.start;
+      let h = 'NESW'.indexOf(b.dir || 'N');
+      const trail = [[r, c]];
+      const blocked = (r, c) =>
+        r < 0 || c < 0 || r >= b.rows || c >= b.cols || (b.blocks || []).some((k) => k[0] === r && k[1] === c);
+      for (const t of prog) {
+        const m = /^(TL|TR|[UDLRF])(\d*)$/.exec(t);
+        if (!m) return { trail, crash: true };
+        if (m[1][0] === 'T') {
+          h = (h + (m[1] === 'TL' ? 3 : 1)) % 4;
+          continue;
+        }
+        const d = m[1] === 'F' ? h : 'URDL'.indexOf(m[1]);
+        for (let k = 0; k < (Number(m[2]) || 1); k++) {
+          r += [-1, 0, 1, 0][d];
+          c += [0, 1, 0, -1][d];
+          trail.push([r, c]);
+          if (blocked(r, c)) return { trail, crash: true };
+        }
+      }
+      return { trail, crash: false, end: [r, c], h };
+    },
+
+    // Instruction as shown: arrows, « avance de 3 », « tourne à gauche »
+    gbLabel(t) {
+      const m = /^(TL|TR|[UDLRF])(\d*)$/.exec(t) || [];
+      const n = Number(m[2]) || 1;
+      if (m[1] === 'F') return n > 1 ? `avance de ${n}` : 'avance';
+      if (m[1] === 'TL') return '↰ à gauche';
+      if (m[1] === 'TR') return '↱ à droite';
+      const a = { U: '↑', D: '↓', L: '←', R: '→' }[m[1]] || '?';
+      return n > 1 ? `${n} ${a}` : a;
+    },
+
+    // Mirror: image of a cell across the axis (v / h: grid line before column / row `at`; d / a: diagonal
+    // from the top left / top right corner, through its cells)
+    gbMirror([r, c]) {
+      const b = this.cur.board;
+      if (b.axis === 'v') return [r, 2 * b.at - 1 - c];
+      if (b.axis === 'h') return [2 * b.at - 1 - r, c];
+      return b.axis === 'd' ? [c, r] : [b.cols - 1 - c, b.rows - 1 - r];
+    },
+
+    // Mirror: the cells to colour, as "r,c" (the figure's own cells on a diagonal axis are already there)
+    get gbTarget() {
+      const own = new Set(this.cur.board.shape.map(String));
+      return [...new Set(this.cur.board.shape.map((p) => String(this.gbMirror(p))))].filter((k) => !own.has(k));
+    },
+
+    // Mirror: a vertical / horizontal axis drawn over the grid, in the 0.25rem gap between two cells
+    get gbAxis() {
+      const b = this.cur.board;
+      if (!b || b.mode !== 'mirror' || !'vh'.includes(b.axis)) return null;
+      const n = b.axis === 'v' ? b.cols : b.rows;
+      const pos = `calc(${(100 * b.at) / n}% + ${0.25 * (b.at / n - 0.5)}rem)`;
+      return b.axis === 'v'
+        ? { left: pos, top: '-0.5rem', bottom: '-0.5rem', width: '4px', transform: 'translateX(-50%)' }
+        : { top: pos, left: '-0.5rem', right: '-0.5rem', height: '4px', transform: 'translateY(-50%)' };
+    },
+
+    get gbCells() {
+      const b = this.cur.board;
+      if (!b || b.mode === 'draw') return [];
+      const at = (list, r, c) => (list || []).find((k) => k[0] === r && k[1] === c);
+      if (b.mode === 'mirror') {
+        const target = new Set(this.gbTarget);
+        const cells = [];
+        for (let r = 0; r < b.rows; r++)
+          for (let c = 0; c < b.cols; c++) {
+            const lock = !!at(b.shape, r, c);
+            const painted = !!at(this.gbPaint, r, c);
+            const cls = lock
+              ? 'border-primary-600 bg-primary-500'
+              : !painted
+                ? 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'
+                : this.solved
+                  ? 'border-green-600 bg-green-500'
+                  : this.showError && !target.has(r + ',' + c)
+                    ? 'border-red-500 bg-red-400'
+                    : 'border-amber-500 bg-amber-400';
+            const label = `ligne ${r + 1}, colonne ${c + 1}` + (lock ? ', figure' : painted ? ', coloriée' : '');
+            cells.push({ r, c, txt: '', cls, lock, label });
+          }
+        return cells;
+      }
+      const end = this.solved && this.gbTrail.length ? this.gbTrail[this.gbTrail.length - 1] : b.start;
+      const cells = [];
+      for (let r = 0; r < b.rows; r++)
+        for (let c = 0; c < b.cols; c++) {
+          const block = at(b.blocks, r, c);
+          const mark = (b.marks || []).find((m) => m.at[0] === r && m.at[1] === c);
+          const goal = b.goal && b.goal[0] === r && b.goal[1] === c;
+          const walked = at(this.gbTrail, r, c);
+          const wrong = this.gbWrong && this.gbWrong[0] === r && this.gbWrong[1] === c;
+          const last = this.gbTrail[this.gbTrail.length - 1];
+          const crash = this.gbCrash && last[0] === r && last[1] === c;
+          const picked = this.gbPick && this.gbPick[0] === r && this.gbPick[1] === c;
+          const txt =
+            end[0] === r && end[1] === c
+              ? '🤖'
+              : block
+                ? block[2] || '🪨'
+                : goal
+                  ? b.goalEmoji || '⭐'
+                  : mark
+                    ? mark.e
+                    : picked
+                      ? '📍'
+                      : walked
+                        ? '•'
+                        : '';
+          const cls =
+            wrong || crash
+              ? 'border-red-400 bg-red-50 dark:bg-red-900/20'
+              : picked || (walked && this.solved)
+                ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                : walked
+                  ? 'border-primary-400 bg-primary-50 dark:bg-primary-900/20'
+                  : block
+                    ? 'border-slate-300 dark:border-slate-600 bg-slate-200 dark:bg-slate-700'
+                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800';
+          const lock = b.mode !== 'follow';
+          cells.push({ r, c, txt, cls, lock, label: `ligne ${r + 1}, colonne ${c + 1}` + (txt ? ` ${txt}` : '') });
+        }
+      return cells;
+    },
+
+    // Heading of the robot (relative boards): the arrow drawn beside it, in degrees
+    get gbHeading() {
+      const b = this.cur.board;
+      if (!b || !b.dir) return null;
+      const h = this.solved && b.mode !== 'debug' ? this.gbRun(b.mode === 'write' ? this.gbProg : b.program).h : null;
+      return 90 * (h ?? 'NESW'.indexOf(b.dir));
+    },
+
+    gbTapCell(r, c) {
+      const b = this.cur.board;
+      if (this.solved || !b) return;
+      if (b.mode === 'mirror') {
+        if (b.shape.some((k) => k[0] === r && k[1] === c)) return;
+        const rest = this.gbPaint.filter((k) => k[0] !== r || k[1] !== c);
+        this.gbPaint = rest.length < this.gbPaint.length ? rest : [...this.gbPaint, [r, c]];
+        return;
+      }
+      if (b.mode !== 'follow') return;
+      this.gbPick = [r, c];
+      this.gbWrong = null;
+      if (this.kid) this.check();
+    },
+
+    gbAdd(t) {
+      if (this.solved) return;
+      this.gbProg = [...this.gbProg, t];
+      this.gbTrail = [];
+      this.gbCrash = false;
+    },
+
+    gbUndo() {
+      if (this.solved) return;
+      this.gbProg = this.gbProg.slice(0, -1);
+      this.gbTrail = [];
+      this.gbCrash = false;
+    },
+
+    // Debug: tap the wrong instruction
+    gbTapStep(i) {
+      if (this.solved) return;
+      if (i === this.cur.board.bug) {
+        this.gbWrong = null;
+        this._markSolvedAndAdvance();
+      } else {
+        this.gbWrong = i;
+        this._flashError(() => {
+          this.gbWrong = null;
+        });
+      }
+    },
+
     /* Venn — select an item from the bank */
     // A Venn item is a drawing (figures: the property must be visible) or a character (numbers, emojis)
     vennLabel(it) {
@@ -946,6 +1150,38 @@ export function seriesPlayer(exercises, seriesId) {
         }
         // Discover mode is handled by fmTap() directly
         return;
+      }
+
+      if (_e.type === 'grid-board' && _e.board) {
+        const b = _e.board;
+        if (b.mode === 'debug') return;
+        if (b.mode === 'draw') return this.gbDrawOk() ? this._markSolvedAndAdvance() : this._flashError();
+        if (b.mode === 'mirror') {
+          // Exactly the mirror image: nothing missing, nothing extra (extra cells flash red)
+          const target = this.gbTarget;
+          const ok = this.gbPaint.length === target.length && this.gbPaint.every((p) => target.includes(String(p)));
+          return ok ? this._markSolvedAndAdvance() : this._flashError();
+        }
+        const run = this.gbRun(b.mode === 'write' ? this.gbProg : b.program);
+        if (b.mode === 'follow') {
+          if (!this.gbPick) return this._flashError();
+          if (run.end && run.end[0] === this.gbPick[0] && run.end[1] === this.gbPick[1]) {
+            this.gbTrail = run.trail;
+            return this._markSolvedAndAdvance();
+          }
+          this.gbWrong = this.gbPick;
+          this.gbPick = null;
+          return this._flashError(() => {
+            this.gbWrong = null;
+          });
+        }
+        // write: any program that reaches the goal without a crash, within maxSteps. Off the grid, the
+        // trail stops on the last cell inside (shown red)
+        this.gbTrail = run.trail.filter(([r, c]) => r >= 0 && c >= 0 && r < b.rows && c < b.cols);
+        this.gbCrash = run.crash;
+        const ok = run.end && run.end[0] === b.goal[0] && run.end[1] === b.goal[1];
+        if (ok && !(b.maxSteps && this.gbProg.length > b.maxSteps)) return this._markSolvedAndAdvance();
+        return this._flashError();
       }
 
       if (_e.type === 'maze' && _e.maze) {
@@ -2571,4 +2807,7 @@ export function seriesPlayer(exercises, seriesId) {
       };
     },
   };
+  // Optional parts, loaded by the pages that use them (grid-board draw: assets/js/grid-draw.js)
+  if (globalThis.GridDraw) Object.defineProperties(player, Object.getOwnPropertyDescriptors(globalThis.GridDraw));
+  return player;
 }

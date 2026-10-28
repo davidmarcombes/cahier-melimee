@@ -169,3 +169,55 @@
 ### La symétrie
 - Reconnaître un axe de symétrie
 - Compléter une figure par symétrie
+
+
+## Programme 2024 — compléments
+
+> Source : programme de mathématiques du cycle 2, BO n° 41 du 31 octobre 2024, en application depuis la rentrée 2025 ; résumé par année de [maitresselunicole.fr](https://maitresselunicole.fr/wp-content/uploads/2025/03/resume-par-niveaux-programme-de-mathematiques-cycle-2-2024-1.pdf), à vérifier sur le texte du BO. Ajouts seulement : objectifs du programme absents de la liste ci-dessus. Rien n'a été retiré.
+
+### Nombres entiers
+- Relations entre unités de numération ; suite écrite et orale jusqu'à dix mille
+- Expressions « égal à », « supérieur à », « inférieur à », « compris entre … et … » ; intercaler
+- Placer des nombres sur une demi-droite graduée
+
+### Fractions
+- Établir des égalités de fractions inférieures ou égales à 1
+- Partager une unité de longueur en fractions d'unité ; mesurer des longueurs non entières avec cette unité
+- Comparer des fractions inférieures à 1
+- Additionner et soustraire des fractions
+
+### Les quatre opérations
+- Mots « termes », « somme », « différence », « facteur », « produit », « multiple »
+- Sens de la division ; symbole « ÷ »
+- Multiplication posée d'un nombre à 2 ou 3 chiffres par un nombre à **1 ou 2 chiffres**
+
+### Calcul mental
+- Multiplier un entier par 10 ou 100
+- Ajouter 8, 9, 18, 19, 28, 29, 38 ou 39 ; soustraire 9, 19, 29 ou 39
+- Multiplier par 4 ou par 8 ; un nombre < 10 par un nombre entier de dizaines
+- Produit d'un nombre de 11 à 99 par un nombre < 10 en décomposant (distributivité)
+
+### Résolution de problèmes
+- Additifs en une étape (parties-tout, comparaison) ; additifs en deux étapes
+- Multiplicatifs en une étape ; comparaison multiplicative en une étape
+- Mixtes en deux ou trois étapes
+- Produits cartésiens
+
+### Grandeurs et mesures
+- Longueurs : unités m, dm, cm, mm, km ; tracer un segment de longueur donnée ; estimer une longueur ou une distance
+- Périmètre : comparer sans règle graduée, au compas ; mesurer à la règle graduée
+- Masses : g, kg, **t** ; masses de référence ; estimer une masse
+- Contenances : 1 L = 10 dL = 100 cL
+- Monnaie : additions et soustractions posées de montants en euros
+- Durées : durée écoulée entre deux instants d'une même journée ; problèmes à une ou deux étapes
+
+### Espace et géométrie
+- Solides : nature des faces d'une pyramide ; construire un cube à partir d'un patron
+- Losange : reconnaître, nommer, décrire ; propriétés des angles et des longueurs du carré, du rectangle, du losange
+- Codage de l'angle droit et des segments de même longueur
+- Axes de symétrie par pliage ou calque ; compléter une figure par symétrie sur quadrillage ou papier pointé
+
+### Organisation et gestion de données
+- Produire un tableau ou un diagramme en barres
+- Lire et interpréter un tableau à double entrée, un diagramme en barres
+- Résoudre des problèmes avec les données d'un tableau à double entrée ou d'un diagramme en barres

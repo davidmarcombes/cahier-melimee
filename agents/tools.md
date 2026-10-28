@@ -49,6 +49,7 @@ The e2e per-page specs:
 | `npm run check` | Pre-commit check (see above) |
 | `npm run check:full` | Pre-commit check, e2e on every page |
 | `npm test` | Run vitest unit test suite (generators, Alpine logic) |
+| `npm run test:site` | Tests of the built site (`tests/site-*.test.js`) — run after the build by `npm run build` and `npm run check` |
 | `npm run test:watch` | Run vitest in watch mode |
 | `npm run test:e2e` | Run Playwright E2E tests — requires built `_site/` (auto-starts static server) |
 | `npm run test:e2e:ui` | Playwright with interactive UI |

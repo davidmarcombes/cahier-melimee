@@ -283,6 +283,41 @@
     // facile: firstPV=3, lastPV=4  →  X,X   (e.g. 3,7)
     // moyen:  firstPV=3, lastPV=5  →  X,XX  (e.g. 4,35)
     // difficile: firstPV=2, lastPV=6 → XX,XXX (e.g. 13,035)
+    // arrondirDecimal: « 12,7 ≈ ? » rounded to the whole number, or « Partie entière de 12,7 = ? »
+    // (CM1–CM2). The tenths digit is never 5 when rounding (no halfway case).
+    // params: mode ('arrondi' | 'entiere' | 'mix'), maxDec (2), wholeMax (99)
+    arrondirDecimal: {
+      generate(params = {}) {
+        const maxDec = params.maxDec ?? 2;
+        const wholeMax = params.wholeMax ?? 99;
+        const mode = params.mode === 'mix' || !params.mode ? randItem(['arrondi', 'entiere']) : params.mode;
+        const whole = rand(0, wholeMax);
+        const dec = rand(1, maxDec);
+        const digits = [];
+        for (let i = 0; i < dec; i++) {
+          // last digit ≠ 0 (no trailing zero); tenths ≠ 5 when rounding — both rules at once for « 12,7 »
+          const pool = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(
+            (d) => !(i === dec - 1 && d === 0) && !(i === 0 && mode === 'arrondi' && d === 5)
+          );
+          digits.push(randItem(pool));
+        }
+        const x = `${whole},${digits.join('')}`;
+        if (mode === 'entiere')
+          return {
+            type: 'number-check',
+            title: 'Donne la partie entière.',
+            operation: `Partie entière de ${x} = ?`,
+            answers: [String(whole)],
+          };
+        return {
+          type: 'number-check',
+          title: 'Arrondis à l’unité.',
+          operation: `${x}&ensp;≈&ensp;?`,
+          answers: [String(digits[0] > 5 ? whole + 1 : whole)],
+        };
+      },
+    },
+
     decomposerDecimal: {
       generate(params = {}) {
         const PV = [1000, 100, 10, 1, 0.1, 0.01, 0.001];

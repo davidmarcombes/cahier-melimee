@@ -1,9 +1,19 @@
 ---
 layout: null
-permalink: /robots.txt
+pagination:
+  data: filenames
+  size: 1
+  alias: filename
+filenames:
+  - robots.txt
+  - robot.txt
+permalink: "/{{ filename }}"
 eleventyExcludeFromCollections: true
 ---
 User-agent: *
 Allow: /
+Disallow: /admin/
+
 Sitemap: {{ site.url }}/sitemap.xml
-Host: {{ site.url }}
+# LLMs: {{ site.url }}/llms.txt
+

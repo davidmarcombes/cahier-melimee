@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
     <title>{{ title or site.title }}</title>
+
+    <!-- Inline scripts before the stylesheet: an inline script waits for every stylesheet above it -->
+    <!-- Path prefix for JS runtime fetches -->
+    <script>window.__pathPrefix = '{{ '/' | url }}';</script>
+    <!-- Dark mode initialization script — runs before styles so no flash of wrong theme on load -->
+    <script>
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches))
+      { document.documentElement.classList.add('dark'); }
+    </script>
+    {% if preloadCsv %}<script>if(!sessionStorage.getItem('ex4')){var _l=document.createElement('link');_l.rel='preload';_l.as='fetch';_l.crossOrigin='anonymous';_l.href='{{ '/fr/exercices/data.csv' | url }}';document.head.appendChild(_l);}</script>{% endif %}
+    <style>[x-cloak] { display: none !important; }</style>
+    <link rel="stylesheet" href="{{ '/css/styles.css' | url }}?v={{ site.version }}">
+
     <meta name="description" content="{{ description or site.description }}" />
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
 
@@ -22,18 +35,9 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"{{ site.url }}/#website","url":"{{ site.url }}/","name":"{{ site.title | safe }}","description":"{{ site.description | safe }}","inLanguage":"fr"},{"@type":"EducationalApplication","@id":"{{ site.url }}/#app","name":"{{ site.title }}","url":"{{ site.url }}/fr/","description":"Exercices de mathématiques gratuits pour enfants de la GS au CM2. Sans publicité, sans inscription et 100% libre. Idéal pour s'entraîner en classe ou à la maison.","applicationCategory":"EducationalApplication","operatingSystem":"All","browserRequirements":"Requires JavaScript. Requires HTML5.","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"educationalLevel":["GS","CP","CE1","CE2","CM1","CM2"],"audience":{"@type":"EducationalAudience","educationalRole":"student"},"inLanguage":"fr"}]}</script>
 
-    <link rel="stylesheet" href="{{ '/css/styles.css' | url }}?v={{ site.version }}">
-    {% if preloadCsv %}<script>if(!sessionStorage.getItem('ex4')){var _l=document.createElement('link');_l.rel='preload';_l.as='fetch';_l.crossOrigin='anonymous';_l.href='{{ '/fr/exercices/data.csv' | url }}';document.head.appendChild(_l);}</script>{% endif %}
-    <style>[x-cloak] { display: none !important; }</style>
-
-    <!-- Path prefix for JS runtime fetches -->
-    <script>window.__pathPrefix = '{{ '/' | url }}';</script>
-    <!-- Dark mode initialization script — runs before styles so no flash of wrong theme on load -->
-    <script>
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches))
-      { document.documentElement.classList.add('dark'); }
-    </script>
 
   </head>
   <body class="min-h-screen flex flex-col bg-surface-default text-content-default">

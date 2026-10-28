@@ -5,17 +5,62 @@
 
 ---
 
+## Plan couverture 2026-10 (programmes 2024–2025)
+
+> Ajouté le 2026-10-26. Base de régression : `npm run regress -- avant-couverture-2026-10`. Programmes : compléments ajoutés en fin de `docs/maths_cp.md` … `docs/maths_cm2.md`. Les sections plus bas restent pour l'historique (la section CM2 date d'avant ses 99 séries).
+
+### Phase 1 — contenu avec les types existants (aucun changement moteur)
+
+Bilan et reste à faire : [plan-phase-1.md](plan-phase-1.md).
+
+| # | Lot | Niveau | Statut |
+|---|-----|--------|--------|
+| 1.1 | Géométrie CM2 : triangles, quadrilatères (trapèze, pentagone, hexagone), cercle, solides (prisme, perspective, patrons), parallèles / perpendiculaires, symétrie, angles sans rapporteur | CM2 | ✅ 7 séries (2026-10-26) : `figures-planes-01`, `triangles-01`, `cercle-01`, `solides-01`, `paralleles-perpendiculaires-01`, `angles-01`, `programmes-construction-01` — symétrie sur quadrillage en phase 2 |
+| 1.2 | Fractions CE1 (nouveau) : fractions unitaires 1/2 … 1/10, numérateur / dénominateur, comparer (même dénominateur, numérateur 1), additionner / soustraire même dénominateur | CE1 | ✅ 4 séries (2026-10-26) : `fractions-unitaires-01`, `numerateur-denominateur-01`, `comparer-fractions-01`, `ajouter-fractions-01` |
+| 1.3 | Couleurs (presque des maths) : GS mélanges primaires → secondaires (voix) ; CE logique roue chromatique ; CM proportions de peinture (tableau de proportionnalité), dénombrement des mélanges | GS → CM2 | ✅ 4 séries (2026-10-26) : GS `melanger-couleurs-01` (voix), CE2 `roue-couleurs-01`, CM1 `melanges-peinture-01`, CM2 `melanges-couleurs-01` |
+| 1.4 | Calcul CM2 2025 : décimal × entier posé, division décimale (diviseur 1 chiffre), parenthèses, arrondi à l'entier, ×5 / ×50 d'un décimal | CM2 | ✅ (2026-10-26) générateurs `multiplierDecimalParEntier`, `calculParentheses`, `arrondirDecimal` ; séries CM2 `multiplier-decimal-entier-01`, `multiplier-par-5-et-50-01`, `parentheses-01`, `arrondir-decimal-01` + CM1 `parentheses-01`, `multiplier-decimal-entier-01`, `arrondir-decimal-01`. Décimal × entier **posé** (column-op) reste à faire |
+| 1.5 | Monnaie CP / CE1 (euros, centimes, écriture à virgule), heure entière CP | CP, CE1 | ✅ (2026-10-26) générateur `compterEuros` ; CP `heures-entieres-01`, `compter-euros-01`, `monnaie-01` ; CE1 `euros-centimes-01`, `centimes-en-euros-01`, `ecriture-virgule-01` |
+| 1.6 | Données à chaque niveau : tableau à double entrée (CP→), courbe (CM1), diagramme circulaire (CM2) | CP → CM2 | ✅ (2026-10-26) CP + CE1 `tableaux-01`, CM1 `courbes-01`, CM2 `diagrammes-circulaires-01` (SVG en ligne) |
+| 1.7 | Probabilités CM1 / CM2 : impossible / possible / certain, « a chances sur b » (`mcq`, `classify`, `sort`) | CM1, CM2 | ✅ (2026-10-26) CM1 `donnees/hasard-01`, CM2 `donnees/probabilites-01` (rangées dans `donnees` : pas de topic probabilités). Version en images (lot 2.5, 2026-10-27) : CM1 `donnees/hasard-images-01`, CM2 `donnees/probabilites-images-01` |
+| 1.8 | Algèbre : égalités à trous « 178 − … = 6 × 8 », programmes de calcul, motifs évolutifs (étape n) | CM1, CM2 | ✅ (2026-10-26) CM1 `egalites-trous-01`, `programmes-calcul-01` ; CM2 `programmes-calcul-01`, `logique/motifs-evolutifs-01` |
+| 1.9 | Défis hors calcul (numération, conversions, heure, fractions) | CE1 → CM2 | ✅ (2026-10-26) 6 défis : arrondis CE2/CM1, conversions CM1/CM2, moitié-tiers-quart CE2, × ÷ 10/100/1 000 CM1. + lire l'heure CE2/CM1 (horloge dans le lecteur chronométré) |
+
+### Phase 2 — nouveaux types / générateurs
+
+Voir [plan-phase-2.md](plan-phase-2.md) : codage de déplacements, symétrie sur quadrillage, figures dans toute orientation, angles SVG, probabilités visuelles, manipulations GS — ✅ phase terminée (2026-10-27).
+
+### Phase 3 — équilibre
+
+Voir [plan-phase-3.md](plan-phase-3.md) : recomptage, difficulté (`difficile` CP / CE1, `facile` CM2), formats visuels, validation à la main CE2 / CM1.
+
+### Phase 4 — tracer, solides, aires
+
+Voir [plan-phase-4.md](plan-phase-4.md) : tracer sur quadrillage / papier pointé (✅ 4.1, 2026-10-27), assemblages de cubes et patrons, aire par pavage.
+
+---
+
 ## Carte des séries par niveau et catégorie
 
 | Niveau | Calcul | Décimaux | Données | Fractions | Géométrie | Logique | Mesures | Numération | Problèmes | Proportions | Total |
 |--------|-------:|---------:|--------:|----------:|----------:|--------:|--------:|-----------:|----------:|------------:|------:|
-| GS     | 3 | 0 | 0 | 0 | 1 | 5 | 1 | 18 | 8 | 0 | 36 |
-| CP     | 31 | 0 | 0 | 0 | 4 | 1 | 3 | 33 | 7 | 0 | 79 |
-| CE1    | 74 | 0 | 2 | 0 | 8 | 4 | 8 | 28 | 21 | 0 | 145 |
-| CE2    | 88 | 0 | 3 | 9 | 11 | 12 | 24 | 46 | 29 | 0 | 222 |
-| CM1    | 81 | 18 | 4 | 38 | 11 | 24 | 26 | 31 | 40 | 4 | 277 |
-| CM2    | 34 | 7 | 0 | 8 | 0 | 6 | 15 | 13 | 12 | 4 | 99 |
-| **Total** | **311** | **25** | **9** | **55** | **35** | **52** | **77** | **169** | **117** | **8** | **858** |
+| GS     | 3 | 0 | 0 | 0 | 3 | 6 | 2 | 20 | 8 | 0 | 42 |
+| CP     | 32 | 0 | 3 | 0 | 8 | 3 | 8 | 34 | 8 | 0 | 96 |
+| CE1    | 75 | 0 | 4 | 5 | 11 | 5 | 12 | 29 | 22 | 0 | 163 |
+| CE2    | 88 | 0 | 4 | 11 | 15 | 14 | 25 | 47 | 29 | 0 | 233 |
+| CM1    | 86 | 20 | 9 | 38 | 15 | 24 | 28 | 32 | 40 | 5 | 297 |
+| CM2    | 39 | 9 | 4 | 9 | 10 | 9 | 16 | 13 | 14 | 6 | 129 |
+| **Total** | **323** | **29** | **24** | **63** | **62** | **61** | **91** | **175** | **121** | **11** | **960** |
+
+> Recompté le 2026-10-27 (phase 3.1, puis 3.2) depuis `reports/exercises-report.csv` : exercices + applications + défis.
+
+| Niveau | Facile | Moyen | Difficile |
+|--------|-------:|------:|----------:|
+| GS     | 27 | 14 | 1 |
+| CP     | 60 | 27 | 9 |
+| CE1    | 72 | 80 | 11 |
+| CE2    | 86 | 123 | 24 |
+| CM1    | 55 | 175 | 67 |
+| CM2    | 13 | 69 | 47 |
 
 | Niveau | Santé globale | Priorité |
 |--------|---------------|----------|
@@ -24,7 +69,7 @@
 | CE1    | ✅ complet | — |
 | CE2    | ✅ le plus complet | — |
 | CM1    | ✅ très complet | — |
-| CM2    | ⚠️ lacunaire | ⏳ traité ultérieurement |
+| CM2    | ✅ socle complet depuis la phase 1 | `facile` : un par thème depuis la phase 3.2 |
 
 ---
 
@@ -65,7 +110,7 @@
 | Figures planes | ✅ | mcq |
 | Solides | ✅ | matching/true-false |
 | **Se repérer sur quadrillage** | ✅ | `quadrillage-lire-01` (coordinate-grid 3×3, 2026-03-21) |
-| **Suite de dessins** | ❌ | conceptuel, difficile à automatiser |
+| **Suite de dessins** | ✅ | `suites-dessins-01` (`number-strip` à emojis, phase 3.2) |
 | **Axe de symétrie** | ✅ | `symetrie-01` (true-false + mcq, 2026-03-19) |
 
 ---
@@ -178,7 +223,7 @@
 | Droites parallèles/perpendiculaires | ✅ | `paralleles-perpendiculaires-01` (checkbox + true-false, 2026-03-19) |
 | Symétrie | ✅ | — |
 | **Se repérer sur quadrillage** | ✅ | `quadrillage-lire-01` + `quadrillage-placer-01` |
-| **Reproduire/tracer des figures** | ❌ | non modélisable facilement |
+| **Reproduire/tracer des figures** | ❌ | phase 4 : tracé sur quadrillage / papier pointé |
 
 ---
 
@@ -221,7 +266,7 @@
 | Longueurs, masses, volumes | ✅ | — |
 | Aires (cm², m²) | ✅ | — |
 | Durées | ✅ | — |
-| **Angles (rapporteur)** | ❌ | non modélisable facilement |
+| **Angles (rapporteur)** | — | plus au programme 2025 (pas de rapporteur au CM) ; comparer / classer / ranger : `angles-comparer-01` |
 | Périmètre | ✅ | — |
 
 ### Résolution de problèmes
@@ -241,64 +286,55 @@
 
 ## CM2 — Gaps par domaine
 
-> **Note : le CM2 sera traité ultérieurement.** Cette section est conservée pour référence mais n'est pas dans le périmètre actuel.
-
-Le niveau CM2 est **le plus sous-représenté** (40 séries vs 110–151 pour les autres niveaux).
+> Revu le 2026-10-27 après les phases 1 à 3 (129 séries). Seules les cases ⚠️ / ❌ restent à traiter.
 
 ### Nombres et calculs
 
-| Thème programme | État | Manque / À faire |
+| Thème programme | État | Séries / À faire |
 |----------------|------|-----------------|
-| Grands nombres (milliards) | ⚠️ | séries présentes mais peu |
-| Arrondir | ❌ | `number-check` |
-| Multiples/diviseurs | ❌ | `checkbox` ou `true-false` |
-| **Tables de multiplication** | ✅ | 1 série |
-| **Multiplication posée (2×2)** | ❌ | `column-op` |
-| **Division par 1 chiffre/2 chiffres** | ⚠️ | 1 série seulement |
-| **Division avec quotient décimal** | ❌ | `number-check` |
-| Fractions (comparer, ordonner) | ✅ | — |
-| Fractions équivalentes | ⚠️ | manque exercices variés |
-| **Additionner fractions même dénominateur** | ❌ | `number-check` |
-| **Soustraire fractions même dénominateur** | ❌ | `number-check` |
-| Décimaux (lire, comparer) | ✅ | — |
-| Décimaux (additionner, soustraire) | ✅ | — |
-| **Décimaux × entiers** | ❌ | `number-check` |
-| **Décimaux × décimaux** | ❌ | `number-check` |
-| **Décimaux ÷ 10/100/1 000** | ❌ | `number-check` |
-| **Proportionnalité complète** | ⚠️ | 1 série, manque pourcentages liés |
-| Pourcentages | ✅ | 2 séries |
+| Grands nombres (milliards) | ✅ | `comparer-milliards-01`, `arrondir-grands-nombres-01/02` |
+| Arrondir | ✅ | `arrondir-grands-nombres-*`, `arrondir-decimal-01` |
+| Multiples / diviseurs | ✅ | `multiples-01` |
+| **Multiplication posée (2×2)** | ❌ | `column-op` ne pose que × 1 chiffre ; CM2 `multiplication-posee-decimaux` = décimal × 1 chiffre |
+| Division (1 et 2 chiffres, quotient décimal) | ✅ | `division-simple`, `division-deux-chiffres-01/02`, `quotient-decimal-01`, `diviser-decimal-entier-01` |
+| Fractions (comparer, équivalentes, opérations) | ✅ | `bases-01`, `visuel-01`, `operations-01`, `operations-fractions-01`, `classer-fractions-01` |
+| Décimaux × entier, × ÷ 10/100/1 000 | ✅ | `multiplier-decimal-entier-01`, `mult-/div-puissances-10-01`, `multi-decimal-pow10-difficile` |
+| Parenthèses, programmes de calcul | ✅ | `parentheses-01`, `programmes-calcul-01` |
+| Proportionnalité, pourcentages | ✅ | `proportionnalite-01/02/03`, `pourcentages-01`, `tableaux-simples-01` |
 
 ### Grandeurs et mesures
 
-| Thème programme | État | Manque / À faire |
+| Thème programme | État | Séries / À faire |
 |----------------|------|-----------------|
-| Longueurs (km→mm) | ⚠️ | 1 série, manque multi-étapes |
-| **Périmètre (polygone, cercle)** | ⚠️ | 1 série périmètre de figures |
-| **Aires (carré, rectangle, triangle)** | ✅ | — |
-| Contenances | ⚠️ | 1 série compare seulement |
-| Masses | ⚠️ | 1 série compare seulement |
-| **Volumes (pavé droit)** | ⚠️ | 1 série compare seulement |
-| **Durées (convertir h/min/s, calculer)** | ❌ | `convert` + `number-check` |
-| **Angles (rapporteur)** | ❌ | non modélisable facilement |
+| Longueurs, masses, contenances | ✅ | `convertir-masses-01`, `convertir-contenances-01`, défi `conversions-01` |
+| Périmètre | ✅ | `perimetre-figures`, `perimetre-quadrillage-02`, applications `perimetre*` |
+| **Aires (cm², dm², m², carré, rectangle)** | ⚠️ | `aires-01` en texte seulement → aire sur quadrillage (phase 4) |
+| **Volumes** | ⚠️ | `comparer-volumes` seulement |
+| **Durées (convertir h / min / s, calculer)** | ⚠️ | `suites-horaires-quart`, `classer-tableaux-01` ; pas de série durées dédiée |
+| **Calendrier** | ❌ | `calendrier-01` existe en CE1 → CM1 |
+| Monnaie | ✅ | `compter-porte-monnaie`, `rendre-monnaie-billet`, `centimes-en-euros` |
+| Angles (sans rapporteur) | ✅ | `angles-01`, `angles-comparer-01` ; somme / multiple d'angles pas encore |
 
 ### Géométrie
 
-| Thème programme | État | Manque / À faire |
+| Thème programme | État | Séries / À faire |
 |----------------|------|-----------------|
-| **Triangles (classification, propriétés)** | ❌ | `mcq` + `true-false` |
-| **Quadrilatères (classification)** | ❌ | `mcq` + `matching` |
-| **Cercle (rayon, diamètre)** | ❌ | `number-check` + `mcq` |
-| **Droites parallèles/perpendiculaires** | ❌ | `checkbox` |
-| **Symétrie axiale** | ❌ | `tile-select` |
-| **Solides (patrons, faces)** | ❌ | `matching` + `mcq` |
+| Triangles, quadrilatères, cercle | ✅ | `triangles-01`, `figures-planes-01`, `cercle-01`, `reconnaitre-figures-01` |
+| Parallèles / perpendiculaires (reconnaître) | ✅ | `paralleles-perpendiculaires-01` |
+| Symétrie axiale | ✅ | `symetrie-completer-01` (quadrillage, axe diagonal) |
+| Solides, patrons | ⚠️ | `solides-01` en texte (mcq, matching) ; patrons dessinés et assemblages de cubes à faire |
+| **Reproduire / construire des figures, tracer parallèles et perpendiculaires** | ❌ | phase 4 : tracé sur quadrillage / papier pointé |
+| **Repérage sur quadrillage (coordonnées)** | ❌ | `coordinate-grid` existe en CE1 → CM1 |
+| Programmes de construction (lire) | ✅ | `programmes-construction-01` |
+| Déplacements (codage) | ✅ | `robot-programmes-01` |
 
 ### Résolution de problèmes
 
-| Thème | État | À faire |
-|-------|------|---------|
-| Problèmes à plusieurs étapes | ✅ | 1 série |
-| **Problèmes de proportionnalité** | ❌ | `problem` / `fill-table` |
-| **Modéliser (schéma, tableau)** | ❌ | `multi-question` |
+| Thème | État | Séries |
+|-------|------|--------|
+| Une, deux, trois étapes | ✅ | `une-etape-01`, `deux-etapes-01/02/03`, `trois-etapes-01/02` |
+| Problèmes guidés, modéliser | ✅ | `guide-*`, `modeliser-01`, `problemes-inverses` |
+| Proportionnalité | ✅ | `proportionnalite-*`, `soldes-01`, `melanges-couleurs-01` |
 
 ---
 
@@ -388,7 +424,7 @@ Le niveau CM2 est **le plus sous-représenté** (40 séries vs 110–151 pour le
 | **`money-pick`** | Cliquer sur des pièces et billets pour former une somme donnée. | CE1→CE2 | `problem` couvre le calcul ; l'interface sélecteur de pièces est plus engageante mais non prioritaire. |
 | **`pie-chart`** | Diagramme circulaire SVG + questions de lecture. | CM1→CM2 | Approximable avec `multi-question` + SVG statique. |
 | **`protractor`** | Rapporteur virtuel : mesurer ou classifier un angle. | CM1→CM2 | La classification peut utiliser `mcq` ; la mesure interactive est coûteuse. |
-| **`angle-draw`** | Reconnaître/classer des angles visuellement. | CE2→CM2 | Couvert partiellement par `mcq` + SVG. |
+| **`angle-draw`** | Reconnaître/classer des angles visuellement. | CE2→CM2 | ✅ Couvert sans nouveau type (2026-10-26) : `trouverAngles` / `comparerAngles` / `rangerAngles`, séries CM1 / CM2 `angles-comparer-01`. |
 | **`crossword`** | Mots croisés mathématiques (résultats de calculs = lettres/chiffres dans la grille). | CE1→CM1 | Niche ; `number-check` multiple couvre l'essentiel. |
 | **`word-sort`** | Trier des expressions textuelles. | CE1→CM1 | `drag-sort` avec items texte couvre déjà ce besoin. |
 
@@ -402,13 +438,11 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 
 | Domaine | Programme | Niveaux | État | Remarque |
 |---------|-----------|---------|------|----------|
-| **Traitement de données** — diagrammes en bâtons, lecture et construction | Cycle 2–3 | CE1→CM2 | ⚠️ partiel | `donnees-01` (build) + `donnees-02` (read) à CE1, CE2, CM1 via `bar-chart` ; CM2 non couvert |
+| **Traitement de données** — diagrammes en bâtons, lecture et construction | Cycle 2–3 | CE1→CM2 | ✅ | CP → CM2 (`bar-chart`, tableaux, courbes CM1, diagrammes circulaires CM2) |
 | **Repérage sur quadrillage / plan** | Cycle 3 | CE2→CM2 | ⚠️ partiel | CE1 + CE2 + CM1 couverts (`quadrillage-lire/placer-01`) ; CM2 non couvert |
 | **Calendrier — lecture et calcul** | Cycle 2 | CE1→CM2 | ⚠️ partiel | `calendrier-01` à CE1, CE2, CM1 ; CM2 non couvert |
-| **Suites logiques figurales** | Cycle 2 | CP→CE2 | ⚠️ partiel | `suites-figurales-01` à CP, CE1, CE2 ; CM1 et CM2 non couverts |
-| **Calcul réfléchi — stratégies explicites** | Cycle 2–3 | CE1→CM2 | ⚠️ partiel | CE1 + CE2 + CM1 couverts (`calc-chain`) ; CM2 non couvert |
-| **Données CM2** — diagrammes circulaires, graphiques à double entrée | Cycle 3 | CM2 | ❌ absent | Fortement au programme CM2 ; `bar-chart` existe mais aucune série CM2 |
-| **CM2 global** | Cycle 3 | CM2 | ⚠️ lacunaire | 40 séries totales vs 141 en CM1 — écart significatif |
+| **Suites logiques figurales** | Cycle 2 | CP→CE2 | ⚠️ partiel | `suites-figurales-01` à CP, CE1, CE2 ; CM2 `motifs-evolutifs-01` ; CM1 non couvert |
+| **Calcul réfléchi — stratégies explicites** | Cycle 2–3 | CE1→CM2 | ⚠️ partiel | CE1 + CE2 + CM1 (`calc-chain`) ; CM2 `astuce-dizaine-sup-*`, `schemas-operateurs-01/02` |
 
 ---
 

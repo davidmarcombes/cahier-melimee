@@ -9,10 +9,15 @@
     "\\b[0-9]+\\b",
     "/(?<!\\p{L})\\p{Lu}{2,}(?!\\p{L})/gu",
     "/class=\\\"[^\\\"]*\\\"/g",
+    "/<svg[\\s\\S]*?<\\/svg>/g",
+    "/[\\w/.-]+\\.ogg\\b/g",
     "/^[ \\-]*[A-Za-z_]+:/gm",
-    "/^[ \\-]*(type|generator|gen|name|class|id|svg|shape|direction|mode|theme|op|rule|unit|level|layouts):.*$/gm"
+    "/^[ \\-]*(type|generator|gen|name|class|id|svg|shape|direction|mode|theme|op|rule|unit|level|layouts|task|ask):.*$/gm"
   ],
   "words": [
+    "diag",
+    "some",
+    "trapeze",
     "Alpine",
     "alpinejs",
     "Amin",

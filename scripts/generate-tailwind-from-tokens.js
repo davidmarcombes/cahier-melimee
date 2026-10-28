@@ -101,7 +101,19 @@ if (tokens.colors) processColors(tokens.colors);
 const config = `/** @type {import('tailwindcss').Config} */
 // DO NOT EDIT — auto-generated from design-tokens.json by scripts/generate-tailwind-from-tokens.js
 module.exports = {
-  content: ['./src/**/*.{html,njk,md,js,svg}'],
+  content: [
+    './src/**/*.{html,njk,md,js,svg}',
+    // Dev-only templates (admin, debug panel, dev.js) are built only by \`eleventy serve\`, i.e. alongside
+    // \`tailwindcss --watch\`: keep their classes out of the release CSS.
+    ...(process.argv.includes('--watch')
+      ? []
+      : [
+          '!./src/admin/**',
+          '!./src/_layouts/admin.njk',
+          '!./src/_includes/components/debug-panel.njk',
+          '!./src/assets/js/dev.js',
+        ]),
+  ],
   darkMode: 'class',
   theme: {
     extend: {

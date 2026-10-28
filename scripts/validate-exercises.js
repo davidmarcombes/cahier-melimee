@@ -96,6 +96,7 @@ const TYPE_SCHEMAS = {
   futoshiki: { required: [], requireOneOf: [['futoshiki'], ['generator']] },
   kenken: { required: [], requireOneOf: [['kenken'], ['generator']] },
   numberlink: { required: [], requireOneOf: [['numberlink'], ['generator']] },
+  'grid-board': { required: [], requireOneOf: [['board'], ['generator']] },
 };
 
 const COLORS = {
@@ -138,6 +139,7 @@ const GEN_RUNS = 20;
 global.clockSvg = () => '<svg/>'; // svg.js helper called at generation time (browser global)
 const generators = require('../src/assets/js/generators/index.js');
 const { solveGrid } = require('./lib/logic-grid.js');
+const { boardProblems } = require('./lib/grid-board.js');
 const logicGrids = { checked: 0, unchecked: 0 }; // uniqueness of the solution (see lib/logic-grid.js)
 const svgSource = fs.readFileSync(path.join(__dirname, '../src/assets/js/svg.js'), 'utf8');
 const svgHelperExists = (name) =>
@@ -158,7 +160,8 @@ function duplicateChoice(item) {
     const list = item[key];
     if (!Array.isArray(list) || list.length < 2) continue;
     const seen = new Set();
-    for (const c of list.map(plain)) {
+    // A picture-only tile (shapes SVG) has no text: compare its markup
+    for (const c of list.map((x) => plain(x) || String(x))) {
       if (seen.has(c)) return `« ${c} »`;
       seen.add(c);
     }
@@ -205,6 +208,13 @@ function validateGenerated(relMd, data, errors, bodyText = '') {
     if (out.svg && out.svg.gen && !svgHelperExists(out.svg.gen)) {
       errors.push(`${relMd}: generator "${name}" uses SVG helper "${out.svg.gen}" missing from svg.js`);
       return;
+    }
+    if (out.type === 'grid-board') {
+      const pb = boardProblems(out.board);
+      if (pb.length) {
+        errors.push(`${relMd}: generator "${name}" draws a bad board — ${pb.join('; ')}`);
+        return;
+      }
     }
     const dup = duplicateChoice(out);
     if (dup) {
@@ -373,6 +383,47 @@ function validateSeries(seriesDir, errors) {
       }
     }
 
+    // answers[i] holds the blanks of rows[i], in order — a row without « ? » still needs its [] entry
+    if (type === 'fill-table' && !data.generator && Array.isArray(data.rows) && Array.isArray(data.answers)) {
+      data.rows.forEach((row, i) => {
+        const blanks = (row || []).filter((cell) => cell === '?').length;
+        const given = (data.answers[i] || []).length;
+        if (blanks !== given)
+          errors.push(`${relMd}: fill-table row ${i + 1} has ${blanks} « ? » but ${given} answer(s) in answers[${i}]`);
+      });
+      if (data.answers.length > data.rows.length)
+        errors.push(
+          `${relMd}: fill-table has more answer rows (${data.answers.length}) than rows (${data.rows.length})`
+        );
+    }
+
+    // Bars are drawn in whole cells of yStep: 45 with yStep 10 shows as 40
+    if (type === 'bar-chart' && Array.isArray(data.values) && Number(data.yStep) > 0) {
+      const off = data.values.filter((v) => Number(v) % Number(data.yStep) !== 0 || Number(v) > Number(data.yMax));
+      if (off.length)
+        errors.push(
+          `${relMd}: bar-chart value(s) ${off.join(', ')} not a multiple of yStep ${data.yStep} or above yMax`
+        );
+    }
+
+    // Bar model: the bars must add up once "?" is replaced by the answer
+    if (type === 'bar-model' && data.bm && data.answer !== undefined) {
+      const bm = data.bm;
+      const n = (v) =>
+        String(v) === '?' ? n(data.answer) : parseFloat(String(v).replace(/\s/g, '').replace(',', '.'));
+      const close = (a, b) => Math.abs(a - b) < 1e-6;
+      if (bm.mode === 'part-whole' && Array.isArray(bm.parts)) {
+        const sum = bm.parts.reduce((t, p) => t + n(p), 0);
+        if (!close(sum, n(bm.whole)))
+          errors.push(`${relMd}: bar-model parts [${bm.parts.join(', ')}] do not add up to whole ${bm.whole}`);
+      }
+      if (bm.mode === 'comparison') {
+        if (String(bm.ref) === '?') errors.push(`${relMd}: bar-model comparison ref cannot be "?" (use compared)`);
+        else if (bm.diff !== undefined && !close(Math.abs(n(bm.ref) - n(bm.compared)), n(bm.diff)))
+          errors.push(`${relMd}: bar-model |ref - compared| ≠ diff (${bm.ref}, ${bm.compared}, ${bm.diff})`);
+      }
+    }
+
     if (
       type === 'number-strip' &&
       Array.isArray(data.cells) &&
@@ -398,6 +449,9 @@ function validateSeries(seriesDir, errors) {
       if (data.cells.some((cell) => cell !== null && typeof cell !== 'string' && typeof cell !== 'number'))
         errors.push(`${relMd}: number-strip cells must be strings, numbers, or null`);
     }
+
+    if (type === 'grid-board' && data.board)
+      for (const pb of boardProblems(data.board)) errors.push(`${relMd}: grid-board ${pb}`);
 
     // The operation line is shown very large (text-5xl): it must hold the calculation only.
     // A sentence with — or → ("Achat : 3,50 € — payé : 5 €…") reads as minus signs and wraps

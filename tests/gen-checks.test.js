@@ -40,6 +40,7 @@ const CORRUPT = {
       : { ...e, answers: [String(Number(e.answers[0]) + 1)] },
   decodageEmojis: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),
   arrondirNombre: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 10)] }),
+  arrondirDecimal: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),
   blocsValeurPosition: (e) => ({
     ...e,
     columns: e.columns.map((c, i) => (i === 0 ? { ...c, answer: (c.answer + 1) % 9 } : c)),
@@ -118,6 +119,66 @@ const CORRUPT = {
   convertirValeurPos: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),
   mcqDecimaux: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),
   decompositionBase10: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),
+  robotGrille: (e) => {
+    const b = e.board;
+    if (b.mode === 'write') return { ...e, board: { ...b, blocks: [...(b.blocks || []), b.goal] } };
+    if (b.mode === 'debug') return { ...e, board: { ...b, bug: (b.bug + 1) % b.program.length } };
+    return { ...e, board: { ...b, program: [...b.program, b.dir ? 'F20' : 'U20'] } };
+  },
+  // The mirror of a figure cell joins the figure: across the axis, or twice (on a diagonal axis)
+  symetrieGrille: (e) => {
+    const b = e.board;
+    const [r, c] = b.shape[0];
+    const m = { v: [r, 2 * b.at - 1 - c], h: [2 * b.at - 1 - r, c], d: [c, r], a: [b.cols - 1 - c, b.rows - 1 - r] };
+    return { ...e, board: { ...b, shape: [...b.shape, m[b.axis]] } };
+  },
+  // A side that is not part of the figure, a shape that cannot fit, or no line to draw parallel to
+  tracerGrille: (e) => {
+    const b = e.board;
+    if (b.task === 'copy')
+      return {
+        ...e,
+        board: {
+          ...b,
+          model: [
+            ...b.model,
+            [
+              [0, 0],
+              [b.rows + 1, 0],
+            ],
+          ],
+        },
+      };
+    if (b.task === 'complete')
+      return {
+        ...e,
+        board: {
+          ...b,
+          given: [
+            ...b.given,
+            [
+              [0, 0],
+              [b.rows, b.cols],
+            ],
+          ],
+        },
+      };
+    if (b.task === 'shape') return { ...e, board: { ...b, want: { ...b.want, area: 999 } } };
+    return { ...e, board: { ...b, ref: [b.ref[0], b.ref[0]] } };
+  },
+  // One shape to find is left out of the answers
+  trouverFormes: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
+  trouverAngles: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
+  comparerAngles: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % 3 }),
+  rangerAngles: (e) => ({ ...e, tiles: [...e.tiles].reverse() }),
+  // Another answer, or one ball / sector / face changed in the drawing
+  hasardPossible: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),
+  hasardComparer: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % 3 }),
+  hasardChances: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),
+  hasardRanger: (e) => ({ ...e, tiles: [...e.tiles].reverse() }),
+  boiteDix: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),
+  jeuOie: (e) => ({ ...e, tileAnswers: [e.tileAnswers[0] - 1] }),
+  balanceGS: (e) => ({ ...e, tileAnswers: [1 - e.tileAnswers[0]] }),
 };
 
 describe('per-generator oracle checks', () => {

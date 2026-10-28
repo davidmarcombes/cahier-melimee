@@ -135,3 +135,74 @@
  
 ### La symétrie
 - Axe de symétrie
+
+
+## Programme 2024 — compléments
+
+> Source : programme de mathématiques du cycle 2, BO n° 41 du 31 octobre 2024, en application depuis la rentrée 2025 ; résumé par année de [maitresselunicole.fr](https://maitresselunicole.fr/wp-content/uploads/2025/03/resume-par-niveaux-programme-de-mathematiques-cycle-2-2024-1.pdf), à vérifier sur le texte du BO. Ajouts seulement : objectifs du programme absents de la liste ci-dessus. Rien n'a été retiré.
+
+### Nombres entiers
+- Construire des collections de cardinal donné
+- Comparer, encadrer, intercaler des nombres entiers avec =, < et >
+- Placer des nombres sur une demi-droite graduée de un en un
+- Connaître les nombres ordinaux jusqu'à « vingtième »
+- Repérer un rang ou une position dans une file orientée ou une liste
+- Faire le lien entre le rang d'un objet et le nombre d'éléments qui le précèdent
+- Utiliser les ordinaux dans des suites de symboles, de formes, de lettres ou de nombres
+
+### Les quatre opérations
+- Comprendre et utiliser les symboles « + », « − », « = »
+- Comprendre le sens de la multiplication
+
+### Calcul mental
+- Connaître dans les deux sens les tables d'addition
+- Ajouter ou soustraire 1 ou 2 à un nombre
+- Ajouter ou soustraire 20, 30, … 90 à un nombre
+- Trouver le complément d'un nombre à la dizaine supérieure
+- Ajouter 9 à un nombre
+- Ajouter deux nombres inférieurs à 100
+- Déterminer la moitié d'un nombre pair
+- Soustraire un nombre inférieur à 10 à un nombre entier de dizaines
+
+### Résolution de problèmes
+- Problèmes additifs en une étape de type parties-tout
+- Problèmes additifs en deux étapes (champ numérique ≤ 30)
+- Problèmes multiplicatifs en une étape (champ numérique ≤ 30)
+
+### Longueurs et masses
+- Lexique des longueurs ; comparer des segments selon leur longueur
+- Unités mètre et centimètre (m, cm) ; 1 m = 100 cm ; quelques longueurs de référence
+- Lexique des masses ; comparer des objets selon leur masse
+
+### Monnaie
+- Lexique de la monnaie
+- Comparer les valeurs de deux ensembles de pièces (et de billets)
+- Déterminer la valeur en euros d'un ensemble de pièces et de billets
+- Constituer une somme donnée avec des pièces et des billets
+- Simuler des achats ; rendre la monnaie
+
+### Repérage dans le temps
+- Lire une heure entière sur une horloge à aiguilles
+- Positionner les aiguilles pour une heure entière (≤ 12)
+- Associer une heure à un moment de la journée
+
+### Solides
+- Reconnaître cube, boule, cône, cylindre, pavé ; nommer cube, pavé, boule
+- Décrire un cube ou un pavé avec le mot « face » ; nombre et nature des faces
+- Construire des cubes et des pavés
+
+### Géométrie plane
+- Reconnaître disque, carré, rectangle, triangle dans un assemblage
+- Décrire carré, rectangle, triangle avec « sommet » et « côté »
+- Repérer et vérifier des alignements à la règle
+- Construire carré, rectangle, triangle sur papier quadrillé ou pointé
+
+### Repérage dans l'espace
+- Vocabulaire des positions relatives ; situer des objets les uns par rapport aux autres
+- Représentations / plan de la classe pour localiser et communiquer un emplacement
+- Reproduire des assemblages de solides d'après un modèle ou une représentation plane
+- Utiliser et produire une suite d'instructions qui code un déplacement
+
+### Organisation et gestion de données
+- Collecter des données ; les présenter en tableau ou en diagramme en barres
+- Construire et compléter un tableau à double entrée

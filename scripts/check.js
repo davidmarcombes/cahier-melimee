@@ -132,10 +132,11 @@ const ISO = { SITE_OUT: OUT, E2E_PORT: '4174' };
 fs.rmSync(path.join(ROOT, OUT), { recursive: true, force: true });
 step(
   `Build (fresh ${OUT}/)`,
-  `npm run generate:tokens --silent && npx eleventy --quiet && npx tailwindcss -i src/css/input.css -o ${OUT}/css/styles.css --minify && node scripts/generate-sw.js`,
+  `npm run generate:tokens --silent && npx eleventy --quiet && npx tailwindcss -i src/css/input.css -o ${OUT}/css/styles.css --minify && node scripts/generate-sw.js && node scripts/generate-htaccess.js`,
   ISO
 );
 step('Answer oracle', 'node scripts/check-answers.js', ISO);
+step('Site tests', 'npx vitest run --config vitest.site.config.js', ISO);
 // E2E runs on the production output: minified HTML/JS (html-minifier + terser) as deployed
 step('Minify (production)', 'node scripts/minify.js', ISO);
 

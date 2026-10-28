@@ -57,6 +57,7 @@ project-root/
     │   └── js/
     │       ├── app.js           # Alpine components (seriesPlayer, themeToggle, localStore, exercises store)
     │       ├── svg.js           # SVG generation helpers (embedSvg, slicedPieSvg, clockSvg, partagerSvg, etc.)
+    │       ├── grid-draw.js     # grid-board draw mode (tracer sur quadrillage), loaded by draw pages only
     │       ├── generators/      # Exercise generators by topic (Node.js + browser): _core.js (helpers),
     │       │                    #   numeration, nombres, calcul, operations, fractions-decimaux, mesures, logique;
     │       │                    #   index.js = Node entry (all generators + moduleOf map)
@@ -98,6 +99,7 @@ npm run generate:report  # Generate exercises-report.csv — fast lookup of any 
 npm run validate:html # Run html-validate on all built HTML files
 npm run stats:svg     # Analyze SVG files: count, size, CSS var usage
 npm run test          # Run vitest unit test suite
+npm run test:site     # Tests of the built site (tests/site-*.test.js, needs _site/ or SITE_OUT)
 npm run test:e2e      # Run Playwright E2E tests (requires built _site/)
 npm run build:e2e     # Build _site/ for E2E (tokens → eleventy → css, no validate)
 npm run help          # Print all available npm scripts with descriptions
@@ -113,6 +115,7 @@ The `build` script runs these steps sequentially:
 4. `eleventy` — build HTML (includes HTML minification transform)
 5. `npm run build:css` — build and minify Tailwind CSS
 6. `npm run validate:html` — run html-validate on `_site/**/*.html`
+7. `npm run test:site` — last: tests that read the built site (`tests/site-*.test.js`, left out of `npm run test`)
 
 ### Exercise lookup via report
 

@@ -1,7 +1,8 @@
 ---
-type: number-check
-title: "Écris ce nombre en chiffres"
-answer: "6093000"
+type: mcq
+title: "Quelle écriture en chiffres ?"
+choices: ["6 093 000", "6 930 000", "6 000 093", "60 093 000"]
+answer: "6 093 000"
 ---
 
-Écris en chiffres : **six-millions-quatre-vingt-treize-mille**
+Choisis l'écriture en chiffres de : **six-millions-quatre-vingt-treize-mille**

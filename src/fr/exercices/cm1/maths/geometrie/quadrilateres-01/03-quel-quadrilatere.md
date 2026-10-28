@@ -9,4 +9,4 @@ choices:
   - "Un trapèze"
 ---
 
-Un quadrilatère avec **4 côtés égaux** et **aucun angle droit**, c'est :
+Quel est le nom **le plus précis** d’un quadrilatère avec **4 côtés égaux** et **aucun angle droit** ?

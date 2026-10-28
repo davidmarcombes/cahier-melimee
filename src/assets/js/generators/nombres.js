@@ -964,6 +964,70 @@
         return { type: 'sequence', sequence: { items } };
       },
     },
+
+    // boiteDix: count-objects (GS) — a box of 10 (2 rows of 5) with tokens; how many tokens, or how many
+    //   more to fill the box? Answered by tapping a number. The spoken instruction (say) is fixed by `ask`.
+    //   params: ask ('combien' | 'manque'), min (1), max (10, 9 for 'manque'), scatter (false — tokens
+    //   in any cell; otherwise the top row fills first, left to right)
+    boiteDix: {
+      generate(params = {}) {
+        const manque = params.ask === 'manque';
+        const n = rand(params.min ?? 1, Math.min(params.max ?? 10, manque ? 9 : 10));
+        const cells = params.scatter ? shuffle([...Array(10).keys()]).slice(0, n) : [...Array(n).keys()];
+        const box = Array.from({ length: 10 }, (_, i) => {
+          const [x, y] = [12 + (i % 5) * 52, 12 + Math.floor(i / 5) * 52];
+          return (
+            `<rect x="${x}" y="${y}" width="48" height="48" rx="6" fill="var(--sf)" stroke="var(--ct)" stroke-width="2"/>` +
+            (cells.includes(i)
+              ? `<circle cx="${x + 24}" cy="${y + 24}" r="17" fill="#ef4444" stroke="#991b1b" stroke-width="2"/>`
+              : '')
+          );
+        }).join('');
+        return {
+          type: 'count-objects',
+          title: 'Combien ?',
+          say: manque ? 'Combien de jetons pour remplir la boîte ?' : 'Combien de jetons ?',
+          svgHtml: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 284 128" width="284" height="128" role="img" aria-label="Boîte de 10">${box}</svg>`,
+          answers: [String(manque ? 10 - n : n)],
+        };
+      },
+    },
+
+    // jeuOie: tile-select (GS) — a die and a frog on a track of cells: tap the cell it lands on (surcomptage
+    //   from its cell). Cells are square tiles in one row, all blank but the frog's, so `positional` (the answer is a place).
+    //   params: die ([1, 3] dots), start ([0, 2] — the frog's cell), after ([1, 3] cells past the landing one)
+    jeuOie: {
+      generate(params = {}) {
+        const [dMin, dMax] = params.die || [1, 3];
+        const [sMin, sMax] = params.start || [0, 2];
+        const [aMin, aMax] = params.after || [1, 3];
+        const d = rand(dMin, dMax);
+        const start = rand(sMin, sMax);
+        const length = Math.min(10, start + d + 1 + rand(aMin, aMax));
+        // Pip spots on a 3 × 3 grid, numbered 0..8 row by row
+        const PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+        const pips = PIPS[d]
+          .map((k) => `<circle cx="${22 + (k % 3) * 23}" cy="${22 + Math.floor(k / 3) * 23}" r="8" fill="var(--ct)"/>`)
+          .join('');
+        const die =
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" width="90" height="90" role="img" aria-label="Dé : ${d}">` +
+          `<rect x="3" y="3" width="84" height="84" rx="14" fill="var(--sf)" stroke="var(--ct)" stroke-width="3"/>${pips}</svg>`;
+        // A square cell: blank, or with the frog (SVG tiles get the big kid size, text ones shrink)
+        const cell = (frog) =>
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">` +
+          (frog ? `<text x="20" y="29" text-anchor="middle" font-size="26">🐸</text>` : '') +
+          `</svg>`;
+        return {
+          type: 'tile-select',
+          title: '🎲',
+          say: 'Touche la case où arrive la grenouille.',
+          body: `<div style="display:flex;justify-content:center">${die}</div>`,
+          tiles: Array.from({ length }, (_, i) => cell(i === start)),
+          tileAnswers: [start + d],
+          positional: true,
+        };
+      },
+    },
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = generators;

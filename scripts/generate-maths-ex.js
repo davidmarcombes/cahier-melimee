@@ -73,6 +73,10 @@ const TYPE_CHOICES = [
   { name: 'svg-tiles       — Tuiles avec SVG générés via helpers', value: 'svg-tiles' },
   { name: 'tile-select     — Cliquer toutes les tuiles correctes', value: 'tile-select' },
   { name: 'number-strip   — Compléter une bande numérique', value: 'number-strip' },
+  {
+    name: 'grid-board     — Quadrillage (robot : suivre / écrire / déboguer ; symétrie ; tracer)',
+    value: 'grid-board',
+  },
   { name: 'fraction-check  — Saisir une fraction (numérateur/dénominateur)', value: 'fraction-check' },
   { name: 'ruler           — Lire une valeur sur une règle graduée', value: 'ruler' },
   { name: 'click-blocks    — Colorier des blocs pour représenter la valeur', value: 'click-blocks' },
@@ -109,6 +113,7 @@ const TEMPLATES = {
     'tiles:\n  - gen: "circleSvg"\n    par:\n      r: 40\n  - gen: "squareSvg"\n    par:\n      size: 40\nanswers: []',
   'tile-select': 'tiles:\n  - ""\n  - ""\n  - ""\ntileAnswers: []',
   'number-strip': 'cells: ["1", null, "3", "4"]\nchoices: ["2", "5", "6"]\nanswers: [0]',
+  'grid-board': 'board:\n  mode: follow\n  rows: 4\n  cols: 4\n  start: [3, 0]\n  program: ["R", "R", "U"]',
   'fraction-check': 'answers:\n  - ""\n  - ""',
   ruler: 'min: 0\nmax: 10\ndivisions: 10\nmarkers:\n  - label: "A"\n    value: ',
   'click-blocks':

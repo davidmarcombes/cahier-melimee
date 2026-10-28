@@ -10,7 +10,7 @@ statements:
     answer: false
   - text: "Un carré est aussi un losange."
     answer: true
-  - text: "Un trapèze a exactement une paire de côtés parallèles."
+  - text: "Un parallélogramme est aussi un trapèze."
     answer: true
 ---
 

@@ -1,7 +1,8 @@
 ---
-type: number-check
-title: "Écris ce nombre en chiffres"
-answer: "9081"
+type: mcq
+title: "Quelle écriture en chiffres ?"
+choices: ["9 081", "9 801", "90 081", "981"]
+answer: "9 081"
 ---
 
-Écris en chiffres : **neuf-mille-quatre-vingt-un**
+Choisis l'écriture en chiffres de : **neuf-mille-quatre-vingt-un**

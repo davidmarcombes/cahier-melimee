@@ -152,6 +152,14 @@ describe('timedPlayer.opHtml', () => {
     p.curIdx = 0;
     expect(p.opHtml).toBe(' = ?');
   });
+
+  it('is empty for a clock item (the clock face is the question)', () => {
+    const p = mkPlayer();
+    p.ex = [{ type: 'clock', hour: 8, minute: 30, answers: ['8:30'] }];
+    p.curIdx = 0;
+    expect(p.isClock).toBe(true);
+    expect(p.opHtml).toBe('');
+  });
 });
 
 // ─── timerClass ───────────────────────────────────────────────────────────────

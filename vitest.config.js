@@ -1,9 +1,11 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
     globals: true,
     include: ['tests/**/*.test.js'],
+    // Tests of the built site run after the build: `npm run test:site` (vitest.site.config.js)
+    exclude: [...configDefaults.exclude, 'tests/site-*.test.js'],
     // svg.test.js carries a // @vitest-environment happy-dom docblock so it
     // gets the DOM environment it needs.  generators.test.js stays in Node.
     //

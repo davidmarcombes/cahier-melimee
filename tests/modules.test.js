@@ -792,3 +792,178 @@ describe('groupDigits', () => {
     expect(groupDigits('3/4')).toBe('3/4');
   });
 });
+
+import { createRequire } from 'node:module';
+
+describe('Grid-board Logic', () => {
+  const require = createRequire(import.meta.url);
+  globalThis.GridDraw = require('../src/assets/js/grid-draw.js'); // loaded by draw pages only
+  const { robotGrille } = require('../src/assets/js/generators/logique.js');
+  const { walk } = require('../scripts/lib/grid-board.js');
+  const mk = (board) => {
+    const ex = { type: 'grid-board', board };
+    const p = seriesPlayer([ex], 'gb');
+    Object.defineProperty(p, 'cur', { get: () => ex });
+    p._markSolvedAndAdvance = vi.fn();
+    p._flashError = vi.fn();
+    return p;
+  };
+
+  it('gbRun walks like the independent checker', () => {
+    for (const params of [
+      { mode: 'follow', size: 5, steps: 5, blocks: 3 },
+      { mode: 'follow', size: 6, steps: 4, compact: true },
+      { mode: 'follow', city: true, steps: 4, relative: true, compact: true },
+      { mode: 'debug', size: 6, steps: 3, relative: true, compact: true },
+    ])
+      for (let k = 0; k < 30; k++) {
+        const { board } = robotGrille.generate(params);
+        const a = mk(board).gbRun(board.program);
+        const b = walk(board, board.program);
+        expect(a.trail).toEqual(b.cells);
+        expect(a.crash).toBe(!!b.crash);
+      }
+  });
+
+  it('mirror: the exact mirror image is accepted, a missing or extra cell refused', () => {
+    const board = {
+      mode: 'mirror',
+      rows: 4,
+      cols: 6,
+      axis: 'v',
+      at: 3,
+      shape: [
+        [1, 2],
+        [1, 1],
+        [2, 1],
+      ],
+    };
+    const p = mk(board);
+    expect(p.gbTarget.sort()).toEqual(['1,3', '1,4', '2,4']);
+    p.gbTapCell(1, 2); // a figure cell: not paintable
+    expect(p.gbPaint).toEqual([]);
+    p.gbTapCell(1, 3);
+    p.gbTapCell(1, 4);
+    p.check();
+    expect(p._flashError).toHaveBeenCalledTimes(1);
+    p.gbTapCell(2, 4);
+    p.gbTapCell(0, 0);
+    p.check();
+    expect(p._flashError).toHaveBeenCalledTimes(2);
+    p.gbTapCell(0, 0); // tapping again clears it
+    p.check();
+    expect(p._markSolvedAndAdvance).toHaveBeenCalled();
+  });
+
+  it('mirror: the player and the checker mirror alike', () => {
+    const { symetrieGrille } = require('../src/assets/js/generators/logique.js');
+    const { mirrorTarget } = require('../scripts/lib/grid-board.js');
+    for (let k = 0; k < 40; k++) {
+      const { board } = symetrieGrille.generate({ axis: 'any', touch: k % 2 === 0 });
+      expect(mk(board).gbTarget.sort()).toEqual(mirrorTarget(board).map(String).sort());
+    }
+  });
+
+  it('draw: the player accepts the answers the independent checker accepts, and refuses the others', () => {
+    const { tracerGrille } = require('../src/assets/js/generators/geometrie.js');
+    const { drawCheck, drawSolution } = require('../scripts/lib/grid-board.js');
+    for (const params of [
+      { task: 'copy', anchor: true },
+      { task: 'copy', figure: 'free' },
+      { task: 'complete', tilted: true },
+      { task: 'mirror', axis: 'any', diagonals: true },
+      { task: 'shape', ask: ['sides', 'area', 'tilted'] },
+      { task: 'parallel', slopes: 'any' },
+      { task: 'perp', slopes: 'any' },
+    ])
+      for (let k = 0; k < 20; k++) {
+        const { board } = tracerGrille.generate(params);
+        const sol = drawSolution(board);
+        const p = mk(board);
+        for (const segs of [
+          sol,
+          sol.slice(1),
+          [
+            ...sol,
+            [
+              [0, 0],
+              [board.rows, board.cols],
+            ],
+          ],
+        ]) {
+          p.gbSegs = segs;
+          expect(p.gbDrawOk(), JSON.stringify({ board, segs })).toBe(drawCheck(board, segs) === null);
+        }
+      }
+  });
+
+  it('draw: tap two points for a segment, the pen stays on the last one; undo and lift', () => {
+    const board = { mode: 'draw', rows: 4, cols: 4, task: 'shape', want: { shape: 'carre', sides: [2] } };
+    const p = mk(board);
+    for (const pt of [
+      [0, 0],
+      [0, 2],
+      [2, 2],
+      [2, 0],
+      [0, 0],
+    ])
+      p.gbTapPoint(pt);
+    expect(p.gbSegs).toHaveLength(4);
+    p.check();
+    expect(p._markSolvedAndAdvance).toHaveBeenCalled();
+    const q = mk(board);
+    q.gbTapPoint([1, 1]);
+    q.gbTapPoint([1, 1]); // tapping the pen lifts it
+    expect(q.gbPen).toBeNull();
+    q.gbTapPoint([0, 0]);
+    q.gbTapPoint([0, 3]);
+    q.gbUndoSeg();
+    expect(q.gbSegs).toEqual([]);
+    expect(q.gbPen).toEqual([0, 0]);
+    q.gbTapPoint([0, 1]);
+    q.check();
+    expect(q._flashError).toHaveBeenCalled();
+  });
+
+  it('follow: the arrival cell is accepted, another one refused', () => {
+    const board = { mode: 'follow', rows: 4, cols: 4, start: [3, 0], program: ['U', 'U', 'R'] };
+    const p = mk(board);
+    p.gbTapCell(1, 0);
+    p.check();
+    expect(p._flashError).toHaveBeenCalled();
+    p.gbTapCell(1, 1);
+    p.check();
+    expect(p._markSolvedAndAdvance).toHaveBeenCalled();
+  });
+
+  it('write: any path to the goal, a block stops the robot, maxSteps is enforced', () => {
+    const board = { mode: 'write', rows: 3, cols: 3, start: [0, 0], goal: [2, 2], blocks: [[1, 1]], maxSteps: 4 };
+    const p = mk(board);
+    ['R', 'D', 'D', 'R'].forEach((t) => p.gbAdd(t));
+    p.check();
+    expect(p.gbCrash).toBe(true);
+    expect(p._markSolvedAndAdvance).not.toHaveBeenCalled();
+    p.gbProg = ['D', 'D', 'R', 'R'];
+    p.check();
+    expect(p._markSolvedAndAdvance).toHaveBeenCalledTimes(1);
+    const q = mk(board);
+    q.gbProg = ['R', 'R', 'L', 'L', 'D', 'D', 'R', 'R'];
+    q.check();
+    expect(q._markSolvedAndAdvance).not.toHaveBeenCalled();
+  });
+
+  it('relative: turns change the heading, avance follows it', () => {
+    const p = mk({ mode: 'follow', rows: 3, cols: 3, start: [2, 0], dir: 'N', program: ['F2', 'TR', 'F'] });
+    expect(p.gbRun(p.cur.board.program).end).toEqual([0, 1]);
+    expect(p.gbLabel('F2')).toBe('avance de 2');
+    expect(p.gbLabel('R3')).toBe('3 →');
+  });
+
+  it('debug: only the declared instruction solves', () => {
+    const p = mk({ mode: 'debug', rows: 3, cols: 3, start: [0, 0], goal: [0, 2], program: ['R', 'D'], bug: 1 });
+    p.gbTapStep(0);
+    expect(p.gbWrong).toBe(0);
+    p.gbTapStep(1);
+    expect(p._markSolvedAndAdvance).toHaveBeenCalled();
+  });
+});

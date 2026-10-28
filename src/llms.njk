@@ -1,0 +1,62 @@
+---
+layout: null
+pagination:
+  data: filenames
+  size: 1
+  alias: filename
+filenames:
+  - llms.txt
+  - llm.txt
+permalink: "/{{ filename }}"
+eleventyExcludeFromCollections: true
+---
+# Le Cahier de Mélimée
+
+> Des maths pour s'entraîner, du CP au CM2. Plateforme libre, gratuite, souveraine et sans collecte de données personnelles.
+
+Le Cahier de Mélimée ({{ site.url }}) est un service web libre d'entraînement aux mathématiques pour l'école primaire (Grande Section, CP, CE1, CE2, CM1, CM2). Il propose plus de 900 séries d'exercices progressifs, des applications guidées et des défis chronométrés.
+
+Le projet s'appuie sur les repères de progressivité du ministère de l'Éducation nationale et sur la théorie des champs conceptuels de Gérard Vergnaud (structures additives et multiplicatives).
+
+## Principes fondamentaux
+
+- **100% Souverain et Libre :** Code source ouvert sous licence EUPL v1.2 (Copyleft), aucun cookie, aucun traceur publicitaire, aucune dépendance externe à l'exécution.
+- **Respect absolu de la vie privée (RGPD) :** Fonctionnement entièrement anonyme sans création de compte. L'état d'avancement de l'élève et son historique sont stockés exclusivement dans le navigateur (localStorage).
+- **Aide vocale intégrée (« Salto ») :** Synthèse vocale et clips audio préenregistrés pour la lecture des consignes et les encouragements, garantissant l'accessibilité aux élèves non-lecteurs (GS, CP).
+- **Richesse des représentations :** Plus de 50 types d'exercices et d'aides visuelles (pyramides de calcul, arbres additifs/multiplicatifs, droites graduées, balances de Roberval, fractions découpées, monnaie en euros, horloges, etc.).
+
+## Niveaux scolaires
+
+- [Grande Section (GS)]({{ site.url }}/fr/exercices/?level=0): Repérage spatial, formes géométriques, tris, logique, premiers pas avec les nombres.
+- [CP]({{ site.url }}/fr/exercices/?level=1): Nombres jusqu'à 100, calcul mental, géométrie élémentaire, longueurs et monnaie.
+- [CE1]({{ site.url }}/fr/exercices/?level=2): Calcul réfléchi, arbres de calcul, introduction à la multiplication, euros et centimes, tableaux.
+- [CE2]({{ site.url }}/fr/exercices/?level=3): Tables de multiplication, division, fractions simples, solides, durées et heures.
+- [CM1]({{ site.url }}/fr/exercices/?level=4): Fractions, nombres décimaux, opérations posées, proportionnalité, aires et périmètres.
+- [CM2]({{ site.url }}/fr/exercices/?level=5): Décimaux avancés, grands nombres, pourcentages, calculs de durées, volumes.
+
+## Formats d'activités
+
+- [Exercices classiques]({{ site.url }}/fr/exercices/): Séries interactives de 5 à 10 questions avec validation étape par étape et corrections immédiates.
+- [Défis chronométrés]({{ site.url }}/fr/exercices/?folder=d): Activités rapides minutées pour automatiser les calculs et renforcer la fluence.
+- [Applications guidées]({{ site.url }}/fr/exercices/?folder=a): Activités pratiques de manipulation mathématique (conversions, mesures, fractions).
+
+## Rubriques du site
+
+- [Accueil]({{ site.url }}/fr/): Présentation de la plateforme et accès direct aux niveaux.
+- [Catalogue complet des exercices]({{ site.url }}/fr/exercices/): Interface interactive de recherche et de sélection d'exercices.
+- [Mon Cahier]({{ site.url }}/fr/cahiers/): Suivi des progrès de l'élève et consultation des séries terminées.
+- [Assistant vocal Salto]({{ site.url }}/fr/voix/): Présentation du compagnon vocal Salto et du moteur audio.
+- [Blog pédagogique]({{ site.url }}/fr/blog/): Articles didactiques et réflexions sur l'enseignement des mathématiques à l'école.
+- [Données structurées des exercices (CSV)]({{ site.url }}/fr/exercices/data.csv): Répertoire CSV complet des séries (identifiant, niveau, domaine, sous-thème, titre, difficulté, type).
+- [Plan du site (sitemap)]({{ site.url }}/sitemap.xml): Index XML standard de l'ensemble des pages.
+
+## Informations légales et code source
+
+- [Licence et mentions légales]({{ site.url }}/fr/mentions-legales/): Licence libre EUPL v1.2, informations éditeur et hébergement.
+- [Politique de confidentialité]({{ site.url }}/fr/confidentialite/): Engagements stricts de non-collecte et conformité RGPD.
+- [Dépôt de développement GitHub]({{ site.repo }}): Code source complet, documentation technique et contribution.
+
+## Fichier complet
+
+- [Index détaillé pour LLM]({{ site.url }}/llms-full.txt): Description didactique complète, taxonomie des domaines par classe et typologie des exercices.
+

@@ -593,6 +593,28 @@
     // params: notes ([500, 1000, 2000, 5000] cents), minNotes (1), maxNotes (2),
     //         euroCoins ([100, 200]), maxEuroCoins (2), cents ([5, 10, 20, 50]), minCents (2), maxCents (4),
     //         carryRate (0.4 — share of wallets whose centimes reach 1 € or more)
+    // compterEuros: « Combien d’euros ? » for a wallet of whole-euro coins and notes drawn with moneySvg (CP–CE1).
+    // params: coins ([100, 200] cents), notes ([500, 1000]), maxItems (4), max (20 — total in €)
+    compterEuros: {
+      generate(params = {}) {
+        const coins = params.coins ?? [100, 200];
+        const notes = params.notes ?? [500, 1000];
+        const max = (params.max ?? 20) * 100;
+        let items;
+        for (let tries = 0; tries < 100; tries++) {
+          items = Array.from({ length: rand(2, params.maxItems ?? 4) }, () => randItem([...coins, ...notes]));
+          if (items.reduce((s, v) => s + v, 0) <= max) break;
+          items = [randItem(coins), randItem(coins)];
+        }
+        const total = items.reduce((s, v) => s + v, 0) / 100;
+        return {
+          type: 'multi-question',
+          svg: { gen: 'moneySvg', par: { items } },
+          mqQuestions: [{ text: 'Combien d’euros en tout ? (en €)', answer: String(total) }],
+        };
+      },
+    },
+
     porteMonnaie: {
       generate(params = {}) {
         const notes = params.notes ?? [500, 1000, 2000, 5000];
@@ -720,6 +742,52 @@
           type: 'number-check',
           operation: `${grouped}__c__=__? € ? c`,
           answers: [String(Math.floor(v / 100)), String(v % 100)],
+        };
+      },
+    },
+
+    // balanceGS: tile-select (GS) — two objects on a balance that leans to the heavier one: tap the heavier
+    //   (or the lighter). Objects come from weight tiers that never contradict real life.
+    //   params: ask ('lourd' | 'léger'), trap (false — the lighter object is drawn bigger)
+    balanceGS: {
+      generate(params = {}) {
+        const TIERS = [
+          ['🪶', '🎈', '🍃'],
+          ['🍓', '🍒', '🥜'],
+          ['🍎', '🥕', '🍐'],
+          ['🍉', '🧱', '🎃'],
+        ];
+        const [i, j] = shuffle([0, 1, 2, 3])
+          .slice(0, 2)
+          .sort((a, b) => a - b);
+        const light = randItem(TIERS[i]);
+        const heavy = randItem(TIERS[j]);
+        const heavyLeft = Math.random() < 0.5;
+        const [left, right] = heavyLeft ? [heavy, light] : [light, heavy];
+        const size = (o) => (params.trap ? (o === light ? 60 : 30) : 44);
+        // The beam leans 18 px towards the heavy side; each pan hangs 50 px below its end
+        const [yl, yr] = heavyLeft ? [62, 26] : [26, 62];
+        const pan = (x, y, o) =>
+          `<line x1="${x}" y1="${y}" x2="${x - 34}" y2="${y + 50}" stroke="var(--ct)" stroke-width="2"/>` +
+          `<line x1="${x}" y1="${y}" x2="${x + 34}" y2="${y + 50}" stroke="var(--ct)" stroke-width="2"/>` +
+          `<path d="M${x - 44},${y + 50} Q${x},${y + 72} ${x + 44},${y + 50} Z" fill="#d97706" stroke="#92400e" stroke-width="2"/>` +
+          `<text x="${x}" y="${y + 48}" text-anchor="middle" font-size="${size(o)}">${o}</text>`;
+        const svg =
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 190" width="320" height="190" role="img" aria-label="Balance">` +
+          `<path d="M130,182 L190,182 L160,150 Z" fill="#b45309"/><line x1="160" y1="44" x2="160" y2="160" stroke="#b45309" stroke-width="6"/>` +
+          `<line x1="70" y1="${yl}" x2="250" y2="${yr}" stroke="#b45309" stroke-width="6" stroke-linecap="round"/>` +
+          `<circle cx="160" cy="44" r="6" fill="#92400e"/>` +
+          pan(70, yl, left) +
+          pan(250, yr, right) +
+          `</svg>`;
+        const leger = params.ask === 'léger';
+        return {
+          type: 'tile-select',
+          title: '⚖️',
+          say: leger ? 'Touche le plus léger.' : 'Touche le plus lourd.',
+          body: `<div style="display:flex;justify-content:center">${svg}</div>`,
+          tiles: [left, right],
+          tileAnswers: [(heavyLeft ? 0 : 1) ^ (leger ? 1 : 0)],
         };
       },
     },

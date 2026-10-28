@@ -1141,6 +1141,67 @@ describe('diviserDecimalParEntier', () => {
   });
 });
 
+describe('multiplierDecimalParEntier', () => {
+  const num = (s) => parseFloat(s.replace(',', '.'));
+  it('product of a decimal by a whole factor, decimal input', () => {
+    for (let i = 0; i < 200; i++) {
+      const r = generators.multiplierDecimalParEntier.generate({ factors: [5, 50], maxDec: 2 });
+      const [a, rest] = r.operation.split(' × ');
+      const k = parseInt(rest, 10);
+      expect([5, 50]).toContain(k);
+      expect(a).toContain(',');
+      expect(num(r.answers[0])).toBeCloseTo(num(a) * k, 9);
+    }
+  });
+});
+
+describe('calculParentheses', () => {
+  const evalOp = (op) =>
+    Function(
+      `return ${op
+        .replace(/ = \?$/, '')
+        .replace(/×/g, '*')
+        .replace(/÷/g, '/')
+        .replace(/−/g, '-')}`
+    )();
+  for (const pairs of [1, 2])
+    it(`${pairs} pair(s): answer = value of the expression, whole and not negative`, () => {
+      for (let i = 0; i < 300; i++) {
+        const r = generators.calculParentheses.generate({ pairs });
+        expect((r.operation.match(/\(/g) || []).length).toBe(pairs);
+        const v = evalOp(r.operation);
+        expect(Number.isInteger(v)).toBe(true);
+        expect(v).toBeGreaterThanOrEqual(0);
+        expect(r.answers[0]).toBe(String(v));
+      }
+    });
+});
+
+describe('arrondirDecimal', () => {
+  it('rounds to the unit without halfway cases, or gives the whole part', () => {
+    for (let i = 0; i < 300; i++) {
+      const r = generators.arrondirDecimal.generate({ mode: 'mix', maxDec: 3 });
+      const x = parseFloat(r.operation.match(/\d+,\d+/)[0].replace(',', '.'));
+      if (r.operation.startsWith('Partie')) expect(r.answers[0]).toBe(String(Math.floor(x)));
+      else {
+        expect(r.operation.match(/,(\d)/)[1]).not.toBe('5');
+        expect(r.answers[0]).toBe(String(Math.round(x)));
+      }
+    }
+  });
+});
+
+describe('compterEuros', () => {
+  it('total of whole-euro coins and notes, at most max', () => {
+    for (let i = 0; i < 200; i++) {
+      const r = generators.compterEuros.generate({ max: 20 });
+      const total = r.svg.par.items.reduce((s, v) => s + v, 0) / 100;
+      expect(total).toBeLessThanOrEqual(20);
+      expect(r.mqQuestions[0].answer).toBe(String(total));
+    }
+  });
+});
+
 describe('convertirMesure', () => {
   const E = { t: 9, kg: 6, g: 3, mg: 0, L: 3, dL: 2, cL: 1, mL: 0 };
   for (const p of [
@@ -1266,5 +1327,569 @@ describe('dicteeNombre — spoken number names', () => {
     }
     expect(prompts.size).toBe(16);
     expect([...prompts]).toContain('objets/etoiles.ogg');
+  });
+});
+
+// ─── robotGrille ─────────────────────────────────────────────────────────────
+
+describe('robotGrille', () => {
+  const { boardProblems } = require('../scripts/lib/grid-board.js');
+  beforeEach(() => vi.restoreAllMocks()); // an earlier test leaves Math.random mocked to 0
+  it('every mode draws boards the independent checker accepts', () => {
+    for (const params of [
+      { mode: 'follow', size: 4, steps: 3 },
+      { mode: 'follow', size: 5, steps: 4, blocks: 3, compact: true },
+      { mode: 'follow', city: true, steps: 4, relative: true, compact: true },
+      { mode: 'write', size: 5, blocks: 4, slack: 1 },
+      { mode: 'write', size: 5, relative: true },
+      { mode: 'debug', size: 5, steps: 5 },
+      { mode: 'debug', size: 6, steps: 3, relative: true, compact: true },
+    ])
+      for (let k = 0; k < 25; k++) {
+        const r = generators.robotGrille.generate({ ...params });
+        expect(r.type).toBe('grid-board');
+        expect(boardProblems(r.board)).toEqual([]);
+      }
+  });
+
+  it('city: 7×7 plan, houses between the streets, the goal is a place', () => {
+    const r = generators.robotGrille.generate({ mode: 'write', city: true });
+    expect(r.board.rows).toBe(7);
+    expect(r.board.blocks).toHaveLength(9);
+    expect(r.title).toContain(r.board.goalEmoji);
+  });
+
+  it('non-compact programs use one arrow per cell', () => {
+    const r = generators.robotGrille.generate({ mode: 'follow', size: 5, steps: 5 });
+    expect(r.board.program).toHaveLength(5);
+    expect(r.board.program.every((t) => /^[UDLR]$/.test(t))).toBe(true);
+  });
+});
+
+// ─── tracerGrille ────────────────────────────────────────────────────────────
+
+describe('tracerGrille', () => {
+  const { boardProblems, drawCheck, drawSolution } = require('../scripts/lib/grid-board.js');
+  const PARAMS = [
+    { task: 'copy' },
+    { task: 'copy', cells: [5, 8], box: 5, anchor: true },
+    { task: 'copy', figure: 'free', corners: [4, 5], anchor: true, paper: 'dots' },
+    { task: 'complete' },
+    { task: 'complete', shapes: ['rectangle'], tilted: true },
+    { task: 'mirror', touch: false },
+    { task: 'mirror', axis: 'any', diagonals: true },
+    { task: 'shape', ask: ['sides', 'area', 'free', 'tilted'] },
+    { task: 'parallel', slopes: 'any' },
+    { task: 'perp', slopes: 'diag' },
+  ];
+
+  it('every task draws boards the independent checker accepts, with an answer it accepts', () => {
+    for (const params of PARAMS)
+      for (let k = 0; k < 30; k++) {
+        const { type, board } = generators.tracerGrille.generate({ ...params });
+        expect(type).toBe('grid-board');
+        expect(boardProblems(board)).toEqual([]);
+        expect(drawCheck(board, drawSolution(board))).toBeNull();
+      }
+  });
+
+  it('a copy is accepted anywhere without an anchor, only from the anchor with one', () => {
+    const model = [
+      [
+        [0, 0],
+        [0, 2],
+      ],
+      [
+        [0, 2],
+        [2, 2],
+      ],
+      [
+        [2, 2],
+        [0, 0],
+      ],
+    ];
+    const b = { mode: 'draw', rows: 6, cols: 6, task: 'copy', model };
+    const moved = model.map((s) => s.map(([r, c]) => [r + 3, c + 1]));
+    expect(drawCheck(b, moved)).toBeNull();
+    expect(drawCheck({ ...b, anchor: { from: [0, 0], to: [1, 1] } }, moved)).not.toBeNull();
+    // drawn in other pieces: the same figure
+    expect(
+      drawCheck(b, [
+        [
+          [0, 0],
+          [0, 1],
+        ],
+        [
+          [0, 1],
+          [0, 2],
+        ],
+        [
+          [2, 2],
+          [0, 2],
+        ],
+        [
+          [0, 0],
+          [1, 1],
+        ],
+        [
+          [1, 1],
+          [2, 2],
+        ],
+      ])
+    ).toBeNull();
+  });
+
+  it('shapes: a square is a rectangle only when the board says so; tilted sides are asked for', () => {
+    const sq = [
+      [
+        [0, 0],
+        [0, 3],
+      ],
+      [
+        [0, 3],
+        [3, 3],
+      ],
+      [
+        [3, 3],
+        [3, 0],
+      ],
+      [
+        [3, 0],
+        [0, 0],
+      ],
+    ];
+    const b = (want) => ({ mode: 'draw', rows: 6, cols: 6, task: 'shape', want });
+    expect(drawCheck(b({ shape: 'carre', sides: [3] }), sq)).toBeNull();
+    expect(drawCheck(b({ shape: 'rectangle' }), sq)).not.toBeNull();
+    expect(drawCheck(b({ shape: 'rectangle', area: 9, inclusive: true }), sq)).toBeNull();
+    expect(drawCheck(b({ shape: 'carre', tilted: true }), sq)).not.toBeNull();
+    const tilted = [
+      [
+        [0, 1],
+        [1, 3],
+      ],
+      [
+        [1, 3],
+        [3, 2],
+      ],
+      [
+        [3, 2],
+        [2, 0],
+      ],
+      [
+        [2, 0],
+        [0, 1],
+      ],
+    ];
+    expect(drawCheck(b({ shape: 'carre', tilted: true }), tilted)).toBeNull();
+    expect(drawCheck(b({ shape: 'carre' }), sq.slice(0, 3))).not.toBeNull(); // not closed
+  });
+
+  it('parallel / perpendicular: through A, in one piece, two steps at least', () => {
+    const b = {
+      mode: 'draw',
+      rows: 6,
+      cols: 6,
+      task: 'parallel',
+      ref: [
+        [0, 0],
+        [0, 3],
+      ],
+      through: [2, 2],
+    };
+    expect(
+      drawCheck(b, [
+        [
+          [2, 0],
+          [2, 4],
+        ],
+      ])
+    ).toBeNull();
+    expect(
+      drawCheck(b, [
+        [
+          [2, 2],
+          [2, 3],
+        ],
+      ])
+    ).not.toBeNull(); // one step
+    expect(
+      drawCheck(b, [
+        [
+          [2, 3],
+          [2, 5],
+        ],
+      ])
+    ).not.toBeNull(); // misses A
+    expect(
+      drawCheck(b, [
+        [
+          [2, 0],
+          [2, 1],
+        ],
+        [
+          [2, 2],
+          [2, 4],
+        ],
+      ])
+    ).not.toBeNull(); // a gap
+    expect(
+      drawCheck({ ...b, task: 'perp' }, [
+        [
+          [0, 2],
+          [4, 2],
+        ],
+      ])
+    ).toBeNull();
+    expect(
+      drawCheck({ ...b, task: 'perp' }, [
+        [
+          [0, 0],
+          [4, 4],
+        ],
+      ])
+    ).not.toBeNull();
+  });
+});
+
+// ─── symetrieGrille ──────────────────────────────────────────────────────────
+
+describe('symetrieGrille', () => {
+  const { boardProblems, mirrorTarget } = require('../scripts/lib/grid-board.js');
+  beforeEach(() => vi.restoreAllMocks());
+  it('every axis draws figures the independent checker accepts', () => {
+    for (const params of [
+      { axis: 'v' },
+      { axis: 'h', cells: [3, 5] },
+      { axis: 'vh', touch: false, offCentre: true, rows: 7, cols: 9, cells: [5, 8] },
+      { axis: 'd', size: 6 },
+      { axis: 'diag', size: 7, touch: false },
+      { axis: 'any', touch: false },
+    ])
+      for (let k = 0; k < 40; k++) {
+        const r = generators.symetrieGrille.generate({ ...params });
+        expect(r.type).toBe('grid-board');
+        expect(boardProblems(r.board)).toEqual([]);
+      }
+  });
+
+  it('touch: a figure cell next to the axis; apart: none', () => {
+    const v = generators.symetrieGrille.generate({ axis: 'v' }).board;
+    expect(v.shape.some(([, c]) => c === v.at - 1 || c === v.at)).toBe(true);
+    for (let k = 0; k < 20; k++) {
+      const h = generators.symetrieGrille.generate({ axis: 'h', touch: false }).board;
+      expect(h.shape.some(([r]) => r === h.at - 1 || r === h.at)).toBe(false);
+    }
+  });
+
+  it('diagonal: the figure cells on the axis are not to colour', () => {
+    const b = {
+      mode: 'mirror',
+      rows: 4,
+      cols: 4,
+      axis: 'd',
+      shape: [
+        [1, 1],
+        [2, 1],
+        [3, 1],
+      ],
+    };
+    expect(boardProblems(b)).toEqual([]);
+    expect(mirrorTarget(b).sort()).toEqual([
+      [1, 2],
+      [1, 3],
+    ]);
+  });
+});
+
+describe('trouverFormes', () => {
+  const { readShape, shapeNames, turned } = require('../scripts/lib/shapes.js');
+  const { GEN_CHECKS } = require('../scripts/lib/gen-checks.js');
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const yaml = require('js-yaml');
+  beforeEach(() => vi.restoreAllMocks());
+
+  it('every target draws tiles the independent checker accepts', () => {
+    for (const params of [
+      {},
+      { target: 'carre', near: true, count: 8, answers: [2, 4] },
+      { target: 'rectangle', inclusive: true, near: true },
+      { target: 'losange', inclusive: true },
+      { target: 'triangle', turn: 'some' },
+      { target: 'triangleRectangle', near: true },
+      { target: 'disque', kid: true, turn: 'none' },
+      { target: 'rectangle', turn: 'none', colour: false },
+    ])
+      for (let k = 0; k < 60; k++) {
+        const r = generators.trouverFormes.generate({ ...params });
+        expect(r.type).toBe('tile-select');
+        expect(r.tiles).toHaveLength(params.count || 6);
+        expect(GEN_CHECKS.trouverFormes(r, params)).toBeNull();
+      }
+  });
+
+  it('turn: all turns every polygon, none keeps a side on an axis, some turns one answer and not another', () => {
+    const shapes = (p) => generators.trouverFormes.generate(p).tiles.map(readShape);
+    for (let k = 0; k < 20; k++) {
+      expect(
+        shapes({ target: 'triangle', turn: 'all' })
+          .filter((s) => s.kind === 'polygon')
+          .every(turned)
+      ).toBe(true);
+      expect(shapes({ target: 'carre', turn: 'none' }).some(turned)).toBe(false);
+      const r = generators.trouverFormes.generate({ target: 'carre', turn: 'some', answers: [2, 2] });
+      const answers = r.tileAnswers.map((i) => turned(readShape(r.tiles[i])));
+      expect(answers.sort()).toEqual([false, true]);
+    }
+  });
+
+  it('a square is a rectangle and a rhombus only when the series says so', () => {
+    const has = (p, name) =>
+      generators.trouverFormes.generate(p).tiles.some((t) => shapeNames(readShape(t)).names.has(name));
+    for (let k = 0; k < 20; k++) {
+      expect(has({ target: 'rectangle' }, 'carre')).toBe(false);
+      expect(has({ target: 'losange', among: ['carre', 'trapeze'] }, 'carre')).toBe(false);
+      expect(has({ target: 'rectangle', inclusive: true }, 'carre')).toBe(true);
+    }
+  });
+
+  it('the checker names shapes whatever their orientation', () => {
+    const sq = (t) => {
+      const [c, s] = [Math.cos(t), Math.sin(t)];
+      return {
+        kind: 'polygon',
+        pts: [
+          [0, 0],
+          [40 * c, 40 * s],
+          [40 * (c - s), 40 * (s + c)],
+          [-40 * s, 40 * c],
+        ],
+      };
+    };
+    for (const t of [0, 0.3, Math.PI / 4, 2])
+      expect([...shapeNames(sq(t)).names].sort()).toEqual([
+        'carre',
+        'losange',
+        'parallelogramme',
+        'quadrilatere',
+        'rectangle',
+      ]);
+    expect(turned(sq(Math.PI / 4))).toBe(true);
+    expect(turned(sq(0))).toBe(false);
+    expect(
+      shapeNames({
+        kind: 'polygon',
+        pts: [
+          [0, 0],
+          [50, 0],
+          [50, 46],
+          [0, 46],
+        ],
+      }).unclear
+    ).toEqual(['rectangle almost a square']);
+    expect(
+      shapeNames({
+        kind: 'polygon',
+        pts: [
+          [0, 0],
+          [50, 0],
+          [3, 50],
+        ],
+      }).unclear
+    ).toEqual(['triangle almost right']);
+  });
+
+  it('GS series speak the instruction the generator gives', () => {
+    const dir = path.join(__dirname, '../src/fr/applications/gs/maths/geometrie/formes-tournees-01');
+    for (const f of fs.readdirSync(dir).filter((f) => f.endsWith('.md'))) {
+      const data = yaml.load(fs.readFileSync(path.join(dir, f), 'utf8').split('---')[1]);
+      expect(generators.trouverFormes.generate(data.params).say, f).toBe(data.say);
+    }
+  });
+});
+
+describe('angles (trouverAngles, comparerAngles, rangerAngles)', () => {
+  const { readAngle, angleKind } = require('../scripts/lib/shapes.js');
+  const { GEN_CHECKS } = require('../scripts/lib/gen-checks.js');
+  const draws = (name, params, n = 80) => Array.from({ length: n }, () => generators[name].generate({ ...params }));
+
+  it('every setting draws angles the independent checker accepts', () => {
+    for (const [name, sets] of [
+      ['trouverAngles', [{}, { target: 'aigu' }, { target: 'obtus', near: true }, { target: 'droit', count: 8 }]],
+      ['comparerAngles', [{}, { equal: 0.5, ask: 'petit' }, { gap: 10, trap: false }]],
+      ['rangerAngles', [{}, { count: 3, direction: 'desc' }, { gap: 20, trap: false }]],
+    ])
+      for (const params of sets) for (const e of draws(name, params)) expect(GEN_CHECKS[name](e, params)).toBeNull();
+  });
+
+  it('trouverAngles: the answers are exactly the angles of the asked kind, one of them turned', () => {
+    for (const e of draws('trouverAngles', { target: 'droit', near: true })) {
+      const angles = e.tiles.map(readAngle);
+      const right = angles.map((a, i) => (angleKind(a.deg).kind === 'droit' ? i : -1)).filter((i) => i >= 0);
+      expect(right).toEqual([...e.tileAnswers].sort((a, b) => a - b));
+      expect(e.tileAnswers.some((i) => angles[i].turned)).toBe(true);
+      // near: no acute or obtuse angle more than 26° from a right angle
+      expect(angles.every((a) => Math.abs(a.deg - 90) <= 26.5)).toBe(true);
+    }
+  });
+
+  it('comparerAngles: the bigger angle has the shorter arms (trap), equal angles are answered « égaux »', () => {
+    for (const e of draws('comparerAngles', { equal: 1 })) expect(e.mcqAnswer).toBe(2);
+    for (const e of draws('comparerAngles', { ask: 'grand' })) {
+      const [a, b] = e.body.match(/<svg\b[\s\S]*?<\/svg>/g).map(readAngle);
+      const big = a.deg > b.deg ? a : b;
+      const small = big === a ? b : a;
+      expect(e.mcqAnswer).toBe(big === a ? 0 : 1);
+      expect(Math.max(...big.arms)).toBeLessThan(Math.min(...small.arms));
+    }
+  });
+
+  it('rangerAngles: tiles are listed in the answer order, at least gap degrees apart', () => {
+    for (const direction of ['asc', 'desc'])
+      for (const e of draws('rangerAngles', { direction, gap: 15 })) {
+        const d = e.tiles.map((t) => readAngle(t).deg);
+        const steps = d.slice(1).map((x, i) => (direction === 'asc' ? x - d[i] : d[i] - x));
+        expect(Math.min(...steps)).toBeGreaterThan(14.5);
+        expect(e.direction).toBe(direction);
+      }
+  });
+
+  it('the reader measures an angle whatever its turn, and checks the arc', () => {
+    const svg = (deg, turn) => {
+      const r = Math.PI / 180;
+      const p = (t, l) => [50 + l * Math.cos(t * r), 50 - l * Math.sin(t * r)].map((x) => Math.round(x * 10) / 10);
+      const [a, b, m, n] = [p(turn, 40), p(turn + deg, 30), p(turn, 10), p(turn + deg, 10)];
+      return `<path d="M50,50 L${m} A10 10 0 0 0 ${n} Z"/><polyline points="${a} 50,50 ${b}"/>`;
+    };
+    for (const turn of [0, 37, 180]) {
+      const a = readAngle(svg(90, turn));
+      expect(a.deg).toBeCloseTo(90, 0);
+      expect(a.arcOk).toBe(true);
+      expect(a.turned).toBe(turn === 37);
+    }
+    expect(readAngle(svg(40, 10).replace('M50,50', 'M60,60')).arcOk).toBe(false);
+    expect(angleKind(84).kind).toBeNull();
+    expect(angleKind(60).kind).toBe('aigu');
+    expect(angleKind(130).kind).toBe('obtus');
+  });
+});
+
+describe('hasard en images (hasardPossible, hasardComparer, hasardChances, hasardRanger)', () => {
+  const { readChance, readEvent, countOf } = require('../scripts/lib/hasard.js');
+  const { GEN_CHECKS } = require('../scripts/lib/gen-checks.js');
+  const draws = (name, params, n = 80) => Array.from({ length: n }, () => generators[name].generate({ ...params }));
+  const pics = (e) => e.body.match(/<svg\b[\s\S]*?<\/svg>/g).map(readChance);
+
+  it('every setting draws pictures the independent checker accepts', () => {
+    for (const [name, sets] of [
+      [
+        'hasardPossible',
+        [{}, { levels: 4 }, { levels: 5 }, { source: 'de' }, { source: 'roue', mix: true, levels: 4 }],
+      ],
+      ['hasardComparer', [{}, { sameTotal: true }, { trap: true, equal: 0.3 }, { source: 'roue', ask: 'moins' }]],
+      ['hasardChances', [{}, { source: 'de' }, { union: true, total: [6, 12] }]],
+      ['hasardRanger', [{}, { count: 4, direction: 'desc' }, { source: 'roue', mix: true }]],
+    ])
+      for (const params of sets) for (const e of draws(name, params)) expect(GEN_CHECKS[name](e, params)).toBeNull();
+  });
+
+  it('hasardPossible: every level comes up, a die has 6 faces', () => {
+    const answers = new Set(draws('hasardPossible', { levels: 4 }, 200).map((e) => e.mcqAnswer));
+    expect([...answers].sort()).toEqual([0, 1, 2, 3]);
+    for (const e of draws('hasardPossible', { source: 'de' })) expect(pics(e)[0].outcomes).toHaveLength(6);
+  });
+
+  it('hasardComparer: the trap gives the likelier urn fewer balls of the colour', () => {
+    for (const e of draws('hasardComparer', { source: 'urne', trap: true })) {
+      const { items } = readEvent(e.title, 'urne');
+      const [a, b] = pics(e).map((r) => [r.outcomes.filter((o) => o === items[0]).length, r.outcomes.length]);
+      const likelier = a[0] * b[1] > b[0] * a[1] ? 0 : 1;
+      expect(e.mcqAnswer).toBe(likelier);
+      expect([a, b][likelier][0]).toBeLessThan([a, b][1 - likelier][0]);
+    }
+    for (const e of draws('hasardComparer', { equal: 1 })) expect(e.mcqAnswer).toBe(2);
+  });
+
+  it('hasardChances: the answer is « a chances sur b » with b the number of outcomes', () => {
+    for (const e of draws('hasardChances', {})) {
+      const r = pics(e)[0];
+      expect(e.mcqChoices[e.mcqAnswer]).toMatch(new RegExp(` sur ${r.outcomes.length}$`));
+    }
+  });
+
+  it('hasardRanger: tiles listed from least to most likely (asc)', () => {
+    for (const e of draws('hasardRanger', { direction: 'asc', count: 4 })) {
+      const counts = countOf(pics(e)[0].outcomes);
+      expect(e.tiles).toHaveLength(4);
+      expect(new Set(counts.values()).size).toBe(4);
+    }
+  });
+
+  it('the reader refuses unequal sectors and overlapping balls', () => {
+    const e = generators.hasardPossible.generate({ source: 'roue' });
+    const svg = e.body.match(/<svg\b[\s\S]*?<\/svg>/)[0];
+    expect(readChance(svg).problems).toEqual([]);
+    expect(readChance(svg.replace(/L([\d.]+),/, (m, x) => `L${Number(x) + 6},`)).problems.join()).toMatch(/sizes/);
+    const urn = generators.hasardPossible.generate({ source: 'urne' }).body.match(/<svg\b[\s\S]*?<\/svg>/)[0];
+    let moved = 0;
+    const stacked = urn.replace(/cx="[\d.]+" cy="[\d.]+"/g, (m) => (moved++ < 2 ? 'cx="50" cy="50"' : m));
+    expect(readChance(stacked).problems.join()).toMatch(/overlap/);
+    expect(readEvent("Tirer une boule qui n'est pas violette", 'urne')).toEqual({ items: ['violet'], not: true });
+    expect(readEvent("Obtenir autre chose qu'un 2 ou un 5", 'de')).toEqual({ items: [2, 5], not: true });
+  });
+});
+
+describe('manipulations GS (boiteDix, jeuOie, balanceGS)', () => {
+  const { readTensFrame, readDie, readBalance } = require('../scripts/lib/manipulations.js');
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const yaml = require('js-yaml');
+  const { GEN_CHECKS } = require('../scripts/lib/gen-checks.js');
+  const draws = (name, params, n = 80) => Array.from({ length: n }, () => generators[name].generate({ ...params }));
+
+  it('every setting draws pictures the independent checker accepts', () => {
+    for (const [name, sets] of [
+      ['boiteDix', [{}, { ask: 'manque' }, { scatter: true, min: 10 }, { ask: 'manque', min: 9 }]],
+      ['jeuOie', [{}, { die: [6, 6], start: [2, 2], after: [3, 3] }, { die: [1, 1], start: [0, 0] }]],
+      ['balanceGS', [{}, { ask: 'léger' }, { trap: true }]],
+    ])
+      for (const params of sets) for (const e of draws(name, params)) expect(GEN_CHECKS[name](e, params)).toBeNull();
+  });
+
+  it('boiteDix: 10 cells, the answer is the tokens or what is missing', () => {
+    for (const e of draws('boiteDix', { ask: 'manque' })) {
+      const f = readTensFrame(e.svgHtml);
+      expect(f.cells).toBe(10);
+      expect(Number(e.answers[0])).toBe(10 - f.tokens);
+      expect(f.tokens).toBeGreaterThan(0);
+    }
+  });
+
+  it('jeuOie: the frog lands inside the track, at most 10 cells', () => {
+    for (const e of draws('jeuOie', { die: [6, 6], start: [2, 2], after: [3, 3] })) {
+      expect(e.tiles.length).toBeLessThanOrEqual(10);
+      expect(e.tileAnswers[0]).toBe(e.tiles.findIndex((t) => t.includes('🐸')) + readDie(e.body));
+      expect(e.tileAnswers[0]).toBeLessThan(e.tiles.length);
+    }
+  });
+
+  it('balanceGS: the lower pan holds the heavier object, drawn smaller with the trap', () => {
+    for (const e of draws('balanceGS', { trap: true })) {
+      const b = readBalance(e.body);
+      const heavy = b.lower === 'left' ? b.left : b.right;
+      expect(e.tiles[e.tileAnswers[0]]).toBe(heavy.o);
+      expect(heavy.size).toBeLessThan((b.lower === 'left' ? b.right : b.left).size);
+    }
+  });
+
+  it('GS series speak the instruction the generator gives', () => {
+    for (const sub of ['numeration/boite-dix-01', 'numeration/jeu-oie-01', 'mesures/balance-01']) {
+      const dir = path.join(__dirname, '../src/fr/applications/gs/maths', sub);
+      for (const f of fs.readdirSync(dir).filter((f) => f.endsWith('.md'))) {
+        const data = yaml.load(fs.readFileSync(path.join(dir, f), 'utf8').split('---')[1]);
+        expect(generators[data.generator].generate(data.params).say, f).toBe(data.say);
+      }
+    }
   });
 });

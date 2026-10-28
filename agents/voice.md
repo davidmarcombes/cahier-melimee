@@ -65,6 +65,7 @@ Ne pas envoyer les phrases à un service de synthèse en ligne lors de la géné
 ## Vérification après changement
 
 - `npm test -- tests/generators.test.js` pour les générateurs numériques.
+- `npm test -- tests/voice-clips.test.js` : chaque clip de l'inventaire et de `instructions.json` existe, aucun clip orphelin, et chaque exercice GS a sa consigne enregistrée.
 - `npm run test:e2e -- --grep "voice|dictée|compter"` si le séquencement de lecture change.
 - `npm run validate:exercises` si les données d'exercices ont changé.
 - `npm run build` pour vérifier l'intégration Eleventy et HTML.

@@ -3,7 +3,17 @@
  * Pages do not load it — they load _core.js + the modules they use (see generatorScripts in .eleventy.js).
  * Non-enumerable extras: moduleOf (generator name → module) and MODULES (load order).
  */
-const MODULES = ['numeration', 'nombres', 'calcul', 'operations', 'fractions-decimaux', 'mesures', 'logique'];
+const MODULES = [
+  'numeration',
+  'nombres',
+  'calcul',
+  'operations',
+  'fractions-decimaux',
+  'mesures',
+  'geometrie',
+  'donnees',
+  'logique',
+];
 const all = {};
 const moduleOf = {};
 for (const m of MODULES) {

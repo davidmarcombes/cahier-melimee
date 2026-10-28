@@ -1,7 +1,8 @@
 ---
-type: number-check
-title: "Écris ce nombre en chiffres"
-answer: "72003400"
+type: mcq
+title: "Quelle écriture en chiffres ?"
+choices: ["72 003 400", "72 300 400", "72 003 040", "723 400"]
+answer: "72 003 400"
 ---
 
-Écris en chiffres : **soixante-douze-millions-trois-mille-quatre-cents**
+Choisis l'écriture en chiffres de : **soixante-douze-millions-trois-mille-quatre-cents**

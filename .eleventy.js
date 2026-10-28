@@ -41,13 +41,15 @@ function genBarModelSvg(bm) {
     GAP = 12;
   const F = 'font-family="system-ui,sans-serif"';
   const ans = String(bm.answer ?? '');
+  // "1 250" → 1250 (parseFloat stops at the space)
+  const num = (v) => parseFloat(String(v).replace(/\s/g, '').replace(',', '.'));
 
   if (bm.mode === 'part-whole') {
     const wholeIsUnk = String(bm.whole) === '?';
-    const wholeNum = wholeIsUnk ? parseFloat(ans) : parseFloat(String(bm.whole));
+    const wholeNum = wholeIsUnk ? num(ans) : num(bm.whole);
     const parts = (bm.parts || []).map((p) => ({
       isUnk: String(p) === '?',
-      val: String(p) === '?' ? parseFloat(ans) : parseFloat(String(p)),
+      val: String(p) === '?' ? num(ans) : num(p),
       label: String(p).replace('.', ','),
     }));
     const hasPartLabels = bm.partLabels && bm.partLabels.length;
@@ -80,9 +82,9 @@ function genBarModelSvg(bm) {
   }
 
   if (bm.mode === 'comparison') {
-    const refNum = parseFloat(String(bm.ref));
+    const refNum = num(bm.ref);
     const compIsUnk = String(bm.compared) === '?';
-    const compNum = compIsUnk ? parseFloat(ans) : parseFloat(String(bm.compared));
+    const compNum = compIsUnk ? num(ans) : num(bm.compared);
     const maxNum = Math.max(refNum, compNum);
     const refW = (refNum / maxNum) * W;
     const compW = (compNum / maxNum) * W;
@@ -449,14 +451,25 @@ module.exports = async function (eleventyConfig) {
       random = seeded(String(ex.inputPath || ex.url || ''));
       const repeat = ex.data.repeat || 1;
 
-      // For generator-based exercises, emit a single placeholder (runtime expands + fills)
+      // Spoken instruction (maternelle read-aloud), when the title alone is too short to read out
+      const isGs = /[\\/]fr[\\/](?:exercices|applications)[\\/]gs[\\/]/.test(ex.inputPath || '');
+      const spokenPrompt = ex.data.say || (isGs ? ex.data.title : '');
+
+      // For generator-based exercises, emit a single placeholder (runtime expands + fills); a fixed
+      // say: is read for every draw
       if (ex.data.generator) {
-        payload.push({
+        const placeholder = {
           title: ex.data.title || '',
           type: ex.data.type || 'number-check',
           body: (ex.templateContent || '').trim(),
           _gen: { name: ex.data.generator, params: ex.data.params || {}, count: repeat },
-        });
+        };
+        if (ex.data.say) {
+          placeholder.say = String(ex.data.say);
+          const clip = instructionClips[placeholder.say.replace(/\s+/g, ' ').trim()];
+          if (clip) placeholder.voiceAudio = clip;
+        }
+        payload.push(placeholder);
         return; // skip to next exercise
       }
 
@@ -510,9 +523,6 @@ module.exports = async function (eleventyConfig) {
               ? md.render(interpolate(String(ex.data.body))).trim()
               : '',
         };
-        // Spoken instruction (maternelle read-aloud), when the title alone is too short to read out
-        const isGs = /[\\/]fr[\\/](?:exercices|applications)[\\/]gs[\\/]/.test(ex.inputPath || '');
-        const spokenPrompt = ex.data.say || (isGs ? ex.data.title : '');
         if (spokenPrompt) {
           item.say = interpolate(String(spokenPrompt));
           const phrase = item.say.replace(/\s+/g, ' ').trim();
@@ -1089,7 +1099,9 @@ module.exports = async function (eleventyConfig) {
             return i >= 0 ? i : s.indexOf('.');
           };
           let maxIntLen, maxDecLen;
-          if (hasDecimal) {
+          // × is set right-aligned (« 3,47 × 6 »: the 6 under the 7), the comma placed in the product only;
+          // + and − line up the commas
+          if (hasDecimal && ex.data.operation !== '×') {
             const intPart = (s) => {
               const i = sepIdx(s);
               return i >= 0 ? s.slice(0, i) : s;
@@ -1182,6 +1194,16 @@ module.exports = async function (eleventyConfig) {
             item.machine.choices = (m.choices || []).map((c) => interpolate(String(c)));
             item.machine.answer = Number(m.answer);
           }
+        }
+
+        if (ex.data.type === 'grid-board' && ex.data.board) {
+          const b = ex.data.board;
+          item.board = {
+            ...b,
+            rows: Number(b.rows),
+            cols: Number(b.cols),
+            ...(b.at !== undefined && { at: Number(b.at) }),
+          };
         }
 
         if (ex.data.type === 'maze' && ex.data.maze) {
@@ -1472,6 +1494,7 @@ module.exports = async function (eleventyConfig) {
       'number-forms',
       'op-triangle',
       'number-strip',
+      'grid-board',
     ];
     const CSV_CLASSES = [
       'A1.1',
@@ -1570,6 +1593,7 @@ module.exports = async function (eleventyConfig) {
           removeEmptyAttributes: true,
           minifyCSS: true,
           minifyJS: true,
+          processScripts: ['application/ld+json'],
           useShortDoctype: true,
         });
       } catch (e) {

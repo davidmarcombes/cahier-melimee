@@ -26,6 +26,21 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const yaml = require('js-yaml');
+const { walk: boardWalk, shortest: boardShortest, mirrorTarget, drawSolution } = require('./lib/grid-board.js');
+const { readShape } = require('./lib/shapes.js');
+const { chanceText, tileColour } = require('./lib/hasard.js');
+const { manipulationText } = require('./lib/manipulations.js');
+// Angle drawings (trouverAngles, comparerAngles, rangerAngles): the polyline end–vertex–end as coordinates
+const angleText = (svg) => {
+  const m = String(svg).match(/<polyline\b[^>]*\spoints="([^"]+)"/);
+  if (!m) return '';
+  const [a, v, b] = m[1]
+    .trim()
+    .split(/\s+/)
+    .map((p) => `(${p.replace(',', ', ')})`);
+  return `angle de sommet ${v}, côtés jusqu'à ${a} et ${b}`;
+};
+const ANGLE_NOTE = `Les angles sont dessinés (coordonnées à l'écran, y vers le bas), sans mesure en degrés : calcule-les depuis les coordonnées. La longueur des côtés ne change pas la taille d'un angle.`;
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
@@ -103,6 +118,7 @@ const LLM_TYPES = new Set([
   'compare-solutions',
   'bar-chart',
   'tile-select',
+  'grid-board',
 ]);
 
 // ─── ANSI colours ────────────────────────────────────────────────────────────
@@ -274,15 +290,16 @@ function getGenerators() {
 }
 
 // Run a generator N times and return sample exercises as { data, body } pairs.
+// An item without its own title gets the file's (« Arrondis à la dizaine. » for « 953 ≈ ? »), as in the player.
 const SAMPLES_PER_GENERATOR = 3;
-function generateSamples(generatorName, params, body) {
+function generateSamples(generatorName, params, body, title) {
   const gens = getGenerators();
   if (!gens || !gens[generatorName]) return [];
   const out = [];
   for (let i = 0; i < SAMPLES_PER_GENERATOR; i++) {
     try {
       const item = gens[generatorName].generate(params || {});
-      if (item && item.type) out.push({ data: item, body, generatorName });
+      if (item && item.type) out.push({ data: item.title || !title ? item : { ...item, title }, body, generatorName });
     } catch {
       /* skip bad sample */
     }
@@ -395,7 +412,15 @@ function buildPrompt({ data, body }) {
     }
 
     case 'mcq': {
-      const bodyText = strip(data.body || body || '');
+      const pics = String(data.body || '').match(/<svg\b[\s\S]*?<\/svg>/g) || [];
+      const angles = pics.map(angleText);
+      // Urns, spinners, dice (hasard*): the drawing in words, with the body's sentence
+      const chance = pics.map(chanceText);
+      // Angle drawings are described below: their captions (A, B) are not the question
+      const bodyText =
+        angles.length && !chance.every(Boolean)
+          ? ''
+          : strip(String(data.body || body || '').replace(/<svg\b[\s\S]*?<\/svg>/g, ''));
       const question = bodyText || title;
       // Static files: choices + answer (text). Generators: mcqChoices + mcqAnswer (index)
       const list = data.mcqChoices || data.choices || [];
@@ -409,6 +434,12 @@ function buildPrompt({ data, body }) {
         title && title !== question && `Énoncé: ${strip(title)}`,
         data.operation && `Calcul: ${strip(String(data.operation))}`,
         data.generator && `(figure générée: ${data.generator})`,
+        ...(angles.length && angles.every(Boolean)
+          ? [...angles.map((t, i) => `Figure ${'ABCDEFGH'[i]}: ${t}`), ANGLE_NOTE]
+          : []),
+        ...(chance.length && chance.every(Boolean)
+          ? chance.map((t, i) => (chance.length > 1 ? `Figure ${'AB'[i]}: ${t}` : `Figure: ${t}`))
+          : []),
         `Choix proposés:\n${choices}`,
         `Réponse proposée comme étant la bonne : ${ans}`,
       ]
@@ -508,12 +539,15 @@ function buildPrompt({ data, body }) {
 
     case 'pyramid': {
       if (!Array.isArray(data.pyramid)) return null;
-      const rows = data.pyramid.map((r) => (Array.isArray(r) ? r.join('  ') : r));
+      // YAML rows are bottom-first; null = a hole the pupil fills
+      const rows = data.pyramid.map((r, i) =>
+        Array.isArray(r) ? `Rangée ${i + 1} : ${r.map((v) => (v == null ? '?' : v)).join(' | ')}` : r
+      );
       return [
-        `Type: pyramide d'additions (chaque case est la somme des deux cases en dessous)`,
+        `Type: pyramide d'additions (chaque case est la somme des deux cases juste en dessous d'elle ; la case c de la rangée r+1 = case c + case c+1 de la rangée r)`,
         title && `Contexte: ${title}`,
-        `Pyramide (du haut vers le bas) :\n${rows.join('\n')}`,
-        `Vérifie si toutes les sommes sont exactes.`,
+        `Pyramide, de la base (rangée 1) vers le sommet, « ? » = case à trouver :\n${rows.join('\n')}`,
+        `Vérifie que les cases données ne se contredisent pas et que chaque « ? » a une seule valeur possible (des nombres entiers positifs).`,
       ]
         .filter(Boolean)
         .join('\n');
@@ -570,28 +604,36 @@ function buildPrompt({ data, body }) {
       // Fraction picture tiles ({ gen, par: { n, d } }) are shown as « n/d (figure) »
       const raw = data.items || data.tiles || [];
       const items = raw.map((i) =>
-        i && typeof i === 'object'
-          ? i.par && i.par.d
-            ? `${i.par.n}/${i.par.d} (figure)`
-            : ''
-          : strip(String(i).replace(/<span class="fn">([^<]*)<\/span><span class="fd">([^<]*)<\/span>/g, '$1/$2'))
+        typeof i === 'string' && /<polyline\b/.test(i)
+          ? angleText(i)
+          : typeof i === 'string' && /<svg\b/.test(i) && tileColour(i)
+            ? `couleur ${tileColour(i)}`
+            : i && typeof i === 'object'
+              ? i.par && i.par.d
+                ? `${i.par.n}/${i.par.d} (figure)`
+                : ''
+              : strip(String(i).replace(/<span class="fn">([^<]*)<\/span><span class="fd">([^<]*)<\/span>/g, '$1/$2'))
       );
       if (items.some((i) => !i)) return null; // other picture tiles
       // Picture tiles are pre-rendered with their n/d spans, which sortValue() reads (= player.js)
       const value = (i) => (typeof raw[i] === 'object' ? raw[i].par.n / raw[i].par.d : sortValue(raw[i]));
-      const expected = data.sortKeepOrder
-        ? items
-        : items
-            .map((_, i) => i)
-            .sort((a, b) => (data.direction === 'desc' ? value(b) - value(a) : value(a) - value(b)))
-            .map((i) => items[i]);
+      // Picture tiles (angles, colours) keep their listed order, like sortKeepOrder
+      const expected =
+        data.sortKeepOrder || raw.some((i) => typeof i === 'string' && /<svg\b/.test(i))
+          ? items
+          : items
+              .map((_, i) => i)
+              .sort((a, b) => (data.direction === 'desc' ? value(b) - value(a) : value(a) - value(b)))
+              .map((i) => items[i]);
       return [
         `Type: ranger dans l'ordre`,
         title && `Consigne: ${title}`,
-        (data.body || body) && `Énoncé: ${tableText(data.body || body)}`,
+        (data.body || body) &&
+          `Énoncé: ${[tableText(String(data.body || body).replace(/<svg\b[\s\S]*?<\/svg>/g, '')), ...(String(data.body || body).match(/<svg\b[\s\S]*?<\/svg>/g) || []).map(chanceText)].filter(Boolean).join(' — ')}`,
         `Éléments à ranger: ${items.join(' ; ')}`,
         `Ordre attendu par le jeu (du premier au dernier): ${expected.join(' ; ')}`,
         `Vérifie que cet ordre respecte la consigne (sens croissant / décroissant, valeurs du tableau).`,
+        items.some((i) => i.startsWith('angle de sommet')) && ANGLE_NOTE,
       ]
         .filter(Boolean)
         .join('\n');
@@ -648,11 +690,122 @@ function buildPrompt({ data, body }) {
           ? `Type: droite graduée — l'élève doit placer le nombre ${fmt(data.answer)} sur une graduation`
           : `Type: droite graduée`,
         bodyText && `Question: ${bodyText}`,
-        `Graduation: de ${fmt(data.min)} à ${fmt(data.max)}, pas de ${fmt(data.step || 1)}`,
+        `Graduation: de ${fmt(data.min)} à ${fmt(data.max)}, pas de ${fmt(data.step || 1)}` +
+          // minor ticks: 850 sits on a graduation when step 100 is split in 2
+          (data.subdivisions > 1
+            ? `, chaque pas coupé en ${data.subdivisions} (petite graduation tous les ${fmt((data.step || 1) / data.subdivisions)})`
+            : ''),
         data.value != null && `Position du point ${data.label || 'A'}: ${data.value}`,
         place
           ? `Vérifie que ${fmt(data.answer)} est entre ${fmt(data.min)} et ${fmt(data.max)} et tombe exactement sur une graduation.`
           : `Réponse proposée: ${fmt(data.answer)}`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'grid-board': {
+      const b = data.board;
+      if (!b) return null;
+      if (b.mode === 'mirror') {
+        const AX = {
+          v: `verticale, entre les colonnes ${b.at} et ${b.at + 1}`,
+          h: `horizontale, entre les lignes ${b.at} et ${b.at + 1}`,
+          d: 'la diagonale du coin en haut à gauche au coin en bas à droite (elle traverse les cases ligne n, colonne n)',
+          a: 'la diagonale du coin en haut à droite au coin en bas à gauche',
+        };
+        const own = new Set(b.shape.map(String));
+        const add = new Set(mirrorTarget(b).map(String));
+        const rows = Array.from({ length: b.rows }, (_, r) =>
+          Array.from({ length: b.cols }, (_, c) => (own.has(`${r},${c}`) ? '#' : add.has(`${r},${c}`) ? 'o' : '.'))
+        );
+        const draw = (g) => g.map((row) => row.join(' ')).join('\n');
+        return [
+          `Type: symétrie axiale sur quadrillage — # = cases de la figure donnée, o = cases que l'élève doit colorier, . = vide ; lignes numérotées de haut en bas à partir de 1, colonnes de gauche à droite`,
+          title && `Consigne: ${title}`,
+          (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+          `Axe de symétrie: ${AX[b.axis]}`,
+          `Figure donnée (${b.rows} lignes × ${b.cols} colonnes):\n${draw(rows.map((row) => row.map((x) => (x === 'o' ? '.' : x))))}`,
+          `Réponse proposée (figure complétée):\n${draw(rows)}`,
+          `Question: les cases o sont-elles exactement les symétriques des cases # (sans case en trop ni manquante) ?`,
+        ]
+          .filter(Boolean)
+          .join('\n');
+      }
+      if (b.mode === 'draw') {
+        const P = ([r, c]) => `(${r} ; ${c})`;
+        const segs = (list) => list.map(([p, q]) => `${P(p)}–${P(q)}`).join(', ');
+        const AX = {
+          v: `verticale, colonne ${b.axis?.at}`,
+          h: `horizontale, ligne ${b.axis?.at}`,
+          d: 'la diagonale (r ; r)',
+          a: `l'autre diagonale (r ; ${b.cols} − r)`,
+        };
+        const WANT =
+          b.want &&
+          [
+            {
+              carre: 'un carré',
+              rectangle: 'un rectangle',
+              triangleRectangle: 'un triangle rectangle',
+              triangle: 'un triangle',
+            }[b.want.shape],
+            b.want.sides && `côtés ${b.want.sides.join(' et ')} carreaux`,
+            b.want.area && `aire ${b.want.area} carreaux`,
+            b.want.tilted && 'aucun côté sur les lignes du quadrillage',
+            b.want.inclusive && 'un carré compte comme rectangle',
+          ]
+            .filter(Boolean)
+            .join(', ');
+        return [
+          `Type: tracé sur ${b.paper === 'dots' ? 'papier pointé' : 'quadrillage'} — l'élève relie des points (ligne ; colonne), lignes 0 à ${b.rows} de haut en bas, colonnes 0 à ${b.cols} de gauche à droite ; un carreau = 1`,
+          title && `Consigne: ${title}`,
+          (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+          b.model && `Modèle à reproduire: ${segs(b.model)}`,
+          b.anchor && `Point de départ: le point ${P(b.anchor.from)} du modèle va au point rouge ${P(b.anchor.to)}`,
+          b.task === 'copy' && !b.anchor && `Le modèle peut être reproduit n'importe où sur le quadrillage`,
+          b.given && `Traits déjà tracés: ${segs(b.given)}`,
+          b.axis && `Axe de symétrie (rouge): ${AX[b.axis.axis]}`,
+          b.ref && `Droite d (bleue): ${segs([b.ref])} ; point A ${P(b.through)}`,
+          WANT && `Figure demandée: ${WANT}`,
+          `Réponse proposée (traits à tracer): ${segs(drawSolution(b))}`,
+          `Question: la réponse proposée répond-elle exactement à la consigne, et la consigne est-elle claire pour un élève ?`,
+        ]
+          .filter(Boolean)
+          .join('\n');
+      }
+      const LBL = { U: '↑', D: '↓', L: '←', R: '→', F: 'avance', TL: 'tourne à gauche', TR: 'tourne à droite' };
+      const say = (t) => {
+        const m = /^(TL|TR|[UDLRF])(\d*)$/.exec(t) || [];
+        return `${LBL[m[1]] || t}${m[2] ? ' ×' + m[2] : ''}`;
+      };
+      const at = (list, r, c) => (list || []).find((k) => k[0] === r && k[1] === c);
+      const grid = Array.from({ length: b.rows }, (_, r) =>
+        Array.from({ length: b.cols }, (_, c) =>
+          r === b.start[0] && c === b.start[1]
+            ? 'R'
+            : at(b.blocks, r, c)
+              ? '#'
+              : b.goal && b.goal[0] === r && b.goal[1] === c
+                ? '*'
+                : '.'
+        ).join(' ')
+      ).join('\n');
+      const cell = (p) => `ligne ${p[0] + 1}, colonne ${p[1] + 1}`;
+      const run = b.program ? boardWalk(b, b.program) : null;
+      return [
+        `Type: robot sur quadrillage — R = robot, # = obstacle infranchissable, * = arrivée visée ; lignes numérotées de haut en bas, ↑ = vers le haut`,
+        b.dir &&
+          `Le robot regarde vers ${{ N: 'le haut', E: 'la droite', S: 'le bas', W: 'la gauche' }[b.dir]} ; « avance » suit son regard, « tourne » le fait pivoter sur place`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Grille (${b.rows} lignes × ${b.cols} colonnes):\n${grid}`,
+        b.program && `Programme: ${b.program.map(say).join(' ; ')}`,
+        b.mode === 'follow' && run && run.end && `Réponse proposée: le robot arrive ${cell(run.end)}`,
+        b.mode === 'write' &&
+          `Réponse proposée: un programme existe (le plus court fait ${boardShortest(b)} instructions d'une case)${b.maxSteps ? `, limite ${b.maxSteps}` : ''}`,
+        b.mode === 'debug' &&
+          `Réponse proposée: l'instruction fausse est la n° ${b.bug + 1} (${say(b.program[b.bug])}) ; c'est la seule qu'on peut corriger pour arriver sur *`,
       ]
         .filter(Boolean)
         .join('\n');
@@ -829,14 +982,36 @@ function buildPrompt({ data, body }) {
 
     case 'tile-select': {
       if (!Array.isArray(data.tiles)) return null;
-      const tiles = data.tiles.map((t) => (typeof t === 'object' ? '' : strip(String(t))));
+      // Shape tiles (trouverFormes): the drawing as coordinates, for the model to measure sides and angles
+      const shapeText = (t) => {
+        const sh = readShape(t);
+        if (!sh) return '';
+        if (sh.kind === 'circle') return 'cercle';
+        if (sh.kind === 'ellipse') return `ellipse, grand axe / petit axe = ${sh.ratio.toFixed(2)}`;
+        return `polygone de sommets ${sh.pts.map(([x, y]) => `(${x}, ${y})`).join(' ')}`;
+      };
+      const tiles = data.tiles.map((t) =>
+        typeof t === 'object'
+          ? ''
+          : /<polyline\b/.test(t)
+            ? angleText(t)
+            : (/<svg\b/.test(t) && shapeText(t)) || strip(String(t)) || (data.positional ? '(case vide)' : '')
+      );
+      // Balance, die (GS manipulations): the drawing in words
+      const figures = (String(data.body || '').match(/<svg\b[\s\S]*?<\/svg>/g) || []).map(manipulationText);
       if (tiles.some((t) => !t)) return null; // picture tiles
       const good = new Set((data.tileAnswers || []).map(Number));
       return [
         `Type: sélection de cases (les cases cochées [✓] sont les réponses proposées)`,
         title && `Consigne: ${title}`,
-        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        data.say && `Consigne lue à voix haute: ${data.say}`,
+        (data.body || body) && strip(data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        ...figures.filter(Boolean).map((t) => `Figure: ${t}`),
         ...tiles.map((t, i) => `[${good.has(i) ? '✓' : ' '}] ${t}`),
+        data.positional && `Les cases sont dans l'ordre, de gauche à droite (case 1 = la première).`,
+        tiles.some((t) => t.startsWith('polygone')) &&
+          `Les figures sont dessinées dans toutes les orientations (coordonnées à l'écran, y vers le bas) : mesure les côtés et les angles.`,
+        tiles.some((t) => t.startsWith('angle de sommet')) && ANGLE_NOTE,
       ]
         .filter(Boolean)
         .join('\n');
@@ -1205,7 +1380,7 @@ function collectTasks(cache) {
       if (FILTER_TYPE && !FILTER_TYPE.has(t)) continue;
       if (ex.data.generator) {
         // Application exercise: run generator to produce real samples
-        const samples = generateSamples(ex.data.generator, ex.data.params, ex.body);
+        const samples = generateSamples(ex.data.generator, ex.data.params, ex.body, ex.data.title);
         for (const s of samples) {
           if (LLM_TYPES.has(s.data.type || 'number-check')) relevant.push(s);
         }

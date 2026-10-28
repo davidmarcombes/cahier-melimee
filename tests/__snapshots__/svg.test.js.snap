@@ -13,9 +13,9 @@ exports[`SVG generators > rectangleSvg > matches snapshot (no labels) 1`] = `
 `;
 
 exports[`SVG generators > rectangleSvg > matches snapshot (with labels) 1`] = `
-"<svg width="150" height="110" viewBox="0 0 150 110" xmlns="http://www.w3.org/2000/svg" ><rect x="35" y="35" width="80" height="40" fill="var(--sf)" stroke="var(--ct)" stroke-width="2"/>
-    <text x="75" y="100" text-anchor="middle" font-family="system-ui,sans-serif" fill="var(--ct)">8 cm</text>
-    <text x="25" y="55" text-anchor="end" dominant-baseline="middle" font-family="system-ui,sans-serif" fill="var(--ct)">4 cm</text></svg>"
+"<svg width="185" height="110" viewBox="0 0 185 110" xmlns="http://www.w3.org/2000/svg" ><rect x="70" y="35" width="80" height="40" fill="var(--sf)" stroke="var(--ct)" stroke-width="2"/>
+    <text x="110" y="100" text-anchor="middle" font-family="system-ui,sans-serif" fill="var(--ct)">8 cm</text>
+    <text x="60" y="55" text-anchor="end" dominant-baseline="middle" font-family="system-ui,sans-serif" fill="var(--ct)">4 cm</text></svg>"
 `;
 
 exports[`SVG generators > slicedPieSvg > matches snapshot (3 of 4 slices filled) 1`] = `"<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" ><g stroke="var(--cs)" stroke-width="1"><path d="M50,50L50,2A48,48,0,0,1,98,50Z" fill="var(--p)"/><path d="M50,50L98,50A48,48,0,0,1,50,98Z" fill="var(--p)"/><path d="M50,50L50,98A48,48,0,0,1,2,50Z" fill="var(--p)"/><path d="M50,50L2,50A48,48,0,0,1,50,2Z" fill="var(--sf)"/></g></svg>"`;

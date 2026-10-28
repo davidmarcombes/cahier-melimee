@@ -1,0 +1,136 @@
+---
+layout: null
+permalink: /llms-full.txt
+eleventyExcludeFromCollections: true
+---
+# Le Cahier de Mélimée — Documentation complète
+
+> Des maths pour s'entraîner, du CP au CM2. Plateforme libre, gratuite, souveraine et respectueuse de la vie privée.
+
+Ce document fournit une vue exhaustive du contenu, de la structure didactique et de l'architecture technique de la plateforme « Le Cahier de Mélimée » ({{ site.url }}).
+
+## 1. Vue d'ensemble du projet
+
+- **Nom :** {{ site.title | safe }}
+- **URL officielle :** {{ site.url }}
+- **Dépôt source :** {{ site.repo }}
+- **Licence :** EUPL v1.2 (European Union Public Licence - Copyleft)
+- **Auteurs :** {{ site.author | safe }}
+- **Contact :** {{ site.email }}
+- **Cible :** Élèves du primaire (Grande Section au CM2), enseignants du premier degré, parents, et dispositifs d'aide ou de remédiation scolaire (ULIS, RASED).
+- **Garantie vie privée :** Aucun cookie, aucun système de traçage tiers, aucune publicité. Données d'exercice enregistrées en local uniquement (HTML5 Web Storage). Aucune inscription ni compte utilisateur requis.
+
+## 2. Fondements pédagogiques et didactiques
+
+Le Cahier de Mélimée repose sur les principes de la didactique moderne des mathématiques :
+- **Théorie des champs conceptuels (Gérard Vergnaud) :**
+  - Structures additives (composition de deux états, transformation d'état, comparaison d'états).
+  - Structures multiplicatives (proportionnalité simple, produit de mesures).
+- **Représentations multiples :** Chaque concept est décliné sous plusieurs formes sémiotiques (langage naturel, écriture symbolique chiffrée, schémas, matériel virtuel manipulable, représentations géométriques).
+- **Progressivité et remédiation :**
+  - Niveau 1 (Facile) : guidage fort, aides visuelles complètes, nombres simples.
+  - Niveau 2 (Moyen) : guidance intermédiaire, automatisation des procédures.
+  - Niveau 3 (Difficile) : transfert dans des contextes plus abstraits ou nombres plus élevés.
+
+## 3. Répertoire des domaines par niveau scolaire
+
+### Grande Section (GS)
+- **Calcul :** Premières additions avec support visuel, compléments à 5 et 10.
+- **Géométrie :** Reconnaissance des formes de base (carré, rond, triangle, rectangle), algorithmes visuels, alignements.
+- **Logique :** Tris par couleur, taille et forme, puzzles, suites ordonnées.
+- **Mesures :** Comparaison directe de longueurs et de contenances.
+- **Numération :** Dénombrement jusqu'à 10, constellations du dé, doigts de la main, écriture chiffrée.
+- **Problèmes :** Situations simples d'ajout et de retrait sur images.
+
+### Cours Préparatoire (CP)
+- **Calcul :** Tables d'addition, calcul mental, soustractions simples, décompositions des nombres jusqu'à 20.
+- **Données :** Premiers tableaux à double entrée.
+- **Géométrie :** Figures usuelles, repérage sur quadrillage, déplacements codés.
+- **Logique :** Suites logiques, déductions simples.
+- **Mesures :** Utilisation de la règle graduée (cm), lecture de l'heure pile et demie, pièces de monnaie (1€, 2€).
+- **Numération :** Nombres de 0 à 100, dizaines et unités, comparaison (<, >), droite numérique.
+- **Problèmes :** Problèmes additifs et soustractifs simples du quotidien.
+
+### Cours Élémentaire 1 (CE1)
+- **Calcul :** Additions posées, calcul réfléchi (passage par la dizaine), arbres de calcul, introduction aux tables de multiplication (2, 3, 4, 5, 10).
+- **Données :** Tableaux à double entrée, diagrammes en bâtons.
+- **Fractions :** Initiation intuitive (moitié, quart).
+- **Géométrie :** Angle droit, symétrie axiale, reproduction sur quadrillage, solides simples.
+- **Logique :** Énigmes logiques, grilles de déduction.
+- **Mesures :** Monnaie (euros et centimes), lecture de l'heure (quarts, moins le quart), masses (g, kg), longueurs (m, dm, cm).
+- **Numération :** Nombres jusqu'à 1000, centaines, décomposition additive.
+- **Problèmes :** Situations de partage équitable, comparaisons, problèmes à étapes.
+
+### Cours Élémentaire 2 (CE2)
+- **Calcul :** Multiplication posée, tables de multiplication de 0 à 10, soustraction avec retenue, division sans reste.
+- **Données :** Graphiques cartésiens simples, tableaux complexes.
+- **Fractions :** Écritures fractionnaires simples (1/2, 1/3, 1/4, 3/4).
+- **Géométrie :** Polygones, cercles (compas), solides (faces, arêtes, sommets), symétrie.
+- **Logique :** Raisonnement par élimination, carrés magiques.
+- **Mesures :** Conversions simples de mesures (km, m, cm, mm ; kg, g ; l, cl), durées (secondes, minutes, heures).
+- **Numération :** Nombres jusqu'à 10 000, ordre de grandeur.
+- **Problèmes :** Problèmes à deux opérations combinées, logique multiplicative.
+
+### Cours Moyen 1 (CM1)
+- **Calcul :** Division posée à un chiffre, calcul mental avec multiples, parenthèses dans les calculs.
+- **Décimaux :** Découverte des dixièmes et centièmes, passage écriture fractionnaire / écriture à virgule.
+- **Données :** Graphiques et courbes d'évolution.
+- **Fractions :** Sommes de fractions de même dénominateur, encadrement entre deux entiers.
+- **Géométrie :** Triangles particuliers, parallélogrammes, axes de symétrie multiples, programmes de construction.
+- **Logique :** Chaînes de déduction, raisonnement algorithmique.
+- **Mesures :** Périmètres de polygones réguliers et complexes, aires par comptage de carreaux.
+- **Numération :** Grands nombres jusqu'au million.
+- **Problèmes :** Situations de proportionnalité simple (règle de trois intuitive), étapes multiples.
+- **Proportions :** Recettes, échelles, tableaux de proportionnalité.
+
+### Cours Moyen 2 (CM2)
+- **Calcul :** Multiplication et division posée avec des nombres décimaux, priorités opératoires.
+- **Décimaux :** Nombres décimaux jusqu'aux millièmes, repérage sur droite graduée fine.
+- **Données :** Tableaux statistiques, pourcentages et moyennes.
+- **Fractions :** Fractions décimales, comparaison et simplification de fractions.
+- **Géométrie :** Hauteur d'un triangle, solides complexes (prismes, pyramides), patrons.
+- **Logique :** Algorithmes et programmation visuelle débranchée.
+- **Mesures :** Calculs d'aires (carré, rectangle, triangle), volumes (cube, pavé droit), conversions d'unités d'aire.
+- **Numération :** Nombres jusqu'au milliard, puissances de 10.
+- **Problèmes :** Problèmes complexes de recherche et de synthèse.
+- **Proportions :** Pourcentages, vitesses moyennes, échelles.
+
+## 4. Typologie des composants d'exercices interactifs
+
+La plateforme implémente plus de 50 types d'interactions didactiques développées avec des micro-composants réactifs :
+- **Pyramides d'additions :** Remplissage des briques où chaque brique est la somme des deux briques inférieures.
+- **Arbres de calcul :** Visualisation de la décomposition des opérations arithmétiques.
+- **Balances de Roberval :** Équilibration de masses pour modéliser l'égalité algébrique et la recherche d'inconnue.
+- **Droites et règles graduées :** Placement de points, lecture d'abscisses entières ou décimales.
+- **Fractions visuelles :** Disques et bandes fractionnaires découpées dynamiquement en SVG.
+- **Horloges analogiques :** Lecture et manipulation des aiguilles des heures et minutes.
+- **Casiers et boîtes de dix :** Modélisation de la dizaine et du groupement-échange (méthode de Singapour / Brissiaud).
+- **Monnaie virtuelle :** Manipulation de pièces et billets en euros pour constituer une somme ou rendre la monnaie.
+- **Grilles et repères :** Déplacements codés, quadrillages et repérage spatial.
+
+## 5. Données ouvertes et intégration
+
+- **Export global CSV :** Accessible en direct à l'adresse `{{ site.url }}/fr/exercices/data.csv`.
+  Colonnes : `id,l,s,t,title,d,f,ty,cl`
+  - `id` : Identifiant unique hexadécimal à 8 caractères de la série.
+  - `l` : Code niveau (0 = GS, 1 = CP, 2 = CE1, 3 = CE2, 4 = CM1, 5 = CM2).
+  - `s` : Discipline (`M` = Mathématiques).
+  - `t` : Sous-thème / domaine (`calcul`, `geometrie`, `mesures`, `numeration`, `fractions`, etc.).
+  - `title` : Titre pédagogique de la série.
+  - `d` : Niveau de difficulté (1 = facile, 2 = moyen, 3 = difficile).
+  - `f` : Format (`e` = exercice, `a` = application, `d` = défi).
+  - `ty` : Code de type de l'exercice.
+  - `cl` : Classification Vergnaud / compétence.
+- **Accès direct à une série :**
+  - Exercice : `{{ site.url }}/fr/exercices/<id>/`
+  - Application : `{{ site.url }}/fr/applications/<id>/`
+  - Défi : `{{ site.url }}/fr/defis/<id>/`
+
+## 6. Architecture technique
+
+- **Générateur statique :** Eleventy (11ty) v3.x.
+- **Styles :** Tailwind CSS avec design tokens stricts (`design-tokens.json`).
+- **Interactivité :** Alpine.js pour la réactivité sans framework lourd.
+- **Performance :** Pages statiques pré-rendues, CSS minifié, images optimisées (WebP/AVIF), aucun JavaScript superflu.
+- **Validation continue :** Tests unitaires Vitest, tests de non-régression visuelle et fonctionnelle Playwright, contrôle d'accessibilité (axe / html-validate).
+

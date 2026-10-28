@@ -146,11 +146,12 @@ function circleSvg(r, label = '', fillColor = 'var(--sf)') {
 function rectangleSvg(w, h, labelW = '', labelH = '', fillColor = 'var(--sf)') {
   const f = SVG.f,
     p = labelW || labelH ? 35 : 5,
-    tw = w + p * 2,
+    pl = labelH ? 70 : p, // room for « 12 cm » left of the rectangle
+    tw = w + p + pl,
     th = h + p * 2;
-  const res = `<rect x="${p}" y="${p}" width="${w}" height="${h}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
-    ${labelW ? `<text x="${f(p + w / 2)}" y="${f(p + h + 25)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelW}</text>` : ''}
-    ${labelH ? `<text x="${f(p - 10)}" y="${f(p + h / 2)}" text-anchor="end" dominant-baseline="middle" font-family="${SVG.font}" fill="var(--ct)">${labelH}</text>` : ''}`;
+  const res = `<rect x="${pl}" y="${p}" width="${w}" height="${h}" fill="${fillColor}" stroke="var(--ct)" stroke-width="2"/>
+    ${labelW ? `<text x="${f(pl + w / 2)}" y="${f(p + h + 25)}" text-anchor="middle" font-family="${SVG.font}" fill="var(--ct)">${labelW}</text>` : ''}
+    ${labelH ? `<text x="${f(pl - 10)}" y="${f(p + h / 2)}" text-anchor="end" dominant-baseline="middle" font-family="${SVG.font}" fill="var(--ct)">${labelH}</text>` : ''}`;
   return SVG.tag(tw, th, res);
 }
 
@@ -865,7 +866,7 @@ function numberLineSvg(nl) {
   for (let v = min, i = 0; v <= max + 1e-9; v = Math.round((v + step) * 1e9) / 1e9, i++) {
     const x = PAD + (v - min) * uw;
     s += `<line x1="${x}" y1="${LY - 10}" x2="${x}" y2="${LY + 6}" stroke="currentColor" stroke-width="2"/>`;
-    const lbl = Number.isInteger(v) ? String(v) : String(Math.round(v * 1000) / 1000);
+    const lbl = Number.isInteger(v) ? String(v) : String(Math.round(v * 1000) / 1000).replace('.', ',');
     s += `<text x="${x}" y="${LY + 21}" text-anchor="middle" fill="currentColor" font-size="12" font-weight="500">${lbl}</text>`;
 
     // Minor ticks (subdivisions) between this major tick and the next

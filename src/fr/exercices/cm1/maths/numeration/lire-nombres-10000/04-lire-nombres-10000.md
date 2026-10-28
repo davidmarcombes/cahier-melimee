@@ -1,7 +1,8 @@
 ---
-type: number-check
-title: "Écris ce nombre en chiffres"
-answer: "5060"
+type: mcq
+title: "Quelle écriture en chiffres ?"
+choices: ["5 060", "5 600", "50 060", "560"]
+answer: "5 060"
 ---
 
-Écris en chiffres : **cinq-mille-soixante**
+Choisis l'écriture en chiffres de : **cinq-mille-soixante**
