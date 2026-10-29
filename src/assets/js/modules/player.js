@@ -349,6 +349,8 @@ export function seriesPlayer(exercises, seriesId) {
 
     _setupCurrentExercise() {
       const _e = this.cur;
+      // Fields are reused across exercises: drop the right / wrong marks of enterField
+      this.$root?.querySelectorAll('[data-field]').forEach((f) => delete f.dataset.field);
       this.countWrong = null;
       this.countChoices = this.kid && _e.type === 'count-objects' ? this._nearChoices(Number(_e.answers?.[0])) : [];
       this.countShow();
@@ -648,6 +650,32 @@ export function seriesPlayer(exercises, seriesId) {
         }
       }
       return parts;
+    },
+
+    // A blank whose answer is a whole number of 4+ digits: digit groups appear as you type
+    // (« 34000000 » → « 34 000 000 »); normalizeAnswer ignores the spaces when checking.
+    _bigAnswer(idx) {
+      return /^\d{4,}$/.test(String(this.cur.answers?.[idx] ?? ''));
+    },
+
+    trouInput(e, idx) {
+      const el = e.target;
+      if (this._bigAnswer(idx) && /^[\d ]*$/.test(el.value)) {
+        const caretDigits = el.value.slice(0, el.selectionStart).replace(/ /g, '').length;
+        const v = el.value.replace(/ /g, '').replace(/\B(?=(\d{3})+$)/g, ' ');
+        el.value = v;
+        let pos = 0;
+        for (let d = 0; pos < v.length && d < caretDigits; pos++) if (v[pos] !== ' ') d++;
+        el.setSelectionRange(pos, pos);
+      }
+      this.trouInputs[idx] = el.value;
+    },
+
+    // Blank width from the expected answer, digit-group spaces included
+    trouWidth(idx) {
+      const n = String(this.cur.answers?.[idx] ?? '').length;
+      const ch = this._bigAnswer(idx) ? n + Math.floor((n - 1) / 3) : n;
+      return `calc(${Math.max(2, ch)}ch + 2.5rem)`;
     },
 
     tileTap(i) {
@@ -2342,6 +2370,101 @@ export function seriesPlayer(exercises, seriesId) {
       }, SETTINGS.ERROR_FLASH_DURATION);
     },
 
+    // The answer fields of the exercise on screen, in page order (the minifier drops type="text": the
+    // property, not the attribute)
+    _fields(el) {
+      return [...el.closest('.js-player').querySelectorAll('input')].filter(
+        (f) => f.type === 'text' && !f.disabled && f.offsetParent !== null
+      );
+    },
+
+    // Focus the next empty field after `el` (wrapping round); false when every field is filled
+    _focusNextField(el) {
+      const fields = this._fields(el);
+      const empty = fields.filter((f) => f !== el && !f.value.trim());
+      const next = empty.find((f) => fields.indexOf(f) > fields.indexOf(el)) || empty[0];
+      if (next) next.focus();
+      return !!next;
+    },
+
+    /* Enter in one field of a several-field exercise: that field alone is checked (green when right;
+       when wrong a red flash and the focus stays), then the focus goes to the next empty field. With
+       every field filled, Enter checks the whole exercise, like « Vérifier ». */
+    enterField(el, key) {
+      if (this.solved) return;
+      if (!this._fields(el).some((f) => !f.value.trim())) return this.check();
+      if (el.value.trim()) {
+        const ok = this._fieldOk(key);
+        el.addEventListener('input', () => delete el.dataset.field, { once: true });
+        if (ok === false) {
+          el.dataset.field = 'bad';
+          this._kidFeedback(false);
+          setTimeout(() => {
+            if (el.dataset.field === 'bad') delete el.dataset.field;
+          }, SETTINGS.ERROR_FLASH_DURATION);
+          return;
+        }
+        if (ok) el.dataset.field = 'ok';
+      }
+      this._focusNextField(el);
+    },
+
+    // One field judged alone (`key` as in the type's inputs array): true / false, undefined when it
+    // cannot be judged without the others (puzzles: futoshiki, kenken)
+    _fieldOk(key) {
+      const _e = this.cur;
+      const eq = (v, a) => normalizeAnswer(v ?? '') === normalizeAnswer(String(a));
+      switch (_e.type) {
+        case 'fill-table': {
+          const cell = (_e.table?.rows || []).flat().find((c) => c.blank && c.idx === key);
+          return cell ? eq(this.tableInputs[key], cell.answer) : undefined;
+        }
+        case 'sequence':
+        case 'bounding':
+        case 'convert':
+        case 'number-forms':
+        case 'op-triangle': {
+          const s = _e.sequence || _e.bounding || _e.convert || _e.forms || _e.opTri;
+          const answers = s.answers || s.items.filter((it) => it.blank).map((it) => it.answer);
+          return eq(this.seqInputs[key], answers[key]);
+        }
+        case 'calc-chain':
+          return eq(this.ccInputs[key], _e.chain.steps[key].answer);
+        case 'decomp':
+          return eq(this.decompInputs[key], _e.decomp.parts.filter((p) => !p.comma)[key].answer);
+        case 'fact-family':
+          return eq(this.ffInputs[key], _e.ffEquations[key].answer);
+        case 'tri-arith':
+          return eq(this.triInputs[key], [..._e.triangle.vertices, ..._e.triangle.edges][key]);
+        case 'pyramid': {
+          const p = _e.pyramid;
+          for (let r = 0; r < p.rows.length; r++)
+            for (let c = 0; c < p.rows[r].length; c++)
+              if (this.pyramidFlatIdx(r, c) === key) return eq(this.pyramidInputs[key], p.rows[r][c]);
+          return undefined;
+        }
+        case 'decimal-triple': {
+          const v = this.dtInputs[key];
+          if (key === 'fracNum') return eq(v, _e.dtFrac.num);
+          if (key === 'fracDen') return eq(v, _e.dtFrac.den);
+          if (key === 'decimal') return eq(v, _e.dtDecimal);
+          return eq(v, (_e.dtPlaces || [])[['dizaines', 'unites', 'dixiemes', 'centiemes', 'milliemes'].indexOf(key)]);
+        }
+        case 'estimation':
+          return key === 'est'
+            ? (_e.estAnswers || []).some((a) => eq(this.estInput, a))
+            : (_e.answers || []).some((a) => eq(this.userInput, a));
+        // x, y / numerator, denominator: right when some accepted answer has it
+        case 'coordinate-grid':
+          return (_e.answers || []).some((a) => eq(this.cgInputs[key], a.split(',')[key]));
+        case 'fraction-check':
+          return (_e.answers || []).some((a) => eq(this.rfInputs[key], a.split('/')[key]));
+        default:
+          // Blanks in an operation (« 3 + ? = 7 », column-op)
+          return this.trouInputs.length > 1 ? eq(this.trouInputs[key], (_e.answers || [])[key]) : undefined;
+      }
+    },
+
     matchTap(side, i) {
       if (this.solved) return;
       // Tapping a linked item unlinks it (left: and selects it, ready to be linked again)
@@ -2498,24 +2621,15 @@ export function seriesPlayer(exercises, seriesId) {
       }
     },
 
-    mqCheck(i) {
+    // el: the field where Enter was pressed (the focus then goes to the next empty one)
+    mqCheck(i, el) {
       const q = this.cur.mqQuestions;
       if (!q || this.mqSolved[i] || !this.mqInputs[i]?.trim()) return;
       if (normalizeAnswer(this.mqInputs[i]) === normalizeAnswer(q[i].answer)) {
         this.mqSolved[i] = true;
         this.mqErrors = this.mqErrors.filter((e) => e !== i);
         if (this.mqSolved.every(Boolean)) this._markSolvedAndAdvance();
-        else {
-          this.$nextTick(() => {
-            for (let j = i + 1; j < q.length; j++) {
-              if (!this.mqSolved[j]) {
-                const ref = this.$refs['mqInput' + j];
-                if (ref) ref.focus();
-                return;
-              }
-            }
-          });
-        }
+        else if (el) this._focusNextField(el);
       } else {
         this.mqErrors = [...this.mqErrors.filter((e) => e !== i), i];
         setTimeout(() => {
@@ -2530,13 +2644,20 @@ export function seriesPlayer(exercises, seriesId) {
       this.bcErrors = this.bcErrors.filter((e) => e !== colIdx);
     },
 
-    bcCheck(i) {
-      if (!this.cur.bc?.questions || this.bcSolved[i]) return;
+    // bcErrors holds bar indices in build mode, question indices in read mode: only build-mode errors redden a bar
+    bcBarError(colIdx) {
+      return this.cur.bc?.mode === 'build' && this.bcErrors.includes(colIdx);
+    },
+
+    // el: as in mqCheck
+    bcCheck(i, el) {
+      if (!this.cur.bc?.questions || this.bcSolved[i] || !this.bcInputs[i]?.trim()) return;
       const q = this.cur.bc.questions[i];
       if (normalizeAnswer(this.bcInputs[i]) === normalizeAnswer(q.answer)) {
         this.bcSolved[i] = true;
         this.bcErrors = this.bcErrors.filter((e) => e !== i);
         if (this.bcSolved.every(Boolean)) this._markSolvedAndAdvance();
+        else if (el) this._focusNextField(el);
       } else {
         if (!this.bcErrors.includes(i)) this.bcErrors = [...this.bcErrors, i];
         setTimeout(() => {

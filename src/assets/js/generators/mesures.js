@@ -588,11 +588,12 @@
       },
     },
 
-    // porteMonnaie: count a wallet drawn with moneySvg — euros first, then centimes, then the total
-    // (centimes ≥ 100 make an extra euro: 1 € 20 c of small coins + 18 € = 19 € 20 c).
+    // porteMonnaie: count a wallet drawn with moneySvg — euros, then centimes, all questions shown at once
+    // so the steps are visible. Only when the centimes reach 1 € or more does it add the total
+    // (1 € 20 c of small coins + 18 € = 19 € 20 c); below, euros + centimes already are the total.
     // params: notes ([500, 1000, 2000, 5000] cents), minNotes (1), maxNotes (2),
-    //         euroCoins ([100, 200]), maxEuroCoins (2), cents ([5, 10, 20, 50]), minCents (2), maxCents (4),
-    //         carryRate (0.4 — share of wallets whose centimes reach 1 € or more)
+    //         euroCoins ([100, 200]), minEuroCoins (0), maxEuroCoins (2), cents ([5, 10, 20, 50]),
+    //         minCents (2), maxCents (4), carryRate (0.4 — share of wallets whose centimes reach 1 € or more)
     // compterEuros: « Combien d’euros ? » for a wallet of whole-euro coins and notes drawn with moneySvg (CP–CE1).
     // params: coins ([100, 200] cents), notes ([500, 1000]), maxItems (4), max (20 — total in €)
     compterEuros: {
@@ -628,7 +629,7 @@
         for (let tries = 0; tries < 50; tries++) {
           const big = [
             ...pick(notes, rand(params.minNotes ?? 1, params.maxNotes ?? 2)),
-            ...pick(euroCoins, rand(0, params.maxEuroCoins ?? 2)),
+            ...pick(euroCoins, rand(params.minEuroCoins ?? 0, params.maxEuroCoins ?? 2)),
           ];
           const small = pick(cents, rand(params.minCents ?? 2, params.maxCents ?? 4));
           items = [...big, ...small];
@@ -638,17 +639,17 @@
         }
         const total = euros * 100 + centimes;
 
-        return {
-          type: 'multi-question',
-          mqSequential: true,
-          svg: { gen: 'moneySvg', par: { items } },
-          mqQuestions: [
-            { text: 'Les billets et les pièces en euros font… (en €)', answer: String(euros) },
-            { text: 'Les pièces en centimes font… (en c)', answer: String(centimes) },
+        const mqQuestions = [
+          { text: 'Les billets et les pièces en euros font… (en €)', answer: String(euros) },
+          { text: 'Les pièces en centimes font… (en c)', answer: String(centimes) },
+        ];
+        if (centimes >= 100)
+          mqQuestions.push(
             { text: 'Somme totale : combien d’euros ?', answer: String(Math.floor(total / 100)) },
-            { text: '… et combien de centimes ?', answer: String(total % 100) },
-          ],
-        };
+            { text: '… et combien de centimes ?', answer: String(total % 100) }
+          );
+
+        return { type: 'multi-question', svg: { gen: 'moneySvg', par: { items } }, mqQuestions };
       },
     },
 

@@ -99,11 +99,12 @@ async function runHealthChecks(page, url) {
   //    overflow horizontally (checked per exercise: content width varies from one to the next)
   const walk = await page.evaluate(async () => {
     const root = document.querySelector('[x-data^="seriesPlayer"]');
-    if (!root || !window.Alpine) return { out: [], overflow: [], empty: [] };
+    if (!root || !window.Alpine) return { out: [], overflow: [], empty: [], noVerify: [] };
     const p = window.Alpine.$data(root);
     const out = [];
     const overflow = [];
     const empty = [];
+    const noVerify = [];
     const frame = () => new Promise((r) => setTimeout(r, 50));
     for (let i = 0; i < p.exercises.length; i++) {
       p.currentIndex = i; // not goTo(): no URL-hash navigation while the test walks the exercises
@@ -128,6 +129,13 @@ async function runHealthChecks(page, url) {
           .trim()
       )
         empty.push(`#${i + 1} (${t})`);
+      // Answer fields always come with a « Vérifier » button (Enter alone checks one field at a time)
+      const shownEl = (el) => el.offsetHeight > 0;
+      if (
+        [...root.querySelectorAll('input')].some((f) => f.type === 'text' && shownEl(f)) &&
+        ![...root.querySelectorAll('button')].some((b) => shownEl(b) && /Vérifier/.test(b.textContent))
+      )
+        noVerify.push(`#${i + 1} (${t})`);
       const doc = document.documentElement;
       if (doc.scrollWidth > doc.clientWidth + 5)
         overflow.push(`#${i + 1} (${t}, ${doc.scrollWidth}px > ${doc.clientWidth}px)`);
@@ -159,11 +167,12 @@ async function runHealthChecks(page, url) {
         );
     }
 
-    return { out, overflow, empty };
+    return { out, overflow, empty, noVerify };
   });
   if (walk.out.length) issues.push(`exercises with no visible type block: ${walk.out.join(', ')}`);
   if (walk.overflow.length) issues.push(`horizontal overflow on exercise ${walk.overflow.join(', ')}`);
   if (walk.empty.length) issues.push(`word problem with no statement: ${walk.empty.join(', ')}`);
+  if (walk.noVerify.length) issues.push(`answer fields with no « Vérifier » button: ${walk.noVerify.join(', ')}`);
 
   // Errors collected during load and the walk
   if (jsErrors.length) issues.push(`JS error: ${[...new Set(jsErrors)].slice(0, 5).join(' | ')}`);

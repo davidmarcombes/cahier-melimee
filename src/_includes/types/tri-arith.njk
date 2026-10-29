@@ -26,7 +26,7 @@
         <div class="w-13 h-13 w-full h-full rounded-full flex items-center justify-center font-extrabold text-lg bg-slate-700 dark:bg-slate-200 text-white dark:text-slate-800 shadow" x-text="cur.triangle.vertices[0]"></div>
       </template>
       <template x-if="!cur.triangle?.givenV?.[0]">
-        <input type="text" inputmode="numeric" x-model="triInputs[0]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+        <input type="text" inputmode="numeric" x-model="triInputs[0]" @keydown.enter="enterField($el, 0)" :disabled="solved" placeholder="?" maxlength="4"
           class="w-full h-full rounded-full text-center text-lg font-extrabold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
           :class="triErrors.includes(0)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-primary-300 dark:border-primary-600'"/>
       </template>
@@ -38,7 +38,7 @@
         <div class="w-full h-full rounded-full flex items-center justify-center font-extrabold text-lg bg-slate-700 dark:bg-slate-200 text-white dark:text-slate-800 shadow" x-text="cur.triangle.vertices[1]"></div>
       </template>
       <template x-if="!cur.triangle?.givenV?.[1]">
-        <input type="text" inputmode="numeric" x-model="triInputs[1]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+        <input type="text" inputmode="numeric" x-model="triInputs[1]" @keydown.enter="enterField($el, 1)" :disabled="solved" placeholder="?" maxlength="4"
           class="w-full h-full rounded-full text-center text-lg font-extrabold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
           :class="triErrors.includes(1)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-primary-300 dark:border-primary-600'"/>
       </template>
@@ -50,7 +50,7 @@
         <div class="w-full h-full rounded-full flex items-center justify-center font-extrabold text-lg bg-slate-700 dark:bg-slate-200 text-white dark:text-slate-800 shadow" x-text="cur.triangle.vertices[2]"></div>
       </template>
       <template x-if="!cur.triangle?.givenV?.[2]">
-        <input type="text" inputmode="numeric" x-model="triInputs[2]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+        <input type="text" inputmode="numeric" x-model="triInputs[2]" @keydown.enter="enterField($el, 2)" :disabled="solved" placeholder="?" maxlength="4"
           class="w-full h-full rounded-full text-center text-lg font-extrabold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
           :class="triErrors.includes(2)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-primary-300 dark:border-primary-600'"/>
       </template>
@@ -64,7 +64,7 @@
         <div class="w-full h-full rounded-lg flex items-center justify-center font-bold text-base bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border-2 border-primary-300 dark:border-primary-700 shadow-sm" x-text="cur.triangle.edges[0]"></div>
       </template>
       <template x-if="!cur.triangle?.givenE?.[0]">
-        <input type="text" inputmode="numeric" x-model="triInputs[3]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+        <input type="text" inputmode="numeric" x-model="triInputs[3]" @keydown.enter="enterField($el, 3)" :disabled="solved" placeholder="?" maxlength="4"
           class="w-full h-full rounded-lg text-center text-base font-bold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
           :class="triErrors.includes(3)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-slate-300 dark:border-slate-600'"/>
       </template>
@@ -76,7 +76,7 @@
         <div class="w-full h-full rounded-lg flex items-center justify-center font-bold text-base bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border-2 border-primary-300 dark:border-primary-700 shadow-sm" x-text="cur.triangle.edges[1]"></div>
       </template>
       <template x-if="!cur.triangle?.givenE?.[1]">
-        <input type="text" inputmode="numeric" x-model="triInputs[4]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+        <input type="text" inputmode="numeric" x-model="triInputs[4]" @keydown.enter="enterField($el, 4)" :disabled="solved" placeholder="?" maxlength="4"
           class="w-full h-full rounded-lg text-center text-base font-bold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
           :class="triErrors.includes(4)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-slate-300 dark:border-slate-600'"/>
       </template>
@@ -88,7 +88,7 @@
         <div class="w-full h-full rounded-lg flex items-center justify-center font-bold text-base bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-200 border-2 border-primary-300 dark:border-primary-700 shadow-sm" x-text="cur.triangle.edges[2]"></div>
       </template>
       <template x-if="!cur.triangle?.givenE?.[2]">
-        <input type="text" inputmode="numeric" x-model="triInputs[5]" @keydown.enter="check()" :disabled="solved" placeholder="?" maxlength="4"
+        <input type="text" inputmode="numeric" x-model="triInputs[5]" @keydown.enter="enterField($el, 5)" :disabled="solved" placeholder="?" maxlength="4"
           class="w-full h-full rounded-lg text-center text-base font-bold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
           :class="triErrors.includes(5)?'border-red-400 bg-red-50 dark:bg-red-900/20':solved?'border-green-500':'border-slate-300 dark:border-slate-600'"/>
       </template>

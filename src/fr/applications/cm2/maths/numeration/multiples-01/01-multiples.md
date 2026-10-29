@@ -1,12 +1,12 @@
 ---
 type: checkbox
 generator: multiplesOf
-repeat: 10
+repeat: 6
 params:
-  divisors: [12, 15, 16, 18, 20, 24, 25]
-  min: 12
-  max: 600
-  count: 8
+  divisors: [6, 7, 8, 9, 11, 12]
+  min: 6
+  max: 150
+  count: 6
 ---
 
-Un multiple de 15 est un nombre de la table de 15 : 15 × 1, 15 × 2, 15 × 3…
+Un multiple d'un nombre est un résultat de la table de ce nombre.

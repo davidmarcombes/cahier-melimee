@@ -13,7 +13,7 @@
         <input
           type="text"
           x-model="seqInputs[i]"
-          @keydown.enter="check()"
+          @keydown.enter="enterField($el, i)"
           @input="seqErrors = []"
           :disabled="solved"
           class="w-24 sm:w-28 h-11 text-center rounded-xl border-2 font-semibold text-lg transition-colors

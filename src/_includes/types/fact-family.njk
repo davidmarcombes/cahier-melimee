@@ -31,7 +31,7 @@
           inputmode="numeric"
           :x-ref="'ffInput' + i"
           x-model="ffInputs[i]"
-          @keydown.enter="$nextTick(() => { const nx = $el.closest('.space-y-2').querySelectorAll('input')[i+1]; if(nx) nx.focus(); else check(); })"
+          @keydown.enter="enterField($el, i)"
           :disabled="solved"
           placeholder="?"
           class="w-20 px-3 py-1.5 text-lg font-bold text-center border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-white dark:bg-slate-800 text-content-default"

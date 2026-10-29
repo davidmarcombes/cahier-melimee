@@ -21,10 +21,10 @@
           type="text"
           inputmode="numeric"
           :value="trouInputs[p.idx] || ''"
-          @input="trouInputs[p.idx] = $event.target.value"
-          @keydown.enter="check()"
+          @input="trouInput($event, p.idx)"
+          @keydown.enter="enterField($el, p.idx)"
           :disabled="solved"
-          :style="{ width: 'calc(' + Math.max(2, String((cur.answers||[])[p.idx] ?? '').length) + 'ch + 1.5rem)' }"
+          :style="{ width: trouWidth(p.idx) }"
           class="h-14 sm:h-16 text-center text-3xl sm:text-4xl font-extrabold rounded-xl border-2 transition-colors
             focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
           :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':showError,'border-primary-300 dark:border-primary-600':!solved&&!showError}"
@@ -36,7 +36,7 @@
               inputmode="numeric"
               :value="trouInputs[p.idx] || ''"
               @input="trouInputs[p.idx] = $event.target.value"
-              @keydown.enter="check()"
+              @keydown.enter="enterField($el, p.idx)"
               :disabled="solved"
               class="w-12 sm:w-16 h-10 sm:h-12 text-center text-lg sm:text-xl font-extrabold rounded-lg border-2 transition-colors
                 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"

@@ -17,7 +17,7 @@
             <input x-show="cur.pyramid && cur.pyramid.given[r] && !cur.pyramid.given[r][c]"
                    type="text" inputmode="numeric"
                    x-model="pyramidInputs[pyramidFlatIdx(r,c)]"
-                   @keydown.enter="check()"
+                   @keydown.enter="enterField($el, pyramidFlatIdx(r, c))"
                    @input="pyramidErrors = []"
                    :disabled="solved"
                    class="w-14 h-12 sm:w-16 sm:h-14 text-center rounded-lg border-2 font-bold text-lg sm:text-xl transition-colors

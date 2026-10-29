@@ -3122,5 +3122,16 @@
     "createdAt": "2026-10-26T07:42:01.992Z",
     "resolvedAt": "2026-10-26T11:58:14.285Z",
     "resolvedBy": "validated"
+  },
+  {
+    "id": "14693a5a",
+    "seriesId": "e215c0cd",
+    "url": "/fr/applications/e215c0cd/",
+    "title": "Compter un porte-monnaie",
+    "reason": "porteMonnaie: questions now shown together; total asked only when centimes ≥ 1 € — re-check",
+    "source": "claude",
+    "createdAt": "2026-10-28T08:30:03.299Z",
+    "resolvedAt": "2026-10-28T18:57:54.324Z",
+    "resolvedBy": "validated"
   }
 ]

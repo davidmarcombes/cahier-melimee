@@ -20,7 +20,7 @@
       <div class="absolute" style="width:96px;height:48px" :style="{ left: [68, 218, 68][i] + 'px', top: [16, 116, 216][i] + 'px' }">
         <div x-show="!node.blank" class="w-full h-full flex items-center justify-center rounded-2xl border-2 border-primary-300 dark:border-primary-700 bg-primary-50 dark:bg-primary-900/30 font-extrabold text-lg text-content-default whitespace-nowrap" x-text="node.value"></div>
         <template x-if="node.blank">
-          <input type="text" inputmode="decimal" x-model="seqInputs[node.idx]" @keydown.enter="check()" @input="seqErrors = []" :disabled="solved" placeholder="?" :aria-label="'Case ' + (i + 1)"
+          <input type="text" inputmode="decimal" x-model="seqInputs[node.idx]" @keydown.enter="enterField($el, node.idx)" @input="seqErrors = []" :disabled="solved" placeholder="?" :aria-label="'Case ' + (i + 1)"
             class="w-full h-full rounded-2xl text-center text-lg font-extrabold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
             :class="{ 'border-green-500 bg-green-50 dark:bg-green-900/20': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(node.idx), 'border-slate-300 dark:border-slate-600': !solved && !seqErrors.includes(node.idx) }" />
         </template>
@@ -33,7 +33,7 @@
         <span x-text="op.sign"></span>
         <span x-show="!op.blank" x-text="op.value"></span>
         <template x-if="op.blank">
-          <input type="text" inputmode="numeric" x-model="seqInputs[op.idx]" @keydown.enter="check()" @input="seqErrors = []" :disabled="solved" placeholder="?" :aria-label="'Opérateur ' + (i + 1)"
+          <input type="text" inputmode="numeric" x-model="seqInputs[op.idx]" @keydown.enter="enterField($el, op.idx)" @input="seqErrors = []" :disabled="solved" placeholder="?" :aria-label="'Opérateur ' + (i + 1)"
             class="w-16 h-10 rounded-xl text-center text-base font-bold border-2 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors"
             :class="{ 'border-green-500 bg-green-50 dark:bg-green-900/20': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(op.idx), 'border-slate-300 dark:border-slate-600': !solved && !seqErrors.includes(op.idx) }" />
         </template>

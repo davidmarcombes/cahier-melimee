@@ -49,7 +49,7 @@
                   <input type="text" inputmode="numeric" maxlength="2"
                          :value="trouInputs[colOpTrouIdx(i)] || ''"
                          @input="trouInputs[colOpTrouIdx(i)] = $event.target.value.replace(/[^0-9]/g,'').slice(-1); $event.target.value = trouInputs[colOpTrouIdx(i)]"
-                         @keydown.enter="check()"
+                         @keydown.enter="enterField($el, colOpTrouIdx(i))"
                          :disabled="solved"
                          class="w-11 h-11 text-center rounded-lg border-2 text-xl font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
                          :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : showError ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : colOpColor(cur.colOp.result.length - 1 - i)"
@@ -68,4 +68,12 @@
       </table>
     </div>
   </template>
+</div>
+<div x-show="cur.type === 'column-op' && cur.colOp && trouInputs.length" class="flex justify-center pt-2 mb-6">
+  <button type="button" @click="check()" :disabled="solved || trouInputs.some(v => !v.trim())"
+    class="px-6 py-2 text-sm font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+    <span x-show="!solved">Vérifier</span>
+    <span x-show="solved">Bravo !</span>
+  </button>
 </div>

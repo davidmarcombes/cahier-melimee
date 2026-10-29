@@ -9,7 +9,7 @@
     <input
       type="text" inputmode="numeric"
       x-model="seqInputs[0]"
-      @keydown.enter="check()"
+      @keydown.enter="enterField($el, 0)"
       @input="seqErrors = []"
       :disabled="solved"
       class="w-20 sm:w-24 h-14 sm:h-16 text-center rounded-xl border-2 font-bold text-xl sm:text-2xl transition-colors
@@ -30,7 +30,7 @@
     <input
       type="text" inputmode="numeric"
       x-model="seqInputs[1]"
-      @keydown.enter="check()"
+      @keydown.enter="enterField($el, 1)"
       @input="seqErrors = []"
       :disabled="solved"
       class="w-20 sm:w-24 h-14 sm:h-16 text-center rounded-xl border-2 font-bold text-xl sm:text-2xl transition-colors

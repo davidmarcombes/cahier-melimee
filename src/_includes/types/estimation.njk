@@ -13,7 +13,7 @@
       <input
         type="text"
         x-model="estInput"
-        @keydown.enter="check()"
+        @keydown.enter="enterField($el, 'est')"
         @input="estError = false"
         :disabled="solved"
         placeholder="Ton estimation…"
@@ -29,7 +29,7 @@
       <input
         type="text"
         x-model="userInput"
-        @keydown.enter="check()"
+        @keydown.enter="enterField($el, 'exact')"
         @input="exactError = false"
         :disabled="solved"
         placeholder="Calcul exact…"

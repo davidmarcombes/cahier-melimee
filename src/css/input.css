@@ -231,6 +231,14 @@
   }
 }
 
+/* A field checked alone with Enter (player enterField): right / wrong. Beats the type's own border classes. */
+.js-player input[data-field='ok'] {
+  @apply border-green-500 bg-green-50 dark:bg-green-900/20;
+}
+.js-player input[data-field='bad'] {
+  @apply border-red-400 bg-red-50 dark:bg-red-900/20;
+}
+
 /* Short screens (laptop 768p at 100 %): the type partials' spacing tightened in one place,
    so « Vérifier » stays above the fold. Tall screens keep the normal look.
    (.js-player .x beats the single-class utility, sm: variants included.) */

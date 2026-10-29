@@ -27,8 +27,8 @@
               <div
                 class="w-14 h-8 border border-slate-200 dark:border-slate-600 transition-colors"
                 :class="{
-                  'bg-primary-400 dark:bg-primary-500 border-primary-300 dark:border-primary-600': bcValues[colIdx] >= v && !bcErrors.includes(colIdx),
-                  'bg-red-300 dark:bg-red-700 border-red-300': bcValues[colIdx] >= v && bcErrors.includes(colIdx),
+                  'bg-primary-400 dark:bg-primary-500 border-primary-300 dark:border-primary-600': bcValues[colIdx] >= v && !bcBarError(colIdx),
+                  'bg-red-300 dark:bg-red-700 border-red-300': bcValues[colIdx] >= v && bcBarError(colIdx),
                   'bg-white dark:bg-slate-800 hover:bg-primary-100 dark:hover:bg-primary-900/30 cursor-pointer': bcValues[colIdx] < v && cur.bc && cur.bc.mode === 'build' && !solved,
                   'bg-white dark:bg-slate-800': bcValues[colIdx] < v && (!cur.bc || cur.bc.mode !== 'build' || solved)
                 }"
@@ -39,7 +39,7 @@
             {# Column label — colored stripe ties label to bar #}
             <div class="w-14 mt-1 flex flex-col items-center gap-0.5">
               <div class="w-4 h-1 rounded-full"
-                :class="bcErrors.includes(colIdx) ? 'bg-red-400' : 'bg-primary-400'"></div>
+                :class="bcBarError(colIdx) ? 'bg-red-400' : 'bg-primary-400'"></div>
               <span class="text-xs text-content-muted text-center leading-tight w-full px-0.5 break-words" x-text="label"></span>
             </div>
           </div>
@@ -78,7 +78,7 @@
           <input
             type="text"
             x-model="bcInputs[i]"
-            @keydown.enter="bcCheck(i)"
+            @keydown.enter="bcCheck(i, $el)"
             :disabled="bcSolved[i]"
             placeholder="?"
             class="w-24 px-3 py-2 text-center text-sm border-2 rounded-lg
@@ -93,6 +93,16 @@
           <span x-show="bcSolved[i]" class="text-green-500 text-lg">&#x2714;</span>
         </div>
       </template>
+      {# Verify button — checks every answered question #}
+      <div x-show="!solved" class="flex justify-center pt-2">
+        <button
+          type="button"
+          @click="cur.bc.questions.forEach((_, i) => bcCheck(i))"
+          :disabled="bcInputs.every(v => !v.trim())"
+          class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
+          Vérifier
+        </button>
+      </div>
     </div>
 
   </div>

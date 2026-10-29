@@ -22,7 +22,7 @@
               :type="cur.sequence.timeMode ? 'text' : 'text'"
               :inputmode="cur.sequence.timeMode ? 'text' : 'numeric'"
               x-model="seqInputs[item.inputIdx]"
-              @keydown.enter="check()"
+              @keydown.enter="enterField($el, item.inputIdx)"
               @input="seqErrors = []"
               :disabled="solved"
               :class="{
@@ -53,7 +53,7 @@
         <input
           type="text" :inputmode="cur.sequence && cur.sequence.answers.some(a => a.includes('/')) ? 'text' : 'numeric'"
           x-model="seqInputs[i]"
-          @keydown.enter="check()"
+          @keydown.enter="enterField($el, i)"
           @input="seqErrors = []"
           :disabled="solved"
           class="w-16 sm:w-20 h-12 sm:h-14 text-center rounded-xl border-2 font-bold text-lg sm:text-xl transition-colors

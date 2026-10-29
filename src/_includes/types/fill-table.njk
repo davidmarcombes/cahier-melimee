@@ -25,7 +25,7 @@
                 <input x-show="cell.blank" type="text" inputmode="decimal"
                        :value="tableInputs[cell.idx] || ''"
                        @input="tableInputs[cell.idx] = $event.target.value"
-                       @keydown.enter="check()" :disabled="solved"
+                       @keydown.enter="enterField($el, cell.idx)" :disabled="solved"
                        class="js-table h-8 text-center text-sm font-bold rounded-lg border-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
                        :class="[cur.table.inputClass||'w-14',{'border-green-500 bg-green-50 dark:bg-green-900/20':solved&&!tableErrors.includes(cell.idx),'border-red-400 bg-red-50 dark:bg-red-900/20':tableErrors.includes(cell.idx),'border-primary-300 dark:border-primary-600':!solved&&!tableErrors.includes(cell.idx)}]"
                        placeholder="?"/>

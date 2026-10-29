@@ -1,7 +1,7 @@
 ---
 type: number-check
 generator: arrondirGrandNombre
-repeat: 10
+repeat: 6
 params:
   places: [million, dizaine de millions, centaine de millions, milliard]
   minDigits: 8

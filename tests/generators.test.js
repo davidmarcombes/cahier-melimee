@@ -1064,12 +1064,23 @@ describe('porteMonnaie', () => {
       const euros = items.filter((v) => v >= 100).reduce((s, v) => s + v, 0) / 100;
       const cents = items.filter((v) => v < 100).reduce((s, v) => s + v, 0);
       const total = euros * 100 + cents;
-      expect(r.mqQuestions.map((q) => q.answer)).toEqual([
-        String(euros),
-        String(cents),
-        String(Math.floor(total / 100)),
-        String(total % 100),
-      ]);
+      // The total is asked only when the centimes make an extra euro
+      expect(r.mqQuestions.map((q) => q.answer)).toEqual(
+        cents >= 100
+          ? [String(euros), String(cents), String(Math.floor(total / 100)), String(total % 100)]
+          : [String(euros), String(cents)]
+      );
+      expect(r.mqSequential).toBeUndefined();
+    }
+  });
+  it('minEuroCoins without notes: at least one euro coin, centimes under 1 € with carryRate 0', () => {
+    for (let i = 0; i < 50; i++) {
+      const r = generators.porteMonnaie.generate({ minNotes: 0, maxNotes: 0, minEuroCoins: 1, carryRate: 0 });
+      const items = r.svg.par.items;
+      expect(items.some((v) => v === 100 || v === 200)).toBe(true);
+      expect(items.every((v) => v <= 200)).toBe(true);
+      expect(r.mqQuestions).toHaveLength(2);
+      expect(Number(r.mqQuestions[1].answer)).toBeLessThan(100);
     }
   });
   it('carryRate 1 always gives 1 € or more of centimes', () => {

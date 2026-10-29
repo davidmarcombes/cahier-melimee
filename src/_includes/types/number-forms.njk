@@ -17,7 +17,7 @@
             type="text"
             inputmode="decimal"
             x-model="seqInputs[i]"
-            @keydown.enter="check()"
+            @keydown.enter="enterField($el, i)"
             @input="seqErrors = []"
             :disabled="solved"
             placeholder="?"

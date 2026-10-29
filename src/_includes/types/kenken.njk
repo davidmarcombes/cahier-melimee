@@ -40,7 +40,7 @@
                 type="text" inputmode="numeric" maxlength="1"
                 :value="kkInputs[r * cur.kenken.size + c] ?? ''"
                 @input="kkSetCell(r, c, $event.target.value.replace(/[^1-9]/g,'').slice(-1))"
-                @keydown.enter="check()"
+                @keydown.enter="enterField($el)"
                 :disabled="solved"
                 class="absolute inset-0 w-full h-full pt-4 text-center text-3xl font-bold bg-transparent focus:outline-none focus:bg-primary-50 dark:focus:bg-primary-900/20 text-content-default transition-colors"
                 :class="{ 'opacity-0': solved }"

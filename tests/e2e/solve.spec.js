@@ -583,6 +583,20 @@ function solveAll() {
   for (const t of ['number-check', 'problem', 'clock', 'fraction', 'base-10', 'ruler', 'thermometer']) S[t] = S.input;
   for (const t of ['bar-model', 'emoji-equations', 'count-objects', 'column-op']) S[t] = S.input;
 
+  // Enter checks one field alone (enterField / _fieldOk): with the right answers in, none may be judged wrong
+  const FIELDS = { 'fill-table': 'tableInputs', 'calc-chain': 'ccInputs', decomp: 'decompInputs' };
+  Object.assign(FIELDS, { 'fact-family': 'ffInputs', 'tri-arith': 'triInputs', pyramid: 'pyramidInputs' });
+  Object.assign(FIELDS, { 'coordinate-grid': 'cgInputs', 'fraction-check': 'rfInputs', 'decimal-triple': 'dtInputs' });
+  for (const t of ['sequence', 'bounding', 'convert', 'number-forms', 'op-triangle']) FIELDS[t] = 'seqInputs';
+  const wrongFields = (t) => {
+    if (t === 'estimation') return ['est', 'exact'].filter((k) => p._fieldOk(k) === false);
+    const vals = p[FIELDS[t] || 'trouInputs'] || [];
+    return Object.keys(vals)
+      .filter((k) => String(vals[k] ?? '').trim())
+      .map((k) => (Array.isArray(vals) ? Number(k) : k))
+      .filter((k) => p._fieldOk(k) === false);
+  };
+
   const out = { total: p.exercises.length, solved: 0, failed: [], acceptedWrong: [], unsupported: [] };
   for (let i = 0; i < p.exercises.length; i++) {
     setup(i);
@@ -599,9 +613,20 @@ function solveAll() {
       if (r !== 'no-wrong' && p.solvedFlags[i]) out.acceptedWrong.push(tag);
       setup(i);
       p.solvedFlags[i] = false;
-      solver(e, false);
+      const check = p.check;
+      let badFields = [];
+      p.check = () => {
+        badFields = wrongFields(t);
+        return check.call(p);
+      };
+      try {
+        solver(e, false);
+      } finally {
+        p.check = check;
+      }
       if (p.solvedFlags[i]) out.solved++;
       else out.failed.push(`${tag} correct answer refused`);
+      if (badFields.length) out.failed.push(`${tag} right field(s) ${badFields.join(', ')} judged wrong on Enter`);
     } catch (err) {
       out.failed.push(`${tag} ${err.message}`);
     }

@@ -230,7 +230,8 @@ Complete checklist — every step is required:
 Create `src/_includes/types/your-type.njk`.
 - Wrap everything in `<div x-show="cur.type === 'your-type'">`.
 - Keep `:class` objects on a **single line** — multi-line blocks render verbatim whitespace into built HTML and inflate page size.
-- Include a "Vérifier" button inside the partial (or reuse `seq-verify.njk` for sequence-style types).
+- Include a "Vérifier" button inside the partial (or reuse `seq-verify.njk` for sequence-style types). Every exercise with a text field shows one — `layout-health` fails otherwise.
+- Enter, the same everywhere: one field → `check()`. Several fields → `@keydown.enter="enterField($el, key)"`: that field alone is checked (green / red flash, the focus stays on a wrong one), then the focus goes to the next empty field; once all are filled, Enter checks the whole exercise. `key` indexes the type's inputs array; add the type to `_fieldOk()` in `player.js` (and to `FIELDS` in `solve.spec.js`, which checks no right field is judged wrong). Independent questions (multi-question, bar-chart read) keep their own per-question check (`mqCheck(i, $el)`).
 
 ### 2. `series-player.njk` — two places
 ```njk

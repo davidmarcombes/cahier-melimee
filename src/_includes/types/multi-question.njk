@@ -29,7 +29,7 @@
         <input
           type="text"
           x-model="mqInputs[i]"
-          @keydown.enter="mqCheck(i)"
+          @keydown.enter="mqCheck(i, $el)"
           :disabled="mqSolved[i]"
           :x-ref="'mqInput' + i"
           placeholder="?"
