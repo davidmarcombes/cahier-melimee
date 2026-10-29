@@ -1550,6 +1550,20 @@ module.exports = async function (eleventyConfig) {
       'M1',
       'M2',
       'M3',
+      'I1.2.1',
+      'D1.1.2',
+      'G1.1.1',
+      'G1.1.2',
+      'G1.1.3',
+      'G1.2.1',
+      'G1.2.2',
+      'S3.1.4',
+      'S3.2.4',
+      'S4.1.1',
+      'S4.1.2',
+      'S4.2.1',
+      'S4.2.2',
+      'S3.2.5',
     ];
 
     const lines = ['id,l,s,t,title,d,f,ty,cl'];

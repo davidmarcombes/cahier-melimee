@@ -4,6 +4,24 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const VALID_DIFFICULTIES = ['facile', 'moyen', 'difficile'];
+
+// Series class codes: the bold codes of the two classification docs, and known to the dashboard (CSV_CLASSES)
+const ROOT = path.join(__dirname, '..');
+const DOC_CLASSES = new Set(
+  ['docs/classification.md', 'docs/maths_classification_vergnaud.md'].flatMap((f) =>
+    [...fs.readFileSync(path.join(ROOT, f), 'utf8').matchAll(/^\| \*\*([A-Z]\d+(?:\.\d+)*)\*\*/gm)].map((m) => m[1])
+  )
+);
+// Vergnaud group codes (A1–A4, M1–M3): a problem series mixing the sub-classes of one group
+for (const c of DOC_CLASSES) if (/^[AM]\d\./.test(c)) DOC_CLASSES.add(c.split('.')[0]);
+const CSV_CLASSES = new Set(
+  [
+    ...fs
+      .readFileSync(path.join(ROOT, '.eleventy.js'), 'utf8')
+      .match(/const CSV_CLASSES = \[([^\]]*)\]/)[1]
+      .matchAll(/'([^']*)'/g),
+  ].map((m) => m[1])
+);
 // Topic = the folder after maths/ (listing filter). Fixed list, see agents/content.md « Topics »
 const VALID_TOPICS = [
   'numeration',
@@ -265,6 +283,11 @@ function validateSeries(seriesDir, errors) {
     errors.push(`${rel}: unknown topic "${topic}" (expected: ${VALID_TOPICS.join(', ')})`);
   else if (parts.length < parts.indexOf('maths') + 3)
     errors.push(`${rel}: series sits directly on the topic folder — move it into its own folder`);
+  if (!meta.class) errors.push(`${rel}/index.yaml: missing "class" (see docs/classification.md)`);
+  else if (!DOC_CLASSES.has(String(meta.class)))
+    errors.push(`${rel}/index.yaml: class "${meta.class}" is in neither docs/classification.md nor the Vergnaud doc`);
+  else if (!CSV_CLASSES.has(String(meta.class)))
+    errors.push(`${rel}/index.yaml: class "${meta.class}" missing from CSV_CLASSES (.eleventy.js and app.js)`);
   if (!meta.difficulty) {
     errors.push(`${rel}/index.yaml: missing "difficulty"`);
   } else if (!VALID_DIFFICULTIES.includes(meta.difficulty)) {

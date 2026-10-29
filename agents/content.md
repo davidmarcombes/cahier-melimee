@@ -81,6 +81,7 @@ Placement rule: pick the notion the pupil practises, not the context (« Additio
 
 ```yaml
 title: "Titre humain de la série"
+class: "S1.1.1"             # Required — skill code (docs/classification.md) or Vergnaud code for problems
 difficulty: facile          # facile | moyen | difficile
 ```
 
