@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'arrosage du jardin"
+operation: "15 × 3 = 45"
 answer: "45"
 ---
 

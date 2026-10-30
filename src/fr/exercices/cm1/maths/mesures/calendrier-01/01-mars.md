@@ -9,8 +9,10 @@ svg:
 questions:
   - text: "Les vacances de printemps vont du 15 au 28 mars inclus. Combien de jours durent-elles ?"
     answer: "14"
+    operation: "28 - 15 + 1 = 14"
   - text: "Aujourd'hui est le 8 mars. Dans combien de jours sera-t-on le 25 mars ?"
     answer: "17"
+    operation: "25 - 8 = 17"
   - text: "Quel jour de la semaine est le 31 mars ?"
     answer: "lundi"
 ---

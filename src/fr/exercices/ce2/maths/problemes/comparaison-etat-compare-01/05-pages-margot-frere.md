@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les pages lues"
+operation: "45 + 32 = 77"
 answer: "77"
 ---
 

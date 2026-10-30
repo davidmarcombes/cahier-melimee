@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le cycliste"
+operation: "45 ÷ 3 = 15 ; 15 × 5 = 75"
 answer: "75"
 ---
 

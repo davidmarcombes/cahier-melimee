@@ -5,8 +5,10 @@ context: "348 + 275 = ?"
 questions:
   - text: "Résultat"
     answer: "623"
+    operation: "348 + 275 = 623"
   - text: "Vérification : 623 − 275 = ?"
     answer: "348"
+    operation: "623 - 275 = 348"
 ---
 
 **Étape 1** : calcule. **Étape 2** : vérifie avec l'opération inverse.

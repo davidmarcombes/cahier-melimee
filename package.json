@@ -66,6 +66,7 @@
     "list:series": "node scripts/list-series.js",
     "list:type": "node scripts/show-type.js",
     "list:human-validations": "node scripts/show-human-validations.js",
+    "queue:human": "node scripts/show-review-queue.js",
     "review:failures": "node scripts/review-failures.js",
     "sync:human-validations": "node scripts/sync-human-validations.js",
     "sync:human-validations:write": "node scripts/sync-human-validations.js --write",

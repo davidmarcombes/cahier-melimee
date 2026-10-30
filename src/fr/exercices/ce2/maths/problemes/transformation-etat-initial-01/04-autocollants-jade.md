@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants de Jade"
+operation: "67 + 18 = 85"
 answer: "85"
 ---
 

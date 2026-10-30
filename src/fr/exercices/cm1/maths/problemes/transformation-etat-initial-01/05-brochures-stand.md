@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les brochures du stand"
+operation: "127 + 64 = 191"
 answer: "191"
 ---
 

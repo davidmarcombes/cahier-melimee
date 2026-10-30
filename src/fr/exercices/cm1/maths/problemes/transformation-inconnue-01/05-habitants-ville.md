@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les habitants de la ville"
+operation: "13 800 - 12 500 = 1 300"
 answer: "1300"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La tirelire"
+operation: "3 × 20 = 60 ; 2 × 10 = 20 ; 60 + 20 + 5 = 85"
 answer: "85"
 ---
 

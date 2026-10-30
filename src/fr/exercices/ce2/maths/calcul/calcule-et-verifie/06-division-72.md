@@ -5,8 +5,10 @@ context: "72 ÷ 8 = ?"
 questions:
   - text: "Résultat"
     answer: "9"
+    operation: "72 ÷ 8 = 9"
   - text: "Vérification : 9 × 8 = ?"
     answer: "72"
+    operation: "9 × 8 = 72"
 ---
 
 **Étape 1** : calcule. **Étape 2** : vérifie avec l'opération inverse.

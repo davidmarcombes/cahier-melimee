@@ -7,6 +7,7 @@ questions:
     answer: "multiplication"
   - text: "Combien de tulipes a-t-il plantées en tout ?"
     answer: "72"
+    operation: "8 × 9 = 72"
 ---
 
 Lis le problème, puis réponds aux deux questions.

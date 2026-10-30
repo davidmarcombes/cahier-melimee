@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le pichet de jus"
+operation: "2 × 100 = 200 ; 200 - 50 = 150 ; 150 ÷ 6 = 25"
 answer: "25"
 ---
 

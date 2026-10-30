@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le sous-marin"
+operation: "60 - 35 = 25"
 answer: "25"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le bouquet du fleuriste"
+operation: "15 + 12 + 8 = 35"
 answer: "35"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les photos de vacances"
+operation: "96 ÷ 12 = 8"
 answer: "8"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La tirelire d'Adèle"
+operation: "20 - 8 = 12"
 answer: "12"
 ---
 

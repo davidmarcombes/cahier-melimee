@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billets"
+operation: "360 - 48 = 312"
 answer: "312"
 ---
 

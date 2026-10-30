@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les deux livres"
+operation: "32 - 15 = 17"
 answer: "17"
 ---
 

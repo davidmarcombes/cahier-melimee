@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le trajet des vacances"
+operation: "250 + 185 = 435"
 answer: "435"
 ---
 

@@ -7,6 +7,7 @@ questions:
     answer: "6 000"
   - text: "Résultat exact"
     answer: "6 012"
+    operation: "3 847 + 2 165 = 6 012"
 ---
 
 **Étape 1** : estime le résultat (arrondi au millier). **Étape 2** : calcule le résultat exact.

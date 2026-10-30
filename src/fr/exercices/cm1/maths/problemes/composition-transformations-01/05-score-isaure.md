@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le score d'Isaure"
+operation: "145 - 78 = 67"
 answer: "67"
 ---
 

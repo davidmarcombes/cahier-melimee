@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le potager"
+operation: "36 + 25 = 61 ; 61 - 10 = 51"
 answer: "51"
 ---
 

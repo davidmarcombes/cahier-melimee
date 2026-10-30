@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Mia"
+operation: "9 - 5 = 4"
 answer: "4"
 ---
 

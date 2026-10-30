@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les pages du roman"
+operation: "210 - 75 = 135"
 answer: "135"
 ---
 

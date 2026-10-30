@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La température de la journée"
+operation: "8 - 3 = 5"
 answer: "5"
 ---
 

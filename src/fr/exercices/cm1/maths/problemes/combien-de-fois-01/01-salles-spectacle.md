@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les salles de spectacle"
+operation: "480 ÷ 160 = 3"
 answer: "3"
 ---
 

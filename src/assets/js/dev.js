@@ -16,6 +16,7 @@ document.addEventListener('alpine:init', () => {
     return Object.assign(base, {
       humanValidated: false,
       humanValidating: false,
+      humanError: '',
       nextUnvalidatedUrl: null,
       init() {
         _origInit.call(this);
@@ -34,21 +35,36 @@ document.addEventListener('alpine:init', () => {
           /* ignore fetch errors in dev panel */
         }
       },
+      // What this page was built from and ran: the server refuses the validation when it is not
+      // the series on disk (empty page, page older than the files, stale generator scripts)
+      _served(meta) {
+        const generators = {};
+        for (const ex of this.exercises)
+          if (ex._gen) generators[ex._gen.name] = window.AppGenerators?.[ex._gen.name]?.generate.toString() || null;
+        return {
+          count: this.exercises.length,
+          errors: this.exercises.filter((ex) => String(ex.body || '').includes('Erreur de génération')).length,
+          files: meta.files || {},
+          generators,
+        };
+      },
       async humanValidate() {
         this.humanValidating = true;
+        this.humanError = '';
         try {
           const meta = JSON.parse(document.getElementById('series-meta')?.textContent || '{}');
           const res = await fetch('/api/human-validate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ seriesId: meta.id, url: window.location.pathname }),
+            body: JSON.stringify({ seriesId: meta.id, served: this._served(meta) }),
           });
-          if (!res.ok) throw new Error(`human-validate: HTTP ${res.status}`);
+          const json = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
           this.humanValidated = true;
           await this._fetchNextUnvalidated();
         } catch (e) {
-          // non-fatal: the button stays, so it can be retried
-          console.warn(e);
+          // the button stays, so it can be retried once the page is fixed
+          this.humanError = 'Non validée : ' + e.message;
         } finally {
           this.humanValidating = false;
         }

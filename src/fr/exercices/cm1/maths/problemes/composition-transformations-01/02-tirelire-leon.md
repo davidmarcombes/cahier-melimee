@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La tirelire de Léon"
+operation: "65 - 38 = 27"
 answer: "27"
 ---
 

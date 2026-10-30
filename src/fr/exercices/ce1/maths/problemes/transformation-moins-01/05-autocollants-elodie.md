@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants d'Élodie"
+operation: "13 - 5 = 8"
 answer: "8"
 ---
 

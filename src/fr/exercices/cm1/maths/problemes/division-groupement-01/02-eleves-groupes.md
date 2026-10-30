@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les groupes de travail"
+operation: "225 ÷ 9 = 25"
 answer: "25"
 ---
 

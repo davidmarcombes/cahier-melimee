@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points d'Enzo et Chloé"
+operation: "85 - 23 = 62"
 answer: "62"
 ---
 

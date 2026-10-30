@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le jardin et le balcon"
+operation: "6 × 4 = 24"
 answer: "24"
 ---
 

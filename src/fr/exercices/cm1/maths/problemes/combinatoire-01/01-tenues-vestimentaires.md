@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les tenues vestimentaires"
+operation: "3 × 2 = 6"
 answer: "6"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Mattéo"
+operation: "25 - 18 = 7"
 answer: "7"
 ---
 

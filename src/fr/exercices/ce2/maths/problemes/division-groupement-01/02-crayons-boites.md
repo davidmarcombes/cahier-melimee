@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les crayons dans les boîtes"
+operation: "36 ÷ 4 = 9"
 answer: "9"
 ---
 

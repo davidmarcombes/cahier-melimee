@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le voyage en train"
+operation: "180 × 2 = 360 ; 180 ÷ 2 = 90 ; 360 + 90 = 450"
 answer: "450"
 ---
 

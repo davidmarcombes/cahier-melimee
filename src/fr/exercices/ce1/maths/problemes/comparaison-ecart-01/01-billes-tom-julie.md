@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Tom et Julie"
+operation: "11 - 8 = 3"
 answer: "3"
 ---
 

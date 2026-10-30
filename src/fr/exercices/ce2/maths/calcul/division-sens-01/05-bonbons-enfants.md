@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le partage des bonbons"
+operation: "35 ÷ 5 = 7"
 answer: "7"
 ---
 

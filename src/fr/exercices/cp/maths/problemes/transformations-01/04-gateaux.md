@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les gâteaux de l'école"
+operation: "50 - 15 = 35"
 answer: "35"
 ---
 

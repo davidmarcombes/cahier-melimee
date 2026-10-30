@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points de Victoire"
+operation: "512 - 148 = 364"
 answer: "364"
 ---
 

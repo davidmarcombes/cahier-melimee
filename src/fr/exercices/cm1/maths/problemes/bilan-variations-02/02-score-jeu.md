@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le score du jeu vidéo"
+operation: "65 - 42 = 23"
 answer: "23"
 ---
 

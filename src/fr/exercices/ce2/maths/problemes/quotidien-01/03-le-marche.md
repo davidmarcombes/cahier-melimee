@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le marché"
+operation: "3 × 8 = 24"
 answer: "24"
 ---
 

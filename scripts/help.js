@@ -46,6 +46,7 @@ const desc = {
   'list:series': 'List all series with metadata',
   'list:type': 'Show exercises of a given type',
   'list:human-validations': 'Show human-validated exercises',
+  'queue:human': 'Series a human should check next, riskiest first (--top N, --why)',
   'review:failures': 'Review LLM validation failures interactively',
   'sync:human-validations': 'Sync human validations (dry run)',
   'sync:human-validations:write': 'Sync human validations (write)',

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le livre et le jeu"
+operation: "35 - 12 = 23"
 answer: "23"
 ---
 

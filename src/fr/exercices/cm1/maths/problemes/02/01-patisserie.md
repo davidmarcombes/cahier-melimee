@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La pâtisserie"
+operation: "11 × 12 = 132"
 answer: "132"
 ---
 

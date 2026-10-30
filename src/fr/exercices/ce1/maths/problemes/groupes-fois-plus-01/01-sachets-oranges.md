@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les sachets d'oranges"
+operation: "40 ÷ 5 = 8"
 answer: "8"
 ---
 

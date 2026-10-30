@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Jade"
+operation: "15 - 8 = 7"
 answer: "7"
 ---
 

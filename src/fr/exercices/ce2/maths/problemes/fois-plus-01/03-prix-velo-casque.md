@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le vélo et le casque"
+operation: "15 × 5 = 75"
 answer: "75"
 ---
 

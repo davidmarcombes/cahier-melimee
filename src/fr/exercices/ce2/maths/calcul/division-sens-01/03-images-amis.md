@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le partage des images"
+operation: "42 ÷ 7 = 6"
 answer: "6"
 ---
 

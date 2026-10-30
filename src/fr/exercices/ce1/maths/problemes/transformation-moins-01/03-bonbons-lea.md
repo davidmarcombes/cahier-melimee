@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les bonbons de Léa"
+operation: "16 - 7 = 9"
 answer: "9"
 ---
 

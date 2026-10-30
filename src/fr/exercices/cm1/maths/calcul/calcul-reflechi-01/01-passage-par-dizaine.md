@@ -5,10 +5,13 @@ context: "Pour calculer 47 + 8, on peut d'abord ajouter 3 pour aller à 50, puis
 questions:
   - text: "Combien faut-il ajouter à 47 pour arriver à 50 ?"
     answer: "3"
+    operation: "50 - 47 = 3"
   - text: "Combien reste-t-il à ajouter après avoir atteint 50 ?"
     answer: "5"
+    operation: "8 - 3 = 5"
   - text: "Combien fait 47 + 8 ?"
     answer: "55"
+    operation: "47 + 8 = 55"
 ---
 
 Utilise la stratégie du passage par la dizaine.

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le jeu de l'oie"
+operation: "50 - 15 = 35 ; 35 + 20 = 55"
 answer: "55"
 ---
 

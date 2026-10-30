@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'aquarium"
+operation: "15 - 6 = 9"
 answer: "9"
 ---
 

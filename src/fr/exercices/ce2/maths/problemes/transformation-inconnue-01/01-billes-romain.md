@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Romain"
+operation: "63 - 47 = 16"
 answer: "16"
 ---
 

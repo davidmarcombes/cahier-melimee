@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le bus de l'école"
+operation: "28 + 12 = 40 ; 40 - 7 = 33"
 answer: "33"
 ---
 

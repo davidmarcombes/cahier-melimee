@@ -4,10 +4,13 @@ title: "Les repas des fauves"
 questions:
   - text: "Combien de kilogrammes de viande les lions consomment-ils en tout par jour ?"
     answer: "38"
+    operation: "16 + 10 + 12 = 38"
   - text: "Combien de kilogrammes de viande la lionne et le tigre mangent-ils en tout par jour ?"
     answer: "22"
+    operation: "10 + 12 = 22"
   - text: "Quelle est la quantité totale de viande distribuée aux 4 fauves en kilogrammes ?"
     answer: "50"
+    operation: "16 + 10 + 12 + 12 = 50"
 ---
 
 Pendant la visite, la classe assiste au repas des animaux. Voici la ration quotidienne de chaque fauve :

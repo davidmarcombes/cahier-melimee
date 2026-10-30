@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les boîtes d'œufs"
+operation: "56 ÷ 8 = 7"
 answer: "7"
 ---
 

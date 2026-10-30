@@ -160,4 +160,4 @@ const targetOf = (text) => {
   return null;
 };
 
-module.exports = { readShape, shapeNames, turned, targetOf, readAngle, angleKind };
+module.exports = { readShape, shapeNames, sides, angles, turned, targetOf, readAngle, angleKind };

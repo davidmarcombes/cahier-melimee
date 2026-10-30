@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'argent de Lucie"
+operation: "127 - 85 = 42"
 answer: "42"
 ---
 

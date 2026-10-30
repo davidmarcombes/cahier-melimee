@@ -7,6 +7,7 @@ questions:
     answer: "division"
   - text: "Combien de crayons chaque enfant reçoit-il ?"
     answer: "8"
+    operation: "56 ÷ 7 = 8"
 ---
 
 Lis le problème, puis réponds aux deux questions.

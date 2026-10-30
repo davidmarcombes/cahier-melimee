@@ -6,8 +6,10 @@ context: "Nina a 12 points. Elle gagne 9 points au premier tour, puis 7 points a
 questions:
   - text: "Combien de points a-t-elle après le premier tour ?"
     answer: "21"
+    operation: "12 + 9 = 21"
   - text: "Combien de points a-t-elle à la fin des deux tours ?"
     answer: "28"
+    operation: "21 + 7 = 28"
 ---
 
 Lis le problème, puis réponds aux deux questions.

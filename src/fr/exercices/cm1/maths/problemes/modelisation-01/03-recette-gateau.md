@@ -4,10 +4,13 @@ title: "La recette du gâteau"
 questions:
   - text: "Combien de grammes de farine faut-il pour 2 gâteaux ?"
     answer: "400"
+    operation: "200 × 2 = 400"
   - text: "Combien d'œufs faut-il pour 3 gâteaux ?"
     answer: "9"
+    operation: "3 × 3 = 9"
   - text: "Combien de grammes de sucre faut-il pour 4 gâteaux ?"
     answer: "600"
+    operation: "150 × 4 = 600"
 ---
 
 Voici la recette pour **1 gâteau** :

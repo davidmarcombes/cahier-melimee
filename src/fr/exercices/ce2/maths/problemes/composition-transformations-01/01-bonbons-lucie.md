@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les bonbons de Lucie"
+operation: "30 - 18 = 12"
 answer: "12"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants d'Elsa et son frère"
+operation: "58 - 23 = 35"
 answer: "35"
 ---
 

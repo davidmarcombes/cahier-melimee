@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes d'Adam et son frère"
+operation: "10 - 6 = 4"
 answer: "4"
 ---
 

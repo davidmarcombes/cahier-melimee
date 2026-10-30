@@ -4,10 +4,12 @@ title: "Le tableau des températures"
 questions:
   - text: "Quelle température faisait-il à Lille mercredi (en °C) ?"
     answer: "12"
+    operation: "12"
   - text: "Quelle ville a eu la température la plus haute lundi ?"
     answer: "Nice"
   - text: "De combien de degrés la température a-t-elle monté à Lille entre lundi et mercredi ?"
     answer: "4"
+    operation: "12 - 8 = 4"
 ---
 
 | | Lundi | Mardi | Mercredi |

@@ -77,3 +77,6 @@ _site-check/
 
 # Checkpoints of the built site (npm run snapshot / npm run regress)
 .snapshots/
+
+# Local
+_ideas/

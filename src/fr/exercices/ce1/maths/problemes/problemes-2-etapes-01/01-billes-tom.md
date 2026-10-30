@@ -6,8 +6,10 @@ context: "Tom a 14 billes. Il gagne 6 billes, puis en perd 4."
 questions:
   - text: "Combien de billes a-t-il après avoir gagné 6 ?"
     answer: "20"
+    operation: "14 + 6 = 20"
   - text: "Combien de billes a-t-il à la fin ?"
     answer: "16"
+    operation: "20 - 4 = 16"
 ---
 
 Lis le problème, puis réponds aux deux questions.

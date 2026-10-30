@@ -35,7 +35,7 @@ isSeriesPage: true
 {% endfor %}
 
 
-<script id="series-meta" type="application/json">{"id":"{{ id }}","url":"{{ page.url }}"}</script>
+<script id="series-meta" type="application/json">{"id":"{{ id }}","url":"{{ page.url }}"{% if site.devMode %},"files":{{ exercises | servedFingerprints | safe }}{% endif %}}</script>
 <script type="speculationrules">{"prerender":[{"urls":["{{ '/fr/exercices/' | url }}"]}]}</script>
 
 <div
@@ -393,6 +393,7 @@ isSeriesPage: true
             <span x-show="!humanValidating">✓ Valider la série</span>
             <span x-show="humanValidating">Envoi…</span>
           </button>
+          <p x-show="humanError" x-text="humanError" role="alert" class="text-red-600 dark:text-red-400 text-sm text-center font-semibold"></p>
           <a x-show="nextUnvalidatedUrl" :href="nextUnvalidatedUrl || '#'"
             class="w-full px-6 py-3 bg-amber-500 text-white font-bold rounded-2xl hover:bg-amber-600 transition-all active:scale-95 text-center">
             <span x-show="!humanValidated">→ Suivante non validée</span>

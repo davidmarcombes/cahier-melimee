@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le stade et la salle des fêtes"
+operation: "1 800 ÷ 9 = 200"
 answer: "200"
 ---
 

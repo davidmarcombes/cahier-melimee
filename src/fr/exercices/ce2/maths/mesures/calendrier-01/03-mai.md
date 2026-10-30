@@ -11,6 +11,7 @@ questions:
     answer: "15"
   - text: "Quelle date tombe exactement 3 semaines après le 5 mai ?"
     answer: "26"
+    operation: "5 + 3 × 7 = 26"
   - text: "Combien y a-t-il de jours en mai ?"
     answer: "31"
 ---

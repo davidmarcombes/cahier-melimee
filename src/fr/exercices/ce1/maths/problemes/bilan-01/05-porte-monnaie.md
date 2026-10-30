@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le porte-monnaie"
+operation: "40 + 15 = 55 ; 55 - 22 = 33"
 answer: "33"
 ---
 

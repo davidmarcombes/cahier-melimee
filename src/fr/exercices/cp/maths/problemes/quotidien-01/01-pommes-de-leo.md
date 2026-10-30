@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les pommes de Léo"
+operation: "3 + 2 = 5"
 answer: "5"
 ---
 

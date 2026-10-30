@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les trajets entre trois villes"
+operation: "4 × 3 = 12"
 answer: "12"
 ---
 

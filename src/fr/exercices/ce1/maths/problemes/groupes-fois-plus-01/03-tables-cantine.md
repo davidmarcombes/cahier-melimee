@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les tables de la cantine"
+operation: "30 ÷ 3 = 10"
 answer: "10"
 ---
 

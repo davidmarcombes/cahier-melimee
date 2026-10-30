@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La librairie"
+operation: "137 - 28 = 109"
 answer: "109"
 ---
 

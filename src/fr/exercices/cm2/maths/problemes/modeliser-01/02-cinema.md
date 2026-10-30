@@ -5,6 +5,8 @@ context: "La classe de CM2 compte **14 filles** et **11 garçons**. **3 adultes*
 questions:
   - text: "Combien d'**élèves** y a-t-il dans la classe ?"
     answer: "25"
+    operation: "14 + 11 = 25"
   - text: "Combien de **personnes** vont au cinéma en tout ?"
     answer: "28"
+    operation: "25 + 3 = 28"
 ---

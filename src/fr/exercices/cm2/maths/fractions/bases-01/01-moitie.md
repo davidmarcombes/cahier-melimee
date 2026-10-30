@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La moitié d'un nombre"
+operation: "12 ÷ 2 = 6"
 answer: "6"
 ---
 

@@ -7,6 +7,7 @@ questions:
     answer: "500"
   - text: "Résultat exact"
     answer: "453"
+    operation: "876 - 423 = 453"
 ---
 
 **Étape 1** : estime le résultat (arrondi à la centaine). **Étape 2** : calcule le résultat exact.

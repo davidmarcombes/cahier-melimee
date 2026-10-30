@@ -9,8 +9,10 @@ svg:
 questions:
   - text: "Un projet commence le 5 mai. Il dure 18 jours. Quelle est la date de fin ?"
     answer: "22"
+    operation: "5 + 18 - 1 = 22"
   - text: "Combien de jours séparent le 7 mai et le 28 mai ?"
     answer: "21"
+    operation: "28 - 7 = 21"
   - text: "Quel jour de la semaine est le 31 mai ?"
     answer: "samedi"
 ---

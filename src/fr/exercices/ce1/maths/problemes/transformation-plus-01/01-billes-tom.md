@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Tom"
+operation: "9 + 6 = 15"
 answer: "15"
 ---
 

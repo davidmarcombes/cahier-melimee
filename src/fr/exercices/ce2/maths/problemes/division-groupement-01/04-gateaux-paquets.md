@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les gâteaux en paquets"
+operation: "64 ÷ 8 = 8"
 answer: "8"
 ---
 

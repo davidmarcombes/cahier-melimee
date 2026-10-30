@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants de Lucie"
+operation: "19 + 9 = 28"
 answer: "28"
 ---
 

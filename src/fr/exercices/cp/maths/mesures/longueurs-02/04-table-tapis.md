@@ -2,6 +2,7 @@
 type: problem
 title: "La table et le tapis"
 class: "A3.1"
+operation: "100 - 80 = 20"
 answer: "20"
 ---
 

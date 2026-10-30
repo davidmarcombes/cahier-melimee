@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les cartes de Gaspard"
+operation: "28 - 15 = 13"
 answer: "13"
 ---
 

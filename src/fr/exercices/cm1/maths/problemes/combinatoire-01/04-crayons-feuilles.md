@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les crayons et les feuilles"
+operation: "5 × 3 = 15"
 answer: "15"
 ---
 

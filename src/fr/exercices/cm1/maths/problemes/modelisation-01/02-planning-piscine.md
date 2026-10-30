@@ -4,10 +4,12 @@ title: "Le planning de la piscine"
 questions:
   - text: "Combien de minutes dure une séance de natation ?"
     answer: "45"
+    operation: "17 h 45 - 17 h 00 = 45"
   - text: "Combien de séances Paul fait-il par semaine ?"
     answer: "3"
   - text: "Combien de minutes Paul nage-t-il en tout dans la semaine ?"
     answer: "135"
+    operation: "45 × 3 = 135"
 ---
 
 Paul va à la piscine selon ce planning :

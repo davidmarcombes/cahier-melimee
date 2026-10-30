@@ -4,10 +4,13 @@ title: "L'enclos des primates"
 questions:
   - text: "Combien y a-t-il de singes en tout dans l'espace des primates ?"
     answer: "31"
+    operation: "8 + 11 + 12 = 31"
   - text: "Combien y a-t-il de petits singes (capucins et lémuriens réunis) ?"
     answer: "23"
+    operation: "11 + 12 = 23"
   - text: "Combien coûtent 10 kg de bananes pour les chimpanzés en euros ?"
     answer: "22"
+    operation: "2,20 × 10 = 22"
 ---
 
 Dans l'espace des primates, le soigneur s'occupe de plusieurs espèces. La nourriture coûte **2,20 €** le kilogramme de bananes.

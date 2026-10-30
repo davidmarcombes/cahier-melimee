@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La fusée et l'avion"
+operation: "7 200 ÷ 9 = 800"
 answer: "800"
 ---
 

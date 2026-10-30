@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les cartes à collectionner"
+operation: "7 × 3 = 21"
 answer: "21"
 ---
 

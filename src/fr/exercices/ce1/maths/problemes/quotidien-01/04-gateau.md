@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La recette"
+operation: "200 × 2 = 400"
 answer: "400"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les cartes d'Inès"
+operation: "75 - 28 = 47"
 answer: "47"
 ---
 

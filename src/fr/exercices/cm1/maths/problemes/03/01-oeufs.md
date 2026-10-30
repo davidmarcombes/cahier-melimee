@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les œufs de la ferme"
+operation: "6 × 12 = 72"
 answer: "72"
 ---
 

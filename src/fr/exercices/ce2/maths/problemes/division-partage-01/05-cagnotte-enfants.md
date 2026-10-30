@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La cagnotte de la classe"
+operation: "63 ÷ 9 = 7"
 answer: "7"
 ---
 

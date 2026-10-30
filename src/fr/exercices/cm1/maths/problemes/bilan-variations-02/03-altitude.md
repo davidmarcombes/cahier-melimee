@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La randonnée en montagne"
+operation: "540 - 255 = 285"
 answer: "285"
 ---
 

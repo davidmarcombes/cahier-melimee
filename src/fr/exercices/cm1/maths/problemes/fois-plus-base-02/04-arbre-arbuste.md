@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'arbre et l'arbuste"
+operation: "56 ÷ 8 = 7"
 answer: "7"
 ---
 

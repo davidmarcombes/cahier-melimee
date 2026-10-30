@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La tirelire de Zoé"
+operation: "45,50 - 12,50 = 33 ; 33 ÷ 3 = 11"
 answer: "11"
 ---
 

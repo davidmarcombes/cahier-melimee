@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les fleurs du jardin"
+operation: "35 - 7 = 28"
 answer: "28"
 ---
 

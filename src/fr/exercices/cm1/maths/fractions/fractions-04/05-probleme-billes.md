@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Léa"
+operation: "30 ÷ 3 = 10"
 answer: "10"
 ---
 

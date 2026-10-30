@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'argent de Lucie"
+operation: "56 + 24 = 80"
 answer: "80"
 ---
 

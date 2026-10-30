@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'âge de Jules et de sa mère"
+operation: "6 × 7 = 42"
 answer: "42"
 ---
 

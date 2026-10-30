@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les bonbons"
+operation: "24 ÷ 4 = 6"
 answer: "6"
 ---
 

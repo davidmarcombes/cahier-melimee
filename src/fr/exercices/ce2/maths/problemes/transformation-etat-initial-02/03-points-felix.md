@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points de Félix"
+operation: "67 + 22 = 89"
 answer: "89"
 ---
 

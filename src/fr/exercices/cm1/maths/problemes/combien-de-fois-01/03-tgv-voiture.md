@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le TGV et la voiture"
+operation: "300 ÷ 50 = 6"
 answer: "6"
 ---
 

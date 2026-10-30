@@ -3,7 +3,7 @@
  * Browser: registers into window.AppGenerators (needs generators/_core.js first) · Node: module.exports
  */
 (function (root) {
-  const { rand, randItem, shuffle } =
+  const { rand, randItem, shuffle, scatter } =
     typeof module !== 'undefined' && module.exports ? require('./_core.js') : root.GenCore;
 
   const generators = {
@@ -449,29 +449,9 @@
           countB = rand(Math.min(max, countA + 1), Math.min(max, countA + 2));
         }
 
-        // Scatter positions with collision avoidance
-        const W = 300,
-          H = 160,
-          ITEM = 28,
-          GAP = ITEM * 1.4;
-        const total = countA + countB;
-        const placed = [];
-        for (let i = 0; i < total; i++) {
-          let found = false;
-          for (let t = 0; t < 300; t++) {
-            const x = ITEM / 2 + 4 + Math.random() * (W - ITEM - 8);
-            const y = ITEM / 2 + 4 + Math.random() * (H - ITEM - 8);
-            if (placed.every((p) => Math.hypot(p.x - x, p.y - y) >= GAP)) {
-              placed.push({ x, y });
-              found = true;
-              break;
-            }
-          }
-          if (!found) {
-            // Fallback grid row
-            placed.push({ x: 24 + (i % 7) * 42, y: 24 + Math.floor(i / 7) * 56 });
-          }
-        }
+        // Scatter, apart (_core.js scatter: taller picture or a grid when they do not fit)
+        const W = 300;
+        const { placed, H } = scatter(countA + countB, { W, H: 160, item: 28, gap: 28 * 1.4, margin: 4 });
 
         const texts = [
           ...placed
@@ -615,27 +595,9 @@
         const set = SETS[Math.floor(Math.random() * SETS.length)];
         const count = Math.floor(Math.random() * (max - min + 1)) + min;
 
-        // Scatter with collision avoidance
-        const W = 280,
-          H = 200,
-          ITEM = 30,
-          GAP = ITEM * 1.5;
-        const placed = [];
-        for (let i = 0; i < count; i++) {
-          let found = false;
-          for (let t = 0; t < 400; t++) {
-            const x = ITEM / 2 + 6 + Math.random() * (W - ITEM - 12);
-            const y = ITEM / 2 + 6 + Math.random() * (H - ITEM - 12);
-            if (placed.every((p) => Math.hypot(p.x - x, p.y - y) >= GAP)) {
-              placed.push({ x, y });
-              found = true;
-              break;
-            }
-          }
-          if (!found) {
-            placed.push({ x: 30 + (i % 6) * 44, y: 30 + Math.floor(i / 6) * 50 });
-          }
-        }
+        // Scatter, apart (_core.js scatter: taller picture or a grid when they do not fit)
+        const W = 280;
+        const { placed, H } = scatter(count, { W, H: 200, item: 30, gap: 45, margin: 6, tries: 400 });
 
         const texts = placed
           .map(

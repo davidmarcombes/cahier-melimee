@@ -4,10 +4,13 @@ title: "Le fruit préféré"
 questions:
   - text: "Combien d'élèves préfèrent les pommes ?"
     answer: "30"
+    operation: "60 ÷ 2 = 30"
   - text: "Combien d'élèves préfèrent les fraises ?"
     answer: "20"
+    operation: "60 ÷ 3 = 20"
   - text: "Combien d'élèves préfèrent les bananes ?"
     answer: "10"
+    operation: "60 - 30 - 20 = 10"
 ---
 
 **60 élèves** ont donné leur fruit préféré. La moitié préfère les pommes, un tiers les fraises, et les autres les bananes.

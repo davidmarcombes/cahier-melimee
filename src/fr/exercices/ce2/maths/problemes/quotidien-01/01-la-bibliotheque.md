@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La bibliothèque"
+operation: "87 + 48 = 135"
 answer: "135"
 ---
 

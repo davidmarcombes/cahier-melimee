@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La boulangerie"
+operation: "6 × 12 = 72"
 answer: "72"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le musée"
+operation: "4 370 - 1 243 = 3 127"
 answer: "3 127"
 ---
 

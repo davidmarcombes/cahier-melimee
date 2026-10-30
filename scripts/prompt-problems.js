@@ -180,7 +180,7 @@ ${curriculum ? '\n' + curriculum + '\n' : ''}
 5. Situations réalistes et bienveillantes : prix, durées et quantités plausibles ; prénoms variés (filles et garçons, origines diverses) ; pas de marques, pas de violence.
 ${
   type === 'problem'
-    ? `6. Le champ \`operation\` donne le calcul attendu, étape par étape, séparé par \`  ;  \` (ex. \`"48 + 12 = 60  ;  60 ÷ 6 = 10"\`). Il doit être juste et finir par la réponse.
+    ? `6. Le champ \`operation\` donne le calcul attendu, étape par étape, séparé par \`  ;  \` (ex. \`"48 + 12 = 60  ;  60 ÷ 6 = 10"\`). Il doit être juste et finir par la réponse. Chaque nombre du calcul figure dans l'énoncé (ou sort d'une étape précédente), et jamais de \`?\` : \`npm run check\` le vérifie.
 7. \`class\` = la classe de Vergnaud de la **dernière** étape.`
     : `6. Chaque sous-question ou étape a une seule réponse vérifiable ; fais les calculs pour toi avant de remplir le fichier.
 7. Garde exactement les champs de l’exemple, n’en invente pas.`

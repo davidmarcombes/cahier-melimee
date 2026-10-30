@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La sortie scolaire"
+operation: "3 × 28 = 84 ; 84 + 6 = 90"
 answer: "90"
 ---
 

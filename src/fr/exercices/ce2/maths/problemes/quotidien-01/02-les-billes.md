@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes"
+operation: "52 - 15 = 37"
 answer: "37"
 ---
 

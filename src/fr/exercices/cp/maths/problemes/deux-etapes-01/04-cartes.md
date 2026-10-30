@@ -5,8 +5,10 @@ class: "A3.2"
 questions:
   - text: "Combien de cartes a Lina ?"
     answer: "13"
+    operation: "9 + 4 = 13"
   - text: "Combien de cartes ont-ils ensemble ?"
     answer: "22"
+    operation: "9 + 13 = 22"
 ---
 
 Sami a **9** cartes.

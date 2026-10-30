@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points de Corentin"
+operation: "56 - 29 = 27"
 answer: "27"
 ---
 

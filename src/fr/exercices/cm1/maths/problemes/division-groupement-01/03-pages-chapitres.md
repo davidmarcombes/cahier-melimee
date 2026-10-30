@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les chapitres du livre"
+operation: "168 ÷ 8 = 21"
 answer: "21"
 ---
 

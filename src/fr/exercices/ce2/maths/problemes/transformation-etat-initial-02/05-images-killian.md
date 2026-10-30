@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les images de Killian"
+operation: "112 - 47 = 65"
 answer: "65"
 ---
 

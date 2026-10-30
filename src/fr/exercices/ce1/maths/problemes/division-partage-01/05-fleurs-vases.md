@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les fleurs"
+operation: "18 ÷ 6 = 3"
 answer: "3"
 ---
 

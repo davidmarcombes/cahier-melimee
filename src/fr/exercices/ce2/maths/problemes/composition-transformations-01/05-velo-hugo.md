@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le parcours d'Hugo"
+operation: "80 - 45 = 35"
 answer: "35"
 ---
 

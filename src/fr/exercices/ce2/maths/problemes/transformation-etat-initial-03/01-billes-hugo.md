@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes d'Hugo"
+operation: "42 - 17 = 25"
 answer: "25"
 ---
 

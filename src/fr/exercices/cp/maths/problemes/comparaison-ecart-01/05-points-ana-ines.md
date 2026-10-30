@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points d'Ana et Inès"
+operation: "11 - 7 = 4"
 answer: "4"
 ---
 

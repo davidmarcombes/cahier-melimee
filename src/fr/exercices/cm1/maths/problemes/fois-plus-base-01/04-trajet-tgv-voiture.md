@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le trajet en TGV et en voiture"
+operation: "120 × 3 = 360"
 answer: "360"
 ---
 

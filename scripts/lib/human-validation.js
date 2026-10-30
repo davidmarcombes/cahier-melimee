@@ -10,6 +10,12 @@
  *   If the fingerprint changes later, the validation is STALE: the exercise changed after a human
  *   approved it and must be re-checked. That is the regression signal.
  *
+ * SERVED PAGE (« ✓ Valider la série » in the player)
+ *   The page sends what it was built from and ran: the files' fingerprints at build time, the
+ *   source of the generators it executed, how many exercises it showed. A validation is refused
+ *   when that is not the series on disk — an empty page, a page built before the last edit, stale
+ *   generator scripts (three validations had to be undone after the dev server served those).
+ *
  * FLAGS (reports/human-flags.json)
  *   Items someone — often an agent — asks a human to look at: { id, seriesId, url, reason,
  *   source, createdAt, resolvedAt, resolvedBy }. Validating a series resolves its open flags.
@@ -116,12 +122,32 @@ function findSeries(seriesId) {
   return s;
 }
 
-// Record a human validation of a whole series; resolves its open flags.
-// Returns what it replaced, so the caller can undo it with unvalidateSeries():
-//   { files, previous: [CSV rows of the series before], closedFlags: [flag ids] }
-function validateSeries(seriesId) {
+// What a page was built from, embedded in the player page (serve mode): { relPath: fingerprint }
+function servedFingerprints(absPaths, gens) {
+  return Object.fromEntries(absPaths.map((f) => [rel(f), fingerprint(f, gens)]));
+}
+
+// served: { count, errors, files: { relPath: fingerprint }, generators: { name: generate source } }
+function checkServed(s, served, gens) {
+  if (!served.count) throw new Error('série vide : la page n’a affiché aucun exercice — redémarre npm start');
+  if (served.errors) throw new Error(`${served.errors} exercice(s) en erreur de génération`);
+  for (const f of s.files)
+    if ((served.files || {})[rel(f)] !== fingerprint(f, gens))
+      throw new Error(`la page date d’avant la dernière modification de ${path.basename(f)} : recharge-la`);
+  for (const [name, src] of Object.entries(served.generators || {})) {
+    if (!src) throw new Error(`générateur ${name} absent de la page — redémarre npm start`);
+    if (!gens[name] || src !== gens[name].generate.toString())
+      throw new Error(`le générateur ${name} de la page n’est pas celui du disque — redémarre npm start`);
+  }
+}
+
+// Record a human validation of a whole series; resolves its open flags. `served` (from the player)
+// is checked first: see SERVED PAGE above. Returns what it replaced, so the caller can undo it with
+// unvalidateSeries(): { files, previous: [CSV rows of the series before], closedFlags: [flag ids] }
+function validateSeries(seriesId, served) {
   const s = findSeries(seriesId);
   const gens = loadGenerators();
+  if (served) checkServed(s, served, gens);
   const map = readValidations();
   const ts = now();
   const previous = [];
@@ -271,6 +297,7 @@ module.exports = {
   listSeries,
   readValidations,
   writeValidations,
+  servedFingerprints,
   validateSeries,
   unvalidateSeries,
   resolveTarget,

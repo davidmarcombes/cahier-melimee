@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les paquets de biscuits"
+operation: "240 ÷ 15 = 16"
 answer: "16"
 ---
 

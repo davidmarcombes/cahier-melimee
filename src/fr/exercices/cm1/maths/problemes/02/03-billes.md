@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La collection de billes"
+operation: "45 + 38 + 42 = 125"
 answer: "125"
 ---
 

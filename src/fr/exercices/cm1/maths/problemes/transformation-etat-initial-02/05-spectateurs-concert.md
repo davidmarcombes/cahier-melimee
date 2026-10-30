@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le concert"
+operation: "2 118 + 738 = 2 856"
 answer: "2 856"
 ---
 

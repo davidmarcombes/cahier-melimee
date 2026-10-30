@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les tenues du club"
+operation: "4 × 3 × 2 = 24"
 answer: "24"
 ---
 

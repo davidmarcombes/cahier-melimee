@@ -5,8 +5,10 @@ context: "5 mètres de tissu coûtent 35 €."
 questions:
   - text: "Quel est le prix du tissu au mètre ?"
     answer: "7"
+    operation: "35 ÷ 5 = 7"
   - text: "Quel est le prix de 9 mètres de tissu ?"
     answer: "63"
+    operation: "7 × 9 = 63"
 ---
 
 Lis le problème, puis réponds aux deux questions.

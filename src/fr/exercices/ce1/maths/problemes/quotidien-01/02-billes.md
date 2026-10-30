@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les boîtes de billes"
+operation: "3 × 6 = 18"
 answer: "18"
 ---
 

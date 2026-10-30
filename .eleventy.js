@@ -5,12 +5,15 @@ const path = require('path');
 const yaml = require('js-yaml');
 const arith = require('./scripts/lib/arith.js'); // French-notation arithmetic (shared with the answer oracle)
 const {
+  loadGenerators,
   readFlags,
+  servedFingerprints,
   setFlag,
   status: humanStatus,
   unvalidateSeries,
   validateSeries,
 } = require('./scripts/lib/human-validation.js'); // human validation records (dev API)
+const { riskQueue } = require('./scripts/lib/review-queue.js'); // which series a human checks next
 const pathPrefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
 // HTML minification using html-minifier-terser
 const htmlmin = require('html-minifier-terser');
@@ -748,6 +751,8 @@ module.exports = async function (eleventyConfig) {
           item.mqQuestions = ex.data.questions.map((q) => ({
             text: md.renderInline(interpolate(String(q.text))),
             answer: interpolate(String(q.answer)).trim().toLowerCase(),
+            // Hidden calculation, read only by the answer oracle (like a problem's `operation`)
+            ...(q.operation ? { operation: interpolate(String(q.operation)) } : {}),
           }));
         }
 
@@ -1651,8 +1656,23 @@ module.exports = async function (eleventyConfig) {
     return content;
   });
 
+  // Serve only: what each series page was built from, so « ✓ Valider la série » refuses a page
+  // older than the files on disk (scripts/lib/human-validation.js, SERVED PAGE)
+  let devGenerators = null;
+  eleventyConfig.addFilter('servedFingerprints', (exercises) =>
+    JSON.stringify(
+      process.env.ELEVENTY_RUN_MODE === 'serve'
+        ? servedFingerprints(
+            exercises.map((ex) => path.resolve(ex.inputPath)),
+            devGenerators || (devGenerators = loadGenerators())
+          )
+        : {}
+    )
+  );
+
   // Serve only: series a human validated that changed since (regressions to re-check)
   eleventyConfig.on('eleventy.before', () => {
+    devGenerators = null; // generators edited since the last build
     if (process.env.ELEVENTY_RUN_MODE !== 'serve') return;
     try {
       const stale = humanStatus().filter((x) => x.status === 'stale');
@@ -1758,9 +1778,10 @@ module.exports = async function (eleventyConfig) {
   // Dev-only human-validation API (npm start). Logic lives in scripts/lib/human-validation.js,
   // shared with the admin dashboard, `npm run check` and `npm run flag`.
   //   GET  /api/human-status                 → { series: [...status], flags: [...] } (live)
-  //   GET  /api/human-next-unvalidated?current=<id> → { id, url } of the next series to check
+  //   GET  /api/human-next-unvalidated?current=<id> → { id, url } of the riskiest series to check
   //   GET  /api/human-validated-ids          → ids of series validated and unchanged since
-  //   POST /api/human-validate  { seriesId } → records a fingerprint per file, resolves its flags
+  //   POST /api/human-validate  { seriesId, served? } → records a fingerprint per file, resolves its
+  //                                         flags; `served` (player) refuses a stale or empty page
   //   POST /api/human-validate  { seriesId, action: 'unvalidate', previous, reopen } → undoes it
   //   POST /api/human-flag      { id, action: 'resolve' | 'reopen' }
   const prefix = (process.env.PATH_PREFIX || '/').replace(/\/$/, '');
@@ -1800,19 +1821,15 @@ module.exports = async function (eleventyConfig) {
           }
           if (req.method === 'GET' && req.url.startsWith('/api/human-next-unvalidated')) {
             const current = new URL(req.url, 'http://localhost').searchParams.get('current');
-            const all = humanStatus();
-            const at = all.findIndex((s) => s.id === current);
-            // Stale (regressions) first, then the next unvalidated series after the current one
-            const next =
-              all.find((s) => s.status === 'stale' && s.id !== current) ||
-              [...all.slice(at + 1), ...all.slice(0, Math.max(at, 0))].find((s) => s.status !== 'ok');
+            // Riskiest first: stale (regressions), flagged, then what machines check least
+            const next = riskQueue().find((s) => s.id !== current);
             return sendJson(res, 200, { id: next ? next.id : null, url: next ? prefix + next.url : null });
           }
           if (req.method === 'POST' && req.url === '/api/human-validate') {
             // action 'unvalidate' undoes a validation with what the validation returned (previous, reopen)
-            const { seriesId, action = 'validate', previous, reopen } = await readBody(req);
+            const { seriesId, action = 'validate', previous, reopen, served } = await readBody(req);
             let result = {};
-            if (action === 'validate') result = validateSeries(seriesId);
+            if (action === 'validate') result = validateSeries(seriesId, served);
             else if (action === 'unvalidate') unvalidateSeries(seriesId, { previous, reopen });
             else throw new Error(`unknown action ${action}`);
             // The series' fresh status and flags, so the dashboard updates the row in place

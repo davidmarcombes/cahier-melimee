@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le pique-nique"
+operation: "180 + 72 = 252 ; 252 ÷ 12 = 21"
 answer: "21"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points de Quentin"
+operation: "112 - 35 = 77"
 answer: "77"
 ---
 

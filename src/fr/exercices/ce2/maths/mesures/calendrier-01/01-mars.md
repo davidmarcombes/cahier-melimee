@@ -13,6 +13,7 @@ questions:
     answer: "28"
   - text: "Quelle date tombe exactement 2 semaines après le 3 mars ?"
     answer: "17"
+    operation: "3 + 2 × 7 = 17"
 ---
 
 Observe le calendrier de mars 2025 et réponds aux questions.

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les économies"
+operation: "5 × 7 = 35 ; 35 - 12 = 23"
 answer: "23"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les images d'Ethan"
+operation: "115 - 78 = 37"
 answer: "37"
 ---
 

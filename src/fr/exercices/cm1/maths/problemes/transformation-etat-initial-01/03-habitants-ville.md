@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les habitants de la ville"
+operation: "8 340 + 1 250 = 9 590"
 answer: "9590"
 ---
 

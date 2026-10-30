@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Mia et son frère"
+operation: "12 × 3 = 36"
 answer: "36"
 ---
 

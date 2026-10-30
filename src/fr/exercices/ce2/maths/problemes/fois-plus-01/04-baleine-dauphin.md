@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La baleine et le dauphin"
+operation: "2 × 8 = 16"
 answer: "16"
 ---
 

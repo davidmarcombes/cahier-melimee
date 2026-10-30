@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les pages lues par Bastien et Lucie"
+operation: "148 - 53 = 95"
 answer: "95"
 ---
 

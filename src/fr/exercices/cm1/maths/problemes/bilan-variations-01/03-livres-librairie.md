@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La librairie en fin de semaine"
+operation: "240 - 185 = 55"
 answer: "55"
 ---
 

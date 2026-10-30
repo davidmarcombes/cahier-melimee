@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'épargne de Corentin et Tristan"
+operation: "252 ÷ 7 = 36"
 answer: "36"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le jeu de société"
+operation: "35 - 20 = 15"
 answer: "15"
 ---
 

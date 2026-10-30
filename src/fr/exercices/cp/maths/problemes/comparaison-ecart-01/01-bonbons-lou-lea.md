@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les bonbons de Lou et Léa"
+operation: "8 - 5 = 3"
 answer: "3"
 ---
 

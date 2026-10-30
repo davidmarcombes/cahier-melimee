@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points de Bastien et Camille"
+operation: "43 - 14 = 29"
 answer: "29"
 ---
 

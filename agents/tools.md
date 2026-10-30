@@ -25,7 +25,7 @@ All available commands (run `npm run help` for a live list):
 4. French spelling (cspell) of the changed content files — front matter included (titles, choices, statements). Add proper nouns to `words` in `cspell.json`
    - and the text the **generators** produce (`check:spell:generated`: 20 draws per content file, HTML stripped, same cspell.json) — when a generator or content changed, and with `--full`
 5. Build — fresh `_site-check/` (`SITE_OUT` env var; defaults to `_site/` for every other script) `_site/` (never tests a stale build)
-6. `check:answers` — **answer oracle**: recomputes expected answers (operations incl. blanks, sequences, pyramids, conversions, comparisons, clocks…) on the built pages and on 20 draws of each generator. Blocking. `--verbose` for coverage per type, `--unchecked=<type>` to see what it cannot parse
+6. `check:answers` — **answer oracle**: recomputes expected answers (operations incl. blanks, sequences, pyramids, conversions, comparisons, clocks, word problems from their hidden `operation` trace, inverse problems, guided problems…) on the built pages; **visual exercises from their drawing** (`scripts/lib/visual-checks.js`: emojis counted in the SVG, clock hands read as angles, coins and notes from their labels, ruler marks from the ticks, Venn shapes from their corners, colour codes) — drawing defects are errors too (overlapping or cut-off objects, a mark between graduations, a coin the drawing drops, a number fitting two colours) and on 20 draws of each generator. Blocking. `--verbose` for coverage per type, `--unchecked=<type>` to see what it cannot parse
 7. `minify` — e2e runs on the production (minified) output
 8. Playwright, scoped to what changed since HEAD (`git status`):
    - only content (`src/fr/**`) → `layout-health` + `solve` on the touched series only
@@ -92,6 +92,7 @@ The e2e per-page specs:
 | `npm run sync:human-validations:write` | Apply: update `human-validate.csv` (add new files, rehash unvalidated ones; validated-then-changed files are kept and reported as stale) |
 | `npm run flag -- <id or URL> "<reason>"` | Flag an exercise for a human to check (🚩 in the /admin/ « À vérifier » column; `--list`, `--resolve <id>`) |
 | `npm run list:human-validations` | Display the human-validate.csv as a table with progress summary |
+| `npm run queue:human` | Series a human should check next, riskiest first (`--top N`, `--why` for the reasons) — same order as « → Suivante non validée » and the /admin/ « À vérifier » sort. Logic in `scripts/lib/review-queue.js` |
 | `reports/oracle-coverage.json` | Written by `check:answers` (every `check` / `build`): per series, how many exercises the oracle recomputed (`verified`/`total`; a generated file counts once). Feeds the /admin/ **MV** column (machine verified) with the LLM verdicts: « Haiku », « Oracle », « Oracle n/m », or both |
 | `npm run validate:cross` | Join human + LLM validation CSVs — shows conflicts, gaps, stale hashes (`--verbose`, `--cat=`) |
 
@@ -198,13 +199,34 @@ npm run flag -- --resolve <flag id>
 | Endpoint | |
 |----------|---|
 | `GET /api/human-status` | `{ series: [...status], flags }` — the dashboard loads this live |
-| `GET /api/human-next-unvalidated?current=<id>` | next series to check (stale first) |
+| `GET /api/human-next-unvalidated?current=<id>` | next series to check: the riskiest (see Review queue) |
 | `GET /api/human-validated-ids` | ids with status `ok` (« Non validées » list filter) |
-| `POST /api/human-validate { seriesId }` | validate a series → `{ files, previous, closedFlags, series, flags }` |
+| `POST /api/human-validate { seriesId, served? }` | validate a series → `{ files, previous, closedFlags, series, flags }`; `served` (sent by the player) makes it refuse a page that is not the series on disk (see below) |
 | `POST /api/human-validate { seriesId, action: 'unvalidate', previous, reopen }` | undo: the series' rows go back to `previous` (none → pending), the `reopen` flags it closed are reopened |
 | `POST /api/human-flag { id, action: 'resolve' \| 'reopen' }` | close / reopen a flag |
 
 `reports/human-*` is excluded from the dev server's watch: writes don't trigger a rebuild.
+
+### Review queue (risk)
+
+`scripts/lib/review-queue.js` scores each series not yet validated (or flagged), so human time goes where machines are weakest. Each point comes with its reason (shown in /admin/ details and `queue:human --why`):
+
+| Signal | Points |
+|---|---|
+| validated, changed since (stale) | 100 |
+| open flag(s) | 50 |
+| an LLM failure not overridden | 40 |
+| no machine check at all · visual (LLM: unverifiable) | 30 · 25 |
+| answers not recomputed by the oracle (LLM only) — scaled by the share the oracle misses | ≤ 15 |
+| new series (file added < 14 days, or untracked) · edited, not committed | 15 · 10 |
+| hand-written (no generator) | 10 |
+| type history: flags per series of its main type (not the `[MV]` markers), the worst type = 20 | ≤ 20 |
+
+Weights live in `RISK`; tune them there. The same module computes the « MV » column (`machineVerified`).
+
+### « ✓ Valider la série » refuses a page that is not the series on disk
+
+In serve mode `series-meta` carries each file's fingerprint at build time; the player sends it with the number of exercises shown, the generation errors and the source of the generators it ran. The server refuses (red message under the button) an empty page, a generation error, a page built before the last edit (« recharge-la ») and generators that differ from the disk (« redémarre npm start »). The /admin/ tick does not play the series and is not checked.
 
 ### Rules
 

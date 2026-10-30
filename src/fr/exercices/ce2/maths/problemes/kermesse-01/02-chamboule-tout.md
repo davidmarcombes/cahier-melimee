@@ -7,6 +7,7 @@ questions:
     answer: "soustraction"
   - text: "De combien de points son score a-t-il **augmenté** en tout ?"
     answer: "110"
+    operation: "150 - 40 = 110"
 ---
 
 Lis le problème, puis réponds aux deux questions.

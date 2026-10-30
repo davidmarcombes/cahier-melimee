@@ -6,8 +6,10 @@ context: "La bibliothèque a 25 livres. Elle en prête 8 le matin, puis 6 l'apr�
 questions:
   - text: "Combien reste-t-il de livres après le matin ?"
     answer: "17"
+    operation: "25 - 8 = 17"
   - text: "Combien de livres reste-t-il à la fin de la journée ?"
     answer: "11"
+    operation: "17 - 6 = 11"
 ---
 
 Lis le problème, puis réponds aux deux questions.

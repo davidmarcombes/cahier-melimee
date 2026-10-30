@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La bibliothèque scolaire"
+operation: "120 - 35 = 85 ; 85 + 20 = 105"
 answer: "105"
 ---
 

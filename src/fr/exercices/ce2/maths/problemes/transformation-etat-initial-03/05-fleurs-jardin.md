@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les fleurs du jardin"
+operation: "63 - 16 = 47"
 answer: "47"
 ---
 

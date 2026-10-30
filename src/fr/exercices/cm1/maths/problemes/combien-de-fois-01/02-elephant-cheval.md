@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'éléphant et le cheval"
+operation: "4 200 ÷ 700 = 6"
 answer: "6"
 ---
 

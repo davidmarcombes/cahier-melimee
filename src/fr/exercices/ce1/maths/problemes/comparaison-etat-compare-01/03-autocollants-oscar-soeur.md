@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants d'Oscar et sa sœur"
+operation: "19 + 12 = 31"
 answer: "31"
 ---
 

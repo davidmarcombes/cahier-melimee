@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les élèves du CE1 et du CE2"
+operation: "24 - 3 = 21"
 answer: "21"
 ---
 

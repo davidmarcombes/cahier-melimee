@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le gâteau partagé"
+operation: "8 ÷ 4 = 2 ; 8 - 2 = 6"
 answer: "6"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les passagers du bus"
+operation: "8 - 5 = 3"
 answer: "3"
 ---
 

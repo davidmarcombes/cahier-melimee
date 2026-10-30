@@ -2,6 +2,7 @@
 type: problem
 class: "A2.2"
 title: "La monnaie"
+operation: "10 - 7 = 3"
 answer: "3"
 ---
 

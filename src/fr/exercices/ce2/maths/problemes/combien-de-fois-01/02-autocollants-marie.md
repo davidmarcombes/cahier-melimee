@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants"
+operation: "54 ÷ 9 = 6"
 answer: "6"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les crayons du maître et des élèves"
+operation: "63 ÷ 9 = 7"
 answer: "7"
 ---
 

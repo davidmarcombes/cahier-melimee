@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Nathan"
+operation: "19 - 12 = 7"
 answer: "7"
 ---
 

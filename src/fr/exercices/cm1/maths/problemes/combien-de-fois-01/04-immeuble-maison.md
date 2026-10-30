@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'immeuble et la maison"
+operation: "56 ÷ 7 = 8"
 answer: "8"
 ---
 

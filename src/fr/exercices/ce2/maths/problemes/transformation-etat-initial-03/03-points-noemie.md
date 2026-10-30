@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points de Noémie"
+operation: "92 - 38 = 54"
 answer: "54"
 ---
 

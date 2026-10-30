@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'autocar"
+operation: "58 - 16 = 42 ; 42 ÷ 7 = 6"
 answer: "6"
 ---
 

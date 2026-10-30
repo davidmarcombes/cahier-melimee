@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les puzzles"
+operation: "372 - 124 = 248"
 answer: "248"
 ---
 

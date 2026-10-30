@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La bibliothèque"
+operation: "12 × 5 = 60 ; 60 - 38 = 22"
 answer: "22"
 ---
 

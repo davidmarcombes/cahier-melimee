@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les images de Léon et Gabin"
+operation: "15 - 9 = 6"
 answer: "6"
 ---
 

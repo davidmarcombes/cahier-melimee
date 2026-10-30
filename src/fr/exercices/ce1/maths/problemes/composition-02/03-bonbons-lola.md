@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le sachet de Lola"
+operation: "22 - 13 = 9"
 answer: "9"
 ---
 

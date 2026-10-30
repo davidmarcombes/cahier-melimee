@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points"
+operation: "43 - 12 = 31"
 answer: "31"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La moitié de 24"
+operation: "24 ÷ 2 = 12"
 answer: "12"
 ---
 

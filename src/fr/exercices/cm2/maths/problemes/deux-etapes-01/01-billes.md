@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les sacs de billes"
+operation: "66 - 18 = 48 ; 48 ÷ 6 = 8"
 answer: "8"
 ---
 

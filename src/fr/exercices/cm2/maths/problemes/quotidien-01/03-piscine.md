@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La piscine"
+operation: "5 × 8 = 40"
 answer: "40"
 ---
 

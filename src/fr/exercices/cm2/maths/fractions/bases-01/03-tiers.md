@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le tiers d'un nombre"
+operation: "27 ÷ 3 = 9"
 answer: "9"
 ---
 

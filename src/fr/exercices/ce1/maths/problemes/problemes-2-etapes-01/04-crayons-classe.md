@@ -6,8 +6,10 @@ context: "La classe a 30 crayons. La maîtresse en distribue 12, puis en rachèt
 questions:
   - text: "Combien de crayons reste-t-il après la distribution ?"
     answer: "18"
+    operation: "30 - 12 = 18"
   - text: "Combien de crayons y a-t-il en tout à la fin ?"
     answer: "24"
+    operation: "18 + 6 = 24"
 ---
 
 Lis le problème, puis réponds aux deux questions.

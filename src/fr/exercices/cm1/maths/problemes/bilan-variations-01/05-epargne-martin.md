@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'épargne de Martin"
+operation: "75 - 48 = 27"
 answer: "27"
 ---
 

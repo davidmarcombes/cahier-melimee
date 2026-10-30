@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les graines"
+operation: "24 ÷ 8 = 3"
 answer: "3"
 ---
 

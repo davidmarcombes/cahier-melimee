@@ -6,8 +6,10 @@ questions:
     answer: "jeudi"
   - text: "Quelle est la différence de température entre lundi et jeudi ?"
     answer: "6"
+    operation: "18 - 12 = 6"
   - text: "Quelle est la température moyenne sur les 5 jours ?"
     answer: "14"
+    operation: "12 + 13 + 15 + 18 + 12 = 70 ; 70 ÷ 5 = 14"
 ---
 
 Voici les températures maximales relevées cette semaine :

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le parc et la forêt"
+operation: "630 ÷ 90 = 7"
 answer: "7"
 ---
 

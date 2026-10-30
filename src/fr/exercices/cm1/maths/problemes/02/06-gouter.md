@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le goûter d'anniversaire"
+operation: "4 × 10 = 40 ; 40 + 8 = 48"
 answer: "48"
 ---
 

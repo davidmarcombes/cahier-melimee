@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Mia et son frère"
+operation: "17 + 8 = 25"
 answer: "25"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le réservoir"
+operation: "120 - 45 = 75"
 answer: "75"
 ---
 

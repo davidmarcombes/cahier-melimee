@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes d'Arthur"
+operation: "12 + 9 = 21"
 answer: "21"
 ---
 

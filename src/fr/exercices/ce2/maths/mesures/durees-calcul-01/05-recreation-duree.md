@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La récréation"
+operation: "10 h 30 - 10 h 10 = 20 min"
 answer: "20"
 ---
 

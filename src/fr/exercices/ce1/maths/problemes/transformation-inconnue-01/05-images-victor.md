@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les images de Victor"
+operation: "31 - 18 = 13"
 answer: "13"
 ---
 

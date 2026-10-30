@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le réservoir d'eau"
+operation: "150 - 87 = 63"
 answer: "63"
 ---
 

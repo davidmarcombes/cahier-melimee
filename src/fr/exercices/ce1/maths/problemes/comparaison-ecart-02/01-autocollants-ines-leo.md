@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants d'Inès et Léo"
+operation: "65 - 47 = 18"
 answer: "18"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Théo"
+operation: "45 + 13 = 58"
 answer: "58"
 ---
 

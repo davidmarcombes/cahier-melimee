@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La boulangerie"
+operation: "240 × 0,15 = 36"
 answer: "36"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Rendre la monnaie"
+operation: "5 - 3 = 2"
 answer: "2"
 ---
 

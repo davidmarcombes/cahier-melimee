@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'argent de poche de Nils et son cousin"
+operation: "84 ÷ 6 = 14"
 answer: "14"
 ---
 

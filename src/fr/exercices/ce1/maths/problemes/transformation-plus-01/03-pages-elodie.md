@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le livre d'Élodie"
+operation: "15 + 8 = 23"
 answer: "23"
 ---
 

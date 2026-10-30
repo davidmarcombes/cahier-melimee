@@ -23,6 +23,8 @@ const VERBOSE = process.argv.includes('--verbose');
 
 const { Unparseable, clean, tokenize, evaluate, num, same, fmt, checkEquation } = require('./lib/arith.js');
 const { GEN_CHECKS } = require('./lib/gen-checks.js');
+const { WORD_PROBLEM_CHECKS } = require('./lib/word-problems.js');
+const { VISUAL_CHECKS, VISUAL_GEN_CHECKS, clockSvg } = require('./lib/visual-checks.js');
 
 // ─── Units ────────────────────────────────────────────────────────────────────
 
@@ -115,6 +117,8 @@ const timeToMin = (s) => {
 };
 
 const CHECKS = {
+  ...WORD_PROBLEM_CHECKS,
+  ...VISUAL_CHECKS,
   'number-check': (e) => {
     if (!clean(e.operation)) throw new Unparseable('no operation');
     const err = checkEquation(e.operation, e.answers || []);
@@ -333,7 +337,7 @@ function run(item, where, unit) {
   const t = item.type || 'number-check';
   const st = (stats[t] ??= { ok: 0, unchecked: 0, errors: 0 });
   // A generator check (by name) recomputes what the type check cannot read
-  const genCheck = unit && unit.gen && GEN_CHECKS[unit.gen];
+  const genCheck = unit && unit.gen && (GEN_CHECKS[unit.gen] || VISUAL_GEN_CHECKS[unit.gen]);
   const check = genCheck ? (it) => genCheck(it, unit.params || {}) : CHECKS[t];
   // Static exercise: one run. Generated file: verified when at least one of its draws was
   // recomputed (a wrong draw fails the whole run anyway) — keeps the file stable across random draws
@@ -401,7 +405,7 @@ for (const sec of ['exercices', 'applications', 'defis']) {
 }
 
 // 2. Generated exercises: run each generator with its file's params
-global.clockSvg = () => '<svg/>';
+global.clockSvg = clockSvg; // the real drawing: clocks are read back from their hands
 const generators = require('../src/assets/js/generators/index.js');
 for (const sec of ['exercices', 'applications', 'defis']) {
   for (const f of walk(path.join(ROOT, 'src', 'fr', sec)).filter((f) => f.endsWith('.md'))) {

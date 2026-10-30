@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La recette de grand-mère"
+operation: "300 ÷ 6 = 50 ; 50 × 9 = 450"
 answer: "450"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le don de livres"
+operation: "3 891 + 627 = 4 518"
 answer: "4 518"
 ---
 

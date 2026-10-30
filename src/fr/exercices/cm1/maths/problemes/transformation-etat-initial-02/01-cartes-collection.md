@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La collection de cartes"
+operation: "1 624 - 376 = 1 248"
 answer: "1 248"
 ---
 

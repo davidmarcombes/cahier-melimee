@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les tulipes"
+operation: "18 × 3 = 54 ; 54 - 25 = 29"
 answer: "29"
 ---
 

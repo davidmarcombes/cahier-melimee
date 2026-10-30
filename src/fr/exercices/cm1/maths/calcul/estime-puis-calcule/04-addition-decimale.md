@@ -7,6 +7,7 @@ questions:
     answer: "8"
   - text: "Résultat exact"
     answer: "7,5"
+    operation: "2,7 + 4,8 = 7,5"
 ---
 
 **Étape 1** : estime le résultat (arrondi à l'unité). **Étape 2** : calcule le résultat exact.

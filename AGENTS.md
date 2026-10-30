@@ -69,6 +69,7 @@ npm run unvalidate -- <id|URL> "<why>"   # Withdraw a human validation (series b
 npm run snapshot -- <name>             # Checkpoint of the built site (.snapshots/, git-ignored) — see agents/tools.md
 npm run regress -- [name]              # Compare now with a checkpoint: affected pages, screenshots, pixel-diff report
 npm run list:human-validations         # Display human-validate.csv as a table
+npm run queue:human -- --why           # Series a human should check next, riskiest first, with the reasons
 npm run list:series                    # List all series (--level --type --cat --missing)
 npm run list:type                      # Show schema + template for any exercise type
 ```

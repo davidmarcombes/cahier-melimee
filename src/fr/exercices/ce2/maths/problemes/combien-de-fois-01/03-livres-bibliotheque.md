@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les livres"
+operation: "45 ÷ 9 = 5"
 answer: "5"
 ---
 

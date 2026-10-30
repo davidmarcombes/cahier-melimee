@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le livre"
+operation: "148 + 37 = 185"
 answer: "185"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points d'Eden et Noha"
+operation: "28 + 9 = 37"
 answer: "37"
 ---
 

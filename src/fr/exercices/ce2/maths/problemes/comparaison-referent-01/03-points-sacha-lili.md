@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points de Sacha et Lili"
+operation: "145 - 38 = 107"
 answer: "107"
 ---
 

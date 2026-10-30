@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le saut en longueur"
+operation: "3 × 100 + 45 = 345 ; 3 × 100 + 20 = 320 ; 345 - 320 = 25"
 answer: "25"
 ---
 

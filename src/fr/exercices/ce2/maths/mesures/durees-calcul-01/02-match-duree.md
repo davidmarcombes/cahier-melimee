@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La durée du match"
+operation: "15 h 45 - 15 h 00 = 45 min"
 answer: "45"
 ---
 

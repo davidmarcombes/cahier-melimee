@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les trajets"
+operation: "1,2 × 1000 = 1 200 ; 1 200 ÷ 300 = 4"
 answer: "4"
 ---
 

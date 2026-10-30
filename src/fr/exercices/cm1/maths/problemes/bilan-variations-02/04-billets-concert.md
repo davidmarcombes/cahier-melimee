@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billets de concert"
+operation: "160 - 75 = 85"
 answer: "85"
 ---
 

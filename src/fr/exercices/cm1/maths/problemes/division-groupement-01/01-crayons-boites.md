@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les crayons dans les boîtes"
+operation: "156 ÷ 12 = 13"
 answer: "13"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Zoé"
+operation: "18 - 6 = 12"
 answer: "12"
 ---
 

@@ -7,6 +7,7 @@ questions:
     answer: "2 500"
   - text: "Résultat exact"
     answer: "2 444"
+    operation: "47 × 52 = 2 444"
 ---
 
 **Étape 1** : estime le résultat (arrondi à la dizaine). **Étape 2** : calcule le résultat exact.

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les pommes"
+operation: "12 - 5 = 7"
 answer: "7"
 ---
 

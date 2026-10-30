@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants de Léa et Tom"
+operation: "24 - 9 = 15"
 answer: "15"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les groupes de sport"
+operation: "24 ÷ 4 = 6"
 answer: "6"
 ---
 

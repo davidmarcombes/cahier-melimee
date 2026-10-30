@@ -2,6 +2,7 @@
 type: problem
 title: "Le taxi 🚕"
 class: "M3.1"
+operation: "2 × 10 = 20 ; 20 + 3 = 23"
 answer: "23"
 ---
 

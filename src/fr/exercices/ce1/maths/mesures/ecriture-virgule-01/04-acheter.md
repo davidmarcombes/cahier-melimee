@@ -2,6 +2,7 @@
 type: problem
 class: "A2.2"
 title: "La monnaie"
+operation: "5 - 3,50 = 1,50"
 answer: "1,50"
 ---
 

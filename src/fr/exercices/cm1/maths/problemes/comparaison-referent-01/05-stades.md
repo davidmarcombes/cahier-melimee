@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les deux stades"
+operation: "1 245 - 380 = 865"
 answer: "865"
 ---
 

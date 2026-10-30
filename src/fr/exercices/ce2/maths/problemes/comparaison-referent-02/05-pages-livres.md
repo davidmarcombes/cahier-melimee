@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les deux livres"
+operation: "253 - 57 = 196"
 answer: "196"
 ---
 

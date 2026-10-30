@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La séance de cinéma"
+operation: "14 h 30 + 1 h 45 = 16 h 15"
 answer: "16:15"
 ---
 

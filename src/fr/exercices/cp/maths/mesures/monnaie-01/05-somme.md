@@ -2,6 +2,7 @@
 type: problem
 class: "A1.1"
 title: "Au marché"
+operation: "2 + 4 + 3 = 9"
 answer: "9"
 ---
 

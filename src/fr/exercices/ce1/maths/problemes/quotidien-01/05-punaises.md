@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les punaises"
+operation: "3 × 7 = 21"
 answer: "21"
 ---
 

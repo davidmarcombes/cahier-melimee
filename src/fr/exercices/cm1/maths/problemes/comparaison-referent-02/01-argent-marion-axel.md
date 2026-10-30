@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'argent de Marion et Axel"
+operation: "64 - 19 = 45"
 answer: "45"
 ---
 

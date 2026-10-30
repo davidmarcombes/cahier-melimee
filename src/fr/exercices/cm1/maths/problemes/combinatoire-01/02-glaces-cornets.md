@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les glaces et les cornets"
+operation: "4 × 3 = 12"
 answer: "12"
 ---
 

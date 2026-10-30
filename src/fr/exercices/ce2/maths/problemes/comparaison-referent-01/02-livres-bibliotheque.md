@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les livres de la bibliothèque"
+operation: "187 - 64 = 123"
 answer: "123"
 ---
 

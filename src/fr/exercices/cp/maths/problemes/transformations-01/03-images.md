@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les images de Léo"
+operation: "26 - 8 = 18"
 answer: "18"
 ---
 

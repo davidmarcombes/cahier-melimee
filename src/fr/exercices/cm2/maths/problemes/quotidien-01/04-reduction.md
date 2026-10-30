@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La réduction"
+operation: "24 - 3 = 21"
 answer: "21"
 ---
 

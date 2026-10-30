@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les dépenses du club"
+operation: "230 - 85 = 145"
 answer: "145"
 ---
 

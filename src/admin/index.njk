@@ -150,7 +150,7 @@ title: Dashboard
                   Diff. <span class="sort-icon" x-text="sort.col==='difficulty' ? (sort.dir==='asc' ? '↑' : '↓') : '↕'"></span>
                 </th>
                 <th x-show="live" :aria-sort="sort.col==='check' ? (sort.dir==='asc' ? 'ascending' : 'descending') : 'none'" class="text-left px-3 py-2.5 font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">
-                  <button type="button" @click="sortBy('check')" :class="sort.col==='check' && 'active'" title="Trier : modifiées, puis signalées, puis à faire, puis validées"
+                  <button type="button" @click="sortBy('check')" :class="sort.col==='check' && 'active'" title="Trier : modifiées, puis signalées, puis à faire (les plus risquées d’abord), puis validées"
                           class="font-semibold cursor-pointer hover:text-slate-700 dark:hover:text-slate-200 select-none">
                     À vérifier <span class="sort-icon" x-text="sort.col==='check' ? (sort.dir==='asc' ? '↑' : '↓') : '↕'"></span>
                   </button>
@@ -224,7 +224,7 @@ title: Dashboard
                               class="flex items-center gap-1.5 text-xs rounded px-1 py-0.5 hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400">
                         <span x-show="row.humanStatus === 'stale'" class="font-bold text-amber-600 dark:text-amber-400">↻ modifiée</span>
                         <span x-show="row.openFlags.length" class="font-bold text-red-600 dark:text-red-400" x-text="'🚩 ' + row.openFlags.length"></span>
-                        <span x-show="row.check === 'pending'" class="text-slate-400" x-text="row.humanStatus === 'partial' ? '○ ' + row.humanCoverage : '○ à faire'"></span>
+                        <span x-show="row.check === 'pending'" class="text-slate-400" x-text="(row.humanStatus === 'partial' ? '○ ' + row.humanCoverage : '○ à faire') + (row.risk ? ' · risque ' + row.risk : '')"></span>
                         <span x-show="row.check === 'ok'" class="text-green-600 dark:text-green-400" x-text="row.humanDate"></span>
                       </button>
                     </div>
@@ -250,6 +250,11 @@ title: Dashboard
                           </div>
                         </template>
                         <p x-show="!row.openFlags.length && !row.resolvedFlags.length && row.humanStatus !== 'stale'" class="text-slate-400">Aucun signalement.</p>
+                        {# Why the series is this high in the queue (scripts/lib/review-queue.js) #}
+                        <div x-show="row.check !== 'ok' && row.riskReasons.length" class="text-slate-500 dark:text-slate-400">
+                          <p class="font-medium" x-text="'Risque ' + row.risk + ' :'"></p>
+                          <template x-for="why in row.riskReasons" :key="why"><p x-text="why"></p></template>
+                        </div>
                       </div>
                     </template>
                   </td>
@@ -353,7 +358,7 @@ function adminDashboard() {
           const [id, l, , t, title, d, f, ty, cl] = row.split(',');
           const tyIdx = ty !== undefined && ty !== '' ? Number(ty) : -1;
           const clIdx = cl !== undefined && cl !== '' ? Number(cl) : -1;
-          return { id, level: LEVELS[l] || l, topic: t || '', title: title || '', difficulty: DIFFS[d] || d, kind: KINDS[f] || 'exercice', typeKey: CSV_TYPES[tyIdx] || '', classKey: CSV_CLASSES[clIdx] || '', _f: f, path: '', absPath: '', humanStatus: 'pending', humanCoverage: '—', humanDate: '', humanStale: [], mvStatus: 'pending', mvLabel: '', mvTitle: '', mvRank: 1, openFlags: [], resolvedFlags: [], check: 'pending', checkRank: 2 };
+          return { id, level: LEVELS[l] || l, topic: t || '', title: title || '', difficulty: DIFFS[d] || d, kind: KINDS[f] || 'exercice', typeKey: CSV_TYPES[tyIdx] || '', classKey: CSV_CLASSES[clIdx] || '', _f: f, path: '', absPath: '', humanStatus: 'pending', humanCoverage: '—', humanDate: '', humanStale: [], mvStatus: 'pending', mvLabel: '', mvTitle: '', mvRank: 1, risk: 0, riskReasons: [], openFlags: [], resolvedFlags: [], check: 'pending', checkRank: 2 };
         });
 
         // Merge devMode enrichment (human/llm/path) if available
@@ -367,7 +372,7 @@ function adminDashboard() {
           } catch(_) {}
           for (const row of base) {
             const e = enrichMap[row.id];
-            if (e) { row.path = e.path || ''; row.absPath = e.absPath || ''; row.humanStatus = e.humanStatus || 'pending'; row.humanCoverage = e.humanCoverage || '—'; row.humanDate = e.humanDate || ''; row.mvStatus = e.mvStatus || 'pending'; row.mvLabel = e.mvLabel || ''; row.mvTitle = e.mvTitle || ''; row.mvRank = e.mvRank ?? 1; }
+            if (e) { row.path = e.path || ''; row.absPath = e.absPath || ''; row.humanStatus = e.humanStatus || 'pending'; row.humanCoverage = e.humanCoverage || '—'; row.humanDate = e.humanDate || ''; row.mvStatus = e.mvStatus || 'pending'; row.mvLabel = e.mvLabel || ''; row.mvTitle = e.mvTitle || ''; row.mvRank = e.mvRank ?? 1; row.risk = e.risk ?? 0; row.riskReasons = e.riskReasons || []; }
           }
         }
 
@@ -555,8 +560,8 @@ function adminDashboard() {
         let av = a[this.sort.col] ?? '';
         let bv = b[this.sort.col] ?? '';
         if (this.sort.col === 'check') {
-          // stale, then flagged, then pending, then ok; most flags first within a state
-          const d = a.checkRank - b.checkRank || b.openFlags.length - a.openFlags.length;
+          // stale, then flagged, then pending, then ok; most flags, then riskiest first within a state
+          const d = a.checkRank - b.checkRank || b.openFlags.length - a.openFlags.length || b.risk - a.risk;
           return this.sort.dir === 'asc' ? d : -d;
         }
         if (this.sort.col === 'level') {

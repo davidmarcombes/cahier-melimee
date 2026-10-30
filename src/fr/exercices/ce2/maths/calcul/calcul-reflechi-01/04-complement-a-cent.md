@@ -5,10 +5,13 @@ context: "100 − 37 = ?"
 questions:
   - text: "Combien faut-il ajouter à 37 pour arriver à 40 ?"
     answer: "3"
+    operation: "40 - 37 = 3"
   - text: "Combien faut-il ajouter à 40 pour arriver à 100 ?"
     answer: "60"
+    operation: "100 - 40 = 60"
   - text: "Combien font 100 − 37 ?"
     answer: "63"
+    operation: "100 - 37 = 63"
 ---
 
 Pour calculer **100 − 37**, on remonte de 37 jusqu'à 100 par étapes.

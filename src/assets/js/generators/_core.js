@@ -121,6 +121,33 @@
     return Array.from({ length: count }, () => rand(minV, maxV));
   }
 
+  // Scatter `count` objects in a W-wide picture, at least `gap` apart and `margin` from the frame.
+  // When they do not fit, start over in a taller picture; after a few tries, a regular grid
+  // (a fallback grid mixed with scattered objects used to draw them on top of each other).
+  // → { placed: [{ x, y }], H }
+  function scatter(count, { W, H, item, gap, margin, tries = 300 }) {
+    for (let grow = 0; grow < 6; grow++, H += 40) {
+      const placed = [];
+      for (let i = 0; i < count; i++) {
+        let spot = null;
+        for (let t = 0; t < tries && !spot; t++) {
+          const x = item / 2 + margin + Math.random() * (W - item - 2 * margin);
+          const y = item / 2 + margin + Math.random() * (H - item - 2 * margin);
+          if (placed.every((p) => Math.hypot(p.x - x, p.y - y) >= gap)) spot = { x, y };
+        }
+        if (!spot) break;
+        placed.push(spot);
+      }
+      if (placed.length === count) return { placed, H };
+    }
+    const cols = Math.max(1, Math.floor((W - 2 * margin) / gap));
+    const placed = Array.from({ length: count }, (_, i) => ({
+      x: margin + gap / 2 + (i % cols) * gap,
+      y: margin + gap / 2 + Math.floor(i / cols) * gap,
+    }));
+    return { placed, H: Math.max(H, 2 * margin + Math.ceil(count / cols) * gap) };
+  }
+
   // Returns the palette color index that the number n belongs to for a given rule.
   function magicColorIdx(rule, n, params) {
     switch (rule) {
@@ -149,7 +176,18 @@
     }
   }
 
-  const core = { rand, randItem, shuffle, randUnique, toRoman, TABLE_THEMES, tableHtml, tableValues, magicColorIdx };
+  const core = {
+    rand,
+    randItem,
+    shuffle,
+    randUnique,
+    toRoman,
+    TABLE_THEMES,
+    tableHtml,
+    tableValues,
+    magicColorIdx,
+    scatter,
+  };
   if (typeof module !== 'undefined' && module.exports) module.exports = core;
   else root.GenCore = core;
 })(typeof window !== 'undefined' ? window : globalThis);

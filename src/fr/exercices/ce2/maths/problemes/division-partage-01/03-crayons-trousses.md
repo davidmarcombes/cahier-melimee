@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les crayons dans les trousses"
+operation: "72 ÷ 8 = 9"
 answer: "9"
 ---
 

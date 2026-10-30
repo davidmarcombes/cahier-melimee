@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'heure de départ en cuisine"
+operation: "12 h 30 - 1 h = 11 h 30"
 answer: "11:30"
 ---
 

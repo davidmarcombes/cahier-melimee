@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants de Clara et Hugo"
+operation: "34 + 15 = 49"
 answer: "49"
 ---
 

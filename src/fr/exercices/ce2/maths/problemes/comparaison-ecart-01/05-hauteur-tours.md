@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les deux tours"
+operation: "248 - 175 = 73"
 answer: "73"
 ---
 

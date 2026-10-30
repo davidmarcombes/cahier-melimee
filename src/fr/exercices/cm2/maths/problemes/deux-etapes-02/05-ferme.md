@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "À la ferme"
+operation: "50 × 8 = 400 ; 500 - 400 = 100"
 answer: "100"
 ---
 

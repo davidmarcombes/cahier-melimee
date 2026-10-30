@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le poids du panier"
+operation: "2 × 1000 = 2000 ; 2000 + 500 = 2500"
 answer: "2500"
 ---
 

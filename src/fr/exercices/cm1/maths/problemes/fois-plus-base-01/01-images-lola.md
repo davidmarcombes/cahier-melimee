@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les images de Lola et son frère"
+operation: "48 ÷ 4 = 12"
 answer: "12"
 ---
 

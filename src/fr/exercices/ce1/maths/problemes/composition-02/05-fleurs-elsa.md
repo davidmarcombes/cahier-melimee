@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le bouquet d'Elsa"
+operation: "20 - 14 = 6"
 answer: "6"
 ---
 

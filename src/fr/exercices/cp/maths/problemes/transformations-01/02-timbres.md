@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les timbres de Karim"
+operation: "23 - 9 = 14"
 answer: "14"
 ---
 

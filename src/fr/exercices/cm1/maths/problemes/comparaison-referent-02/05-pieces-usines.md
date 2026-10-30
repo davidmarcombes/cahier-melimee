@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les deux usines"
+operation: "1 248 - 365 = 883"
 answer: "883"
 ---
 

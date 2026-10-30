@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le jardin"
+operation: "8 + 5 + 8 + 5 = 26"
 answer: "26"
 ---
 

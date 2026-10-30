@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Élèves sportifs"
+operation: "200 × 0,40 = 80"
 answer: "80"
 ---
 

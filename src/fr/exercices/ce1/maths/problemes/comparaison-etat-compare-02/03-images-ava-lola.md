@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les images d'Ava et Lola"
+operation: "35 - 12 = 23"
 answer: "23"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La trousse d'Inès"
+operation: "15 - 7 = 8"
 answer: "8"
 ---
 

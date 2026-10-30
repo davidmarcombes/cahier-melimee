@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les bonbons"
+operation: "20 ÷ 5 = 4"
 answer: "4"
 ---
 

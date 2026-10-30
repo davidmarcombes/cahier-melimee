@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le score"
+operation: "63 ÷ 9 = 7"
 answer: "7"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les croissants de la boulangerie"
+operation: "94 - 18 = 76"
 answer: "76"
 ---
 

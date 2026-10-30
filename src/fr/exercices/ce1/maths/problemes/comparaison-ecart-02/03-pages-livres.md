@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les pages des livres"
+operation: "96 - 64 = 32"
 answer: "32"
 ---
 

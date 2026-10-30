@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le prix des stylos"
+operation: "6 ÷ 3 = 2 ; 2 × 7 = 14"
 answer: "14"
 ---
 

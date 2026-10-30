@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les buts des deux équipes"
+operation: "29 - 14 = 15"
 answer: "15"
 ---
 

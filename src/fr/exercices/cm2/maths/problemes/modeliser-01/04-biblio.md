@@ -5,6 +5,8 @@ context: "Une bibliothèque possède **1 250 romans**, **830 bandes dessinées**
 questions:
   - text: "Combien de **livres** possède-t-elle en tout ?"
     answer: "2500"
+    operation: "1 250 + 830 + 420 = 2 500"
   - text: "Combien de livres ne sont **pas** des romans ?"
     answer: "1250"
+    operation: "830 + 420 = 1 250"
 ---

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les cartes d'Inaya et Tristan"
+operation: "63 - 48 = 15"
 answer: "15"
 ---
 

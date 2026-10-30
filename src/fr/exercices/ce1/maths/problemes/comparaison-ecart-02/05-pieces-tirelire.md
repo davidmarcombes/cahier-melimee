@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les tirelires"
+operation: "75 - 37 = 38"
 answer: "38"
 ---
 

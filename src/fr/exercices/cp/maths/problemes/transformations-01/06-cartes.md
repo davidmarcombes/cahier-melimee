@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les cartes de Noé"
+operation: "40 - 6 = 34"
 answer: "34"
 ---
 

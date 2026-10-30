@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les glaces du magasin"
+operation: "92 - 17 = 75"
 answer: "75"
 ---
 

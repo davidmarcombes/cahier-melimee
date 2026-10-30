@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les points de Gabriel"
+operation: "18 + 17 = 35"
 answer: "35"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les passagers de l'avion"
+operation: "243 - 180 = 63"
 answer: "63"
 ---
 

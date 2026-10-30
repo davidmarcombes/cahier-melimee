@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants de Florian"
+operation: "92 - 54 = 38"
 answer: "38"
 ---
 

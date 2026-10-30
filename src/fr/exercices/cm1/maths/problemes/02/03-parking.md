@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le parking du supermarché"
+operation: "4 × 35 = 140 ; 140 + 20 = 160"
 answer: "160"
 ---
 

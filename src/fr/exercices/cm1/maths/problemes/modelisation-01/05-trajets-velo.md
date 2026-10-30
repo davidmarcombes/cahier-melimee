@@ -4,10 +4,13 @@ title: "Les trajets à vélo"
 questions:
   - text: "Combien de kilomètres Lucie a-t-elle pédalé lundi et mardi réunis ?"
     answer: "19"
+    operation: "8 + 11 = 19"
   - text: "Quelle est la différence entre le trajet le plus long et le plus court ?"
     answer: "11"
+    operation: "15 - 4 = 11"
   - text: "Combien de kilomètres Lucie a-t-elle pédalé en tout sur les 4 jours ?"
     answer: "38"
+    operation: "8 + 11 + 4 + 15 = 38"
 ---
 
 Lucie note ses trajets à vélo dans un tableau :

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les deux salles"
+operation: "256 - 48 = 208"
 answer: "208"
 ---
 

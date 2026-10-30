@@ -11,8 +11,10 @@ questions:
     answer: "30"
   - text: "Quelle date tombe exactement 10 jours après le 7 avril ?"
     answer: "17"
+    operation: "7 + 10 = 17"
   - text: "Combien de jours séparent le 4 avril et le 18 avril ?"
     answer: "14"
+    operation: "18 - 4 = 14"
 ---
 
 Observe le calendrier d'avril 2025 et réponds aux questions.

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes d'Hugo"
+operation: "28 ÷ 7 = 4"
 answer: "4"
 ---
 

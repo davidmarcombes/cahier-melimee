@@ -11,8 +11,10 @@ questions:
     answer: "jeudi"
   - text: "Une exposition dure du 3 au 16 avril inclus. Combien de jours dure-t-elle ?"
     answer: "14"
+    operation: "16 - 3 + 1 = 14"
   - text: "Quelle date tombe exactement 3 semaines après le 8 avril ?"
     answer: "29"
+    operation: "8 + 3 × 7 = 29"
 ---
 
 Observe le calendrier d'avril 2025 et réponds aux questions.

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'argent de poche"
+operation: "1 855 + 485 = 2 340"
 answer: "2 340"
 ---
 

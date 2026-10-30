@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les sachets de billes"
+operation: "54 ÷ 6 = 9"
 answer: "9"
 ---
 

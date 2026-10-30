@@ -21,8 +21,10 @@ const {
   status,
   unvalidateSeries,
   validateSeries,
+  servedFingerprints,
   writeValidations,
 } = require('../scripts/lib/human-validation.js');
+const { riskQueue } = require('../scripts/lib/review-queue.js');
 
 const STATIC = 'a3f0b05b'; // hand-written series (emoji equations, CM1)
 const GENERATED = 'b2025e33'; // generated series (sequences with a check cell, CM1)
@@ -144,6 +146,68 @@ describe('flags', () => {
     expect(readFlags().find((x) => x.id === f.id).resolvedAt).toBeNull();
     setFlag(f.id, 'resolve');
     expect(readFlags().find((x) => x.id === f.id).resolvedBy).toBe('human');
+  });
+});
+
+describe('validating from the player: the served page must be the series on disk', () => {
+  // What a fresh page of the series sends (series-meta files + the generators it ran)
+  const served = (id) => {
+    const series = listSeries().find((s) => s.id === id);
+    const gens = loadGenerators();
+    const names = series.files
+      .map(
+        (f) =>
+          (require('node:fs')
+            .readFileSync(f, 'utf8')
+            .match(/^generator:\s*(\w+)/m) || [])[1]
+      )
+      .filter(Boolean);
+    return {
+      count: 5,
+      errors: 0,
+      files: servedFingerprints(series.files, gens),
+      generators: Object.fromEntries(names.map((n) => [n, gens[n].generate.toString()])),
+    };
+  };
+
+  it('accepts a fresh page', () => {
+    validateSeries(GENERATED, served(GENERATED));
+    expect(statusOf(GENERATED).status).toBe('ok');
+  });
+
+  it('refuses an empty page, generation errors, a page older than its files, stale generators', () => {
+    const ok = served(GENERATED);
+    const name = Object.keys(ok.generators)[0];
+    const [file] = Object.keys(ok.files);
+    expect(() => validateSeries(GENERATED, { ...ok, count: 0 })).toThrow(/série vide/);
+    expect(() => validateSeries(GENERATED, { ...ok, errors: 2 })).toThrow(/erreur de génération/);
+    expect(() => validateSeries(GENERATED, { ...ok, files: { ...ok.files, [file]: 'old' } })).toThrow(/recharge/);
+    expect(() => validateSeries(GENERATED, { ...ok, files: {} })).toThrow(/recharge/);
+    const old = { ...ok.generators, [name]: '() => ({})' };
+    expect(() => validateSeries(GENERATED, { ...ok, generators: old })).toThrow(/pas celui du disque/);
+    const missing = { ...ok.generators, [name]: null };
+    expect(() => validateSeries(GENERATED, { ...ok, generators: missing })).toThrow(/absent de la page/);
+    expect(statusOf(GENERATED).status).toBe('pending');
+  });
+});
+
+describe('review queue', () => {
+  it('ranks stale then flagged series first, each risk the sum of its reasons', () => {
+    validateSeries(STATIC);
+    const map = readValidations();
+    const [first] = [...map.values()].filter((v) => v.seriesId === STATIC);
+    map.set(first.path, { ...first, hash: 'deadbeefdeadbeef' });
+    writeValidations(map);
+    addFlag(GENERATED, 'look at #1');
+    const queue = riskQueue();
+    expect(queue.slice(0, 2).map((r) => r.id)).toEqual([STATIC, GENERATED]);
+    for (const r of queue) expect(r.risk).toBe(r.reasons.reduce((a, x) => a + x.points, 0));
+    expect(queue.map((r) => r.risk)).toEqual([...queue.map((r) => r.risk)].sort((a, b) => b - a));
+  });
+
+  it('leaves validated, unflagged series out', () => {
+    validateSeries(STATIC);
+    expect(riskQueue().some((r) => r.id === STATIC)).toBe(false);
   });
 });
 

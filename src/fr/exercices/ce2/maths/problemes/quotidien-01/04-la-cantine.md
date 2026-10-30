@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La cantine"
+operation: "6 × 4 = 24"
 answer: "24"
 ---
 

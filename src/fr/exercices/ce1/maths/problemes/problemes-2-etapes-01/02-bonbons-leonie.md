@@ -6,8 +6,10 @@ context: "Léonie a 20 bonbons. Elle en mange 5, puis en reçoit 8 de sa mamie."
 questions:
   - text: "Combien de bonbons reste-t-il après qu'elle en a mangé 5 ?"
     answer: "15"
+    operation: "20 - 5 = 15"
   - text: "Combien de bonbons a-t-elle à la fin ?"
     answer: "23"
+    operation: "15 + 8 = 23"
 ---
 
 Lis le problème, puis réponds aux deux questions.

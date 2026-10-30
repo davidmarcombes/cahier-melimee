@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les menus du restaurant"
+operation: "3 × 4 × 2 = 24"
 answer: "24"
 ---
 

@@ -5,8 +5,10 @@ class: "A1.1"
 questions:
   - text: "Combien de gâteaux y a-t-il en tout dans les deux boîtes ?"
     answer: "25"
+    operation: "15 + 10 = 25"
   - text: "La classe mange 10 gâteaux. Combien en reste-t-il ?"
     answer: "15"
+    operation: "25 - 10 = 15"
 ---
 
 Dans une boîte, il y a **15** gâteaux.

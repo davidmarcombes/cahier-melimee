@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le quart d'un nombre"
+operation: "20 ÷ 4 = 5"
 answer: "5"
 ---
 

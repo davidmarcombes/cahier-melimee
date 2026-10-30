@@ -2,6 +2,7 @@
 type: problem
 class: "M3.1"
 title: "Le violet d'Inès"
+operation: "15 ÷ 5 = 3 ; 3 × 3 = 9"
 answer: "9"
 ---
 

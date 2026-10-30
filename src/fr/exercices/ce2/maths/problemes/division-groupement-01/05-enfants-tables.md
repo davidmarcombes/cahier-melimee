@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les enfants à table"
+operation: "48 ÷ 6 = 8"
 answer: "8"
 ---
 

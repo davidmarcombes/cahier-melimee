@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Théo et Emma"
+operation: "48 - 15 = 33"
 answer: "33"
 ---
 

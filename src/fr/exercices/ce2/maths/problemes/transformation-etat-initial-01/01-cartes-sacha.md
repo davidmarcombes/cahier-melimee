@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les cartes de Sacha"
+operation: "43 - 15 = 28"
 answer: "28"
 ---
 

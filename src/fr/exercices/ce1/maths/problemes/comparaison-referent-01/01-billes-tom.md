@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Tom"
+operation: "30 - 8 = 22"
 answer: "22"
 ---
 

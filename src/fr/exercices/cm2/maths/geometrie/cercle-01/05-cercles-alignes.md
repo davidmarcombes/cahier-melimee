@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Des cercles alignés"
+operation: "2 × 2 = 4 ; 20 ÷ 4 = 5"
 answer: "5"
 ---
 

@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les autocollants par page"
+operation: "30 ÷ 5 = 6"
 answer: "6"
 ---
 

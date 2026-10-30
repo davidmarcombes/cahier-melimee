@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les morceaux de tissu"
+operation: "5 × 100 = 500 ; 500 ÷ 25 = 20"
 answer: "20"
 ---
 

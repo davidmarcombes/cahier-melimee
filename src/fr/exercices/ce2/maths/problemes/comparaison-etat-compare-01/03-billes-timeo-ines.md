@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes de Timéo et Inès"
+operation: "67 - 28 = 39"
 answer: "39"
 ---
 

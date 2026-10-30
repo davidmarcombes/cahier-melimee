@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Les billes"
+operation: "12 ÷ 4 = 3"
 answer: "3"
 ---
 

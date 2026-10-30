@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Compter des pièces"
+operation: "2 × 50 = 100 ; 100 ÷ 100 = 1 ; 3 + 1 = 4"
 answer: "4"
 ---
 

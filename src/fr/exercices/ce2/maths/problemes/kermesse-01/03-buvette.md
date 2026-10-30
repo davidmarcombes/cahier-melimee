@@ -5,8 +5,10 @@ context: "À la buvette, **4 verres de limonade** coûtent **8 €**. La maître
 questions:
   - text: "Combien coûte **1 verre** en euros ?"
     answer: "2"
+    operation: "8 ÷ 4 = 2"
   - text: "Combien paye-t-elle en **euros** ?"
     answer: "24"
+    operation: "2 × 12 = 24"
 ---
 
 Lis le problème, puis réponds aux deux questions.

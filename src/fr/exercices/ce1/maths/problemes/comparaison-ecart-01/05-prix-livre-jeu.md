@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le livre et le jeu"
+operation: "14 - 8 = 6"
 answer: "6"
 ---
 

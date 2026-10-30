@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'appartement et la chambre"
+operation: "120 ÷ 6 = 20"
 answer: "20"
 ---
 

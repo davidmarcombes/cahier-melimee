@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La course à pied"
+operation: "3,5 × 4 = 14 ; 14 - 3,5 = 10,5"
 answer: "10,5"
 ---
 

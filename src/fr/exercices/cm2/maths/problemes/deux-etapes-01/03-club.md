@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "Le club de football"
+operation: "132 - 24 = 108 ; 108 ÷ 6 = 18"
 answer: "18"
 ---
 

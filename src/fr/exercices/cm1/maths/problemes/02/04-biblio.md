@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "La bibliothèque"
+operation: "3 × 75 = 225 ; 225 + 20 = 245"
 answer: "245"
 ---
 

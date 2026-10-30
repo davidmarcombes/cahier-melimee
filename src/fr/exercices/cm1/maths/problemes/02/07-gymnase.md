@@ -1,6 +1,7 @@
 ---
 type: problem
 title: "L'inventaire du gymnase"
+operation: "6 × 15 = 90 ; 90 + 12 = 102"
 answer: "102"
 ---
 
