@@ -343,6 +343,18 @@ function validateSeries(seriesDir, errors) {
       for (const it of data.items)
         if (!ids.has(String(it.cat))) errors.push(`${relMd}: classify item "${it.html}" has unknown cat "${it.cat}"`);
     }
+    // A token the story doesn't contain is never tappable: the step can't be done (« 1 h 40 » vs « 1 heure 40 minutes »).
+    // Same match as the build (.eleventy.js, case-insensitive), within one run of text: the build
+    // wraps between tags, so a token straddling a ** boundary is never tappable either.
+    if (type === 'guided-problem' && data.story && Array.isArray(data.steps)) {
+      const runs = String(data.story).split('**');
+      for (const s of data.steps)
+        for (const t of Array.isArray(s.tokens) ? s.tokens : []) {
+          const esc = String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const re = new RegExp(`(?<![\\p{L}\\d_])${esc}(?![\\p{L}\\d_])`, 'iu');
+          if (!runs.some((r) => re.test(r))) errors.push(`${relMd}: guided-problem token "${t}" is not in the story`);
+        }
+    }
     // The pupil types the correction: a sentence can never be matched (« « de plus » → c'est A qui… »)
     if (type === 'error-analysis' && /\p{L}{3,}.*\s.*\p{L}{3,}/u.test(String(data.correction ?? '')))
       errors.push(

@@ -4,10 +4,10 @@ title: "L'heure de départ"
 story: "Le cours se termine à **11 h 45**. Il a duré **1 heure 15 minutes**. À quelle heure a-t-il **commencé** ?"
 steps:
   - kind: keywords
-    tokens: ["terminé", "commencé", "duré"]
+    tokens: ["termine", "commencé", "duré"]
     hint: "On soustrait la durée de l'heure de fin pour trouver l'heure de début."
   - kind: numbers
-    tokens: ["11 h 45", "1 h 15"]
+    tokens: ["11 h 45", "1 heure 15 minutes"]
   - kind: convert
     question: "45 min − 15 min = ___ min"
     answer: "30"

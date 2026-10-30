@@ -890,16 +890,29 @@ module.exports = async function (eleventyConfig) {
           // Render story markdown (strip outer <p> if single paragraph)
           let storyHtml = md.render(interpolate(String(ex.data.story))).trim();
           storyHtml = storyHtml.replace(/^<p>([\s\S]*)<\/p>$/, '$1');
-          // Wrap tokens — longest first to avoid partial overlaps
+          // Wrap tokens in one pass, longest first, in the text between tags only: wrapping one token
+          // at a time re-matched « 5 » inside the attribute of « sacs de 5 ». A shorter token inside a
+          // longer one gets its own nested span (« 5 » is tapped at the numbers step, closest() finds it).
+          // Case-insensitive: « Chaque » opens a sentence but the step lists « chaque »; the story keeps its spelling.
+          const wrap = (text, toks) => {
+            if (!toks.length) return text;
+            const byLower = new Map(toks.map((t) => [t.toLowerCase(), t]));
+            const alt = toks.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+            const re = new RegExp(`(?<![\\p{L}\\d_])(?:${alt})(?![\\p{L}\\d_])`, 'giu');
+            return text.replace(re, (m) => {
+              const tok = byLower.get(m.toLowerCase());
+              const inner = wrap(
+                m,
+                toks.filter((t) => t !== tok)
+              );
+              return `<span class="gp-token" data-gp="${tok.replace(/"/g, '&quot;')}">${inner}</span>`;
+            });
+          };
           const sorted = [...new Set(allTokens)].sort((a, b) => b.length - a.length);
-          for (const tok of sorted) {
-            const esc = tok.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const attr = tok.replace(/"/g, '&quot;');
-            storyHtml = storyHtml.replace(
-              new RegExp(`(?<![\\w"])${esc}(?![\\w])`, 'g'),
-              `<span class="gp-token" data-gp="${attr}">${tok}</span>`
-            );
-          }
+          storyHtml = storyHtml
+            .split(/(<[^>]*>)/)
+            .map((part, i) => (i % 2 ? part : wrap(part, sorted)))
+            .join('');
           item.gpStory = storyHtml;
           // Map steps
           item.gpSteps = ex.data.steps.map((step) => {

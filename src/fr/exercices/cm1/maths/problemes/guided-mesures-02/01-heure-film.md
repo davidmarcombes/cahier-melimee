@@ -7,7 +7,7 @@ steps:
     tokens: ["commence", "dure", "termine"]
     hint: "On ajoute la durée à l'heure de début pour trouver l'heure de fin."
   - kind: numbers
-    tokens: ["20 h 15", "1 h 40"]
+    tokens: ["20 h 15", "1 heure 40 minutes"]
   - kind: convert
     question: "15 min + 40 min = ___ min"
     answer: "55"
