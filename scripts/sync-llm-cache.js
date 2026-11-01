@@ -3,8 +3,9 @@
  * sync-llm-cache.js — Keep validate-llm-cache.csv in sync with exercise files.
  *
  * - Adds new exercise files (no verdicts yet)
- * - Updates hash when file content changed (clears verdicts)
- * - Updates hash silently when only line endings changed (CRLF→LF, keeps verdicts)
+ * - Reports files changed since their verdicts (the file or its generator: the fingerprint of
+ *   scripts/lib/human-validation.js): those verdicts and manual=ok no longer count, but stay recorded
+ *   on the old fingerprint — npm run restore:validations brings them back for a safe edit
  * - Removes entries for files that no longer exist
  *
  * Does NOT require Ollama. Safe to run as a pre-commit step.
@@ -15,14 +16,18 @@
  */
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
+const {
+  CACHE_PATH,
+  SRC_DIRS,
+  getSeriesId,
+  loadCache,
+  saveCache,
+  fileHash,
+  walkMdFiles,
+} = require('./lib/llm-cache.js');
 
 const ROOT = path.resolve(__dirname, '..');
-const CACHE_PATH = path.join(ROOT, 'reports/validate-llm-cache.csv');
-const SRC_DIRS = ['src/fr/exercices', 'src/fr/applications', 'src/fr/defis'].map((r) => path.join(ROOT, r));
-
 const doWrite = process.argv.includes('--write');
 
 const C = {
@@ -34,98 +39,6 @@ const C = {
   reset: '\x1b[0m',
 };
 
-// ── Hashing ──────────────────────────────────────────────────────────────────
-
-function fileHash(filePath) {
-  const content = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  return crypto.createHash('sha256').update(content).digest('hex').slice(0, 16);
-}
-
-function fileHashRaw(filePath) {
-  return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex').slice(0, 16);
-}
-
-// Hash of the file as if it had CRLF line endings (detects stored-CRLF → checkout-LF migration).
-function fileHashForceCRLF(filePath) {
-  const crlf = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '\r\n');
-  return crypto.createHash('sha256').update(crlf).digest('hex').slice(0, 16);
-}
-
-// ── File discovery ────────────────────────────────────────────────────────────
-
-const _seriesIdCache = new Map();
-function getSeriesId(absPath) {
-  const dir = path.dirname(absPath);
-  if (_seriesIdCache.has(dir)) return _seriesIdCache.get(dir);
-  try {
-    const m = fs.readFileSync(path.join(dir, 'index.yaml'), 'utf8').match(/^id:\s*(\S+)/m);
-    const id = m ? m[1] : '';
-    _seriesIdCache.set(dir, id);
-    return id;
-  } catch {
-    _seriesIdCache.set(dir, '');
-    return '';
-  }
-}
-
-function walkMdFiles(dir) {
-  const results = [];
-  if (!fs.existsSync(dir)) return results;
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) results.push(...walkMdFiles(full));
-    else if (entry.name.endsWith('.md') && !entry.name.startsWith('_')) results.push(full);
-  }
-  return results;
-}
-
-// ── Cache I/O ─────────────────────────────────────────────────────────────────
-
-function loadCache() {
-  const map = new Map();
-  if (!fs.existsSync(CACHE_PATH)) return map;
-  const lines = fs
-    .readFileSync(CACHE_PATH, 'utf8')
-    .split('\n')
-    .filter((l) => l.trim());
-  if (lines.length === 0) return map;
-
-  const header = lines[0].split(',');
-  const hasSeriesId = header[1] === 'seriesId';
-  const hasManual = hasSeriesId && header[3] === 'manual';
-  const dataOffset = hasManual ? 4 : hasSeriesId ? 3 : 2;
-  const modelCols = header.slice(dataOffset);
-
-  for (const line of lines.slice(1)) {
-    const parts = line.split(',');
-    if (!parts[0]) continue;
-    const seriesId = hasSeriesId ? parts[1] || '' : '';
-    const hash = hasSeriesId ? parts[2] || '' : parts[1] || '';
-    const manual = hasManual ? parts[3] || '' : '';
-    const verdicts = parts.slice(dataOffset);
-    const models = new Map();
-    modelCols.forEach((m, i) => {
-      if (verdicts[i]) models.set(m, verdicts[i]);
-    });
-    map.set(parts[0], { seriesId, hash, manual, models });
-  }
-  return map;
-}
-
-function saveCache(map) {
-  const allModels = new Set();
-  for (const e of map.values()) for (const m of e.models.keys()) allModels.add(m);
-  const cols = [...allModels].sort();
-
-  const header = ['path', 'seriesId', 'hash', 'manual', ...cols].join(',');
-  const rows = [...map.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([p, e]) =>
-      [p, e.seriesId || '', e.hash, e.manual || '', ...cols.map((m) => e.models.get(m) || '')].join(',')
-    );
-  fs.writeFileSync(CACHE_PATH, [header, ...rows].join('\n') + '\n');
-}
-
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 const cache = loadCache();
@@ -135,7 +48,6 @@ const seen = new Set();
 
 let added = 0,
   changed = 0,
-  rehashed = 0,
   removed = 0;
 
 console.log(`\n${C.bold}Sync LLM cache${C.reset}  (${doWrite ? 'write mode' : 'dry-run — use --write to apply'})\n`);
@@ -152,20 +64,16 @@ for (const absPath of allFiles) {
     console.log(`  ${C.green}+${C.reset} NEW      ${relPath}`);
     added++;
   } else if (entry.hash !== hash) {
-    const isLineEndingChange = entry.hash === fileHashRaw(absPath) || entry.hash === fileHashForceCRLF(absPath);
-    if (isLineEndingChange) {
-      // Only line endings changed — update hash silently, keep verdicts
-      updated.set(relPath, { ...entry, seriesId, hash });
-      rehashed++;
-    } else {
-      // Real content change — clear verdicts (re-validation needed)
-      const hadVerdicts = entry.models.size > 0;
-      updated.set(relPath, { seriesId, hash, manual: entry.manual || '', models: new Map() });
-      console.log(
-        `  ${C.yellow}~${C.reset} CHANGED  ${relPath}` + (hadVerdicts ? `  ${C.dim}(verdicts cleared)${C.reset}` : '')
-      );
-      changed++;
-    }
+    // Changed (the file or its generator): its verdicts and manual=ok no longer count. They stay
+    // recorded on the old fingerprint — like a stale human validation — so that
+    // npm run restore:validations can bring them back when the edit is known to be safe.
+    const hadVerdicts = entry.models.size > 0 || entry.manual === 'ok';
+    if (!hadVerdicts) updated.set(relPath, { ...entry, seriesId, hash });
+    console.log(
+      `  ${C.yellow}~${C.reset} CHANGED  ${relPath}` +
+        (hadVerdicts ? `  ${C.dim}(verdicts on the previous version: no longer count)${C.reset}` : '')
+    );
+    changed++;
   }
 }
 
@@ -177,16 +85,15 @@ for (const relPath of cache.keys()) {
   }
 }
 
-const unchanged = allFiles.length - added - changed - rehashed;
+const unchanged = allFiles.length - added - changed;
 
-if (added + changed + removed + rehashed === 0) {
+if (added + changed + removed === 0) {
   console.log(`  ${C.dim}All ${allFiles.length} exercise files are up to date.${C.reset}`);
 } else {
   const parts = [];
   if (added) parts.push(`${C.green}${added} added${C.reset}`);
-  if (changed) parts.push(`${C.yellow}${changed} changed${C.reset} (verdicts cleared)`);
+  if (changed) parts.push(`${C.yellow}${changed} changed${C.reset} (their verdicts no longer count)`);
   if (removed) parts.push(`${C.red}${removed} removed${C.reset}`);
-  if (rehashed) parts.push(`${C.dim}${rehashed} rehashed (CRLF→LF)${C.reset}`);
   if (unchanged) parts.push(`${C.dim}${unchanged} unchanged${C.reset}`);
   console.log(`\n${C.bold}Summary:${C.reset} ${parts.join(', ')}`);
 

@@ -16,20 +16,20 @@ title: Dashboard
     <div class="space-y-4">
 
       {# ── Stats bar ──────────────────────────────────────────────────────────── #}
-      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-center">
-          <div class="text-2xl font-black text-slate-700 dark:text-slate-200" x-text="rows.length"></div>
-          <div class="text-xs text-slate-400 mt-0.5">Séries total</div>
+      <div class="flex flex-wrap gap-2">
+        <div class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 flex items-baseline gap-1.5">
+          <span class="text-lg font-black text-slate-700 dark:text-slate-200" x-text="rows.length"></span>
+          <span class="text-xs text-slate-400">séries</span>
         </div>
         <template x-for="(count, lvl) in levelCounts" :key="lvl">
-          <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-center">
-            <div class="text-2xl font-black text-primary-600 dark:text-primary-400" x-text="count"></div>
-            <div class="text-xs text-slate-400 mt-0.5" x-text="lvl"></div>
+          <div class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 flex items-baseline gap-1.5">
+            <span class="text-lg font-black text-primary-600 dark:text-primary-400" x-text="count"></span>
+            <span class="text-xs text-slate-400" x-text="lvl"></span>
           </div>
         </template>
-        <div x-show="humanOkCount > 0" class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-center">
-          <div class="text-2xl font-black text-green-600 dark:text-green-400" x-text="humanOkCount"></div>
-          <div class="text-xs text-slate-400 mt-0.5">Validées ✓</div>
+        <div x-show="humanOkCount > 0" class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 flex items-baseline gap-1.5">
+          <span class="text-lg font-black text-green-600 dark:text-green-400" x-text="humanOkCount"></span>
+          <span class="text-xs text-slate-400">validées ✓</span>
         </div>
       </div>
 
@@ -174,18 +174,21 @@ title: Dashboard
                 <tr class="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors group">
 
                   {# Title + ID #}
-                  <td class="px-3 py-2 max-w-xs">
-                    <a href="#" :href="seriesUrl(row)" target="_blank"
-                       class="font-medium text-primary-600 dark:text-primary-400 hover:underline leading-tight block truncate"
-                       x-text="row.title || '(sans titre)'">série</a>
-                    {# Level next to the id: several series share a title across levels #}
-                    <span class="text-xs font-semibold text-slate-600 dark:text-slate-300" x-text="row.level"></span>
-                    <span class="text-xs text-slate-400 font-mono" x-text="row.id"></span>
+                  {# Width capped on an inner block: a table cell ignores max-width #}
+                  <td class="px-3 py-2">
+                    <div class="w-[13rem]">
+                      <a href="#" :href="seriesUrl(row)" target="_blank" :title="row.title"
+                         class="font-medium text-primary-600 dark:text-primary-400 hover:underline leading-tight block truncate"
+                         x-text="row.title || '(sans titre)'">série</a>
+                      {# Level next to the id: several series share a title across levels #}
+                      <span class="text-xs font-semibold text-slate-600 dark:text-slate-300" x-text="row.level"></span>
+                      <span class="text-xs text-slate-400 font-mono" x-text="row.id"></span>
+                    </div>
                   </td>
 
                   {# Kind badge #}
                   <td class="px-3 py-2 whitespace-nowrap">
-                    <span :class="{'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300': row.kind === 'exercice', 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300': row.kind === 'application', 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300': row.kind === 'defi'}" class="px-1.5 py-0.5 rounded text-xs font-medium" x-text="row.kind"></span>
+                    <span :class="{'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300': row.kind === 'exercice', 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300': row.kind === 'application', 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300': row.kind === 'defi'}" class="px-1.5 py-0.5 rounded text-xs font-medium" :title="row.kind" x-text="({ exercice: 'ex', application: 'app', defi: 'défi' })[row.kind] || row.kind"></span>
                   </td>
 
                   {# Level #}
@@ -224,7 +227,7 @@ title: Dashboard
                               class="flex items-center gap-1.5 text-xs rounded px-1 py-0.5 hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-400">
                         <span x-show="row.humanStatus === 'stale'" class="font-bold text-amber-600 dark:text-amber-400">↻ modifiée</span>
                         <span x-show="row.openFlags.length" class="font-bold text-red-600 dark:text-red-400" x-text="'🚩 ' + row.openFlags.length"></span>
-                        <span x-show="row.check === 'pending'" class="text-slate-400" x-text="(row.humanStatus === 'partial' ? '○ ' + row.humanCoverage : '○ à faire') + (row.risk ? ' · risque ' + row.risk : '')"></span>
+                        <span x-show="row.check === 'pending'" class="text-slate-400" x-text="(row.humanStatus === 'partial' ? row.humanCoverage : 'À faire') + (row.risk ? ' - ' + row.risk : '')" title="À faire - risque (cliquer : pourquoi)"></span>
                         <span x-show="row.check === 'ok'" class="text-green-600 dark:text-green-400" x-text="row.humanDate"></span>
                       </button>
                     </div>
@@ -279,7 +282,7 @@ title: Dashboard
                   </td>
 
                   {# MV — machine verified: LLM model(s) and/or answer oracle (title: details) #}
-                  <td x-show="hasHumanData" class="px-3 py-2 whitespace-nowrap text-xs" :title="row.mvTitle">
+                  <td x-show="hasHumanData" class="px-3 py-2 text-xs min-w-[6rem] max-w-[9rem]" :title="row.mvTitle">
                     <span x-show="row.mvStatus === 'ok'" class="font-semibold text-green-600 dark:text-green-400" x-text="'✓ ' + row.mvLabel"></span>
                     <span x-show="row.mvStatus === 'partial'" class="font-medium text-amber-600 dark:text-amber-400" x-text="'◐ ' + row.mvLabel"></span>
                     <span x-show="row.mvStatus === 'fail'" class="font-bold text-red-600 dark:text-red-400" x-text="row.mvLabel"></span>
@@ -289,10 +292,10 @@ title: Dashboard
 
                   {# Source path — copyable + open in editor #}
                   <td x-show="hasHumanData" class="px-3 py-2">
-                    <div class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-1.5 w-48">
                       <button type="button" @click="copy(row.path)" :title="'Copier : ' + row.path"
-                              class="text-xs text-slate-400 hover:text-primary-500 font-mono truncate max-w-[11rem] block text-left transition-colors"
-                              x-text="row.path"></button>
+                              class="text-xs text-slate-400 hover:text-primary-500 font-mono truncate min-w-0 block text-left transition-colors"
+                              x-text="row.path.replace(/^fr\//, '')"></button>
                       <a x-show="row.absPath" href="#" :href="'vscode://file/' + row.absPath" title="Ouvrir dans VS Code" aria-label="Ouvrir dans VS Code"
                          class="shrink-0 text-slate-300 dark:text-slate-600 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 19.08V4.92a1.5 1.5 0 0 0-.85-1.333zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/></svg>

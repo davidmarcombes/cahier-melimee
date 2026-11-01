@@ -35,6 +35,7 @@ const desc = {
   'validate:html': 'Validate generated HTML',
   'validate:llm': 'Validate exercises with LLM',
   'validate:llm:smoke': 'Quick LLM smoke test (one exercise, verbose)',
+  'validate:vision': 'Visual exercises checked on screenshots by Haiku subagents (--export / --import)',
   'validate:cross': 'Cross-validate LLM + human validations',
   'check:spell': 'Spellcheck markdown files',
   lint: 'Strict lint: ESLint (0 warnings) + Prettier check + knip (dead code / deps)',
@@ -50,6 +51,8 @@ const desc = {
   'review:failures': 'Review LLM validation failures interactively',
   'sync:human-validations': 'Sync human validations (dry run)',
   'sync:human-validations:write': 'Sync human validations (write)',
+  'restore:validations':
+    'After a safe tweak: keep human/LLM validations of files changed since HEAD (--only=<regex>, --ref=, dry run unless --write)',
   'sync:llm-cache': 'Sync LLM validation cache (dry run)',
   'sync:llm-cache:write': 'Sync LLM validation cache (write)',
   'normalize:eol': 'Check for CRLF line endings in source files (dry run)',

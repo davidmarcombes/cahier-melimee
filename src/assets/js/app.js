@@ -1,5 +1,6 @@
 import { localStore } from './modules/store.js';
 import { themeToggle } from './modules/theme.js';
+import { voiceSpeed } from './modules/voice-speed.js';
 import { seriesPlayer } from './modules/player.js';
 import { timedPlayer } from './modules/timed-player.js';
 import { renderOpShorthands } from './modules/utils.js';
@@ -7,6 +8,7 @@ import { renderOpShorthands } from './modules/utils.js';
 // Expose to window for Alpine.js and global access
 window.localStore = localStore;
 window.themeToggle = themeToggle;
+window.voiceSpeed = voiceSpeed;
 window.seriesPlayer = seriesPlayer;
 window.timedPlayer = timedPlayer;
 window.renderOpShorthands = renderOpShorthands;

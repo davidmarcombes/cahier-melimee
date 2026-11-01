@@ -14,6 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const { execSync } = require('child_process');
+const { fileHash } = require('./lib/llm-cache.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const CACHE_PATH = path.join(ROOT, 'reports/validate-llm-cache.csv');
@@ -105,7 +106,9 @@ async function main() {
     process.exit(1);
   }
 
-  const failed = rows.filter((r) => r.manual !== 'ok' && modelCols.some((m) => r[m] === 'fail'));
+  // Failures on the current version only: a file changed since has to be validated again first
+  const current = (r) => fs.existsSync(path.join(ROOT, r.path)) && r.hash === fileHash(path.join(ROOT, r.path));
+  const failed = rows.filter((r) => r.manual !== 'ok' && modelCols.some((m) => r[m] === 'fail') && current(r));
 
   if (!failed.length) {
     console.log(`\n${C.green}No failures to review.${C.reset}\n`);

@@ -59,6 +59,7 @@ Après génération, contrôler `git status` et la taille des assets pour détec
 - `src/assets/js/generators/nombres.js` attache une consigne audio aux 16 types CP de comptage d'objets.
 - Les clips ne sont pas inclus dans le cache initial du service worker. La lecture crée une requête audio à la demande, ensuite mise en cache par le service worker.
 - La page publique [src/fr/voix.md](../src/fr/voix.md) décrit l'expérience, la vie privée, l'attribution et donne des exemples d'écoute.
+- **Vitesse** : réglage « Normale / Lente » de la page voix, par appareil (`localStorage` `voiceSpeed`). `src/assets/js/modules/voice-speed.js` : « Lente » joue chaque clip à 0,8 sans changer la hauteur (`preservesPitch`) et allonge les pauses entre segments d'autant. Pas de bouton dans les exercices. Tout nouveau lecteur de clip passe par `applyVoiceRate()`.
 
 Ne pas envoyer les phrases à un service de synthèse en ligne lors de la génération. Les fichiers audio livrés sont publics; ne jamais y inclure de données personnelles.
 

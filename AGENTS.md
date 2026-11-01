@@ -66,10 +66,12 @@ npm run sync:human-validations         # Dry-run: show new/changed/removed exerc
 npm run sync:human-validations:write   # Apply: update human-validate.csv (add / rehash / remove; changed validated files stay, reported stale)
 npm run flag -- <id|URL> "<reason>"      # Flag something for the human to check (/admin/ « À vérifier » column) — see agents/tools.md
 npm run unvalidate -- <id|URL> "<why>"   # Withdraw a human validation (series back to « à faire » + a flag saying why)
+npm run restore:validations -- --only='^\s*operation:' --write  # After a safe tweak: keep the human/LLM validations of files changed since HEAD whose every changed line matches
 npm run snapshot -- <name>             # Checkpoint of the built site (.snapshots/, git-ignored) — see agents/tools.md
 npm run regress -- [name]              # Compare now with a checkpoint: affected pages, screenshots, pixel-diff report
 npm run list:human-validations         # Display human-validate.csv as a table
 npm run queue:human -- --why           # Series a human should check next, riskiest first, with the reasons
+npm run validate:vision -- --export    # Screenshots of visual exercises for Haiku subagents (then -- --import) — see agents/tools.md
 npm run list:series                    # List all series (--level --type --cat --missing)
 npm run list:type                      # Show schema + template for any exercise type
 ```

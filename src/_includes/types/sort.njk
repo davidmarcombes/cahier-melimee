@@ -5,11 +5,13 @@
   <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4 max-w-none text-content-subtle"></div>
 
   {# Tile pool — unselected items #}
-  <div class="flex flex-wrap justify-center gap-3 min-h-[4.5rem] p-4 rounded-xl bg-surface-subtle border border-slate-200 dark:border-slate-700">
+  <div class="flex flex-wrap justify-center rounded-xl bg-surface-subtle border border-slate-200 dark:border-slate-700"
+    :class="sortLong ? 'gap-1.5 p-2 min-h-[2.75rem]' : 'gap-3 p-4 min-h-[4.5rem]'">
     <template x-for="(item, i) in sortShuffled" :key="i">
       <button type="button" x-show="!sortPicked.includes(i)"
         @click="sortTap(i)" :disabled="solved"
-        class="px-6 py-3 rounded-xl border-2 font-semibold text-lg transition-all active:scale-95 select-none border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-content-default hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+        class="rounded-xl border-2 transition-all active:scale-95 select-none border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-content-default hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+        :class="sortLong ? 'w-full px-3 py-1.5 text-sm font-medium text-left' : 'px-6 py-3 font-semibold text-lg'"
         x-text="item">
       </button>
     </template>
@@ -26,11 +28,13 @@
   </div>
 
   {# Answer track — placed items + empty slots #}
-  <div class="flex flex-wrap justify-center gap-3">
+  <div class="flex flex-wrap justify-center" :class="sortLong ? 'gap-1.5' : 'gap-3'">
     <template x-for="(idx, rank) in sortPicked" :key="rank">
       <button type="button" @click="sortUnpick(rank)" :disabled="solved"
-        class="px-6 py-3 rounded-xl border-2 font-semibold text-lg transition-all active:scale-95 select-none"
+        class="rounded-xl border-2 transition-all active:scale-95 select-none"
         :class="{
+          'w-full px-3 py-1.5 text-sm font-medium text-left': sortLong,
+          'px-6 py-3 font-semibold text-lg': !sortLong,
           'border-green-400 bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200': solved,
           'border-red-400 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200': sortErrors.includes(rank),
           'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-content-default': !solved && !sortErrors.includes(rank)
@@ -40,7 +44,8 @@
       </button>
     </template>
     <template x-for="n in Math.max(0, (cur.items ? cur.items.length : 0) - sortPicked.length)" :key="n">
-      <div class="px-6 py-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 text-content-subtle text-lg font-semibold min-w-[4rem] text-center">
+      <div class="rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 text-content-subtle font-semibold text-center"
+        :class="sortLong ? 'px-2 py-0.5 text-sm min-w-[2.5rem]' : 'px-6 py-3 text-lg min-w-[4rem]'">
         <span x-text="sortPicked.length + n + '.'"></span>
       </div>
     </template>

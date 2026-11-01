@@ -1,6 +1,7 @@
 import { localStore } from './store.js';
 import { renderOpShorthands, normalizeAnswer, groupDigits } from './utils.js';
 import { SETTINGS } from './constants.js';
+import { applyVoiceRate, voiceRate } from './voice-speed.js';
 
 // Value of a sort / drag-sort item: "3 050", "4,5", "3/4", an HTML fraction. NaN for pictures, which keep
 // their listed order (the comparator then returns NaN, treated as equal by the stable sort).
@@ -2243,6 +2244,12 @@ export function seriesPlayer(exercises, seriesId) {
       return '';
     },
 
+    // Sort with sentences (the steps of a construction program): a compact list instead of big tiles,
+    // or six steps push the answer slots below the screen
+    get sortLong() {
+      return (this.cur?.items || []).some((t) => String(t).length > 24);
+    },
+
     get hasAudio() {
       return !!this.cur?.voiceAudio;
     },
@@ -2282,6 +2289,7 @@ export function seriesPlayer(exercises, seriesId) {
           return;
         }
         const audio = new Audio(`${window.__pathPrefix || '/'}assets/audio/voice-pilot/${clipPath}`);
+        applyVoiceRate(audio); // slower voice: a setting of the voix page
         sequence.current = audio;
         audio.addEventListener(
           'ended',
@@ -2291,7 +2299,7 @@ export function seriesPlayer(exercises, seriesId) {
               voiceAudio = null;
               return;
             }
-            sequence.timer = setTimeout(playNext, sequence.pauseMs);
+            sequence.timer = setTimeout(playNext, sequence.pauseMs / voiceRate()); // pauses slow down too
           },
           { once: true }
         );

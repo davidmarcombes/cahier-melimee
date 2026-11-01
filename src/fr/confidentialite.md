@@ -25,6 +25,7 @@ Tout est conservé **localement**, dans le navigateur, et ne nous est jamais tra
 
 - **Les cahiers** (stockage local) : pour chaque enfant, un identifiant anonyme choisi parmi des propositions (ex : *petit-renard-roux*), un autocollant et la liste des séries terminées avec leur date. Plusieurs enfants peuvent avoir chacun leur cahier sur le même appareil.
 - **La préférence d'affichage** clair ou sombre (stockage local).
+- **La vitesse de la voix**, si elle a été réglée sur « lente » (stockage local).
 - **La liste des exercices et les filtres choisis** (stockage de session) : effacés automatiquement à la fermeture de l'onglet.
 - **Une copie du site pour le hors-ligne** (cache du navigateur) : les fichiers communs du site et les pages déjà ouvertes, pour qu'elles fonctionnent sans connexion. Elle ne contient aucune donnée sur l'enfant.
 

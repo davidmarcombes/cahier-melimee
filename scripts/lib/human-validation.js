@@ -44,14 +44,19 @@ function loadGenerators() {
   return require(path.join(GEN_DIR, 'index.js'));
 }
 
-function fingerprint(absPath, gens) {
-  let src = fs.readFileSync(absPath, 'utf8').replace(/\r\n?/g, '\n');
+// Of a source text: a file, or an older version of it (git show) — scripts/restore-validations.js
+function fingerprintSource(text, gens) {
+  let src = String(text).replace(/\r\n?/g, '\n');
   const m = src.match(/^generator:\s*["']?([A-Za-z0-9_]+)/m);
   if (m) {
     const g = (gens || loadGenerators())[m[1]];
     src += '\n--generator ' + m[1] + '--\n' + (g ? g.generate.toString() : 'missing');
   }
   return crypto.createHash('sha256').update(src).digest('hex').slice(0, 16);
+}
+
+function fingerprint(absPath, gens) {
+  return fingerprintSource(fs.readFileSync(absPath, 'utf8'), gens);
 }
 
 // ─── Series ───────────────────────────────────────────────────────────────────
@@ -293,6 +298,7 @@ function setFlag(id, action) {
 
 module.exports = {
   fingerprint,
+  fingerprintSource,
   loadGenerators,
   listSeries,
   readValidations,

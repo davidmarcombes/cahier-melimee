@@ -48,6 +48,35 @@ describe('prerecorded player audio', () => {
     expect(MockAudio.instances).toHaveLength(2);
   });
 
+  it('plays every clip slower, at the same pitch, with longer pauses when the voice is set to slow', () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('window', { __pathPrefix: '/' });
+    vi.stubGlobal('Audio', MockAudio);
+    vi.stubGlobal('localStorage', { getItem: (k) => (k === 'voiceSpeed' ? 'slow' : null) });
+    const player = seriesPlayer([], '');
+
+    player.speak('un million', ['nombres/1.ogg', 'unites/million.ogg']);
+    expect(MockAudio.instances[0]).toMatchObject({ playbackRate: 0.8, preservesPitch: true });
+    MockAudio.instances[0].emit('ended');
+    vi.advanceTimersByTime(180);
+    expect(MockAudio.instances).toHaveLength(1); // 180 ms ÷ 0.8 = 225 ms
+    vi.advanceTimersByTime(45);
+    expect(MockAudio.instances).toHaveLength(2);
+    expect(MockAudio.instances[1].playbackRate).toBe(0.8);
+  });
+
+  it('plays at normal speed when the setting cannot be read', () => {
+    vi.stubGlobal('window', { __pathPrefix: '/' });
+    vi.stubGlobal('Audio', MockAudio);
+    vi.stubGlobal('localStorage', {
+      getItem: () => {
+        throw new Error('blocked');
+      },
+    });
+    seriesPlayer([], '').speak('treize', ['nombres/13.ogg']);
+    expect(MockAudio.instances[0].playbackRate).toBe(1);
+  });
+
   it('leaves a longer pause between counting and its question', () => {
     vi.useFakeTimers();
     vi.stubGlobal('window', { __pathPrefix: '/' });

@@ -8,6 +8,19 @@ templateEngineOverride: njk,md
 
 Certains exercices utilisent des consignes vocales : grande section, dictées et écoutes de nombres, comptage d'objets en CP.
 
+## Vitesse de la voix
+
+Si la voix parle trop vite pour l'enfant, elle peut être ralentie, sans devenir plus grave. Le réglage vaut pour tous les exercices, sur cet appareil.
+
+<div x-data="voiceSpeed()" class="not-prose my-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+<fieldset class="flex gap-4">
+<legend class="sr-only">Vitesse de la voix</legend>
+<label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="voice-speed" value="normal" :checked="!slow" @change="choose(false)" class="accent-primary-500"> Normale</label>
+<label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="voice-speed" value="slow" :checked="slow" @change="choose(true)" class="accent-primary-500"> Lente</label>
+</fieldset>
+<audio controls preload="none" src="{{ '/assets/audio/voice-pilot/objets/souris.ogg' | url }}">Écouter la consigne</audio>
+</div>
+
 ## Clips audio préenregistrés
 
 Les consignes de grande section, les dictées et écoutes de nombres, le comptage d'objets en CP et les encouragements utilisent des clips préenregistrés par le Cahier (voix Piper française SIWIS). Le lecteur compose les grands nombres et les décimaux à partir de clips de groupes de chiffres, d'unités et de virgule. Les 16 consignes d'objets et les retours (« Bravo ! », « Super ! »…) sont partagés entre exercices.
@@ -20,14 +33,14 @@ La voix SIWIS a été entraînée à partir du jeu de données [SIWIS French Spe
 
 Écoute un nombre et un encouragement :
 
+<div x-data="voiceSpeed()">
 <p>Dictée — nombre treize</p>
 <audio controls preload="none" src="{{ '/assets/audio/voice-pilot/nombres/13.ogg' | url }}">Écouter « treize »</audio>
-
 <p>Compter — souris</p>
 <audio controls preload="none" src="{{ '/assets/audio/voice-pilot/objets/souris.ogg' | url }}">Écouter la consigne</audio>
-
 <p>Encouragement — bravo</p>
 <audio controls preload="none" src="{{ '/assets/audio/voice-pilot/feedback/bravo.ogg' | url }}">Écouter « Bravo ! »</audio>
+</div>
 
 <p><a href="{{ '/fr/applications/cf92b76d/' | url }}">Essayer une dictée de grands nombres composés</a></p>
 

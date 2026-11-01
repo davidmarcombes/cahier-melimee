@@ -3,8 +3,8 @@
  * Shared by the admin dashboard (src/_data/adminReport.js), the dev API
  * (/api/human-next-unvalidated) and `npm run queue:human`.
  *
- * MACHINE VERIFIED (« MV » column): which machines checked a series' answers — LLM verdicts
- * (reports/validate-llm-cache.csv), the answer oracle (reports/oracle-coverage.json, written by
+ * MACHINE VERIFIED (« MV » column): which machines checked a series' answers — LLM verdicts on
+ * the current version of each file (reports/validate-llm-cache.csv), the answer oracle (reports/oracle-coverage.json, written by
  * scripts/check-answers.js) and the e2e puzzle solver.
  *
  * RISK: points for what makes an unvalidated series likely to hide an error a human would catch.
@@ -14,84 +14,31 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { listSeries, readFlags, status } = require('./human-validation.js');
+const { loadCache, fileHash } = require('./llm-cache.js');
 
 const ROOT = path.join(__dirname, '..', '..');
 
-function parseCSVRow(line) {
-  const fields = [];
-  let i = 0;
-  while (i <= line.length) {
-    if (i === line.length) {
-      fields.push('');
-      break;
-    }
-    if (line[i] === '"') {
-      i++;
-      let field = '';
-      while (i < line.length) {
-        if (line[i] === '"' && line[i + 1] === '"') {
-          field += '"';
-          i += 2;
-        } else if (line[i] === '"') {
-          i++;
-          break;
-        } else {
-          field += line[i++];
-        }
-      }
-      fields.push(field);
-      if (line[i] === ',') i++;
-    } else {
-      const end = line.indexOf(',', i);
-      if (end === -1) {
-        fields.push(line.slice(i));
-        break;
-      }
-      fields.push(line.slice(i, end));
-      i = end + 1;
-    }
-  }
-  return fields;
-}
-
-function parseCSV(filePath) {
-  if (!fs.existsSync(filePath)) return [];
-  const lines = fs
-    .readFileSync(filePath, 'utf8')
-    .replace(/\r/g, '')
-    .split('\n')
-    .filter((l) => l.trim());
-  if (lines.length < 2) return [];
-  const headers = parseCSVRow(lines[0]).map((h) => h.trim());
-  return lines.slice(1).map((line) => {
-    const vals = parseCSVRow(line);
-    return Object.fromEntries(headers.map((h, i) => [h, (vals[i] || '').trim()]));
-  });
-}
-
-// LLM verdicts aggregated by seriesId: { ok, fail, skip, total, models: Set }
+// LLM verdicts aggregated by seriesId: { ok, fail, skip, total, models: Set } — only verdicts on
+// the current version of a file (its fingerprint): an edit not synced yet does not count as checked
 function llmBySeries() {
-  const rows = parseCSV(path.join(ROOT, 'reports/validate-llm-cache.csv'));
   const llm = {};
-  const models = rows[0] ? Object.keys(rows[0]).filter((k) => !['path', 'seriesId', 'hash', 'manual'].includes(k)) : [];
-  for (const row of rows) {
-    if (!row.seriesId) continue;
-    if (!llm[row.seriesId]) llm[row.seriesId] = { ok: 0, fail: 0, skip: 0, total: 0, models: new Set() };
+  for (const [relPath, e] of loadCache()) {
+    if (!e.seriesId || !fs.existsSync(path.join(ROOT, relPath)) || e.hash !== fileHash(path.join(ROOT, relPath)))
+      continue;
+    const l = (llm[e.seriesId] ??= { ok: 0, fail: 0, skip: 0, total: 0, models: new Set() });
     // A human decision (manual=ok, after a check of an LLM failure) overrides the models' verdicts
-    if (row.manual === 'ok') {
-      llm[row.seriesId].total++;
-      llm[row.seriesId].ok++;
+    if (e.manual === 'ok') {
+      l.total++;
+      l.ok++;
       continue;
     }
-    for (const col of models) {
-      const v = row[col];
-      if (!v) continue;
-      llm[row.seriesId].total++;
+    for (const [model, v] of e.models) {
+      l.total++;
       if (v === 'ok') {
-        llm[row.seriesId].ok++;
-        llm[row.seriesId].models.add(col);
-      } else if (v === 'fail') llm[row.seriesId].fail++;
-      else if (v === 'skip') llm[row.seriesId].skip++;
+        l.ok++;
+        l.models.add(model);
+      } else if (v === 'fail') l.fail++;
+      else if (v === 'skip') l.skip++;
     }
   }
   return llm;
@@ -128,7 +75,13 @@ function seriesContent(s) {
 // game's rule checks (rows, columns, cages, inequalities) — not compared to a stored answer
 const SOLVER_TYPES = new Set(['maze', 'numberlink', 'kenken', 'futoshiki']);
 
-const MODEL_NAMES = { 'claude-haiku-4-5': 'Haiku', 'deepseek-r1:1.5b': 'DeepSeek', 'qwen2.5:7b': 'Qwen' };
+// « claude-sonnet-5-5 » → Sonnet5.5, « claude-haiku-4-5-vision » → Haiku4.5·img (narrow MV column)
+const MODEL_NAMES = { 'deepseek-r1:1.5b': 'DeepSeek', 'qwen2.5:7b': 'Qwen' };
+const modelName = (m) => {
+  const c = m.match(/^claude-([a-z]+)-(\d+)-(\d+)(-vision)?$/);
+  if (!c) return MODEL_NAMES[m] || m;
+  return `${c[1][0].toUpperCase()}${c[1].slice(1)}${c[2]}.${c[3]}${c[4] ? '·img' : ''}`;
+};
 
 //   sources: LLM models with an ok verdict (Haiku…) and/or the oracle (all exercises, or n/m)
 //   status: fail (an LLM failure not overridden by a human) · ok · partial (oracle n/m only)
@@ -142,7 +95,7 @@ function machineVerified(l, o, solver) {
     details.push('Solveur : puzzle résolu par le test e2e (solve.spec)');
   }
   if (l && l.ok > 0) {
-    sources.push(...[...l.models].map((m) => MODEL_NAMES[m] || m));
+    sources.push(...[...l.models].map(modelName));
     details.push(`LLM : ${l.ok} fichier(s) ok${l.skip ? `, ${l.skip} non vérifiable(s)` : ''}`);
   }
   const full = o && o.total > 0 && o.verified === o.total;

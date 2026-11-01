@@ -70,6 +70,18 @@ describe('human validation', () => {
     expect(fingerprint(file, edited)).not.toBe(before);
   });
 
+  it('the LLM cache uses the same fingerprint (an older version gives another one)', () => {
+    const { fileHash } = require('../scripts/lib/llm-cache.js');
+    const { fingerprintSource } = require('../scripts/lib/human-validation.js');
+    const fsx = require('node:fs');
+    for (const id of [STATIC, GENERATED]) {
+      const [file] = listSeries().find((s) => s.id === id).files;
+      expect(fileHash(file)).toBe(fingerprint(file, loadGenerators()));
+      expect(fingerprintSource(fsx.readFileSync(file, 'utf8'))).toBe(fingerprint(file));
+      expect(fingerprintSource(fsx.readFileSync(file, 'utf8') + '\n<!-- edit -->')).not.toBe(fingerprint(file));
+    }
+  });
+
   it('undoing a first validation makes the series pending again and reopens the flags it closed', () => {
     const f = addFlag(STATIC, 'look at #1');
     const done = validateSeries(STATIC);
