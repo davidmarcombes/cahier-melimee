@@ -112,6 +112,84 @@ function longueursSvg(objects) {
   );
 }
 
+// Hands showing 0–5 raised fingers: 1–4 = index first, 5 = open hand, 0 = fist. Cartoon style: thick
+// dark outline; curled fingers in front of the palm, held by the thumb, which grows out of the palm edge.
+// Two hands: the first is mirrored (thumbs face each other); plus draws « + » between them.
+function mainsSvg(hands, plus = false) {
+  if (!Array.isArray(hands) || hands.length < 1 || hands.length > 2) {
+    throw new TypeError('mainsSvg expects one or two hands');
+  }
+  if (hands.some((n) => !Number.isInteger(n) || n < 0 || n > 5)) {
+    throw new TypeError('Each hand shows 0 to 5 fingers');
+  }
+  const w = 130,
+    h = 150,
+    gap = plus ? 50 : 24,
+    skin = '#f8bd88',
+    ink = '#2a1a12';
+  // little, ring, middle, index: base centre x, raised tip y, tilt (degrees, around the base)
+  const fingers = [
+    [33, 38, -10],
+    [51, 20, -3],
+    [69, 12, 2],
+    [87, 22, 8],
+  ];
+  const hand = (n) => {
+    const up = (i) => n === 5 || 3 - i < n;
+    // back: raised fingers, open thumb, palm and wrist — drawn as one silhouette (outline under, skin over)
+    const back = fingers
+      .filter((_, i) => up(i))
+      .map(
+        ([x, tip, tilt]) =>
+          `<rect x="${x - 8}" y="${tip}" width="16" height="${84 - tip}" rx="8" transform="rotate(${tilt} ${x} 84)"/>`
+      );
+    if (n === 5) back.push('<rect x="88" y="60" width="18" height="46" rx="9" transform="rotate(32 97 106)"/>');
+    back.push(
+      '<path d="M24,82C22,108 32,124 42,130L42,160L86,160L86,130C100,122 106,106 104,84C102,72 94,66 82,66L38,66C28,66 24,72 24,82Z"/>'
+    );
+    const b = back.join('');
+    // front: curled fingers, then the thumb across them (open on the palm side)
+    const curled = fingers.filter((_, i) => !up(i));
+    let front = curled
+      .map(([x]) =>
+        x === fingers[0][0]
+          ? `<rect x="${x - 10.5}" y="58" width="21" height="34" rx="10.5"/>`
+          : `<rect x="${x - 10.5}" y="50" width="21" height="40" rx="10.5"/>`
+      )
+      .join('');
+    if (n < 5) {
+      const tip = n === 4 ? 50 : curled[0][0] - 2;
+      front += `<path d="M103,78H${tip + 12.5}A12.5,12.5,0,0,0,${tip + 12.5},103H103" transform="rotate(-8 104 90)"/>`;
+    }
+    const creases =
+      n === 5
+        ? `<path d="M40,104Q56,98 72,104M48,116Q62,112 78,118" fill="none" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>`
+        : '';
+    return (
+      `<g fill="${ink}" stroke="${ink}" stroke-width="7" stroke-linejoin="round">${b}</g><g fill="${skin}">${b}</g>${creases}` +
+      (front ? `<g fill="${skin}" stroke="${ink}" stroke-width="3.5">${front}</g>` : '')
+    );
+  };
+  const content = hands
+    .map((n, i) => {
+      const x = i * (w + gap);
+      const t = i === 0 && hands.length === 2 ? `translate(${x + w} 0) scale(-1 1)` : `translate(${x} 0)`;
+      return `<g transform="${t}" data-doigts="${n}">${hand(n)}</g>`;
+    })
+    .join('');
+  const sign =
+    plus && hands.length === 2
+      ? `<text x="${w + gap / 2}" y="96" text-anchor="middle" font-size="40" font-weight="700" font-family="${SVG.font}" fill="var(--ct)">+</text>`
+      : '';
+  const width = hands.length * w + (hands.length - 1) * gap;
+  return SVG.tag(
+    width,
+    h,
+    content + sign,
+    `role="img" aria-label="${hands.length === 1 ? 'Une main' : 'Deux mains'}" style="max-width:100%;height:auto;overflow:hidden"`
+  );
+}
+
 function slicedPieSvg(n, k, size = 100, color = 'var(--p)') {
   const f = SVG.f,
     c = size / 2,

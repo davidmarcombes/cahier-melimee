@@ -1904,3 +1904,20 @@ describe('manipulations GS (boiteDix, jeuOie, balanceGS)', () => {
     }
   });
 });
+
+describe('suiteQuarts', () => {
+  const shaded = (svg) => [...svg.matchAll(/data-q="(\d)" fill="([^"]+)"/g)].filter((m) => !/--sf/.test(m[2])).length;
+
+  it('4 different choices, one per position, the answer turns the last figure by the step', () => {
+    for (const shape of ['carre', 'disque', 'croix'])
+      for (const step of [1, 2, 3])
+        for (const n of [1, 2]) {
+          const e = generators.suiteQuarts.generate({ shapes: [shape], steps: [step], shaded: [n], shown: 3 });
+          expect(e.type).toBe('mcq');
+          expect(new Set(e.mcqChoices).size).toBe(4);
+          expect(e.mcqChoices.every((c) => c.includes(`data-quarts="${shape}"`) && shaded(c) === n)).toBe(true);
+          expect((e.body.match(/<svg\b/g) || []).length).toBe(3);
+          expect(e.mcqAnswer).toBeGreaterThanOrEqual(0);
+        }
+  });
+});

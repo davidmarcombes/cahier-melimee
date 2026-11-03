@@ -1186,6 +1186,64 @@
         };
       },
     },
+
+    // suiteQuarts: mcq — a row of figures cut in 4 (square grid, disc, square cut by its diagonals)
+    // where the shaded quarter(s) turn by the same step each time: which figure comes next?
+    // Quarters are numbered clockwise (data-q 0–3); step 1 = a quarter turn clockwise, 3 = anticlockwise.
+    // params: shapes (carre | disque | croix), steps ([1], [1, 3], [1, 2, 3]), shaded ([1], [1, 2]: two
+    // neighbouring quarters), shown (figures before the « ? », default 4)
+    suiteQuarts: {
+      generate(params = {}) {
+        const shape = randItem(params.shapes || ['carre', 'disque', 'croix']);
+        const step = randItem(params.steps || [1]);
+        const count = randItem(params.shaded || [1]);
+        const shown = params.shown || 4;
+        const color = randItem([
+          'var(--p,#6366f1)',
+          'var(--red,#e11d48)',
+          'var(--green,#3a9a55)',
+          'var(--orange,#f97316)',
+        ]);
+        const s = 52,
+          c = s / 2,
+          r = c - 1;
+        const pie = (i) => {
+          const a0 = Math.PI * (1 + i / 2),
+            a1 = a0 + Math.PI / 2,
+            p = (a) => `${+(c + r * Math.cos(a)).toFixed(2)},${+(c + r * Math.sin(a)).toFixed(2)}`;
+          return `<path d="M${c},${c}L${p(a0)}A${r},${r},0,0,1,${p(a1)}Z"`;
+        };
+        const QUARTER = {
+          carre: (i) =>
+            `<rect x="${i === 1 || i === 2 ? c : 1}" y="${i >= 2 ? c : 1}" width="${c - 1}" height="${c - 1}"`,
+          disque: pie,
+          croix: (i) =>
+            `<polygon points="${[`1,1 ${s - 1},1`, `${s - 1},1 ${s - 1},${s - 1}`, `${s - 1},${s - 1} 1,${s - 1}`, `1,${s - 1} 1,1`][i]} ${c},${c}"`,
+        };
+        const fig = (on) =>
+          `<svg viewBox="0 0 ${s} ${s}" width="${s}" height="${s}" data-quarts="${shape}" aria-hidden="true"><g stroke="var(--ct,#334155)" stroke-width="1.5" stroke-linejoin="round">` +
+          [0, 1, 2, 3]
+            .map((i) => `${QUARTER[shape](i)} data-q="${i}" fill="${on.includes(i) ? color : 'var(--sf,#fff)'}"/>`)
+            .join('') +
+          `</g></svg>`;
+        const at = (start) => Array.from({ length: count }, (_, k) => (start + k) % 4);
+        const start = rand(0, 3);
+        const row = Array.from({ length: shown }, (_, k) => fig(at(start + k * step)));
+        const next = (start + shown * step) % 4;
+        const order = shuffle([0, 1, 2, 3]);
+        return {
+          type: 'mcq',
+          title: 'Quelle figure vient ensuite ?',
+          body:
+            `<div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.4rem">` +
+            row.join('') +
+            `<span style="display:inline-grid;place-items:center;width:${s}px;height:${s}px;border:2px dashed var(--cs,#94a3b8);border-radius:.4rem;font-size:1.5rem;font-weight:700">?</span></div>`,
+          mcqChoices: order.map((q) => fig(at(q))),
+          mcqAnswer: order.indexOf(next),
+          mcqCompact: true,
+        };
+      },
+    },
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = generators;

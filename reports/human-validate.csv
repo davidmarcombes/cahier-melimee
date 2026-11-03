@@ -2676,6 +2676,11 @@ src/fr/exercices/cp/maths/problemes/transformations-01/05-euros.md,b51fca37,8036
 src/fr/exercices/cp/maths/problemes/transformations-01/06-cartes.md,b51fca37,666210d591516cc7,2026-10-06T16:29:45.458Z
 src/fr/exercices/gs/maths/calcul/ajouter-ensemble-01/01-grenouilles.md,b21930ba,ce326ee1a6fb2324,2026-10-24T14:11:28.985Z
 src/fr/exercices/gs/maths/calcul/ajouter-ensemble-01/02-canards.md,b21930ba,77803e2706907ab6,2026-10-24T14:11:28.985Z
+src/fr/exercices/gs/maths/calcul/doigts-en-tout-01/01-mains-2-1.md,d07c70eb,83754d83e9cf5f5b,2026-11-01T13:20:35.159Z
+src/fr/exercices/gs/maths/calcul/doigts-en-tout-01/02-mains-3-2.md,d07c70eb,c0c38e773ff46045,2026-11-01T13:20:35.159Z
+src/fr/exercices/gs/maths/calcul/doigts-en-tout-01/03-mains-5-1.md,d07c70eb,51674210ba4430d7,2026-11-01T13:20:35.159Z
+src/fr/exercices/gs/maths/calcul/doigts-en-tout-01/04-mains-4-3.md,d07c70eb,cb515aaf9cf5d129,2026-11-01T13:20:35.159Z
+src/fr/exercices/gs/maths/calcul/doigts-en-tout-01/05-mains-5-3.md,d07c70eb,82077ce55b13919a,2026-11-01T13:20:35.159Z
 src/fr/exercices/gs/maths/calcul/doubles-01/01-fraises.md,a60a1ca4,de9b43db1a8610bc,2026-10-24T12:32:05.299Z
 src/fr/exercices/gs/maths/calcul/doubles-01/02-chaussettes.md,a60a1ca4,4e0f22cbae7deb0f,2026-10-24T12:32:05.299Z
 src/fr/exercices/gs/maths/calcul/doubles-01/03-coccinelles.md,a60a1ca4,b3a470ee77beca6a,2026-10-24T12:32:05.299Z
@@ -2732,6 +2737,11 @@ src/fr/exercices/gs/maths/mesures/comparer-longueurs-01/02-plus-court.md,ab350f6
 src/fr/exercices/gs/maths/mesures/comparer-longueurs-01/03-plus-long-encore.md,ab350f6a,a1036a1674dcd84a,2026-10-25T06:17:17.187Z
 src/fr/exercices/gs/maths/mesures/comparer-longueurs-01/04-ranger-trois.md,ab350f6a,d93d348b346dcdf7,2026-10-25T06:17:17.187Z
 src/fr/exercices/gs/maths/mesures/comparer-longueurs-01/05-ranger-trois-autrement.md,ab350f6a,b461b48cdf1801f8,2026-10-25T06:17:17.187Z
+src/fr/exercices/gs/maths/mesures/ranger-tailles-01/01-plus-grand.md,f89bf6f9,07888aaaccb56ecf,2026-11-01T12:09:40.478Z
+src/fr/exercices/gs/maths/mesures/ranger-tailles-01/02-plus-petit.md,f89bf6f9,28ac283f7fca5a44,2026-11-01T12:09:40.478Z
+src/fr/exercices/gs/maths/mesures/ranger-tailles-01/03-ranger-trois.md,f89bf6f9,5f7c30ba609f0bd0,2026-11-01T12:09:40.478Z
+src/fr/exercices/gs/maths/mesures/ranger-tailles-01/04-ranger-quatre.md,f89bf6f9,d8f95f7811e46711,2026-11-01T12:09:40.478Z
+src/fr/exercices/gs/maths/mesures/ranger-tailles-01/05-plus-grand-d-abord.md,f89bf6f9,2d6eca41c216e960,2026-11-01T12:09:40.478Z
 src/fr/exercices/gs/maths/numeration/autant-modele-01/01-elephants.md,c4a3c13f,8cf16fdc9e88eb9a,2026-10-24T13:08:02.840Z
 src/fr/exercices/gs/maths/numeration/autant-modele-01/02-baleines.md,c4a3c13f,2d2fcdea9ba27636,2026-10-24T13:08:02.840Z
 src/fr/exercices/gs/maths/numeration/autant-modele-01/03-girafes.md,c4a3c13f,4dc015b4a46d7fd5,2026-10-24T13:08:02.840Z
@@ -2748,6 +2758,11 @@ src/fr/exercices/gs/maths/numeration/compter-5-01/03-poissons.md,b1842540,ef12a2
 src/fr/exercices/gs/maths/numeration/compter-5-01/04-fleurs.md,b1842540,79ec9cd9e801d822,2026-10-24T13:08:28.660Z
 src/fr/exercices/gs/maths/numeration/compter-5-01/05-ballons.md,b1842540,d6cb69582f180e82,2026-10-24T13:08:28.660Z
 src/fr/exercices/gs/maths/numeration/compter-5-01/06-lapins.md,b1842540,46aca073a9a2600f,2026-10-24T13:08:28.660Z
+src/fr/exercices/gs/maths/numeration/doigts-01/01-main-2.md,a508de3e,55ce666ac519ac00,2026-11-01T13:20:54.147Z
+src/fr/exercices/gs/maths/numeration/doigts-01/02-main-4.md,a508de3e,286f0a8e08957bf6,2026-11-01T13:20:54.147Z
+src/fr/exercices/gs/maths/numeration/doigts-01/03-main-1.md,a508de3e,b23098e036ee8539,2026-11-01T13:20:54.147Z
+src/fr/exercices/gs/maths/numeration/doigts-01/04-main-3.md,a508de3e,ac7e6b7c6aaca6c9,2026-11-01T13:20:54.147Z
+src/fr/exercices/gs/maths/numeration/doigts-01/05-main-5.md,a508de3e,5f55745fdb1ae9bf,2026-11-01T13:20:54.147Z
 src/fr/exercices/gs/maths/numeration/montre-moi-01/01-4-fraises.md,c5a9e6ea,a5d2613ce3a03edc,2026-10-24T13:08:50.864Z
 src/fr/exercices/gs/maths/numeration/montre-moi-01/02-2-poissons.md,c5a9e6ea,cb4e5e8f298ec5c2,2026-10-24T13:08:50.864Z
 src/fr/exercices/gs/maths/numeration/montre-moi-01/03-6-ballons.md,c5a9e6ea,fbaf8721c09ca485,2026-10-24T13:08:50.864Z

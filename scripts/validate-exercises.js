@@ -178,8 +178,9 @@ function duplicateChoice(item) {
     const list = item[key];
     if (!Array.isArray(list) || list.length < 2) continue;
     const seen = new Set();
-    // A picture-only tile (shapes SVG) has no text: compare its markup
-    for (const c of list.map((x) => plain(x) || String(x))) {
+    // A picture-only tile (shapes SVG) has no text, and a sized one (data-size: the same animal drawn
+    // small / big, GS) differs only by its size: compare their markup
+    for (const c of list.map((x) => (/\bdata-size\b/.test(String(x)) ? String(x) : plain(x) || String(x)))) {
       if (seen.has(c)) return `« ${c} »`;
       seen.add(c);
     }

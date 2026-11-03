@@ -351,6 +351,15 @@ body {
   width: min(6rem, calc((100cqi - (var(--n, 1) - 1) * 0.5rem) / var(--n, 1) - 0.4rem - 4px));
   height: auto;
 }
+/* The same animal drawn small / big (ranger-tailles): --s = size in rem, the bottoms line up */
+.taille {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 3.4rem;
+  font-size: calc(var(--s, 1) * 1rem);
+  line-height: 1;
+}
 .kid .js-number-strip-cell,
 .kid .js-number-strip-choice {
   container-type: inline-size;

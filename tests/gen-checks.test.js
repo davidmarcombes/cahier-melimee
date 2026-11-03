@@ -170,6 +170,7 @@ const CORRUPT = {
   trouverFormes: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
   trouverAngles: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
   comparerAngles: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % 3 }),
+  suiteQuarts: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % 4 }),
   rangerAngles: (e) => ({ ...e, tiles: [...e.tiles].reverse() }),
   // Another answer, or one ball / sector / face changed in the drawing
   hasardPossible: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),

@@ -256,6 +256,17 @@ const selectEqual = (e, target) => {
     : `tiles equal to ${fmt(target)}: ${good.join(',')}, selected ${sel.join(',')}`;
 };
 
+// Figures cut in 4 (suiteQuarts): the shaded quarters, read from the fills
+const quartsOf = (svg) => {
+  const q = [...String(svg).matchAll(/data-q="(\d)" fill="([^"]+)"/g)];
+  if (q.length !== 4) throw new Unparseable('figure without 4 quarters');
+  return q
+    .filter((m) => !/^var\(--sf\b/.test(m[2]))
+    .map((m) => Number(m[1]))
+    .sort()
+    .join(',');
+};
+
 const GEN_CHECKS = {
   // « 467 + 99 » : b ends in 8 or 9 (≤ 99); the chain goes to the next ten, then corrects by 1 or 2
   astuceDizaineSup: (e) => {
@@ -694,6 +705,27 @@ const GEN_CHECKS = {
     if (!want.some((i) => angles[i].turned)) out.push('no answer has both arms off the axes');
     if (new Set(e.tiles).size !== e.tiles.length) out.push('two tiles are the same');
     return out.length ? out.join('; ') : null;
+  },
+  suiteQuarts: (e) => {
+    const row = (String(e.body).match(/<svg\b[\s\S]*?<\/svg>/g) || []).map(quartsOf);
+    const choices = e.mcqChoices.map(quartsOf);
+    if (row.length < 3) return 'fewer than 3 figures before the « ? »';
+    if (new Set(choices).size !== choices.length) return 'two choices look the same';
+    const turn = (set, d) =>
+      set
+        .split(',')
+        .map((q) => (Number(q) + d) % 4)
+        .sort()
+        .join(',');
+    // every rotation that explains the whole row; they must all predict the same next figure
+    const steps = [0, 1, 2, 3].filter((d) => row.every((f, i) => i === 0 || turn(row[i - 1], d) === f));
+    if (!steps.length) return 'the figures do not turn by a constant step';
+    const next = new Set(steps.map((d) => turn(row[row.length - 1], d)));
+    if (next.size > 1) return 'several rules fit the row';
+    if (steps.includes(0)) return 'the figure does not move';
+    const want = choices.indexOf([...next][0]);
+    if (want < 0) return 'the next figure is not among the choices';
+    return e.mcqAnswer === want ? null : `answer ${e.mcqAnswer}, the next figure is choice ${want}`;
   },
   comparerAngles: (e, params = {}) => {
     const pics = String(e.body).match(/<svg\b[\s\S]*?<\/svg>/g) || [];

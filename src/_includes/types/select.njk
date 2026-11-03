@@ -1,41 +1,53 @@
-{# select type — inline dropdown for each statement, all shown simultaneously #}
+{# select type — one card per statement: the sentence with its blank, the dropdown on the line below #}
 <div x-show="cur.type === 'select'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-8">
 
   {# Optional body #}
   <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center mb-4 max-w-none text-content-subtle"></div>
 
-  {# Statement rows with inline dropdowns #}
-  <div class="space-y-2.5 mb-5">
+  {# One card per statement, always two lines: the sentence with its blank (shows the chosen word, « … »
+     until then; glued to the punctuation after it), then the dropdown under it — same place in every card #}
+  <ol class="space-y-3 mb-5">
     <template x-for="(stmt, i) in (cur.selectStatements || [])" :key="i">
-      {# Inline text, not a flex row: the dropdown sits in the sentence and the sentence wraps around it. No
-         whitespace between the pieces (the template's own spaces are kept), and the dropdown is glued to the
-         word or punctuation that follows it — « un ▢. », never a lone « . » on the next line #}
-      <p
-        class="relative pl-4 pr-9 py-2.5 rounded-xl border-2 text-sm sm:text-base font-medium leading-loose text-content-default transition-all bg-white dark:bg-slate-800"
+      <li
+        class="relative flex gap-3 p-3 sm:p-4 rounded-xl border-2 transition-all bg-white dark:bg-slate-800"
         :class="{
           'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
           'border-red-400 bg-red-50 dark:bg-red-900/20': selectErrors.includes(i) && !solved,
           'border-slate-200 dark:border-slate-700': !solved && !selectErrors.includes(i)
         }"
-      ><span x-show="solved" class="absolute right-3 top-2.5 text-green-600 dark:text-green-400 font-bold text-lg">✓</span><span x-text="stmt.before"></span><span class="whitespace-nowrap"><select
-          x-model="selectAnswers[i]"
-          :disabled="solved"
-          :aria-label="'Réponse ' + (i + 1)"
-          class="rounded-lg border-2 px-2 py-0.5 align-middle text-sm sm:text-base font-semibold transition-colors cursor-pointer"
-          :class="{
-            'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-700 dark:text-green-300': solved,
-            'bg-red-50 dark:bg-red-900/20 border-red-400 text-red-700 dark:text-red-300': selectErrors.includes(i) && !solved,
-            'bg-primary-50 dark:bg-primary-900/20 border-primary-400 dark:border-primary-500 text-content-default': !solved && selectAnswers[i] && !selectErrors.includes(i),
-            'bg-slate-100 dark:bg-slate-600 border-slate-300 dark:border-slate-500 text-content-subtle': !solved && !selectAnswers[i]
-          }"
-        >
-          <option value="">— choisir —</option>
-          <template x-for="choice in (stmt.choices || cur.selectChoices || [])" :key="choice">
-            <option :value="choice" x-text="choice"></option>
-          </template>
-        </select><span x-text="stmt.after.match(/^\S*/)[0]"></span></span><span x-text="stmt.after.replace(/^\S*/, '')"></span></p>
+      >
+        <span class="shrink-0 w-7 h-7 rounded-full grid place-items-center text-sm font-bold border-2"
+          :class="solved ? 'bg-green-500 border-green-500 text-white' : 'bg-primary-50 dark:bg-primary-900/40 border-primary-300 dark:border-primary-600 text-primary-700 dark:text-primary-300'"
+          x-text="i + 1"></span>
+        <div class="flex-1 min-w-0 space-y-2">
+          <p class="text-base sm:text-lg font-medium leading-relaxed text-content-default"><span x-text="stmt.before"></span><span class="whitespace-nowrap"><span
+            class="inline-block min-w-[3.5rem] px-1 text-center font-bold border-b-2 border-dashed leading-snug"
+            :class="selectAnswers[i]
+              ? (solved ? 'text-green-700 dark:text-green-300 border-green-500' : selectErrors.includes(i) ? 'text-red-700 dark:text-red-300 border-red-400' : 'text-primary-700 dark:text-primary-300 border-primary-400')
+              : 'text-content-subtle border-slate-400'"
+            x-text="selectAnswers[i] || '…'"></span><span x-text="stmt.after.match(/^\S*/)[0]"></span></span><span x-text="stmt.after.replace(/^\S*/, '')"></span></p>
+          <select
+            x-model="selectAnswers[i]"
+            :disabled="solved"
+            :aria-label="'Réponse ' + (i + 1)"
+            class="w-full sm:w-auto sm:min-w-[14rem] rounded-lg border-2 px-3 py-2 text-base font-semibold transition-colors cursor-pointer"
+            :class="{
+              'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-700 dark:text-green-300': solved,
+              'bg-red-50 dark:bg-red-900/20 border-red-400 text-red-700 dark:text-red-300': selectErrors.includes(i) && !solved,
+              'bg-primary-50 dark:bg-primary-900/20 border-primary-400 dark:border-primary-500 text-content-default': !solved && selectAnswers[i] && !selectErrors.includes(i),
+              'bg-slate-100 dark:bg-slate-600 border-slate-300 dark:border-slate-500 text-content-subtle': !solved && !selectAnswers[i]
+            }"
+          >
+            <option value="">— choisir —</option>
+            <template x-for="choice in (stmt.choices || cur.selectChoices || [])" :key="choice">
+              <option :value="choice" x-text="choice"></option>
+            </template>
+          </select>
+        </div>
+        <span x-show="solved" class="absolute right-3 top-3 text-green-600 dark:text-green-400 font-bold text-lg">✓</span>
+      </li>
     </template>
-  </div>
+  </ol>
 
   {# Verify button #}
   <div class="flex justify-center">
