@@ -994,6 +994,7 @@ module.exports = async function (eleventyConfig) {
             cols: Number(ex.data.cols ?? 6),
             rows: Number(ex.data.rows ?? 6),
             placeLabel: String(ex.data.placeLabel || 'A'),
+            hideTarget: !!ex.data.hideTarget,
             points: (ex.data.points || []).map((p) => ({
               x: Number(p.x),
               y: Number(p.y),

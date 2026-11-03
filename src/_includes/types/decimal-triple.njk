@@ -8,7 +8,7 @@
 
     <template x-if="cur.dtGiven === 'fraction'">
       <div class="flex justify-center text-4xl font-extrabold text-primary-700 dark:text-primary-300">
-        <span class="frac"><span class="fn" x-text="cur.dtFrac.num"></span><span class="fd" x-text="cur.dtFrac.den"></span></span>
+        <span class="frac"><span class="fn" x-text="(cur.dtFrac || {}).num"></span><span class="fd" x-text="(cur.dtFrac || {}).den"></span></span>
       </div>
     </template>
 
@@ -37,48 +37,48 @@
       <table class="mx-auto border-collapse">
         <thead>
           <tr>
-            <template x-if="cur.dtPlaces[0] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dizaines</th></template>
+            <template x-if="(cur.dtPlaces || [])[0] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dizaines</th></template>
             <th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">unités</th>
             <th scope="col" class="px-1 border-none bg-transparent"></th>
-            <template x-if="cur.dtPlaces[2] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dixièmes</th></template>
-            <template x-if="cur.dtPlaces[3] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">centièmes</th></template>
-            <template x-if="cur.dtPlaces[4] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">millièmes</th></template>
+            <template x-if="(cur.dtPlaces || [])[2] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">dixièmes</th></template>
+            <template x-if="(cur.dtPlaces || [])[3] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">centièmes</th></template>
+            <template x-if="(cur.dtPlaces || [])[4] !== null"><th scope="col" class="px-3 py-1 text-center text-xs font-bold border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-content-default">millièmes</th></template>
           </tr>
         </thead>
         <tbody>
           <tr>
             {# dizaines #}
-            <template x-if="cur.dtPlaces[0] !== null">
+            <template x-if="(cur.dtPlaces || [])[0] !== null">
               <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
-                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[0]"></span></template>
+                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="(cur.dtPlaces || [])[0]"></span></template>
                 <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.dizaines" @keydown.enter="enterField($el, 'dizaines')" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('dizaines')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('dizaines')}"/></template>
               </td>
             </template>
             {# unites — always shown #}
             <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
-              <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[1]"></span></template>
+              <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="(cur.dtPlaces || [])[1]"></span></template>
               <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.unites" @keydown.enter="enterField($el, 'unites')" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('unites')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('unites')}"/></template>
             </td>
             {# decimal comma separator #}
             <td class="px-0.5 py-2 text-center text-2xl font-extrabold text-content-default border-none">,</td>
             {# dixiemes #}
-            <template x-if="cur.dtPlaces[2] !== null">
+            <template x-if="(cur.dtPlaces || [])[2] !== null">
               <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
-                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[2]"></span></template>
+                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="(cur.dtPlaces || [])[2]"></span></template>
                 <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.dixiemes" @keydown.enter="enterField($el, 'dixiemes')" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('dixiemes')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('dixiemes')}"/></template>
               </td>
             </template>
             {# centiemes #}
-            <template x-if="cur.dtPlaces[3] !== null">
+            <template x-if="(cur.dtPlaces || [])[3] !== null">
               <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
-                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[3]"></span></template>
+                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="(cur.dtPlaces || [])[3]"></span></template>
                 <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.centiemes" @keydown.enter="enterField($el, 'centiemes')" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('centiemes')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('centiemes')}"/></template>
               </td>
             </template>
             {# milliemes #}
-            <template x-if="cur.dtPlaces[4] !== null">
+            <template x-if="(cur.dtPlaces || [])[4] !== null">
               <td class="px-2 py-2 text-center border border-slate-200 dark:border-slate-700">
-                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="cur.dtPlaces[4]"></span></template>
+                <template x-if="cur.dtGiven === 'places'"><span class="text-2xl font-extrabold text-primary-700 dark:text-primary-300" x-text="(cur.dtPlaces || [])[4]"></span></template>
                 <template x-if="cur.dtGiven !== 'places'"><input type="text" inputmode="numeric" maxlength="1" x-model="dtInputs.milliemes" @keydown.enter="enterField($el, 'milliemes')" :disabled="solved" placeholder="?" class="w-11 h-10 text-center text-xl font-extrabold border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default transition-colors" :class="{'border-green-500 bg-green-50 dark:bg-green-900/20':solved,'border-red-400 bg-red-50 dark:bg-red-900/20':dtErrors.includes('milliemes')&&!solved,'border-primary-300 dark:border-primary-600':!solved&&!dtErrors.includes('milliemes')}"/></template>
               </td>
             </template>

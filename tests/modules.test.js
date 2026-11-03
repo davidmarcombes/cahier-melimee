@@ -241,6 +241,15 @@ describe('seriesPlayer Logic', () => {
       expect(parts.some((p) => p.t === 'f' && p.n === '1' && p.d === '2')).toBe(true);
       expect(parts.some((p) => p.t === 'x' && p.v.includes('Calculate'))).toBe(true);
     });
+
+    it('should keep a multi-digit numerator after text whole', () => {
+      const ex = { operation: '? < 347/100 < ?' };
+      const p = seriesPlayer([ex], 'test-num');
+      Object.defineProperty(p, 'cur', { get: () => ex });
+
+      const parts = p.trouParts;
+      expect(parts.some((p) => p.t === 'f' && p.n === '347' && p.d === '100')).toBe(true);
+    });
   });
 });
 

@@ -632,7 +632,7 @@ export function seriesPlayer(exercises, seriesId) {
       const parts = [];
       let ii = 0;
       // eslint-disable-next-line no-control-regex
-      const re = /(\d+\/\d+|\?\/\d+|\?|[^?\d\x00]+(?:\d+(?!\/\d))?[^?\d\x00]*|\x00\d+\x00|\d+(?!\/\d))/g;
+      const re = /(\d+\/\d+|\?\/\d+|\?|[^?\d\x00]+(?:\d+(?![\d/]))?[^?\d\x00]*|\x00\d+\x00|\d+(?!\/\d))/g;
       let m;
       while ((m = re.exec(safe)) !== null) {
         const t = m[1];

@@ -680,6 +680,7 @@ function buildPrompt({ data, body }) {
       return [
         `Type: quadrillage (coordonnées)`,
         title && `Contexte: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
         `Grille: ${data.cols || 6}×${data.rows || 6}`,
         pts && `Points affichés: ${pts}`,
         `Réponse proposée: (${ansCoord})`,

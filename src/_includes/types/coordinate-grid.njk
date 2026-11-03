@@ -3,15 +3,15 @@
   <div class="prose dark:prose-invert text-center text-sm max-w-none mb-3 text-content-subtle"
        x-show="cur.body" x-html="cur.body"></div>
 
-  {# Place mode instruction #}
+  {# Place mode instruction — hideTarget: the pupil finds the coordinates (a figure to complete) #}
   <p x-show="cur.cg && cur.cg.mode === 'place'"
      class="text-center text-base font-semibold mb-3 text-content-default">
     Place le point
     <span class="text-primary-600 dark:text-primary-400 font-bold"
-          x-text="cur.cg && cur.cg.placeLabel"></span>
+          x-text="cur.cg && cur.cg.placeLabel"></span><span x-show="cur.cg && !cur.cg.hideTarget">
     de coordonnées
     <span class="font-bold"
-          x-text="cur.answers && cur.answers[0] ? '(' + cur.answers[0].replace(',', ' ; ') + ')' : ''"></span>.
+          x-text="cur.answers && cur.answers[0] ? '(' + cur.answers[0].replace(',', ' ; ') + ')' : ''"></span></span>.
   </p>
 
   {# SVG container — click target for place mode #}

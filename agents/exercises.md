@@ -76,7 +76,7 @@ Generators live in `src/assets/js/generators/`, one module per topic (`numeratio
 | `clock` | `types/clock.njk` | Analog clock — read or set the time. Fields: `hour`, `minute`, `answer`. |
 | `click-blocks` | `types/click-blocks.njk` | Click cells to fill columns from the bottom up (place-value blocks). Fields: `columns[]` (each with `label`, `value`, `color`, `answer`, `max`). Supports generators. |
 | `number-line` | `types/number-line.njk` | Number line — read a labeled point or click to place one. SVG via `nlSvg` getter. Supports generators. |
-| `coordinate-grid` | `types/coordinate-grid.njk` | Coordinate grid — read (x ; y) for a labeled point, or click to place one. SVG via `coordinateGridSvg` getter. Supports generators. |
+| `coordinate-grid` | `types/coordinate-grid.njk` | Coordinate grid — read (x ; y) for a labeled point, or click to place one. SVG via `coordinateGridSvg` getter. Supports generators. Place mode: `placeLabel`; `hideTarget: true` keeps the coordinates out of the prompt (the point follows from a figure: 4th vertex, midpoint, a move from a shown point). |
 | `bar-chart` | `types/bar-chart.njk` | Bar chart — build mode (click cells to set bar heights) or read mode (static bars + answer inputs). Fields: `bc` object with chart config. Supports generators. |
 | `calc-chain` | `types/calc-chain.njk` | Calculation chain — series of linked operations, fill in the blanks. Supports `cur.svg` and generators. `chain.start` must be a number: a decimal string (« 2,5 ») renders an empty start box. |
 | `column-op` | `types/column-op.njk` | Column operation (+, −, × by a 1-digit number). Multi-digit numbers aligned by place value (commas lined up for + and −; × is right-aligned, comma only in the product); student fills in result digits. |
