@@ -39,7 +39,7 @@
       :disabled="solved"
       placeholder="La bonne réponse…"
       aria-label="Correction"
-      class="flex-1 px-4 py-3 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-surface-subtle text-content-default"
+      class="flex-1 min-w-0 px-4 py-3 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-surface-subtle text-content-default"
       :class="{'border-green-500 bg-green-50 dark:bg-green-900/20': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': eaCorrectionError && !solved, 'border-slate-200 dark:border-slate-700': !eaCorrectionError && !solved}"
     />
   </div>

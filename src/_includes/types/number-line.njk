@@ -7,7 +7,7 @@
      class="text-center text-base font-semibold mb-4 text-content-default">
     Place le nombre
     <span class="text-primary-600 dark:text-primary-400 font-bold"
-          x-text="cur.answers && cur.answers[0]"></span>
+          x-html="cur.answers && String(cur.answers[0]).replace(/^(\d+)\/(\d+)$/, '<span class=&quot;frac text-xl&quot;><span class=&quot;fn&quot;>$1</span><span class=&quot;fd&quot;>$2</span></span>')"></span>
     sur la droite graduée.
   </p>
 

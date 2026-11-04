@@ -268,6 +268,37 @@ const quartsOf = (svg) => {
 };
 
 const GEN_CHECKS = {
+  // Open line « pour aller à »: the title's start / end are the line's ends, the line goes up, and every
+  // point in between is a round landmark (a whole hour; a whole euro; a ten)
+  compterEnAvancant: (e) => {
+    const kind = e.jl.kind;
+    const time = kind === 'temps';
+    const vs = e.jl.points.map((p) => {
+      if (!time) return Math.round(num(p) * 100);
+      const [h, m] = String(p).split(':');
+      return Number(h) * 60 + Number(m);
+    });
+    if (vs.some((v, i) => i && v <= vs[i - 1])) return `points do not go up: ${e.jl.points.join(' → ')}`;
+    if (vs.slice(1, -1).some((v) => v % (time ? 60 : kind === 'nombre' ? 1000 : 100)))
+      return `a landmark is not round: ${e.jl.points.join(' → ')}`;
+    const re = time ? /(\d+) h(?: (\d+))?/g : kind === 'nombre' ? /(\d{1,3}(?: \d{3})*)/g : /(\d+(?:,\d+)?) €/g;
+    const said = [...clean(e.title).matchAll(re)].map((m) =>
+      time ? Number(m[1]) * 60 + Number(m[2] || 0) : Math.round(num(m[1].replace(/ /g, '')) * 100)
+    );
+    if (said.length < 2) throw new Unparseable('no start / end in the title');
+    if (said[0] !== vs[0] || said[said.length - 1] !== vs[vs.length - 1])
+      return `title says ${said.join(' / ')}, line goes ${vs[0]} → ${vs[vs.length - 1]}`;
+    return null;
+  },
+  // « coûte 7,35 € » in the title is the amount to pay, and the coins offered can make it
+  payerSomme: (e) => {
+    const m = clean(e.title).match(/(\d+(?:,\d+)?) €/);
+    if (!m) throw new Unparseable('no price in the title');
+    if (Math.round(num(m[1]) * 100) !== e.mp.amount) return `title says ${m[1]} €, amount is ${e.mp.amount} c`;
+    let left = e.mp.amount;
+    for (const c of [...e.mp.coins].sort((a, b) => b - a)) left %= c;
+    return left ? `${e.mp.amount} c cannot be made with ${e.mp.coins.join(', ')}` : null;
+  },
   // « 467 + 99 » : b ends in 8 or 9 (≤ 99); the chain goes to the next ten, then corrects by 1 or 2
   astuceDizaineSup: (e) => {
     const src = e.type === 'calc-chain' ? String(e.title).replace(/^Calcule | avec.*$/g, '') : String(e.operation);
@@ -543,11 +574,13 @@ const GEN_CHECKS = {
   decimalTriple: (e) => {
     const v = e.dtFrac.num / e.dtFrac.den;
     if (!same(v, num(e.dtDecimal))) return `${e.dtFrac.num}/${e.dtFrac.den} = ${fmt(v)}, declared ${e.dtDecimal}`;
-    const places = [10, 1, 0.1, 0.01, 0.001];
+    // In thousandths, as a whole number: dividing the decimal (49,998 / 10) and rounding misreads digits
+    const places = [10000, 1000, 100, 10, 1];
+    const th = Math.round(v * 1000);
     for (const [i, d] of e.dtPlaces.entries()) {
       if (d == null) continue;
-      const digit = Math.floor(Math.round((v / places[i]) * 1000) / 1000) % 10;
-      if (digit !== d) return `place ${places[i]} of ${fmt(v)} is ${digit}, declared ${d}`;
+      const digit = Math.floor(th / places[i]) % 10;
+      if (digit !== d) return `place ${places[i] / 1000} of ${fmt(v)} is ${digit}, declared ${d}`;
     }
     return null;
   },

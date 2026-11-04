@@ -144,7 +144,9 @@ Quick table — required fields only:
 | `multi-question` | `questions[]` (text, answer) | Body = shared context |
 | `mcq` | `answer`, `choices[]` | Choices shuffled at runtime |
 | `fraction` | `shape`, `numerator`, `denominator`, `answer` | shape: circle\|square (rect draws nothing) |
-| `clock` | `hour`, `minute`, `answer` | answer: "HH:MM" |
+| `clock` | `hour`, `minute`, `answer` | answer: "HH:MM" · `mode: set`: place the hands |
+| `jump-line` | `points[]` (kind temps / monnaie / nombre) | « Pour aller à » — counting up on an open line (57 → 60 → 100; 12,30 → 13 → 20 €; 11:15 → 12:00 → 13:00) |
+| `money-pay` | `amount` (cents) | Tap coins and notes; `fewest` |
 | `sort` | `items[]` | Items in CORRECT order — shuffled at runtime |
 | `drag-sort` | `tiles[]` | Tiles in CORRECT order, direction: asc\|desc |
 | `fill-table` | `headers[]`, `rows[][]`, `answers[][]` | Use "?" to mark blanks |

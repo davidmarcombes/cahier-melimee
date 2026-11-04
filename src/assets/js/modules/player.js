@@ -17,6 +17,60 @@ export function sortValue(s) {
   return frac ? Number(frac[1]) / Number(frac[2]) : parseFloat(t);
 }
 
+// Jump line (« compter en avançant ») on an open line: points are times « 8:45 » or amounts « 6,40 ».
+// The pupil fills one field per jump, one per hidden point, then the total (time: h and min; money: €).
+// Values in minutes / cents. Mirrored in tests/e2e/solve.spec.js (reads the fields from here).
+export function jumpLine({ kind = 'temps', points = [], hide = [] }) {
+  const time = kind === 'temps';
+  const money = kind === 'monnaie';
+  const vs = points.map((p) => {
+    const s = String(p).trim();
+    if (!time) return Math.round(Number(s.replace(',', '.')) * 100);
+    const [h, m] = s.split(/\s*[:h]\s*/);
+    return Number(h) * 60 + Number(m || 0);
+  });
+  // money in euros (6,40 · 7) and plain numbers (57 · 2,5) are both kept in hundredths
+  const dec = (c) => (c % 100 ? (c / 100).toFixed(2).replace('.', ',') : String(c / 100));
+  const num = (c) => dec(c).replace(/(,\d)0$/, '$1');
+  const fmt = money ? dec : num;
+  const clock = (v) => `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`;
+  const labels = vs.map((v) =>
+    time
+      ? `${Math.floor(v / 60)} h${v % 60 ? ' ' + String(v % 60).padStart(2, '0') : ''}`
+      : money
+        ? `${dec(v)} €`
+        : num(v).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f')
+  );
+  const fields = [];
+  for (let i = 1; i < vs.length; i++)
+    fields.push({ role: 'jump', at: i - 1, answer: time ? String(vs[i] - vs[i - 1]) : fmt(vs[i] - vs[i - 1]) });
+  const pointField = {};
+  for (const i of hide) {
+    pointField[i] = fields.length;
+    fields.push({ role: 'point', at: i, answer: time ? clock(vs[i]) : fmt(vs[i]) });
+  }
+  const total = vs[vs.length - 1] - vs[0];
+  const totalFrom = fields.length;
+  if (time)
+    fields.push(
+      { role: 'total', answer: String(Math.floor(total / 60)), unit: 'h' },
+      { role: 'total', answer: String(total % 60), unit: 'min' }
+    );
+  else fields.push({ role: 'total', answer: fmt(total), unit: money ? '€' : '' });
+  return { time, money, labels, fields, pointField, totalFrom, unit: time ? 'min' : money ? '€' : '' };
+}
+
+// Fewest coins and notes making `amount` (cents) from `coins` (greedy: right for euro denominations)
+export function fewestPieces(amount, coins) {
+  let left = amount,
+    n = 0;
+  for (const c of [...coins].sort((a, b) => b - a)) {
+    n += Math.floor(left / c);
+    left %= c;
+  }
+  return left ? Infinity : n;
+}
+
 let voiceAudio = null;
 const VOICE_SEGMENT_PAUSE_MS = 180;
 const VOICE_INSTRUCTION_PAUSE_MS = 500;
@@ -132,6 +186,16 @@ export function seriesPlayer(exercises, seriesId) {
     tbStory: '', // think-board: story quadrant text
     tbStoryError: false, // think-board: story keyword mismatch
     _tbDrawing: false, // think-board: canvas pointer down
+
+    clkH: 12, // clock set: hour the pupil's hands show (1…12)
+    clkM: 0, // clock set: minutes the pupil's hands show
+    clkHand: 'm', // clock set: hand a tap on the face moves (h / m)
+
+    jlInputs: [], // jump-line: jumps, hidden points, total (order of jlFields)
+    jlErrors: [], // jump-line: indices of wrong fields
+
+    mpPicked: [], // money-pay: coins / notes put down by the pupil, in cents
+    mpHint: '', // money-pay: why the last payment was refused
 
     ffInputs: [], // fact-family: one input per equation (4 total)
     ffErrors: [], // fact-family: indices of wrong equations
@@ -257,7 +321,12 @@ export function seriesPlayer(exercises, seriesId) {
         W = 420,
         LY = 58;
       const mx = PAD + (this.nlVal - min) * (W / range);
-      const lbl = String(this.nlVal).replace('.', ',');
+      const { step = 1, subdivisions = 0 } = this.cur.nl;
+      const den = subdivisions > 0 && step === 1 ? subdivisions : 0;
+      const lbl =
+        den && String(this.cur.answers?.[0]).includes('/')
+          ? `${Math.round(this.nlVal * den)}/${den}`
+          : String(this.nlVal).replace('.', ',');
       return (
         `<circle cx="${mx}" cy="${LY}" r="6" class="fill-primary-500"/>` +
         `<line x1="${mx}" y1="${LY - 6}" x2="${mx}" y2="${LY - 15}" stroke-width="2" class="stroke-primary-500"/>` +
@@ -533,6 +602,14 @@ export function seriesPlayer(exercises, seriesId) {
       this.ffInputs = _e.ffEquations ? _e.ffEquations.map(() => '') : [];
       this.ffErrors = [];
 
+      this.clkH = 12;
+      this.clkM = 0;
+      this.clkHand = 'm';
+      this.jlInputs = _e.jl ? jumpLine(_e.jl).fields.map(() => '') : [];
+      this.jlErrors = [];
+      this.mpPicked = [];
+      this.mpHint = '';
+
       this.classifyPlacements = {};
       this.classifySelected = null;
       this.classifyErrors = [];
@@ -764,14 +841,63 @@ export function seriesPlayer(exercises, seriesId) {
       }
     },
 
+    // Clock set mode: move a hand by one step (hours: 1 h; minutes: the exercise step, carrying the hour)
+    clkMove(hand, d) {
+      if (this.solved) return;
+      if (hand === 'h') {
+        this.clkH = ((this.clkH - 1 + d + 12) % 12) + 1;
+        return;
+      }
+      const step = this.cur.clkStep || 5;
+      let m = this.clkM + d * step;
+      if (m >= 60 || m < 0) this.clkMove('h', m >= 60 ? 1 : -1);
+      this.clkM = ((m % 60) + 60) % 60;
+    },
+
+    // Clock set mode: a tap on the face points the chosen hand there
+    clkTap(event) {
+      if (this.solved) return;
+      const r = event.currentTarget.getBoundingClientRect();
+      const dx = event.clientX - r.left - r.width / 2,
+        dy = event.clientY - r.top - r.height / 2;
+      const deg = ((Math.atan2(dx, -dy) * 180) / Math.PI + 360) % 360;
+      if (this.clkHand === 'h') this.clkH = Math.round(deg / 30) % 12 || 12;
+      else {
+        const step = this.cur.clkStep || 5;
+        this.clkM = (Math.round(deg / 6 / step) * step) % 60;
+      }
+    },
+
+    get jlView() {
+      return this.cur.jl ? jumpLine(this.cur.jl) : null;
+    },
+
+    get mpTotal() {
+      return this.mpPicked.reduce((t, c) => t + c, 0);
+    },
+
+    mpEuros(c) {
+      return (c % 100 ? (c / 100).toFixed(2).replace('.', ',') : String(c / 100)) + ' €';
+    },
+
+    mpAdd(c) {
+      if (this.solved || this.mpPicked.length >= 30) return;
+      this.mpPicked = [...this.mpPicked, c].sort((a, b) => b - a);
+      this.mpHint = '';
+    },
+
+    mpRemove(i) {
+      if (this.solved) return;
+      this.mpPicked = this.mpPicked.filter((_, k) => k !== i);
+      this.mpHint = '';
+    },
+
     nlCheck() {
       if (this.solved || this.nlVal === null || !this.cur.nl) return;
       const { step = 1, subdivisions = 0 } = this.cur.nl;
       const snapStep = subdivisions > 0 ? step / subdivisions : step;
       const tol = snapStep * 0.51;
-      const isCorrect = (this.cur.answers || []).some(
-        (a) => Math.abs(Number(String(a).replace(',', '.')) - this.nlVal) <= tol
-      );
+      const isCorrect = (this.cur.answers || []).some((a) => Math.abs(sortValue(a) - this.nlVal) <= tol);
       if (isCorrect) {
         this.solvedFlags[this.currentIndex] = true;
         this.showError = false;
@@ -1164,6 +1290,32 @@ export function seriesPlayer(exercises, seriesId) {
     check() {
       const _e = this.cur;
       if (this.solved) return;
+
+      if (_e.type === 'clock' && _e.clockMode === 'set') {
+        const ok = this.clkH % 12 === _e.hour % 12 && this.clkM === _e.minute;
+        return ok ? this._markSolvedAndAdvance() : this._flashError();
+      }
+
+      if (_e.type === 'jump-line' && _e.jl) {
+        const { fields } = jumpLine(_e.jl);
+        if (this.jlInputs.some((v) => !String(v).trim())) return this._flashError();
+        this.jlErrors = fields
+          .map((f, i) => (normalizeAnswer(this.jlInputs[i]) === normalizeAnswer(f.answer) ? -1 : i))
+          .filter((i) => i >= 0);
+        if (!this.jlErrors.length) return this._markSolvedAndAdvance();
+        return this._flashError(() => {
+          this.jlErrors = [];
+        });
+      }
+
+      if (_e.type === 'money-pay' && _e.mp) {
+        const { amount, coins, fewest } = _e.mp;
+        if (this.mpTotal !== amount) this.mpHint = 'Ce n’est pas la bonne somme : compte encore.';
+        else if (fewest && this.mpPicked.length > fewestPieces(amount, coins))
+          this.mpHint = 'C’est la bonne somme ! Mais tu peux payer avec moins de pièces et de billets.';
+        else return this._markSolvedAndAdvance();
+        return this._flashError();
+      }
 
       if (_e.type === 'function-machine' && _e.machine) {
         if (_e.machine.mode === 'compute') {
@@ -2442,6 +2594,8 @@ export function seriesPlayer(exercises, seriesId) {
           return eq(this.decompInputs[key], _e.decomp.parts.filter((p) => !p.comma)[key].answer);
         case 'fact-family':
           return eq(this.ffInputs[key], _e.ffEquations[key].answer);
+        case 'jump-line':
+          return eq(this.jlInputs[key], jumpLine(_e.jl).fields[key].answer);
         case 'tri-arith':
           return eq(this.triInputs[key], [..._e.triangle.vertices, ..._e.triangle.edges][key]);
         case 'pyramid': {

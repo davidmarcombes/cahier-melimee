@@ -653,6 +653,115 @@
       },
     },
 
+    // compterEnAvancant: jump-line, « pour aller à » on an open line — a duration (start → the next whole
+    // hour → whole hours → end), the change (price → next euro → the note) or a complement (57 → 60 → 100).
+    // params: kind ('temps' | 'monnaie' | 'nombre'), hide (0 | 1 — the first round landmark is to find),
+    //         step (5 — minutes / cents granularity), notes ([1000, 2000, 5000] cents, money),
+    //         bonds (false — money: extra 5 / 10 / 20 € landmarks), target (100 | 1000, nombre),
+    //         tens (true — nombre 1000: start off the tens, 368 → 370 → 400 → 1000)
+    compterEnAvancant: {
+      generate(params = {}) {
+        const kind = ['monnaie', 'nombre'].includes(params.kind) ? params.kind : 'temps';
+        const step = params.step ?? 5;
+        const hide = params.hide ? [1] : [];
+        if (kind === 'nombre') {
+          const target = params.target === 1000 ? 1000 : 100;
+          let n;
+          if (target === 100) n = randItem(Array.from({ length: 89 }, (_, i) => i + 11).filter((v) => v % 10));
+          else if (params.tens === false)
+            do n = rand(11, 89) * 10;
+            while (n % 100 === 0);
+          else
+            do n = rand(101, 899);
+            while (n % 10 === 0);
+          const marks = [n];
+          for (const m of target === 100 ? [10] : [10, 100]) {
+            const v = Math.ceil(marks[marks.length - 1] / m) * m;
+            if (v > marks[marks.length - 1] && v < target) marks.push(v);
+          }
+          marks.push(target);
+          return {
+            type: 'jump-line',
+            title: `${n} pour aller à ${target === 1000 ? '1&nbsp;000' : 100}&nbsp;: combien faut-il ajouter&nbsp;?`,
+            body:
+              target === 100
+                ? 'Arrête-toi d’abord à la dizaine suivante, puis va jusqu’à 100.'
+                : n % 10
+                  ? 'Arrête-toi d’abord à la dizaine, puis à la centaine suivante, puis va jusqu’à 1&nbsp;000.'
+                  : 'Arrête-toi d’abord à la centaine suivante, puis va jusqu’à 1&nbsp;000.',
+            jl: { kind, points: marks.map(String), hide },
+          };
+        }
+        if (kind === 'temps') {
+          const ACTS = [
+            'Le match de rugby',
+            'La sortie au musée',
+            'Le trajet en train',
+            'La séance de cinéma',
+            'L’entraînement de natation',
+          ];
+          let start, end;
+          do {
+            start = rand(7, 16) * 60 + rand(1, 60 / step - 1) * step;
+            end = start + rand(Math.ceil(40 / step), Math.floor(200 / step)) * step;
+          } while (Math.floor(end / 60) === Math.floor(start / 60));
+          const hh = (v) => `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`;
+          const say = (v) => `${Math.floor(v / 60)}&nbsp;h${v % 60 ? '&nbsp;' + String(v % 60).padStart(2, '0') : ''}`;
+          const next = Math.ceil(start / 60) * 60,
+            last = Math.floor(end / 60) * 60;
+          const points = [start, next, ...(last > next ? [last] : []), ...(end > last ? [end] : [])].map(hh);
+          return {
+            type: 'jump-line',
+            title: `${randItem(ACTS)} va de <strong>${say(start)}</strong> à <strong>${say(end)}</strong>. Combien de temps dure-t-il&nbsp;?`,
+            body: `${say(start).replace(/&nbsp;/g, ' ')} pour aller à ${say(end).replace(/&nbsp;/g, ' ')}&nbsp;: arrête-toi d’abord à l’heure pile.`,
+            jl: { kind, points, hide },
+          };
+        }
+        const ITEMS = ['un livre', 'une trousse', 'un jeu de cartes', 'une gourde', 'un ballon', 'une casquette'];
+        const notes = [...(params.notes ?? [1000, 2000, 5000])].sort((a, b) => a - b);
+        let price, note;
+        do {
+          note = randItem(notes);
+          price = rand(Math.ceil(note / 5 / step), Math.floor((note - 1) / step)) * step;
+        } while (price % 100 === 0 || Math.ceil(price / 100) * 100 >= note); // two hops: next euro, then the note
+        const marks = [price, Math.ceil(price / 100) * 100];
+        if (params.bonds)
+          for (const m of [500, 1000, 2000]) {
+            const v = Math.ceil(marks[marks.length - 1] / m) * m;
+            if (v > marks[marks.length - 1] && v < note && marks.length < 4) marks.push(v);
+          }
+        if (marks[marks.length - 1] < note) marks.push(note);
+        const eur = (c) => (c % 100 ? (c / 100).toFixed(2).replace('.', ',') : String(c / 100));
+        // « 12,30 € pour aller à 13 €, c'est comme 30 c pour aller à 100 c » (names the landmark: not when it is to find)
+        const cents = price % 100;
+        const like = hide.length
+          ? 'Arrête-toi d’abord à l’euro suivant&nbsp;: c’est un complément à 100&nbsp;c.'
+          : `${eur(price)}&nbsp;€ pour aller à ${marks[1] / 100}&nbsp;€, c’est comme ${cents}&nbsp;c pour aller à 100&nbsp;c.`;
+        return {
+          type: 'jump-line',
+          title: `Tu achètes ${randItem(ITEMS)} à <strong>${eur(price)}&nbsp;€</strong> et tu payes avec un billet de <strong>${note / 100}&nbsp;€</strong>. Combien te rend-on&nbsp;?`,
+          body: `Compte en avançant, comme le marchand. ${like}`,
+          jl: { kind, points: marks.map(eur), hide },
+        };
+      },
+    },
+
+    // payerSomme: money-pay — make an amount with coins and notes (fewest: with as few pieces as possible)
+    // params: min / max (cents), step (5), coins (offered, cents), fewest (false), showTotal (true)
+    payerSomme: {
+      generate(params = {}) {
+        const step = params.step ?? 5;
+        const coins = params.coins ?? [2000, 1000, 500, 200, 100, 50, 20, 10, 5];
+        const amount = rand(Math.ceil((params.min ?? 105) / step), Math.floor((params.max ?? 2995) / step)) * step;
+        const ITEMS = ['Le pain', 'Le cahier', 'Le jus de pomme', 'Le magazine', 'La boîte de crayons', 'Le bouquet'];
+        return {
+          type: 'money-pay',
+          title: `${randItem(ITEMS)} coûte ${(amount / 100).toFixed(2).replace('.', ',')}&nbsp;€. Paye la somme exacte.`,
+          mp: { amount, coins, fewest: !!params.fewest, showTotal: params.showTotal !== false },
+        };
+      },
+    },
+
     // rendreMonnaie: « Léa a acheté une trousse pour 8 € 20 c. Elle paye avec un billet de 10 €. »
     // → Monnaie rendue : ? € ? c (note drawn with moneySvg). Prices never end in 0 c, so the
     // change always needs the two jumps: to the next euro, then to the note.

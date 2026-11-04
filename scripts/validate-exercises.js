@@ -115,6 +115,8 @@ const TYPE_SCHEMAS = {
   kenken: { required: [], requireOneOf: [['kenken'], ['generator']] },
   numberlink: { required: [], requireOneOf: [['numberlink'], ['generator']] },
   'grid-board': { required: [], requireOneOf: [['board'], ['generator']] },
+  'jump-line': { required: [], requireOneOf: [['points'], ['generator']], arrays: ['points'] },
+  'money-pay': { required: [], requireOneOf: [['amount'], ['generator']] },
 };
 
 const COLORS = {

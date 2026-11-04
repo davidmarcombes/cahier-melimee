@@ -95,7 +95,7 @@ describe('Modules Utilities', () => {
   });
 });
 
-import { seriesPlayer, sortValue } from '../src/assets/js/modules/player.js';
+import { seriesPlayer, sortValue, jumpLine, fewestPieces } from '../src/assets/js/modules/player.js';
 
 describe('seriesPlayer Logic', () => {
   const mockExercises = [
@@ -208,6 +208,35 @@ describe('seriesPlayer Logic', () => {
     expect(p.exercises).toEqual(mockExercises);
     expect(p.currentIndex).toBe(0);
     expect(p.trouInputs).toEqual([]); // Initial state before init()/_setupCurrentExercise()
+  });
+
+  describe('jumpLine', () => {
+    it('times: one field per jump in minutes, then the total in h and min', () => {
+      const v = jumpLine({ kind: 'temps', points: ['8:45', '9:00', '10:00', '10:20'] });
+      expect(v.labels).toEqual(['8 h 45', '9 h', '10 h', '10 h 20']);
+      expect(v.fields.map((f) => f.answer)).toEqual(['15', '60', '20', '1', '35']);
+    });
+
+    it('money: jumps and total in euros; a hidden point is a field too', () => {
+      const v = jumpLine({ kind: 'monnaie', points: ['6,40', '7', '10'], hide: [1] });
+      expect(v.labels).toEqual(['6,40 €', '7 €', '10 €']);
+      expect(v.fields.map((f) => f.answer)).toEqual(['0,60', '3', '7', '3,60']);
+      expect(v.pointField).toEqual({ 1: 2 });
+    });
+
+    it('numbers: « 57 pour aller à 100 » — plain jumps, no unit', () => {
+      const v = jumpLine({ kind: 'nombre', points: ['57', '60', '100'] });
+      expect(v.labels).toEqual(['57', '60', '100']);
+      expect(v.fields.map((f) => f.answer)).toEqual(['3', '40', '43']);
+      expect(v.unit).toBe('');
+    });
+  });
+
+  describe('fewestPieces', () => {
+    it('counts the fewest euro coins and notes, Infinity when impossible', () => {
+      expect(fewestPieces(735, [500, 200, 100, 50, 20, 10, 5])).toBe(5);
+      expect(fewestPieces(3, [5, 10])).toBe(Infinity);
+    });
   });
 
   describe('trouParts parser', () => {

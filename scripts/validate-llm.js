@@ -111,6 +111,8 @@ const LLM_TYPES = new Set([
   'bar-chart',
   'tile-select',
   'grid-board',
+  'jump-line',
+  'money-pay',
 ]);
 
 // ─── ANSI colours ────────────────────────────────────────────────────────────
@@ -809,6 +811,50 @@ function buildPrompt({ data, body }) {
         `Étape fausse proposée: ${Number(data.wrongStep) + 1}`,
         `Correction proposée: ${fmt(data.correction)}`,
         `Vérifie que c'est bien cette étape qui est fausse et que la correction est juste.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    // Open line « compter en avançant »: the player derives the jumps and the total from the points
+    case 'jump-line': {
+      const jl = data.jl || { kind: data.kind || 'temps', points: data.points || [], hide: data.hide || [] };
+      const time = jl.kind === 'temps';
+      const vs = jl.points.map((p) =>
+        time
+          ? Number(String(p).split(':')[0]) * 60 + Number(String(p).split(':')[1] || 0)
+          : Math.round(Number(String(p).replace(',', '.')) * 100)
+      );
+      const money = jl.kind === 'monnaie';
+      const eur = (c) => (money ? (c / 100).toFixed(2).replace('.', ',') + ' €' : String(c / 100).replace('.', ','));
+      const say = (v) => (time ? `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, '0')}` : eur(v));
+      const jumps = vs.slice(1).map((v, i) => (time ? `+${v - vs[i]} min` : `+${eur(v - vs[i])}`));
+      const total = vs[vs.length - 1] - vs[0];
+      return [
+        `Type: compter en avançant sur une droite ouverte (« pour aller à » : ${time ? 'durée' : money ? 'rendu de monnaie' : 'complément'})`,
+        title && `Question: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Étapes de la droite: ${vs.map(say).join(' → ')}`,
+        jl.hide && jl.hide.length && `Étapes que l'élève doit écrire: ${jl.hide.map((i) => say(vs[i])).join(', ')}`,
+        `Bonds attendus: ${jumps.join(' ; ')}`,
+        `Réponse proposée (total): ${time ? `${Math.floor(total / 60)} h ${total % 60} min` : eur(total)}`,
+        `Vérifie que la première et la dernière étape correspondent à la question, que les étapes intermédiaires sont des repères ronds dans l'ordre, et que le total répond à la question.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'money-pay': {
+      const mp = data.mp || { amount: data.amount, coins: data.coins || [], fewest: data.fewest };
+      const eur = (c) => (c / 100).toFixed(2).replace('.', ',') + ' €';
+      return [
+        `Type: payer une somme exacte en touchant des pièces et des billets`,
+        title && `Question: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Somme attendue par le jeu: ${eur(mp.amount)}`,
+        mp.coins && mp.coins.length && `Pièces et billets disponibles: ${mp.coins.map(eur).join(', ')}`,
+        mp.fewest && `L'élève doit aussi utiliser le moins de pièces et de billets possible.`,
+        `Vérifie que la somme attendue est le prix de la question et qu'on peut la faire avec les pièces et billets disponibles.`,
       ]
         .filter(Boolean)
         .join('\n');

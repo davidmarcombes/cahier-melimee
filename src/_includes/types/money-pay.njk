@@ -1,0 +1,36 @@
+{# Money pay — tap coins and notes to make the amount (fewest: with as few pieces as possible) #}
+<div x-show="cur.type === 'money-pay'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-3 text-content-subtle" x-show="cur.body" x-html="cur.body"></div>
+
+  <template x-if="cur.mp">
+    <div>
+      <p class="text-center text-2xl font-extrabold text-content-default mb-4">
+        Paye <span class="text-primary-600 dark:text-primary-400" x-text="mpEuros(cur.mp.amount)"></span>
+      </p>
+
+      {# What the pupil puts down: tap a piece to take it back #}
+      <div class="min-h-[5.5rem] rounded-xl border-2 border-dashed p-2 flex flex-wrap items-center justify-center gap-1" :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/15' : 'border-slate-300 dark:border-slate-600'">
+        <span x-show="!mpPicked.length" class="text-sm text-content-subtle">Touche les pièces et les billets ci-dessous.</span>
+        <template x-for="(c, i) in mpPicked" :key="'p' + i + '-' + c">
+          <button type="button" @click="mpRemove(i)" :disabled="solved" :aria-label="'Reprendre ' + mpEuros(c)" class="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 [&>svg]:!h-12 [&>svg]:!w-auto" x-html="moneySvg([c])"></button>
+        </template>
+      </div>
+      <p class="mt-2 text-center text-sm text-content-subtle" x-show="cur.mp.showTotal">Tu as posé <span class="font-bold text-content-default" x-text="mpEuros(mpTotal)"></span>.</p>
+      <p class="mt-2 text-center text-sm font-semibold text-amber-700 dark:text-amber-300" x-show="mpHint && !showError" x-text="mpHint"></p>
+
+      {# The money box #}
+      <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+        <template x-for="c in cur.mp.coins" :key="'c' + c">
+          <button type="button" @click="mpAdd(c)" :disabled="solved" :aria-label="'Poser ' + mpEuros(c)" class="p-1 rounded-xl border-2 border-slate-200 dark:border-slate-700 hover:border-primary-400 active:scale-95 transition-transform disabled:opacity-40 [&>svg]:!h-12 [&>svg]:!w-auto" x-html="moneySvg([c])"></button>
+        </template>
+      </div>
+
+      <div class="flex justify-center mt-5">
+        <button type="button" @click="check()" :disabled="solved || !mpPicked.length" class="px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed" :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+          <span x-show="!solved">Vérifier</span>
+          <span x-show="solved">Bravo !</span>
+        </button>
+      </div>
+    </div>
+  </template>
+</div>

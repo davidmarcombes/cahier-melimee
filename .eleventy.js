@@ -572,6 +572,26 @@ module.exports = async function (eleventyConfig) {
 
         if (ex.data.hour != null) item.hour = Number(interpolate(String(ex.data.hour)));
         if (ex.data.minute != null) item.minute = Number(interpolate(String(ex.data.minute)));
+        // Clock « set »: the pupil places the hands (step: minutes per tap of the minute buttons)
+        if (ex.data.type === 'clock' && ex.data.mode === 'set') {
+          item.clockMode = 'set';
+          item.clkStep = Number(ex.data.step || 5);
+        }
+
+        // Jump line: open line of times / amounts, answers computed by jumpLine() in player.js
+        if (ex.data.type === 'jump-line' && Array.isArray(ex.data.points)) {
+          item.jl = { kind: ex.data.kind || 'temps', points: ex.data.points.map(String), hide: ex.data.hide || [] };
+        }
+
+        // Money pay: tap coins and notes to make `amount` (cents)
+        if (ex.data.type === 'money-pay' && ex.data.amount != null) {
+          item.mp = {
+            amount: Number(ex.data.amount),
+            coins: (ex.data.coins || [5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1]).map(Number),
+            fewest: !!ex.data.fewest,
+            showTotal: !!ex.data.showTotal,
+          };
+        }
 
         if (ex.data.type === 'base-10') {
           const num = Number(interpolate(String(ex.data.number || 0)));
@@ -1514,6 +1534,8 @@ module.exports = async function (eleventyConfig) {
       'op-triangle',
       'number-strip',
       'grid-board',
+      'jump-line',
+      'money-pay',
     ];
     const CSV_CLASSES = [
       'A1.1',

@@ -112,6 +112,32 @@ function longueursSvg(objects) {
   );
 }
 
+// Fraction wall: strips of the same length cut in equal parts. rows: [den, shaded] (or den alone);
+// whole: a first strip « 1 ». Parts read « 1/den » when wide enough; shaded parts start on the left.
+function fractionStripsSvg(rows, whole = true) {
+  const W = 320,
+    H = 30,
+    GAP = 6,
+    X = 5;
+  const list = (whole ? [[1, 0]] : []).concat(rows.map((r) => (Array.isArray(r) ? r : [r, 0])));
+  let s = '';
+  list.forEach(([den, shaded], k) => {
+    const y = 5 + k * (H + GAP),
+      w = W / den;
+    for (let i = 0; i < den; i++) {
+      const on = i < shaded;
+      s += `<rect x="${(X + i * w).toFixed(1)}" y="${y}" width="${w.toFixed(1)}" height="${H}" fill="${on ? 'var(--p)' : 'var(--sf,#fff)'}" fill-opacity="${on ? 0.45 : 1}"/>`;
+      if (w >= 24)
+        s += `<text x="${(X + i * w + w / 2).toFixed(1)}" y="${y + 20}" text-anchor="middle" font-size="${den > 9 ? 11 : 13}" fill="var(--ct,#1e293b)">${den === 1 ? '1' : '1/' + den}</text>`;
+    }
+    s += `<rect x="${X}" y="${y}" width="${W}" height="${H}" fill="none" stroke="currentColor" stroke-width="2"/>`;
+    for (let i = 1; i < den; i++)
+      s += `<line x1="${(X + i * w).toFixed(1)}" y1="${y}" x2="${(X + i * w).toFixed(1)}" y2="${y + H}" stroke="currentColor" stroke-width="1.5"/>`;
+  });
+  const height = 10 + list.length * (H + GAP) - GAP;
+  return `<svg viewBox="0 0 ${W + 2 * X} ${height}" width="${W + 2 * X}" style="max-width:100%;height:auto" role="img" aria-label="Bandes de fractions">${s}</svg>`;
+}
+
 // Hands showing 0–5 raised fingers: 1–4 = index first, 5 = open hand, 0 = fist. Cartoon style: thick
 // dark outline; curled fingers in front of the palm, held by the thumb, which grows out of the palm edge.
 // Two hands: the first is mirrored (thumbs face each other); plus draws « + » between them.

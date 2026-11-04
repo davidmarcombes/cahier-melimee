@@ -560,10 +560,39 @@ function solveAll() {
     },
     'number-line': (e, w) => {
       if (e.nl?.mode === 'place') {
-        p.nlVal = w ? -987654 : Number(String(e.answers[0]).replace(',', '.'));
+        const [n, d] = String(e.answers[0]).replace(',', '.').split('/');
+        p.nlVal = w ? -987654 : Number(n) / (d ? Number(d) : 1);
         return p.nlCheck();
       }
       return S.input(e, w);
+    },
+    clock: (e, w) => {
+      if (e.clockMode !== 'set') return S.input(e, w);
+      p.clkH = e.hour % 12 || 12;
+      p.clkM = (e.minute + (w ? 5 : 0)) % 60;
+      p.check();
+    },
+    // Fields computed by jumpLine() in player.js (jlView): the solver reads them back from there
+    'jump-line': (e, w) => {
+      p.jlInputs = spoil(
+        p.jlView.fields.map((f) => f.answer),
+        w
+      );
+      p.check();
+    },
+    'money-pay': (e, w) => {
+      // Greedy with the coins offered: the fewest pieces (euro denominations)
+      let left = e.mp.amount;
+      const coins = [...e.mp.coins].sort((a, b) => b - a);
+      const picked = [];
+      for (const c of coins)
+        while (left >= c) {
+          picked.push(c);
+          left -= c;
+        }
+      // Wrong: one coin too many
+      p.mpPicked = w ? [...picked, coins[coins.length - 1]] : picked;
+      p.check();
     },
     'think-board': (e, w) => {
       p.tbStory = e.tbStoryKeyword || '';
@@ -580,13 +609,14 @@ function solveAll() {
   };
   S['compare-expressions'] = S.compare;
   for (const t of ['sequence', 'bounding', 'convert', 'number-forms', 'op-triangle']) S[t] = S.seq;
-  for (const t of ['number-check', 'problem', 'clock', 'fraction', 'base-10', 'ruler', 'thermometer']) S[t] = S.input;
+  for (const t of ['number-check', 'problem', 'fraction', 'base-10', 'ruler', 'thermometer']) S[t] = S.input;
   for (const t of ['bar-model', 'emoji-equations', 'count-objects', 'column-op']) S[t] = S.input;
 
   // Enter checks one field alone (enterField / _fieldOk): with the right answers in, none may be judged wrong
   const FIELDS = { 'fill-table': 'tableInputs', 'calc-chain': 'ccInputs', decomp: 'decompInputs' };
   Object.assign(FIELDS, { 'fact-family': 'ffInputs', 'tri-arith': 'triInputs', pyramid: 'pyramidInputs' });
   Object.assign(FIELDS, { 'coordinate-grid': 'cgInputs', 'fraction-check': 'rfInputs', 'decimal-triple': 'dtInputs' });
+  FIELDS['jump-line'] = 'jlInputs';
   for (const t of ['sequence', 'bounding', 'convert', 'number-forms', 'op-triangle']) FIELDS[t] = 'seqInputs';
   const wrongFields = (t) => {
     if (t === 'estimation') return ['est', 'exact'].filter((k) => p._fieldOk(k) === false);

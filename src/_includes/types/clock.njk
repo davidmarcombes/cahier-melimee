@@ -1,7 +1,7 @@
-{# Analog Clock Display #}
+{# Analog Clock Display — read mode: type the time; set mode (clockMode 'set'): the pupil places the hands #}
 <div x-show="cur.type === 'clock'" class="flex flex-col items-center mb-8">
   <div class="relative w-48 h-48 sm:w-64 sm:h-64">
-    <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm">
+    <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm" @click="cur.clockMode === 'set' && clkTap($event)" :class="cur.clockMode === 'set' && !solved ? 'cursor-pointer' : ''">
       <!-- Clock Face -->
       <circle cx="50" cy="50" r="48" fill="white" stroke="currentColor" stroke-width="2" class="fill-white dark:fill-slate-900 text-slate-400 dark:text-slate-600" />
       
@@ -25,17 +25,35 @@
       <line x1="50" y1="50" x2="50" y2="30" 
             stroke="currentColor" stroke-width="3.5" stroke-linecap="round" 
             class="text-slate-900 dark:text-slate-100 transition-transform duration-500 ease-in-out"
-            :transform="'rotate(' + (((cur.hour || 0) % 12) * 30 + ((cur.minute || 0) / 60) * 30) + ' 50 50)'" />
+            :transform="'rotate(' + (cur.clockMode === 'set' ? (clkH % 12) * 30 + clkM / 2 : ((cur.hour || 0) % 12) * 30 + ((cur.minute || 0) / 60) * 30) + ' 50 50)'" />
       
       <line x1="50" y1="50" x2="50" y2="18" 
             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" 
             class="text-primary-600 transition-transform duration-500 ease-in-out"
-            :transform="'rotate(' + ((cur.minute || 0) * 6) + ' 50 50)'" />
+            :transform="'rotate(' + ((cur.clockMode === 'set' ? clkM : cur.minute || 0) * 6) + ' 50 50)'" />
       
       <!-- Center Pin -->
       <circle cx="50" cy="50" r="3" fill="currentColor" class="text-slate-900 dark:text-slate-100" />
     </svg>
   </div>
+
+  {# Set mode: choose a hand (a tap on the face points it), or turn it step by step #}
+  <template x-if="cur.clockMode === 'set'">
+    <div class="mt-4 flex flex-col items-center gap-3">
+      <div class="grid grid-cols-[auto_auto_auto] items-center gap-2">
+        <button type="button" @click="clkMove('h', -1)" :disabled="solved" aria-label="Petite aiguille en arrière" class="w-11 h-11 rounded-xl border-2 border-slate-300 dark:border-slate-600 text-xl font-bold disabled:opacity-40">−</button>
+        <button type="button" @click="clkHand = 'h'" :disabled="solved" class="px-3 h-11 rounded-xl border-2 font-semibold" :class="clkHand === 'h' ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-slate-800' : 'border-slate-300 dark:border-slate-600'">Petite aiguille (heures)</button>
+        <button type="button" @click="clkMove('h', 1)" :disabled="solved" aria-label="Petite aiguille en avant" class="w-11 h-11 rounded-xl border-2 border-slate-300 dark:border-slate-600 text-xl font-bold disabled:opacity-40">+</button>
+        <button type="button" @click="clkMove('m', -1)" :disabled="solved" aria-label="Grande aiguille en arrière" class="w-11 h-11 rounded-xl border-2 border-primary-300 dark:border-primary-700 text-xl font-bold text-primary-700 dark:text-primary-300 disabled:opacity-40">−</button>
+        <button type="button" @click="clkHand = 'm'" :disabled="solved" class="px-3 h-11 rounded-xl border-2 font-semibold text-primary-700 dark:text-primary-300" :class="clkHand === 'm' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30' : 'border-primary-300 dark:border-primary-700'">Grande aiguille (minutes)</button>
+        <button type="button" @click="clkMove('m', 1)" :disabled="solved" aria-label="Grande aiguille en avant" class="w-11 h-11 rounded-xl border-2 border-primary-300 dark:border-primary-700 text-xl font-bold text-primary-700 dark:text-primary-300 disabled:opacity-40">+</button>
+      </div>
+      <button type="button" @click="check()" :disabled="solved" class="px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95" :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+        <span x-show="!solved">Vérifier</span>
+        <span x-show="solved">Bravo !</span>
+      </button>
+    </div>
+  </template>
 
   {# Instructions from body #}
   <div class="mt-4 prose dark:prose-invert text-base text-center mb-4 max-w-none text-content-subtle" x-html="cur.body"></div>

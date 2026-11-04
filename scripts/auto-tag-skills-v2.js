@@ -29,7 +29,7 @@ const SKILL_KEYWORDS = {
   'S3.2.1': ['suite', 'pattern', 'algorithm', 'motif', 'repetition'],
   'S3.2.2': ['logic-grid', 'enigme', 'logique', 'deduction', 'grille-logique'],
   'S3.2.3': ['vrai-faux', 'check', 'verification', 'vrai-ou-faux', 'checkbox'],
-  'I1.1.1': ['temps', 'heure', 'horloge', 'clock', 'date', 'calendrier', 'duree'],
+  'I1.1.1': ['temps', 'heure', 'horloge', 'clock', 'date', 'calendrier', 'temps'],
   'I1.1.2': ['ruler', 'regle', 'thermometre', 'balance', 'peser', 'instrument', 'graduation-mesure'],
   'I1.2.1': ['place-curseur', 'placer-point', 'regler-heure', 'tracer', 'desiner'],
   'D1.1.1': ['bar-chart', 'graphique', 'tableau', 'tableau-lire', 'picto', 'donnee', 'analyser'],

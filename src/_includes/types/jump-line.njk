@@ -1,0 +1,59 @@
+{# Jump line — « compter en avançant » on an open line (times or amounts): one field per jump, per hidden point, then the total #}
+<div x-show="cur.type === 'jump-line'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle" x-show="cur.body" x-html="cur.body"></div>
+
+  <template x-if="jlView">
+    <div>
+      {# The line: points (dot + time / amount) and the jumps between them (field above an arc) #}
+      <div class="relative flex items-stretch">
+        <div class="absolute left-0 right-0 top-[5.25rem] border-t-2 border-slate-400 dark:border-slate-500"></div>
+        <template x-for="(cell, ci) in jlView.labels.flatMap((l, i) => (i ? [{ j: i - 1 }, { p: i }] : [{ p: 0 }]))" :key="ci">
+          <div class="relative flex flex-col items-center" :class="cell.j !== undefined ? 'flex-1 min-w-0' : 'w-12 shrink-0'">
+            <template x-if="cell.j !== undefined">
+              <div class="flex flex-col items-center w-full">
+                <div class="h-14 flex flex-col items-center justify-end">
+                  <input type="text" inputmode="decimal" x-model="jlInputs[cell.j]" @keydown.enter="enterField($el, cell.j)" @input="jlErrors = []" :disabled="solved" placeholder="?" :aria-label="'Saut ' + (cell.j + 1)" class="w-14 h-9 text-center rounded-lg border-2 font-bold text-base focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': jlErrors.includes(cell.j), 'border-slate-300 dark:border-slate-600': !solved && !jlErrors.includes(cell.j) }" />
+                  <span class="text-xs text-content-subtle leading-4" x-text="jlView.unit"></span>
+                </div>
+                <svg viewBox="0 0 100 24" preserveAspectRatio="none" class="w-full h-6 text-primary-500" aria-hidden="true">
+                  <path d="M3,23 Q50,-6 95,21" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
+                  <path d="M89,15 L96,22 L86,23" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
+                </svg>
+              </div>
+            </template>
+            <template x-if="cell.p !== undefined">
+              <div class="flex flex-col items-center">
+                <div class="h-20"></div>
+                <div class="relative z-10 w-3.5 h-3.5 -mt-[0.4rem] rounded-full bg-slate-700 dark:bg-slate-200"></div>
+                <template x-if="jlView.pointField[cell.p] === undefined">
+                  <span class="mt-1 text-xs sm:text-sm font-bold text-content-default text-center whitespace-nowrap" x-text="jlView.labels[cell.p]"></span>
+                </template>
+                <template x-if="jlView.pointField[cell.p] !== undefined">
+                  <input type="text" x-model="jlInputs[jlView.pointField[cell.p]]" @keydown.enter="enterField($el, jlView.pointField[cell.p])" @input="jlErrors = []" :disabled="solved" :placeholder="jlView.time ? 'h' : jlView.money ? '€' : '?'" aria-label="Point à trouver" class="mt-1 w-16 h-9 text-center rounded-lg border-2 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': jlErrors.includes(jlView.pointField[cell.p]), 'border-slate-300 dark:border-slate-600': !solved && !jlErrors.includes(jlView.pointField[cell.p]) }" />
+                </template>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+
+      {# Total of the jumps #}
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-2 text-lg font-semibold text-content-default">
+        <span>En tout :</span>
+        <template x-for="(f, k) in jlView.fields.slice(jlView.totalFrom)" :key="'t' + k">
+          <span class="inline-flex items-center gap-1">
+            <input type="text" inputmode="decimal" x-model="jlInputs[jlView.totalFrom + k]" @keydown.enter="enterField($el, jlView.totalFrom + k)" @input="jlErrors = []" :disabled="solved" placeholder="?" :aria-label="'Total en ' + f.unit" class="w-16 h-11 text-center rounded-xl border-2 font-bold text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': jlErrors.includes(jlView.totalFrom + k), 'border-slate-300 dark:border-slate-600': !solved && !jlErrors.includes(jlView.totalFrom + k) }" />
+            <span x-text="f.unit"></span>
+          </span>
+        </template>
+      </div>
+
+      <div class="flex justify-center mt-5">
+        <button type="button" @click="check()" :disabled="solved || jlInputs.some((v) => !String(v).trim())" class="px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed" :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+          <span x-show="!solved">Vérifier</span>
+          <span x-show="solved">Bravo !</span>
+        </button>
+      </div>
+    </div>
+  </template>
+</div>

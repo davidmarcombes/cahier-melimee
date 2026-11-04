@@ -81,6 +81,8 @@ const TYPE_CHOICES = [
   { name: 'ruler           — Lire une valeur sur une règle graduée', value: 'ruler' },
   { name: 'click-blocks    — Colorier des blocs pour représenter la valeur', value: 'click-blocks' },
   { name: 'inverse-problem — Problème de base + problèmes inverses (Russie)', value: 'inverse-problem' },
+  { name: 'jump-line       — Compter en avançant : durées, monnaie (droite ouverte)', value: 'jump-line' },
+  { name: 'money-pay       — Payer une somme avec des pièces et des billets', value: 'money-pay' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -115,6 +117,8 @@ const TEMPLATES = {
   'number-strip': 'cells: ["1", null, "3", "4"]\nchoices: ["2", "5", "6"]\nanswers: [0]',
   'grid-board': 'board:\n  mode: follow\n  rows: 4\n  cols: 4\n  start: [3, 0]\n  program: ["R", "R", "U"]',
   'fraction-check': 'answers:\n  - ""\n  - ""',
+  'jump-line': 'kind: temps\npoints: ["8:45", "9:00", "10:00", "10:20"]\nhide: []',
+  'money-pay': 'amount: 735\ncoins: [500, 200, 100, 50, 20, 10, 5]\nfewest: false\nshowTotal: true',
   ruler: 'min: 0\nmax: 10\ndivisions: 10\nmarkers:\n  - label: "A"\n    value: ',
   'click-blocks':
     'columns:\n  - label: "100"\n    value: 100\n    color: "#dc2626"\n    answer: 0\n    max: 9\n  - label: "10"\n    value: 10\n    color: "#7c3aed"\n    answer: 0\n    max: 9\n  - label: "1"\n    value: 1\n    color: "#2563eb"\n    answer: 0\n    max: 9',
