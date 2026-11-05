@@ -1,5 +1,6 @@
 ---
 type: fraction-check
+equivalent: true
 title: "Soustraire des fractions"
 answer: "3/7"
 ---

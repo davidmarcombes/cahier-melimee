@@ -1,5 +1,6 @@
 ---
 type: fraction-check
+equivalent: true
 title: "1/4 + 1/4 + 1/4 = ?"
 answer: "3/4"
 ---

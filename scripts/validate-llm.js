@@ -113,6 +113,7 @@ const LLM_TYPES = new Set([
   'grid-board',
   'jump-line',
   'money-pay',
+  'fraction-op',
 ]);
 
 // ─── ANSI colours ────────────────────────────────────────────────────────────
@@ -839,6 +840,33 @@ function buildPrompt({ data, body }) {
         `Bonds attendus: ${jumps.join(' ; ')}`,
         `Réponse proposée (total): ${time ? `${Math.floor(total / 60)} h ${total % 60} min` : eur(total)}`,
         `Vérifie que la première et la dernière étape correspondent à la question, que les étapes intermédiaires sont des repères ronds dans l'ordre, et que le total répond à la question.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    // Fraction a ± b with a drawing: the player derives the common denominator and the result
+    case 'fraction-op': {
+      const fo = data.fo || { a: data.a, b: data.b, op: data.op || '+', model: data.model };
+      const sub = fo.op === '-' || fo.op === '−';
+      const [[an, ad], [bn, bd]] = [fo.a, fo.b].map((s) => String(s).split('/').map(Number));
+      const gcd = (x, y) => (y ? gcd(y, x % y) : x);
+      const D = (ad * bd) / gcd(ad, bd);
+      const conv = [
+        [an, ad],
+        [bn, bd],
+      ]
+        .filter(([, d]) => d !== D)
+        .map(([n, d]) => `${n}/${d} = ${(n * D) / d}/${D}`);
+      const R = (an * D) / ad + (sub ? -1 : 1) * ((bn * D) / bd);
+      return [
+        `Type: ${sub ? 'soustraction' : 'addition'} de fractions avec un dessin (${fo.model || 'bande'})`,
+        title && `Question: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Calcul: ${fo.a} ${sub ? '−' : '+'} ${fo.b}`,
+        conv.length && `Étape 1 attendue (même dénominateur): ${conv.join(' ; ')}`,
+        `Réponse proposée: ${R}/${D}`,
+        `Vérifie le calcul${conv.length ? ", que l'étape 1 est juste" : ''} et que l'énoncé correspond au calcul (un problème doit bien demander cette opération).`,
       ]
         .filter(Boolean)
         .join('\n');

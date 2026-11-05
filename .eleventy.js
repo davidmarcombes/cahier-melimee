@@ -583,6 +583,21 @@ module.exports = async function (eleventyConfig) {
           item.jl = { kind: ex.data.kind || 'temps', points: ex.data.points.map(String), hide: ex.data.hide || [] };
         }
 
+        // Fraction answer: any equivalent fraction accepted (calculation results)
+        if (ex.data.type === 'fraction-check' && ex.data.equivalent) item.equivalent = true;
+
+        // Fraction operation: a ± b drawn as strips / pies / a line, fields computed by fractionOp() in player.js
+        if (ex.data.type === 'fraction-op' && ex.data.a != null && ex.data.b != null) {
+          item.fo = {
+            a: String(ex.data.a),
+            b: String(ex.data.b),
+            op: ex.data.op || '+',
+            model: ex.data.model || 'bande',
+          };
+          if (ex.data.cut === false) item.fo.cut = false;
+          if (ex.data.askDen) item.fo.askDen = true;
+        }
+
         // Money pay: tap coins and notes to make `amount` (cents)
         if (ex.data.type === 'money-pay' && ex.data.amount != null) {
           item.mp = {
@@ -1536,6 +1551,7 @@ module.exports = async function (eleventyConfig) {
       'grid-board',
       'jump-line',
       'money-pay',
+      'fraction-op',
     ];
     const CSV_CLASSES = [
       'A1.1',

@@ -146,6 +146,7 @@ Quick table — required fields only:
 | `fraction` | `shape`, `numerator`, `denominator`, `answer` | shape: circle\|square (rect draws nothing) |
 | `clock` | `hour`, `minute`, `answer` | answer: "HH:MM" · `mode: set`: place the hands |
 | `jump-line` | `points[]` (kind temps / monnaie / nombre) | « Pour aller à » — counting up on an open line (57 → 60 → 100; 12,30 → 13 → 20 €; 11:15 → 12:00 → 13:00) |
+| `fraction-op` | `a`, `b`, `op`, `model` (bande / disque / droite) | Fraction ± fraction with strips, pies or a number line; different denominators add a « même dénominateur » step; any equivalent result is accepted |
 | `money-pay` | `amount` (cents) | Tap coins and notes; `fewest` |
 | `sort` | `items[]` | Items in CORRECT order — shuffled at runtime |
 | `drag-sort` | `tiles[]` | Tiles in CORRECT order, direction: asc\|desc |
@@ -153,7 +154,7 @@ Quick table — required fields only:
 | `checkbox` | `statements[]`, `checkedAnswers[]` | checkedAnswers = 0-indexed |
 | `select` | `choices[]`, `statements[]` (template, answer) | `___` = dropdown placeholder |
 | `tile-select` | `tiles[]`, `tileAnswers[]` | tileAnswers = 0-indexed correct |
-| `fraction-check` | `answers[numerator, denominator]` | Or single `answer: "n/d"` |
+| `fraction-check` | `answers[numerator, denominator]` | Or single `answer: "n/d"`; `equivalent: true` on calculation results (1/2 accepted for 2/4) |
 | `ruler` | `min`, `max`, `divisions`, `markers[]` | markers[].label + .value |
 | `number-line` | `min`, `max`, `answer` | Optional: `step` |
 | `coordinate-grid` | `answer` | mode: read\|place, cols, rows, points[] |

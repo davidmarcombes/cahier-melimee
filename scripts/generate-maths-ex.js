@@ -83,6 +83,10 @@ const TYPE_CHOICES = [
   { name: 'inverse-problem — Problème de base + problèmes inverses (Russie)', value: 'inverse-problem' },
   { name: 'jump-line       — Compter en avançant : durées, monnaie (droite ouverte)', value: 'jump-line' },
   { name: 'money-pay       — Payer une somme avec des pièces et des billets', value: 'money-pay' },
+  {
+    name: 'fraction-op     — Ajouter / soustraire des fractions avec un dessin (bandes, disques, droite)',
+    value: 'fraction-op',
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -118,6 +122,7 @@ const TEMPLATES = {
   'grid-board': 'board:\n  mode: follow\n  rows: 4\n  cols: 4\n  start: [3, 0]\n  program: ["R", "R", "U"]',
   'fraction-check': 'answers:\n  - ""\n  - ""',
   'jump-line': 'kind: temps\npoints: ["8:45", "9:00", "10:00", "10:20"]\nhide: []',
+  'fraction-op': 'a: "1/2"\nb: "1/4"\nop: "+"\nmodel: bande',
   'money-pay': 'amount: 735\ncoins: [500, 200, 100, 50, 20, 10, 5]\nfewest: false\nshowTotal: true',
   ruler: 'min: 0\nmax: 10\ndivisions: 10\nmarkers:\n  - label: "A"\n    value: ',
   'click-blocks':

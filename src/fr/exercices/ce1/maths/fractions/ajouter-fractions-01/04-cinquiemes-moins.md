@@ -1,5 +1,6 @@
 ---
 type: fraction-check
+equivalent: true
 title: "Calcule"
 answer: "3/5"
 ---

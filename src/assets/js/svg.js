@@ -138,6 +138,166 @@ function fractionStripsSvg(rows, whole = true) {
   return `<svg viewBox="0 0 ${W + 2 * X} ${height}" width="${W + 2 * X}" style="max-width:100%;height:auto" role="img" aria-label="Bandes de fractions">${s}</svg>`;
 }
 
+// Fraction addition / subtraction (view from fractionOp in player.js): first fraction blue, second amber.
+// model bande (one strip per fraction, the result strip under a line), disque (pies: A + B = result) or
+// droite (jumps on a number line in 1/D). cut: dashed lines re-cutting a fraction into the common parts.
+// Until done the result is empty (« ? »); then addition shows both colours, subtraction the parts taken away.
+function fractionOpSvg(v, model = 'bande', done = false, cut = true) {
+  const f = SVG.f,
+    font = `font-family="${SVG.font}" font-weight="700" fill="var(--ct)"`;
+  const [A, B] = v.terms,
+    D = v.D,
+    COL = ['var(--p)', 'var(--a)'];
+  const units = Math.max(1, ...[A.n / A.d, B.n / B.d, v.R / D].map(Math.ceil));
+  // stacked fraction (or « ? ») centred on x, numerator baseline at y
+  const frac = (x, y, n, d, color = 'var(--ct)') =>
+    d == null
+      ? `<text x="${f(x)}" y="${f(y + 12)}" text-anchor="middle" font-size="22" ${font}>?</text>`
+      : `<g fill="${color}"><text x="${f(x)}" y="${f(y)}" text-anchor="middle" font-size="16" ${font} fill="${color}">${n}</text>` +
+        `<line x1="${f(x - 11)}" y1="${f(y + 5)}" x2="${f(x + 11)}" y2="${f(y + 5)}" stroke="${color}" stroke-width="2"/>` +
+        `<text x="${f(x)}" y="${f(y + 22)}" text-anchor="middle" font-size="16" ${font} fill="${color}">${d}</text></g>`;
+  const sign = (x, y, t) => `<text x="${f(x)}" y="${f(y)}" text-anchor="middle" font-size="24" ${font}>${t}</text>`;
+  // part k of the result, once done: addition = A's parts then B's; subtraction = what is left, then the parts taken away
+  const resultPaint = (k) =>
+    !done ? null : v.sub ? (k < v.R ? COL[0] : k < A.N ? 'x' : null) : k < A.N ? COL[0] : k < A.N + B.N ? COL[1] : null;
+  const fill = (c) =>
+    c === 'x' ? 'fill="var(--a)" fill-opacity=".15"' : c ? `fill="${c}" fill-opacity=".55"` : 'fill="var(--sf,#fff)"';
+  const cross = (x0, y0, x1, y1) =>
+    `<path d="M${f(x0 + 4)},${f(y0 + 4)}L${f(x1 - 4)},${f(y1 - 4)}M${f(x1 - 4)},${f(y0 + 4)}L${f(x0 + 4)},${f(y1 - 4)}" stroke="var(--a)" stroke-width="2"/>`;
+
+  if (model === 'disque') {
+    const r = 42,
+      P = 2 * r + 8;
+    let x = 4,
+      s = '';
+    // pies for parts of size 1/d, part k painted paint(k); dashed radii every 1/D
+    const pies = (count, d, paint, sub, label) => {
+      const x0 = x;
+      for (let j = 0; j < count; j++) {
+        const cx = x + r + 2,
+          cy = r + 4;
+        const pt = (i, m) => {
+          const t = (i / m) * 2 * Math.PI - Math.PI / 2;
+          return [cx + r * Math.cos(t), cy + r * Math.sin(t)];
+        };
+        for (let i = 0; i < d; i++) {
+          const c = paint(j * d + i),
+            [x1, y1] = pt(i, d),
+            [x2, y2] = pt(i + 1, d);
+          s += `<path d="M${f(cx)},${f(cy)}L${f(x1)},${f(y1)}A${r},${r},0,0,1,${f(x2)},${f(y2)}Z" ${fill(c)} stroke="currentColor" stroke-width="1.5"/>`;
+          if (c === 'x') {
+            const [mx, my] = pt(i + 0.5, d);
+            s += `<path d="M${f((cx + mx) / 2 - 6)},${f((cy + my) / 2 - 6)}l12,12m0,-12l-12,12" stroke="var(--a)" stroke-width="2"/>`;
+          }
+        }
+        if (sub && sub !== d)
+          for (let i = 0; i < sub; i++)
+            if ((i * d) % sub) {
+              const [x1, y1] = pt(i, sub);
+              s += `<line x1="${f(cx)}" y1="${f(cy)}" x2="${f(x1)}" y2="${f(y1)}" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3"/>`;
+            }
+        s += `<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="none" stroke="currentColor" stroke-width="2"/>`;
+        x += P;
+      }
+      s += label((x0 + x - 8) / 2);
+    };
+    const term = (t, i) =>
+      pies(
+        Math.max(1, Math.ceil(t.n / t.d)),
+        t.d,
+        (k) => (k < t.n ? COL[i] : null),
+        cut && !v.askDen ? D : 0,
+        (cx) => frac(cx, 2 * r + 30, t.n, t.d, COL[i])
+      );
+    term(A, 0);
+    s += sign(x + 10, r + 12, v.sign);
+    x += 26;
+    term(B, 1);
+    s += sign(x + 10, r + 12, '=');
+    x += 26;
+    pies(units, v.askDen && !done ? 1 : D, resultPaint, 0, (cx) => frac(cx, 2 * r + 30, v.R, done ? D : null));
+    return SVG.tag(x, 2 * r + 60, s, 'role="img" aria-label="Fractions en disques" style="max-width:100%;height:auto"');
+  }
+
+  if (model === 'droite') {
+    const X0 = 24,
+      L = 340 / units,
+      Y = 96,
+      at = (q) => X0 + q * L;
+    let s = `<line x1="${X0}" y1="${Y}" x2="${f(at(units) + 12)}" y2="${Y}" stroke="currentColor" stroke-width="2"/>`;
+    for (let k = 0; k <= units * D; k++) {
+      const whole = k % D === 0;
+      s += `<line x1="${f(at(k / D))}" y1="${Y - (whole ? 9 : 5)}" x2="${f(at(k / D))}" y2="${Y + (whole ? 9 : 5)}" stroke="currentColor" stroke-width="${whole ? 2 : 1.2}"/>`;
+      if (whole)
+        s += `<text x="${f(at(k / D))}" y="${Y + 28}" text-anchor="middle" font-size="15" ${font}>${k / D}</text>`;
+    }
+    // jump from p to q (in D-ths), above the line (below: dy > 0), with its fraction at the top
+    const jump = (p, q, color, t, below) => {
+      const x1 = at(p / D),
+        x2 = at(q / D),
+        h = (below ? 1 : -1) * Math.min(54, 22 + Math.abs(x2 - x1) / 4),
+        dir = Math.sign(x2 - x1),
+        y0 = below ? Y + 3 : Y - 3;
+      return (
+        `<path d="M${f(x1)},${y0}Q${f((x1 + x2) / 2)},${f(Y + 2 * h)} ${f(x2)},${y0}" fill="none" stroke="${color}" stroke-width="3"/>` +
+        `<path d="M${f(x2 - dir * 9)},${f(y0 + (below ? 6 : -6))}L${f(x2)},${y0}L${f(x2 + dir * 2)},${f(y0 + (below ? 10 : -10))}" fill="none" stroke="${color}" stroke-width="3"/>` +
+        frac((x1 + x2) / 2, below ? Y + h + 30 : Y + h - 26, t.n, t.d, color)
+      );
+    };
+    s += jump(0, A.N, COL[0], A) + jump(A.N, v.R, COL[1], B, v.sub);
+    s += `<circle cx="${f(at(v.R / D))}" cy="${Y}" r="6" fill="${done ? 'var(--green,#4daa60)' : 'var(--sf,#fff)'}" stroke="currentColor" stroke-width="2"/>`;
+    const H = v.sub ? Y + 116 : Y + 40;
+    return SVG.tag(
+      at(units) + 24,
+      H,
+      s,
+      'role="img" aria-label="Fractions sur une droite" style="max-width:100%;height:auto"'
+    );
+  }
+
+  // bande: one row per fraction, then the result under a line
+  const LX = 64,
+    W = 300,
+    U = W / units,
+    H = 34;
+  let s = '';
+  const strip = (y, d, paint, sub) => {
+    for (let j = 0; j < units; j++) {
+      const x0 = LX + j * U,
+        w = (U - (units > 1 ? 8 : 0)) / d;
+      if (j && j >= Math.ceil(Math.max(1, paint.count) / d) && paint.count != null) break;
+      for (let i = 0; i < d; i++) {
+        const c = paint(j * d + i);
+        s += `<rect x="${f(x0 + i * w)}" y="${y}" width="${f(w)}" height="${H}" ${fill(c)} stroke="currentColor" stroke-width="1.5"/>`;
+        if (c === 'x') s += cross(x0 + i * w, y, x0 + (i + 1) * w, y + H);
+      }
+      if (sub && sub !== d)
+        for (let i = 1; i < sub; i++)
+          if ((i * d) % sub)
+            s += `<line x1="${f(x0 + (i * w * d) / sub)}" y1="${y + 2}" x2="${f(x0 + (i * w * d) / sub)}" y2="${y + H - 2}" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3"/>`;
+      s += `<rect x="${f(x0)}" y="${y}" width="${f(w * d)}" height="${H}" fill="none" stroke="currentColor" stroke-width="2.5"/>`;
+    }
+  };
+  [A, B].forEach((t, i) => {
+    const y = 6 + i * (H + 12),
+      paint = (k) => (k < t.n ? COL[i] : null);
+    paint.count = t.n;
+    if (i) s += sign(12, y + 25, v.sign);
+    s += frac(38, y + 12, t.n, t.d, COL[i]);
+    strip(y, t.d, paint, cut && !v.askDen ? D : 0);
+  });
+  const yR = 6 + 2 * (H + 12) + 12;
+  s += `<line x1="4" y1="${yR - 7}" x2="${LX + W}" y2="${yR - 7}" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 4"/>`;
+  s += sign(12, yR + 25, '=') + frac(38, yR + 12, v.R, done ? D : null);
+  strip(yR, v.askDen && !done ? 1 : D, resultPaint, 0);
+  return SVG.tag(
+    LX + W + 6,
+    yR + H + 6,
+    s,
+    'role="img" aria-label="Fractions en bandes" style="max-width:100%;height:auto"'
+  );
+}
+
 // Hands showing 0–5 raised fingers: 1–4 = index first, 5 = open hand, 0 = fist. Cartoon style: thick
 // dark outline; curled fingers in front of the palm, held by the thumb, which grows out of the palm edge.
 // Two hands: the first is mirrored (thumbs face each other); plus draws « + » between them.

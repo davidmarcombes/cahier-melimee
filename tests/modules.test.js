@@ -95,7 +95,14 @@ describe('Modules Utilities', () => {
   });
 });
 
-import { seriesPlayer, sortValue, jumpLine, fewestPieces } from '../src/assets/js/modules/player.js';
+import {
+  seriesPlayer,
+  sortValue,
+  jumpLine,
+  fewestPieces,
+  fractionOp,
+  fractionOpCheck,
+} from '../src/assets/js/modules/player.js';
 
 describe('seriesPlayer Logic', () => {
   const mockExercises = [
@@ -229,6 +236,44 @@ describe('seriesPlayer Logic', () => {
       expect(v.labels).toEqual(['57', '60', '100']);
       expect(v.fields.map((f) => f.answer)).toEqual(['3', '40', '43']);
       expect(v.unit).toBe('');
+    });
+  });
+
+  describe('fractionOp', () => {
+    it('same denominator: only the result', () => {
+      const v = fractionOp({ a: '2/5', b: '1/5' });
+      expect(v.fields.map((f) => f.answer)).toEqual(['3', '5']);
+      expect(v.hint).toBe('');
+    });
+
+    it('one denominator a multiple of the other: step 1 converts it', () => {
+      const v = fractionOp({ a: '3/4', b: '1/2', op: '−' });
+      expect(v.fields.map((f) => f.answer)).toEqual(['2', '1', '4']);
+      expect(v.terms[1].field).toBe(0);
+      expect(v.hint).toBe('Coupe les demis en quarts.');
+    });
+
+    it('both change; askDen asks the common denominator too', () => {
+      const v = fractionOp({ a: '1/2', b: '1/3', askDen: true });
+      expect(v.fields.map((f) => f.answer)).toEqual(['3', '6', '2', '6', '5', '6']);
+      expect(v.resultFrom).toBe(4);
+    });
+
+    it('accepts any equivalent result: 1/4 + 1/4 = 2/4 = 1/2', () => {
+      const fo = { a: '1/4', b: '1/4' };
+      expect(fractionOpCheck(fo, ['1', '2']).wrong).toEqual([]);
+      expect(fractionOpCheck(fo, ['2', '4']).wrong).toEqual([]);
+      expect(fractionOpCheck(fo, ['2', '8']).wrong).toEqual([0, 1]);
+      expect(fractionOpCheck(fo, ['2', '']).pending).toEqual([0]);
+      expect(fractionOpCheck(fo, ['', '4']).pending).toEqual([1]);
+    });
+
+    it('askDen: any common denominator, the same on both rows', () => {
+      const fo = { a: '1/2', b: '1/3', askDen: true };
+      expect(fractionOpCheck(fo, ['6', '12', '4', '12', '10', '12']).wrong).toEqual([]);
+      expect(fractionOpCheck(fo, ['3', '6', '2', '6', '5', '6']).wrong).toEqual([]);
+      expect(fractionOpCheck(fo, ['2', '4', '', '', '', '']).wrong).toEqual([1]);
+      expect(fractionOpCheck(fo, ['3', '6', '4', '12', '', '']).wrong).toEqual([3]);
     });
   });
 

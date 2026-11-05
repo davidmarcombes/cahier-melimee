@@ -1,5 +1,6 @@
 ---
 type: fraction-check
+equivalent: true
 title: "Le livre de Tom"
 answer: "7/10"
 ---

@@ -290,6 +290,24 @@ const GEN_CHECKS = {
       return `title says ${said.join(' / ')}, line goes ${vs[0]} → ${vs[vs.length - 1]}`;
     return null;
   },
+  // Fraction drawing a ± b: the title's verb is the operation, the result is a whole number of parts of
+  // the common denominator, positive, and (params) the denominators are the same / multiples / coprime
+  fractionDessin: (e, params = {}) => {
+    const [[an, ad], [bn, bd]] = [e.fo.a, e.fo.b].map((f) => String(f).split('/').map(Number));
+    const sub = e.fo.op === '−';
+    if (/^Additionne/.test(e.title) === sub) return `title « ${e.title} » for ${e.fo.op}`;
+    const value = an / ad + (sub ? -1 : 1) * (bn / bd);
+    if (value <= 0) return `${e.fo.a} ${e.fo.op} ${e.fo.b} is not positive`;
+    if (!params.overOne && value > 1 + 1e-9) return `${e.fo.a} ${e.fo.op} ${e.fo.b} passes 1`;
+    const mode = params.mode ?? 'same';
+    const ok =
+      mode === 'same'
+        ? ad === bd
+        : mode === 'multiple'
+          ? ad !== bd && (ad % bd === 0 || bd % ad === 0)
+          : ad % bd && bd % ad;
+    return ok ? null : `${e.fo.a} ${e.fo.op} ${e.fo.b}: denominators are not ${mode}`;
+  },
   // « coûte 7,35 € » in the title is the amount to pay, and the coins offered can make it
   payerSomme: (e) => {
     const m = clean(e.title).match(/(\d+(?:,\d+)?) €/);

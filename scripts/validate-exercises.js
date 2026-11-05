@@ -117,6 +117,7 @@ const TYPE_SCHEMAS = {
   'grid-board': { required: [], requireOneOf: [['board'], ['generator']] },
   'jump-line': { required: [], requireOneOf: [['points'], ['generator']], arrays: ['points'] },
   'money-pay': { required: [], requireOneOf: [['amount'], ['generator']] },
+  'fraction-op': { required: [], requireOneOf: [['a'], ['generator']] },
 };
 
 const COLORS = {
@@ -358,6 +359,14 @@ function validateSeries(seriesDir, errors) {
           if (!runs.some((r) => re.test(r))) errors.push(`${relMd}: guided-problem token "${t}" is not in the story`);
         }
     }
+    // A calculation result may be written in any equivalent form (1/4 + 1/4 = 1/2): only « write the
+    // fraction you see » / « en dixièmes » questions stay exact (user rule, 2026-11-04)
+    if (
+      type === 'fraction-check' &&
+      !data.equivalent &&
+      /\d+\/\d+\s*[+−-]\s*\d+\/\d+/.test(`${data.title} ${bodyText}`)
+    )
+      errors.push(`${relMd}: fraction calculation without \`equivalent: true\` — 2/4 must also accept 1/2`);
     // The pupil types the correction: a sentence can never be matched (« « de plus » → c'est A qui… »)
     if (type === 'error-analysis' && /\p{L}{3,}.*\s.*\p{L}{3,}/u.test(String(data.correction ?? '')))
       errors.push(

@@ -1,0 +1,54 @@
+{# Fraction operation — « 1/2 + 1/4 » drawn as strips, pies or a number line (fractionOpSvg). Different denominators:
+   step 1 writes each fraction over the common denominator, step 2 the result (fields from fractionOp in player.js) #}
+<div x-show="cur.type === 'fraction-op'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-8">
+  <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle" x-show="cur.body" x-html="cur.body"></div>
+
+  <template x-if="foView">
+    <div>
+      <div class="flex justify-center mb-5 text-slate-700 dark:text-slate-200" x-html="fractionOpSvg(foView, cur.fo.model, solved, cur.fo.cut !== false)"></div>
+
+      {# Step 1: each fraction over the common denominator #}
+      <template x-if="foView.resultFrom">
+        <div class="mb-5">
+          <p class="text-sm font-semibold text-center text-content-subtle mb-2">Étape 1 : <span x-text="foView.hint"></span></p>
+          <template x-for="t in foView.terms.map((t, i) => ({ ...t, i })).filter((t) => t.field !== undefined)" :key="'c' + t.i">
+            <div class="flex items-center justify-center gap-3 text-3xl font-extrabold mb-2" :style="'color:' + (t.i ? 'var(--a)' : 'var(--p)')">
+              <span class="frac"><span class="fn" x-text="t.n"></span><span class="fd" x-text="t.d"></span></span>
+              <span class="text-content-default">=</span>
+              <span class="inline-flex flex-col items-center gap-1">
+                <input type="text" inputmode="numeric" x-model="foInputs[t.field]" @keydown.enter="enterField($el, t.field)" @input="foErrors = []" :disabled="solved" placeholder="?" :aria-label="'Numérateur de la fraction ' + (t.i + 1)" class="w-14 h-10 text-center rounded-lg border-2 font-bold text-xl focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': foErrors.includes(t.field), 'border-slate-300 dark:border-slate-600': !solved && !foErrors.includes(t.field) }" />
+                <span class="block w-14 h-0.5 bg-current"></span>
+                <span x-show="!foView.askDen" class="text-2xl" x-text="foView.D"></span>
+                <input x-show="foView.askDen" type="text" inputmode="numeric" x-model="foInputs[t.field + 1]" @keydown.enter="enterField($el, t.field + 1)" @input="foErrors = []" :disabled="solved" placeholder="?" :aria-label="'Dénominateur commun de la fraction ' + (t.i + 1)" class="w-14 h-10 text-center rounded-lg border-2 font-bold text-xl focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': foErrors.includes(t.field + 1), 'border-slate-300 dark:border-slate-600': !solved && !foErrors.includes(t.field + 1) }" />
+              </span>
+            </div>
+          </template>
+          <p class="text-sm font-semibold text-center text-content-subtle mt-4">Étape 2 : calcule.</p>
+        </div>
+      </template>
+
+      {# The operation, with the step-1 fractions as the pupil wrote them, and the result #}
+      <div class="flex flex-wrap items-center justify-center gap-3 text-3xl font-extrabold text-content-default">
+        <template x-for="(t, i) in foView.terms" :key="'t' + i">
+          <span class="inline-flex items-center gap-3">
+            <span x-show="i" x-text="foView.sign"></span>
+            <span class="frac" :style="'color:' + (i ? 'var(--a)' : 'var(--p)')"><span class="fn" x-text="t.field === undefined ? t.n : foInputs[t.field] || '?'"></span><span class="fd" x-text="t.field === undefined ? t.d : foView.askDen ? foInputs[t.field + 1] || '?' : foView.D"></span></span>
+          </span>
+        </template>
+        <span>=</span>
+        <span class="inline-flex flex-col items-center gap-1">
+          <input type="text" inputmode="numeric" x-model="foInputs[foView.resultFrom]" @keydown.enter="enterField($el, foView.resultFrom)" @input="foErrors = []" :disabled="solved" placeholder="?" aria-label="Numérateur du résultat" class="w-16 h-11 text-center rounded-xl border-2 font-bold text-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': foErrors.includes(foView.resultFrom), 'border-slate-300 dark:border-slate-600': !solved && !foErrors.includes(foView.resultFrom) }" />
+          <span class="block w-16 h-0.5 bg-current"></span>
+          <input type="text" inputmode="numeric" x-model="foInputs[foView.resultFrom + 1]" @keydown.enter="enterField($el, foView.resultFrom + 1)" @input="foErrors = []" :disabled="solved" placeholder="?" aria-label="Dénominateur du résultat" class="w-16 h-11 text-center rounded-xl border-2 font-bold text-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': foErrors.includes(foView.resultFrom + 1), 'border-slate-300 dark:border-slate-600': !solved && !foErrors.includes(foView.resultFrom + 1) }" />
+        </span>
+      </div>
+
+      <div class="flex justify-center mt-5">
+        <button type="button" @click="check()" :disabled="solved || foInputs.some((v) => !String(v).trim())" class="px-6 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed" :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+          <span x-show="!solved">Vérifier</span>
+          <span x-show="solved">Bravo !</span>
+        </button>
+      </div>
+    </div>
+  </template>
+</div>

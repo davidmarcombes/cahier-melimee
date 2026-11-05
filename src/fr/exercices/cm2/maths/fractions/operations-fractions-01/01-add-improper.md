@@ -1,5 +1,6 @@
 ---
 type: fraction-check
+equivalent: true
 title: "Additionner des fractions"
 answer: "8/7"
 ---

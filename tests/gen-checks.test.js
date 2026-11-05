@@ -29,6 +29,7 @@ const uses = (name) =>
 // A wrong version of each generated item: the check must refuse it
 const CORRUPT = {
   compterEnAvancant: (e) => ({ ...e, jl: { ...e.jl, points: [...e.jl.points].reverse() } }),
+  fractionDessin: (e) => ({ ...e, title: e.fo.op === '−' ? 'Additionne les fractions' : 'Soustrais les fractions' }),
   payerSomme: (e) => ({ ...e, mp: { ...e.mp, amount: e.mp.amount + 5 } }),
   astuceDizaineSup: (e) =>
     e.type === 'calc-chain'

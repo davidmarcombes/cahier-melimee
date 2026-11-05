@@ -580,6 +580,14 @@ function solveAll() {
       );
       p.check();
     },
+    // Fields computed by fractionOp() in player.js (foView)
+    'fraction-op': (e, w) => {
+      p.foInputs = spoil(
+        p.foView.fields.map((f) => f.answer),
+        w
+      );
+      p.check();
+    },
     'money-pay': (e, w) => {
       // Greedy with the coins offered: the fewest pieces (euro denominations)
       let left = e.mp.amount;
@@ -617,6 +625,7 @@ function solveAll() {
   Object.assign(FIELDS, { 'fact-family': 'ffInputs', 'tri-arith': 'triInputs', pyramid: 'pyramidInputs' });
   Object.assign(FIELDS, { 'coordinate-grid': 'cgInputs', 'fraction-check': 'rfInputs', 'decimal-triple': 'dtInputs' });
   FIELDS['jump-line'] = 'jlInputs';
+  FIELDS['fraction-op'] = 'foInputs';
   for (const t of ['sequence', 'bounding', 'convert', 'number-forms', 'op-triangle']) FIELDS[t] = 'seqInputs';
   const wrongFields = (t) => {
     if (t === 'estimation') return ['est', 'exact'].filter((k) => p._fieldOk(k) === false);

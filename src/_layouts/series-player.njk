@@ -18,7 +18,7 @@ isSeriesPage: true
   {% if ex.data.generator === 'tracerGrille' or (ex.data.board and ex.data.board.mode === 'draw') %}{% set needsGridDraw = true %}{% endif %}
   {% if ex.data.generator or ex.data.type === 'base-10' %}{% set needsSvgJs = true %}{% endif %}
   {% if ex.data.svg %}{% set needsSvgJs = true %}{% endif %}
-  {% if ex.data.type === 'ruler' or ex.data.type === 'thermometer' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' or ex.data.type === 'svg-tiles' or ex.data.type === 'fraction' or ex.data.type === 'money-pay' %}{% set needsSvgJs = true %}{% endif %}
+  {% if ex.data.type === 'ruler' or ex.data.type === 'thermometer' or ex.data.type === 'number-line' or ex.data.type === 'coordinate-grid' or ex.data.type === 'svg-tiles' or ex.data.type === 'fraction' or ex.data.type === 'money-pay' or ex.data.type === 'fraction-op' %}{% set needsSvgJs = true %}{% endif %}
 {% endfor %}
 
 {% if needsSvgJs %}
@@ -156,6 +156,7 @@ isSeriesPage: true
   {% if 'fact-family' in usedTypes %}{% include "types/fact-family.njk" %}{% endif %}
   {% if 'jump-line' in usedTypes %}{% include "types/jump-line.njk" %}{% endif %}
   {% if 'money-pay' in usedTypes %}{% include "types/money-pay.njk" %}{% endif %}
+  {% if 'fraction-op' in usedTypes %}{% include "types/fraction-op.njk" %}{% endif %}
   {% if 'classify' in usedTypes %}{% include "types/classify.njk" %}{% endif %}
 
   {# Shared verify button for sequence/bounding/convert #}
@@ -248,6 +249,9 @@ isSeriesPage: true
     {% endif %}
     {% if 'jump-line' in usedTypes %}
     <span x-show="cur.type === 'jump-line'">Certaines cases ne sont pas justes. Essaie encore !</span>
+    {% endif %}
+    {% if 'fraction-op' in usedTypes %}
+    <span x-show="cur.type === 'fraction-op'">Certaines cases ne sont pas justes. Regarde le dessin et essaie encore !</span>
     {% endif %}
     {% if 'money-pay' in usedTypes %}
     <span x-show="cur.type === 'money-pay'" x-text="mpHint"></span>

@@ -17,6 +17,90 @@ export function sortValue(s) {
   return frac ? Number(frac[1]) / Number(frac[2]) : parseFloat(t);
 }
 
+// Fraction addition / subtraction (« 1/2 + 1/4 ») drawn as strips, pies or a number line (fractionOpSvg in
+// svg.js). Different denominators: step 1 writes each fraction over the common one (lcm), step 2 the result.
+// Fields: per converted fraction its numerator (+ denominator with askDen), then result numerator, denominator.
+// Mirrored in tests/e2e/solve.spec.js (reads the fields from here).
+const PARTS = { 2: 'demis', 3: 'tiers', 4: 'quarts', 5: 'cinquièmes', 6: 'sixièmes', 7: 'septièmes' };
+Object.assign(PARTS, { 8: 'huitièmes', 9: 'neuvièmes', 10: 'dixièmes', 12: 'douzièmes', 14: 'quatorzièmes' });
+Object.assign(PARTS, { 15: 'quinzièmes', 16: 'seizièmes', 18: 'dix-huitièmes', 20: 'vingtièmes' });
+export function fractionOp({ a, b, op = '+', askDen = false }) {
+  const gcd = (x, y) => (y ? gcd(y, x % y) : x);
+  const terms = [a, b].map((f) => {
+    const [n, d] = String(f).split('/').map(Number);
+    return { n, d };
+  });
+  const D = (terms[0].d * terms[1].d) / gcd(terms[0].d, terms[1].d);
+  const fields = [];
+  for (const t of terms) {
+    t.N = (t.n * D) / t.d;
+    if (t.d === D) continue;
+    t.field = fields.length;
+    fields.push({ role: 'conv', answer: String(t.N) });
+    if (askDen) fields.push({ role: 'convDen', answer: String(D) });
+  }
+  const sub = op === '-' || op === '−';
+  const R = sub ? terms[0].N - terms[1].N : terms[0].N + terms[1].N;
+  const resultFrom = fields.length;
+  fields.push({ role: 'num', answer: String(R) }, { role: 'den', answer: String(D) });
+  const changed = [...new Set(terms.filter((t) => t.d !== D).map((t) => t.d))];
+  const parts = (d) => PARTS[d] || `parts de 1/${d}`;
+  const hint = !changed.length
+    ? ''
+    : askDen
+      ? 'Trouve un dénominateur commun aux deux fractions.'
+      : `Coupe les ${changed.map(parts).join(' et les ')} en ${parts(D)}.`;
+  return { terms, D, R, sub, sign: sub ? '−' : '+', fields, resultFrom, askDen, hint };
+}
+
+// Typed fraction [n, d] against an expected one: the same digits, or (equivalent) the same value (2/4 = 1/2)
+function fracEqual([n, d], [en, ed], equivalent) {
+  const [a, b, c, e] = [n, d, en, ed].map((x) => normalizeAnswer(x ?? ''));
+  if (a === c && b === e) return true;
+  if (!equivalent || ![a, b, c, e].every((x) => /^\d+$/.test(x)) || !Number(b)) return false;
+  return Number(a) * Number(e) === Number(c) * Number(b);
+}
+
+// Wrong fields of a fraction-op (indices as in fractionOp().fields). The result may be any equivalent fraction
+// (1/4 + 1/4 = 1/2); with askDen, any common denominator, the same on both rows. A numerator is judged only
+// with its denominator: `pending` lists those waiting for an empty or wrong one.
+export function fractionOpCheck(fo, inputs) {
+  const v = fractionOp(fo);
+  const val = (k) => {
+    const s = normalizeAnswer(inputs[k] ?? '');
+    return s === '' ? null : /^\d+$/.test(s) ? Number(s) : NaN;
+  };
+  const wrong = [],
+    pending = [];
+  const judge = (k, n, d, ok) => {
+    if (n === null) return;
+    if (Number.isNaN(n)) wrong.push(k);
+    else if (!(d > 0)) pending.push(k);
+    else if (!ok(n, d)) wrong.push(k);
+  };
+  let common = null;
+  for (const t of v.terms) {
+    if (t.field === undefined) continue;
+    let d = v.D;
+    if (v.askDen) {
+      d = val(t.field + 1);
+      const other = v.terms.find((u) => u !== t).d;
+      if (d !== null && !(d > 0 && d % t.d === 0 && d % other === 0 && (common === null || d === common))) {
+        wrong.push(t.field + 1);
+        d = NaN;
+      } else if (d !== null) common = d;
+    }
+    judge(t.field, val(t.field), d, (n, d) => n * t.d === t.n * d);
+  }
+  const k = v.resultFrom,
+    d = val(k + 1);
+  if (d !== null && !(d > 0)) wrong.push(k + 1);
+  else if (d !== null && val(k) === null) pending.push(k + 1);
+  judge(k, val(k), d, (n, d) => n * v.D === v.R * d);
+  if (wrong.includes(k) && d > 0) wrong.push(k + 1); // a wrong value: the pair is wrong
+  return { wrong, pending };
+}
+
 // Jump line (« compter en avançant ») on an open line: points are times « 8:45 » or amounts « 6,40 ».
 // The pupil fills one field per jump, one per hidden point, then the total (time: h and min; money: €).
 // Values in minutes / cents. Mirrored in tests/e2e/solve.spec.js (reads the fields from here).
@@ -193,6 +277,8 @@ export function seriesPlayer(exercises, seriesId) {
 
     jlInputs: [], // jump-line: jumps, hidden points, total (order of jlFields)
     jlErrors: [], // jump-line: indices of wrong fields
+    foInputs: [], // fraction-op: conversions, then result numerator and denominator (order of fractionOp fields)
+    foErrors: [], // fraction-op: indices of wrong fields
 
     mpPicked: [], // money-pay: coins / notes put down by the pupil, in cents
     mpHint: '', // money-pay: why the last payment was refused
@@ -607,6 +693,8 @@ export function seriesPlayer(exercises, seriesId) {
       this.clkHand = 'm';
       this.jlInputs = _e.jl ? jumpLine(_e.jl).fields.map(() => '') : [];
       this.jlErrors = [];
+      this.foInputs = _e.fo ? fractionOp(_e.fo).fields.map(() => '') : [];
+      this.foErrors = [];
       this.mpPicked = [];
       this.mpHint = '';
 
@@ -870,6 +958,10 @@ export function seriesPlayer(exercises, seriesId) {
 
     get jlView() {
       return this.cur.jl ? jumpLine(this.cur.jl) : null;
+    },
+
+    get foView() {
+      return this.cur.fo ? fractionOp(this.cur.fo) : null;
     },
 
     get mpTotal() {
@@ -1305,6 +1397,16 @@ export function seriesPlayer(exercises, seriesId) {
         if (!this.jlErrors.length) return this._markSolvedAndAdvance();
         return this._flashError(() => {
           this.jlErrors = [];
+        });
+      }
+
+      if (_e.type === 'fraction-op' && _e.fo) {
+        if (this.foInputs.some((v) => !String(v).trim())) return this._flashError();
+        const { wrong, pending } = fractionOpCheck(_e.fo, this.foInputs);
+        this.foErrors = [...wrong, ...pending];
+        if (!this.foErrors.length) return this._markSolvedAndAdvance();
+        return this._flashError(() => {
+          this.foErrors = [];
         });
       }
 
@@ -1836,13 +1938,7 @@ export function seriesPlayer(exercises, seriesId) {
           this._flashError();
           return;
         }
-        const isCorrect = (_e.answers || []).some((a) => {
-          const p = a.split('/');
-          return (
-            normalizeAnswer(this.rfInputs[0]) === normalizeAnswer(p[0]) &&
-            normalizeAnswer(this.rfInputs[1]) === normalizeAnswer(p[1])
-          );
-        });
+        const isCorrect = (_e.answers || []).some((a) => fracEqual(this.rfInputs, a.split('/'), _e.equivalent));
         if (isCorrect) this._markSolvedAndAdvance();
         else this._flashError();
         return;
@@ -2596,6 +2692,10 @@ export function seriesPlayer(exercises, seriesId) {
           return eq(this.ffInputs[key], _e.ffEquations[key].answer);
         case 'jump-line':
           return eq(this.jlInputs[key], jumpLine(_e.jl).fields[key].answer);
+        case 'fraction-op': {
+          const { wrong, pending } = fractionOpCheck(_e.fo, this.foInputs);
+          return wrong.includes(key) ? false : pending.includes(key) ? undefined : true;
+        }
         case 'tri-arith':
           return eq(this.triInputs[key], [..._e.triangle.vertices, ..._e.triangle.edges][key]);
         case 'pyramid': {
@@ -2620,6 +2720,11 @@ export function seriesPlayer(exercises, seriesId) {
         case 'coordinate-grid':
           return (_e.answers || []).some((a) => eq(this.cgInputs[key], a.split(',')[key]));
         case 'fraction-check':
+          // equivalent: a numerator alone cannot be judged (1/2 or 2/4)
+          if (_e.equivalent)
+            return this.rfInputs.every((v) => String(v).trim())
+              ? (_e.answers || []).some((a) => fracEqual(this.rfInputs, a.split('/'), true))
+              : undefined;
           return (_e.answers || []).some((a) => eq(this.rfInputs[key], a.split('/')[key]));
         default:
           // Blanks in an operation (« 3 + ? = 7 », column-op)

@@ -780,6 +780,61 @@
     // conversionDenominateur: Vrai ou Faux — is this fraction equivalence correct?
     // Shows a/b = (a*k)/(b*k) or a deliberate wrong version.
     // params: level ('simple'|'medium'|'hard'), count (5)
+    // fractionDessin: a ± b with a drawing (type fraction-op — strips, pies or a number line)
+    // params: mode (same | multiple: one denominator a multiple of the other | coprime: both change, 1/2 + 1/3),
+    // op (add | sub | mixed), model (bande | disque | droite | mixte), maxDen, overOne (a sum may pass 1),
+    // askDen (step 1 asks the common denominator too), cut (false: no dashed re-cut lines on the drawing)
+    fractionDessin: {
+      generate(params = {}) {
+        const mode = params.mode ?? 'same';
+        const maxDen = params.maxDen ?? { same: 10, multiple: 12, coprime: 15 }[mode];
+        const gcd = (x, y) => (y ? gcd(y, x % y) : x);
+        const pairs = [];
+        for (let x = 2; x <= maxDen; x++)
+          for (let y = 2; y <= maxDen; y++)
+            if (
+              mode === 'same'
+                ? x === y
+                : mode === 'multiple'
+                  ? y > x && y % x === 0
+                  : x < y && gcd(x, y) === 1 && x * y <= maxDen
+            )
+              pairs.push([x, y]);
+        let fo;
+        for (let tries = 0; !fo && tries < 500; tries++) {
+          const sub = params.op === 'sub' || (params.op === 'mixed' && Math.random() < 0.5);
+          const [x, y] = shuffle(randItem(pairs));
+          const D = (x * y) / gcd(x, y);
+          const an = rand(1, x - 1),
+            bn = rand(1, y - 1);
+          // a fraction to convert as pupils meet it: 1/4, not 3/12
+          if (mode !== 'same' && (gcd(an, x) > 1 || gcd(bn, y) > 1)) continue;
+          const A = (an * D) / x,
+            B = (bn * D) / y;
+          const R = sub ? A - B : A + B;
+          if (R < 1 || (!sub && R > (params.overOne ? 2 * D - 1 : D))) continue;
+          fo = { a: `${an}/${x}`, b: `${bn}/${y}`, op: sub ? '−' : '+' };
+        }
+        fo.model = params.model === 'mixte' ? randItem(['bande', 'disque', 'droite']) : params.model || 'bande';
+        if (params.cut === false) fo.cut = false;
+        if (params.askDen) fo.askDen = true;
+        const sub = fo.op === '−';
+        const body = [
+          mode === 'same' && 'Les parts ont la même taille.',
+          sub ? 'Retire la deuxième fraction de la première.' : 'Assemble les deux fractions.',
+          params.cut === false && 'Le dessin ne montre pas les nouvelles parts : trouve-les par le calcul.',
+        ]
+          .filter(Boolean)
+          .join(' ');
+        return {
+          type: 'fraction-op',
+          title: sub ? 'Soustrais les fractions' : 'Additionne les fractions',
+          body,
+          fo,
+        };
+      },
+    },
+
     // fractionAdditionMatching: match addition of fractions to their result
     // params: mode ('same'|'different'|'mixed'), pairs (4)
     fractionAdditionMatching: {

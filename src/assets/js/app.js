@@ -86,6 +86,7 @@ document.addEventListener('alpine:init', () => {
     'grid-board',
     'jump-line',
     'money-pay',
+    'fraction-op',
   ];
   const CSV_CLASSES = [
     'A1.1',
