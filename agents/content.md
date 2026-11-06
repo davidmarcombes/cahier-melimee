@@ -154,7 +154,7 @@ Quick table — required fields only:
 | `checkbox` | `statements[]`, `checkedAnswers[]` | checkedAnswers = 0-indexed |
 | `select` | `choices[]`, `statements[]` (template, answer) | `___` = dropdown placeholder |
 | `tile-select` | `tiles[]`, `tileAnswers[]` | tileAnswers = 0-indexed correct |
-| `fraction-check` | `answers[numerator, denominator]` | Or single `answer: "n/d"`; `equivalent: true` on calculation results (1/2 accepted for 2/4) |
+| `fraction-check` | `answers[numerator, denominator]` | Or single `answer: "n/d"`; `equivalent: true` on calculation results (1/2 accepted for 2/4); `given: [null, "4"]` locks one box (« 1/2 = ?/4 ») |
 | `ruler` | `min`, `max`, `divisions`, `markers[]` | markers[].label + .value |
 | `number-line` | `min`, `max`, `answer` | Optional: `step` |
 | `coordinate-grid` | `answer` | mode: read\|place, cols, rows, points[] |

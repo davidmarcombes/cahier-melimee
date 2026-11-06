@@ -1,47 +1,66 @@
-{# Bounding visual #}
-<div x-show="cur.type === 'bounding'" class="js-seq bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
+{# Bounding visual — mask: grey squares under each box, one per digit to write (« □□,□□ ») #}
+<div x-show="cur.type === 'bounding'" class="js-seq bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-8">
   <template x-if="cur.svg">
     <div class="flex justify-center mb-4" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
   <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
        x-show="cur.body" x-html="cur.body"></div>
-  <div class="flex flex-wrap justify-center items-center gap-3">
-    <input
-      type="text" inputmode="numeric"
-      x-model="seqInputs[0]"
-      @keydown.enter="enterField($el, 0)"
-      @input="seqErrors = []"
-      :disabled="solved"
-      class="w-20 sm:w-24 h-14 sm:h-16 text-center rounded-xl border-2 font-bold text-xl sm:text-2xl transition-colors
-        focus:outline-none focus:ring-2 focus:ring-primary-500
-        bg-surface-subtle text-content-default"
-      :class="{
-        'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-        'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(0),
-        'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(0)
-      }"
-      placeholder="?"
-    />
+  <div class="flex flex-wrap justify-center items-center gap-2 sm:gap-3"
+       :class="cur.bounding && cur.bounding.mask ? 'mb-6' : ''">
+    <div class="relative">
+      <input
+        type="text" inputmode="numeric"
+        x-model="seqInputs[0]"
+        @keydown.enter="enterField($el, 0)"
+        @input="seqErrors = []"
+        :disabled="solved"
+        class="w-20 sm:w-24 h-14 sm:h-16 text-center rounded-xl border-2 font-bold text-lg sm:text-2xl transition-colors
+          focus:outline-none focus:ring-2 focus:ring-primary-500
+          bg-surface-subtle text-content-default"
+        :class="{
+          'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+          'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(0),
+          'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(0)
+        }"
+        placeholder="?"
+      />
+      <template x-if="cur.bounding && cur.bounding.mask">
+        <div class="absolute top-full inset-x-0 mt-1.5 flex justify-center items-end gap-0.5" aria-hidden="true">
+          <template x-for="(c, i) in cur.bounding.mask[0].split('')" :key="i">
+            <span :class="c === ',' ? 'text-sm font-bold leading-none text-slate-400' : 'w-2.5 h-3 rounded-sm bg-slate-300 dark:bg-slate-600'" x-text="c === ',' ? ',' : ''"></span>
+          </template>
+        </div>
+      </template>
+    </div>
     <span class="text-2xl font-bold text-slate-400">&lt;</span>
-    <div class="w-20 sm:w-24 h-14 sm:h-16 flex items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-primary-700 font-bold text-xl sm:text-2xl text-primary-700 dark:text-primary-300">
+    <div class="min-w-[5rem] sm:min-w-[6rem] px-2 h-14 sm:h-16 flex items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-primary-700 font-bold text-lg sm:text-2xl text-primary-700 dark:text-primary-300">
       <span x-html="cur.bounding ? cur.bounding.number : ''"></span>
     </div>
     <span class="text-2xl font-bold text-slate-400">&lt;</span>
-    <input
-      type="text" inputmode="numeric"
-      x-model="seqInputs[1]"
-      @keydown.enter="enterField($el, 1)"
-      @input="seqErrors = []"
-      :disabled="solved"
-      class="w-20 sm:w-24 h-14 sm:h-16 text-center rounded-xl border-2 font-bold text-xl sm:text-2xl transition-colors
-        focus:outline-none focus:ring-2 focus:ring-primary-500
-        bg-surface-subtle text-content-default"
-      :class="{
-        'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
-        'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(1),
-        'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(1)
-      }"
-      placeholder="?"
-    />
+    <div class="relative">
+      <input
+        type="text" inputmode="numeric"
+        x-model="seqInputs[1]"
+        @keydown.enter="enterField($el, 1)"
+        @input="seqErrors = []"
+        :disabled="solved"
+        class="w-20 sm:w-24 h-14 sm:h-16 text-center rounded-xl border-2 font-bold text-lg sm:text-2xl transition-colors
+          focus:outline-none focus:ring-2 focus:ring-primary-500
+          bg-surface-subtle text-content-default"
+        :class="{
+          'border-green-500 bg-green-50 dark:bg-green-900/20': solved,
+          'border-red-400 bg-red-50 dark:bg-red-900/20': seqErrors.includes(1),
+          'border-slate-200 dark:border-slate-600': !solved && !seqErrors.includes(1)
+        }"
+        placeholder="?"
+      />
+      <template x-if="cur.bounding && cur.bounding.mask">
+        <div class="absolute top-full inset-x-0 mt-1.5 flex justify-center items-end gap-0.5" aria-hidden="true">
+          <template x-for="(c, i) in cur.bounding.mask[1].split('')" :key="i">
+            <span :class="c === ',' ? 'text-sm font-bold leading-none text-slate-400' : 'w-2.5 h-3 rounded-sm bg-slate-300 dark:bg-slate-600'" x-text="c === ',' ? ',' : ''"></span>
+          </template>
+        </div>
+      </template>
+    </div>
   </div>
 </div>

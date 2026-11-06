@@ -585,6 +585,8 @@ module.exports = async function (eleventyConfig) {
 
         // Fraction answer: any equivalent fraction accepted (calculation results)
         if (ex.data.type === 'fraction-check' && ex.data.equivalent) item.equivalent = true;
+        // One box already written (« 1/2 = ?/4 »: given [null, 4])
+        if (ex.data.type === 'fraction-check' && Array.isArray(ex.data.given)) item.given = ex.data.given;
 
         // Fraction operation: a ± b drawn as strips / pies / a line, fields computed by fractionOp() in player.js
         if (ex.data.type === 'fraction-op' && ex.data.a != null && ex.data.b != null) {

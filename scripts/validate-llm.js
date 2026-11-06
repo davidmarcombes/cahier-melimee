@@ -350,11 +350,12 @@ function buildPrompt({ data, body }) {
     }
 
     case 'bounding': {
+      const b = data.bounding || data; // generated: { number, answers } under bounding
       return [
         `Type: encadrement`,
         title && `Contexte: ${title}`,
-        `Nombre: ${fmt(data.number)}`,
-        `Encadrement proposé: ${(data.answers || []).join(' ≤ nombre ≤ ')}`,
+        `Nombre: ${fmt(b.number)}`,
+        `Encadrement proposé: ${(b.answers || []).join(' ≤ nombre ≤ ')}`,
       ]
         .filter(Boolean)
         .join('\n');
@@ -540,6 +541,8 @@ function buildPrompt({ data, body }) {
         title && `Titre: ${title}`,
         bodyText && `Énoncé: ${bodyText}`,
         data.operation && `Calcul: ${strip(String(data.operation))}`,
+        data.given &&
+          `Case déjà écrite: ${data.given[0] != null ? `numérateur ${data.given[0]}` : `dénominateur ${data.given[1]}`} (l'élève complète l'autre)`,
         `Réponse proposée: ${answers}`,
       ]
         .filter(Boolean)

@@ -15,7 +15,7 @@
   <div class="prose dark:prose-invert text-center text-sm max-w-none text-content-subtle mb-6"
        x-show="cur.body" x-html="cur.body"></div>
 
-  {# Stacked fraction answer input #}
+  {# Stacked fraction answer input (given: one box already written, « 1/2 = ?/4 ») #}
   <div class="flex justify-center items-center mb-8">
     <div class="inline-flex flex-col items-center">
       <input
@@ -23,7 +23,7 @@
         inputmode="numeric"
         x-model="rfInputs[0]"
         @keydown.enter="enterField($el, 0)"
-        :disabled="solved"
+        :disabled="solved || !!(cur.given && cur.given[0] != null)"
         placeholder="?"
         aria-label="Numérateur"
         x-ref="rfNum"
@@ -43,7 +43,7 @@
         inputmode="numeric"
         x-model="rfInputs[1]"
         @keydown.enter="enterField($el, 1)"
-        :disabled="solved"
+        :disabled="solved || !!(cur.given && cur.given[1] != null)"
         placeholder="?"
         aria-label="Dénominateur"
         x-ref="rfDenom"

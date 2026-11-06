@@ -472,7 +472,8 @@ export function seriesPlayer(exercises, seriesId) {
 
       const _focusFirst = () => {
         let ref;
-        if (this.cur.type === 'fraction-check') ref = this.$refs.rfNum;
+        if (this.cur.type === 'fraction-check')
+          ref = this.cur.given && this.cur.given[0] != null ? this.$refs.rfDenom : this.$refs.rfNum;
         else if (this.cur.type === 'coordinate-grid' && this.cur.cg && this.cur.cg.mode !== 'place')
           ref = this.$refs.cgX;
         else if (this.trouInputs.length > 0)
@@ -618,7 +619,8 @@ export function seriesPlayer(exercises, seriesId) {
       this.matchConnections = [];
       this.matchErrors = [];
       this._matchLinesSvg = '';
-      this.rfInputs = ['', ''];
+      // given: one box already written (« 1/2 = ?/4 »: [null, '4'])
+      this.rfInputs = _e.given ? _e.given.map((v) => (v == null ? '' : String(v))) : ['', ''];
       this.mcqSelected = null;
       this.mcqWrong = null;
       this.cmpGroupWrong = null;

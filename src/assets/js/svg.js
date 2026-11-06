@@ -457,6 +457,21 @@ function fractionPieSvg(n, d, size = 80) {
   return `<span style="display:inline-flex;flex-direction:column;align-items:center;gap:0.4rem">${pie}<span class="frac text-lg"><span class="fn">${n}</span><span class="fd">${d}</span></span></span>`;
 }
 
+// Two equal fractions side by side (« 1/2 = 2/4 »): n/d shaded, then the same whole cut in D parts
+// with N shaded (N = 0: cut only, the pupil imagines the shading). model disque (pies) or bande (strips).
+function fractionEquivSvg(n, d, N, D, model = 'disque') {
+  if (model === 'bande')
+    return fractionStripsSvg(
+      [
+        [d, n],
+        [D, N],
+      ],
+      false
+    );
+  const eq = '<span style="font-size:2rem;font-weight:800;color:var(--ct)">=</span>';
+  return `<span style="display:inline-flex;align-items:center;gap:1rem" role="img" aria-label="Deux disques partagés">${slicedPieSvg(d, n, 110)}${eq}${slicedPieSvg(D, N, 110)}</span>`;
+}
+
 // --- 3D Shapes ---
 
 function cubeSvg(size = 50, color = 'var(--p)', opacity = 1) {

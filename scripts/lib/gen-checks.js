@@ -614,6 +614,49 @@ const GEN_CHECKS = {
     if (e.tileAnswers.length !== k) return `${e.tileAnswers.length} tiles selected, ${k} asked`;
     return selectEqual(e, v);
   },
+  // « 1/2 = ?/4 »: the answer equals the shown fraction, keeps the given box, and the drawing shows both
+  fractionsEquivalentes: (e, params = {}) => {
+    const [an, ad] = e.answers[0].split('/').map(Number);
+    const [ln, ld] = fracText(e.operation).split('/').map(Number);
+    if (an * ld !== ln * ad) return `${ln}/${ld} ≠ ${e.answers[0]}`;
+    if (an === ln) return `${e.answers[0]} is the same fraction as ${ln}/${ld}`;
+    const given = e.given.map((v, i) => v != null && Number(v) !== [an, ad][i]).some(Boolean);
+    if (given || e.given.filter((v) => v != null).length !== 1) return `given ${JSON.stringify(e.given)}`;
+    if (!e.svg) return params.visual === 'aucun' ? null : 'no drawing';
+    const p = e.svg.par;
+    if (p.n !== ln || p.d !== ld || p.D !== ad || (p.N !== an && p.N !== 0)) return `drawing ${JSON.stringify(p)}`;
+    return p.N === 0 && e.given[0] != null ? 'only the denominator is asked: its cuts give the answer' : null;
+  },
+  // « Clique sur les fractions égales à 1/2 »: exactly the tiles worth 1/2
+  trouverFractionsEgales: (e) => selectEqual(e, fracValue(e.title.replace(/^.*égales à\s*/, ''))),
+  // « 3/2 = ? », « 3/4 = ?/100 = ? », « 1,5 = ?/2 »: every answer is the value of the fraction, never whole
+  fractionVersDecimal: (e, params = {}) => {
+    const m = String(e.operation).match(
+      /^(?:&frac\((\d+),(\d+)\)|([\d,]+)) = \?\/(\d+)(?: = \?)?$|^&frac\((\d+),(\d+)\) = \?$/
+    );
+    if (!m) throw new Unparseable(`operation ${e.operation}`);
+    const [n, d] = m[5]
+      ? [m[5], m[6]].map(Number)
+      : m[3]
+        ? [num(e.answers[0]), Number(m[4])]
+        : [m[1], m[2]].map(Number);
+    if (!(params.dens ?? [2, 4, 5]).includes(d) || n % d === 0) return `${n}/${d} is whole or off the denominators`;
+    const v = n / d;
+    if (m[3]) return same(num(m[3]), v) ? null : `${m[3]} ≠ ${n}/${d}`;
+    if (m[4] && !same(num(e.answers[0]) / Number(m[4]), v)) return `${n}/${d} ≠ ${e.answers[0]}/${m[4]}`;
+    return same(num(e.answers[e.answers.length - 1]), v) ? null : `${n}/${d} ≠ ${e.answers.at(-1)}`;
+  },
+  // « ? < 33,47 < ? »: 33,46 and 33,48 — one step of the last decimal, written with as many decimals
+  precedentSuivantDecimal: (e, params = {}) => {
+    const { number, answers, mask } = e.bounding;
+    const k = (number.split(',')[1] || '').length;
+    if (![].concat(params.decimals ?? [1, 2]).includes(k) || number.endsWith('0')) return `${number}: ${k} decimals`;
+    const [n, lo, hi] = [number, ...answers].map(num);
+    if (!same(n - lo, 10 ** -k) || !same(hi - n, 10 ** -k)) return `${answers[0]} < ${number} < ${answers[1]}`;
+    if (answers.some((a) => (a.split(',')[1] || '').length !== k)) return `${answers.join(' / ')}: not ${k} decimals`;
+    if (mask) return mask.every((m, i) => m === answers[i].replace(/\d/g, '□')) ? null : `mask ${mask.join(' / ')}`;
+    return e.body.includes(`${k} chiffre`) ? null : `body « ${e.body} » for ${k} decimals`;
+  },
   plusGrandeFraction: (e) => {
     const vals = e.tiles.map(fracValue);
     const max = Math.max(...vals);

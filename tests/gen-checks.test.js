@@ -115,6 +115,19 @@ const CORRUPT = {
   egalitesFractions: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
   fractionsEgales5: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
   plusGrandeFraction: (e) => ({ ...e, tileAnswers: [(e.tileAnswers[0] + 1) % e.tiles.length] }),
+  fractionsEquivalentes: (e) => ({
+    ...e,
+    answers: [e.answers[0].replace(/^(\d+)\/(\d+)$/, (_, n, d) => `${n}/${Number(d) + 1}`)],
+  }),
+  trouverFractionsEgales: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
+  fractionVersDecimal: (e) => ({ ...e, answers: [...e.answers.slice(0, -1), e.answers.at(-1) + '1'] }),
+  precedentSuivantDecimal: (e) => ({
+    ...e,
+    bounding: {
+      ...e.bounding,
+      answers: [e.bounding.answers[0], e.bounding.answers[1].replace(/\d$/, (d) => (Number(d) + 1) % 10)],
+    },
+  }),
   recomposerFractions: (e) => ({ ...e, answers: [e.answers[0].replace(/^(\d+)/, (n) => String(Number(n) + 1))] }),
   enigmeSymboles: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),
   lireTableauNombre: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),

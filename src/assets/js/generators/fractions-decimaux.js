@@ -283,6 +283,44 @@
     // facile: firstPV=3, lastPV=4  →  X,X   (e.g. 3,7)
     // moyen:  firstPV=3, lastPV=5  →  X,XX  (e.g. 4,35)
     // difficile: firstPV=2, lastPV=6 → XX,XXX (e.g. 13,035)
+    // precedentSuivantDecimal: « ? < 33,47 < ? » — the numbers just before and after, with as many
+    // decimals (33,46 and 33,48). mask: each box shows the digits to write (□□,□□).
+    // params: decimals (1 | 2 | 3 | [list]), maxInt (99), traps (the last digit 9 or 1 — 175,999 < 176,000,
+    // 33,401 > 33,400 — or a 0 just after the comma — 0,025), mask (true)
+    precedentSuivantDecimal: {
+      generate(params = {}) {
+        const decs = [].concat(params.decimals ?? [1, 2]);
+        const k = randItem(decs);
+        const p = 10 ** k;
+        const maxInt = params.maxInt ?? 99;
+        let u; // the number in units of 1/p
+        if (params.traps) {
+          const trap = randItem(k > 1 ? ['neuf', 'un', 'zero'] : ['neuf', 'un']);
+          const int = rand(trap === 'zero' ? 0 : 1, maxInt);
+          const tens = p / 10; // choices for the digits before the last one
+          if (trap === 'zero')
+            u = int * p + rand(1, tens - 1); // 0,025 · 4,07
+          else if (trap === 'neuf' && Math.random() < 0.5)
+            u = int * p + p - 1; // 4,999 → 5,000
+          else u = int * p + rand(0, tens - 1) * 10 + (trap === 'neuf' ? 9 : 1); // 4,39 → 4,40 · 4,31 → 4,30
+          if (u % 10 === 0) u += 1;
+        } else {
+          do u = rand(2, (maxInt + 1) * p - 1);
+          while (u % 10 === 0); // the last decimal is never 0: 4,70 is written 4,7
+        }
+        const fmt = (v) => (v / p).toFixed(k).replace('.', ',');
+        const answers = [fmt(u - 1), fmt(u + 1)];
+        const out = {
+          type: 'bounding',
+          title: 'Écris le nombre qui précède et celui qui suit',
+          bounding: { number: fmt(u), answers },
+        };
+        if (params.mask !== false) out.bounding.mask = answers.map((a) => a.replace(/\d/g, '□'));
+        else out.body = `Garde ${k === 1 ? '1 chiffre' : `${k} chiffres`} après la virgule.`;
+        return out;
+      },
+    },
+
     // arrondirDecimal: « 12,7 ≈ ? » rounded to the whole number, or « Partie entière de 12,7 = ? »
     // (CM1–CM2). The tenths digit is never 5 when rounding (no halfway case).
     // params: mode ('arrondi' | 'entiere' | 'mix'), maxDec (2), wholeMax (99)
@@ -832,6 +870,117 @@
           body,
           fo,
         };
+      },
+    },
+
+    // fractionsEquivalentes: « 1/2 = ?/4 » — fraction-check with one box of the answer given
+    // params: ask (agrandir: 1/2 = ?/4 | simplifier: 2/4 = ?/2 | denominateur: 1/2 = 2/? | mixte),
+    // visual (compte: both drawings shaded | coupe: the second one only cut — not for denominateur,
+    // its cuts are the answer | aucun), model (disque | bande | mixte), maxDen (12, 30 without drawing)
+    fractionsEquivalentes: {
+      generate(params = {}) {
+        const frac = (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+        const gcd = (x, y) => (y ? gcd(y, x % y) : x);
+        const visual = params.visual ?? 'compte';
+        const maxDen = params.maxDen ?? (visual === 'aucun' ? 30 : 12);
+        const asks = visual === 'coupe' ? ['agrandir', 'simplifier'] : ['agrandir', 'simplifier', 'denominateur'];
+        const ask = !params.ask || params.ask === 'mixte' ? randItem(asks) : params.ask;
+        // n/d in lowest terms, k ≥ 2 so that the other fraction n·k / d·k really changes
+        const pool = [];
+        for (let d = 2; d * 2 <= maxDen; d++)
+          for (let n = 1; n < d; n++)
+            if (gcd(n, d) === 1) for (let k = 2; d * k <= maxDen && k <= 10; k++) pool.push([n, d, k]);
+        const [n, d, k] = randItem(pool);
+        const [[ln, ld], [rn, rd]] =
+          ask === 'simplifier'
+            ? [
+                [n * k, d * k],
+                [n, d],
+              ]
+            : [
+                [n, d],
+                [n * k, d * k],
+              ];
+        const out = {
+          type: 'fraction-check',
+          title: 'Complète la fraction égale',
+          operation: frac(ln, ld),
+          given: ask === 'denominateur' ? [String(rn), null] : [null, String(rd)],
+          answers: [`${rn}/${rd}`],
+        };
+        if (visual !== 'aucun') {
+          const model = params.model === 'mixte' ? randItem(['disque', 'bande']) : params.model || 'disque';
+          const shade = visual === 'coupe' && ask !== 'denominateur' ? 0 : rn;
+          out.svg = { gen: 'fractionEquivSvg', par: { n: ln, d: ld, N: shade, D: rd, model } };
+          out.body = shade ? 'Les deux dessins sont coloriés pareil.' : 'Colorie dans ta tête la même part.';
+        }
+        return out;
+      },
+    },
+
+    // trouverFractionsEgales: « Clique sur les fractions égales à 1/2 » — 6 tiles, 2 or 3 of them n·k / d·k,
+    // the others common mistakes: the same number added to both (2/3), only one term multiplied (1/4, 2/2),
+    // one term off by 1 (3/4 for 2/4). params: maxDen (24)
+    trouverFractionsEgales: {
+      generate(params = {}) {
+        const frac = (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+        const gcd = (x, y) => (y ? gcd(y, x % y) : x);
+        const maxDen = params.maxDen ?? 24;
+        const targets = [];
+        for (let d = 2; d * 4 <= maxDen; d++) for (let n = 1; n < d; n++) if (gcd(n, d) === 1) targets.push([n, d]);
+        const [n, d] = randItem(targets);
+        const ks = shuffle(Array.from({ length: Math.floor(maxDen / d) - 1 }, (_, i) => i + 2));
+        const good = ks.slice(0, rand(2, 3)).map((k) => [n * k, d * k]);
+        const wrong = [];
+        for (let j = 1; j <= 3; j++) wrong.push([n + j, d + j]);
+        for (const [gn, gd] of good) wrong.push([gn + 1, gd], [gn, gd + 1], [gn - 1, gd], [n, gd], [gn, d]);
+        const seen = new Set(good.map(String));
+        const bad = shuffle(wrong).filter(([a, b]) => {
+          if (a < 1 || a * d === b * n || seen.has(String([a, b]))) return false;
+          seen.add(String([a, b]));
+          return true;
+        });
+        const tiles = shuffle([
+          ...good.map((f) => ({ f, ok: true })),
+          ...bad.slice(0, 6 - good.length).map((f) => ({ f, ok: false })),
+        ]);
+        return {
+          type: 'tile-select',
+          title: `Clique sur les fractions égales à ${n}/${d}`,
+          tiles: tiles.map((t) => frac(...t.f)),
+          tileAnswers: tiles.map((t, i) => (t.ok ? i : -1)).filter((i) => i >= 0),
+        };
+      },
+    },
+
+    // fractionVersDecimal: a fraction that is not a whole number, as a decimal — 3/2 = 1,5, 7/4 = 1,75
+    // params: mode (direct: 3/2 = ? | etape: 3/4 = ?/100 = ? | inverse: 1,5 = ?/2 | mixte),
+    // dens ([2, 4, 5]), maxInt (2: the value stays under 2), hint (body « 1/4 = 0,25 »)
+    fractionVersDecimal: {
+      generate(params = {}) {
+        const frac = (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+        const dec = (v) => String(+v.toFixed(3)).replace('.', ',');
+        const mode = !params.mode || params.mode === 'mixte' ? randItem(['direct', 'etape', 'inverse']) : params.mode;
+        const d = randItem(params.dens ?? [2, 4, 5]);
+        let n;
+        do n = rand(1, (params.maxInt ?? 2) * d - 1);
+        while (n % d === 0);
+        const v = dec(n / d);
+        if (mode === 'inverse')
+          return {
+            type: 'number-check',
+            title: 'Retrouve la fraction',
+            operation: `${v} = ?/${d}`,
+            answers: [String(n)],
+          };
+        const out = { type: 'number-check', title: 'Écris en nombre décimal', answers: [v] };
+        if (mode === 'etape') {
+          const D = [10, 100, 1000].find((p) => (n * p) % d === 0);
+          out.operation = `&frac(${n},${d}) = ?/${D} = ?`;
+          out.answers = [String((n * D) / d), v];
+        } else out.operation = `&frac(${n},${d}) = ?`;
+        if (params.hint) out.body = `${frac(1, d)} = ${dec(1 / d)}`;
+        return out;
       },
     },
 
