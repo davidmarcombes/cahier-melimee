@@ -121,6 +121,28 @@ const CORRUPT = {
   }),
   trouverFractionsEgales: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
   fractionVersDecimal: (e) => ({ ...e, answers: [...e.answers.slice(0, -1), e.answers.at(-1) + '1'] }),
+  calculPriorites: (e) =>
+    e.type === 'mcq'
+      ? { ...e, mcqAnswer: (e.mcqAnswer + 1) % 4 }
+      : { ...e, answers: [...e.answers.slice(0, -1), String(Number(e.answers.at(-1)) + 1)] },
+  estimerSommeDiff: (e) =>
+    e.type === 'mcq'
+      ? { ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }
+      : { ...e, answers: [...e.answers.slice(0, -1), String(Number(e.answers.at(-1)) + 10)] },
+  problemesDivision: (e) => ({
+    ...e,
+    answers: [...e.answers.slice(0, -1), String(Number(e.answers.at(-1).replace(',', '.')) + 1)],
+  }),
+  siAlorsDivision: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),
+  suitesRegle: (e) => {
+    if (e.type === 'mcq') return { ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length };
+    if (e.type === 'sequence') {
+      const items = e.sequence.items.map((it) => (it.blank ? { ...it, answer: `${it.answer}1` } : it));
+      return { ...e, sequence: { items } };
+    }
+    return { ...e, answers: [`${e.answers[0]}1`] };
+  },
+  pourcentages: (e) => ({ ...e, answers: [...e.answers.slice(0, -1), String(Number(e.answers.at(-1)) + 1)] }),
   precedentSuivantDecimal: (e) => ({
     ...e,
     bounding: {

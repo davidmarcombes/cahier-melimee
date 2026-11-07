@@ -126,6 +126,204 @@
       },
     },
 
+    // estimerSommeDiff (CM1–CM2): estimate a sum / difference of whole or decimal numbers by rounding each
+    // term. The digit that decides the rounding is never 5, no term is already round, every running total
+    // (exact and rounded) stays above 0.
+    //   params: mode — etape « 38,7 + 21,2 ≈ ? + ? = ? » | direct « 38,7 + 21,2 ≈ ? » | grandeur (mcq: the
+    //     estimate among ÷10 / ×10) | possible (mcq Oui / Non: « 49,8 + 31,3 = 811 », a comma or a carry
+    //     wrong, always far from the estimate) | probleme (kind: assez « Tu as 20 €… as-tu assez ? » mcq,
+    //     environ « … environ combien ? » number-check) | list;
+    //   place (rounding unit 1 / 10 / 100 / 1000, or a list), decimals (0, 1, 2 or a list), min (place),
+    //   max (99: the largest whole part), terms (2, or a list), signs (['+']), kind (['assez', 'environ'])
+    estimerSommeDiff: {
+      generate(params = {}) {
+        const mode = randItem([].concat(params.mode ?? 'etape'));
+        const PLACES = { 1: 'à l’unité', 10: 'à la dizaine', 100: 'à la centaine', 1000: 'au millier' };
+        const nb = (x, glue = '__') =>
+          String(+x.toFixed(2))
+            .replace('.', ',')
+            .replace(/^\d+/, (w) => w.replace(/\B(?=(\d{3})+$)/g, glue));
+        const money = (x) => x.toFixed(2).replace('.', ',');
+
+        if (mode === 'probleme' && randItem([].concat(params.kind ?? ['assez', 'environ'])) === 'assez') {
+          const ITEMS = ['un livre', 'un jeu', 'une trousse', 'un ballon', 'une BD', 'un puzzle', 'une gourde'];
+          const maxPrice = params.max ?? 20;
+          for (;;) {
+            const n = randItem([].concat(params.terms ?? 2));
+            const prices = Array.from({ length: n }, () => rand(150, maxPrice * 100) / 100);
+            if (prices.some((x) => Math.round(x * 100) % 100 === 0 || Math.round(x * 10) % 10 === 5)) continue;
+            const sum = prices.reduce((a, b) => a + b, 0);
+            // a budget in fives, clearly above or below: the rounded prices land on the same side
+            const budgets = [];
+            for (let b = 5; b <= sum * 1.35; b += 5)
+              if (Math.abs(b - sum) >= n + 0.5 && Math.abs(b - sum) <= sum * 0.35) budgets.push(b);
+            if (!budgets.length) continue;
+            const budget = randItem(budgets);
+            const items = shuffle(ITEMS).slice(0, n);
+            const list = items.map((it, i) => `${it} à <strong>${money(prices[i])}\u00a0€</strong>`);
+            return {
+              type: 'mcq',
+              title: 'Arrondis chaque prix à l’unité : as-tu assez d’argent\u00a0?',
+              body: `<p>Tu as <strong>${budget}\u00a0€</strong>. Tu achètes ${list.slice(0, -1).join(', ')} et ${list.at(-1)}.</p>`,
+              mcqChoices: ['Oui', 'Non'],
+              mcqAnswer: sum <= budget ? 0 : 1,
+              mcqCompact: true,
+            };
+          }
+        }
+
+        const place = randItem([].concat(params.place ?? 10));
+        const decimals = randItem([].concat(params.decimals ?? 0).filter((d) => d || place >= 10)) ?? 1; // whole numbers: place 10 or more
+        const scale = 10 ** decimals;
+        const min = params.min ?? place;
+        const max = params.max ?? 99;
+        const unit = place * scale; // the rounding unit, in scaled steps
+        const term = () => {
+          for (;;) {
+            const v = rand(Math.ceil(min * scale) + 1, max * scale + scale - 1);
+            if (decimals && v % 10 === 0) continue; // no trailing zero
+            if (v % unit === 0 || (unit >= 10 && Math.floor(v / (unit / 10)) % 10 === 5)) continue;
+            return { x: v / scale, r: Math.round(v / unit) * place };
+          }
+        };
+        const value = (xs, signs) => xs.reduce((t, x, i) => (i ? (signs[i - 1] === '+' ? t + x : t - x) : x), 0);
+
+        if (mode === 'probleme') {
+          const SMALL = [
+            [
+              '+',
+              'km',
+              (a, b) =>
+                `Un randonneur marche ${a} le matin et ${b} l’après-midi. Environ combien de kilomètres en tout\u00a0?`,
+            ],
+            ['+', 'kg', (a, b) => `Un colis pèse ${a}, un autre ${b}. Environ combien pèsent-ils en tout\u00a0?`],
+            [
+              '−',
+              'm',
+              (a, b) => `Un rouleau de ficelle mesure ${a}. On en coupe ${b}. Environ combien en reste-t-il\u00a0?`,
+            ],
+            ['−', '€', (a, b) => `Tu as ${a}. Tu dépenses ${b}. Environ combien te reste-t-il\u00a0?`],
+          ];
+          const BIG = [
+            [
+              '+',
+              'jouets',
+              (a, b) => `Une usine fabrique ${a} en mars et ${b} en avril. Environ combien de jouets en tout\u00a0?`,
+            ],
+            [
+              '+',
+              'spectateurs',
+              (a, b) =>
+                `Le stade accueille ${a} le samedi et ${b} le dimanche. Environ combien de spectateurs en tout\u00a0?`,
+            ],
+            [
+              '−',
+              'livres',
+              (a, b) =>
+                `Une bibliothèque a ${a}. Elle prête ${b}. Environ combien en reste-t-il sur les étagères\u00a0?`,
+            ],
+            [
+              '−',
+              'habitants',
+              (a, b) =>
+                `Une ville compte ${a}, sa voisine ${b}. Environ combien d’habitants de plus dans la première\u00a0?`,
+            ],
+          ];
+          const [s, u, say] = randItem(decimals ? SMALL.filter((t) => t[1] !== '€' || decimals === 2) : BIG);
+          for (;;) {
+            const [a, b] = [term(), term()].sort((p, q) => q.x - p.x);
+            const est = value([a.r, b.r], [s]);
+            if (est <= 0 || a.x === b.x) continue;
+            const show = (t) => `<strong>${nb(t.x, '\u00a0')}\u00a0${u}</strong>`;
+            return {
+              type: 'number-check',
+              title: `Arrondis chaque nombre ${PLACES[place]}, puis calcule.`,
+              body: `<p>${say(show(a), show(b))}</p>`,
+              operation: `≈ ? ${u}`,
+              answers: [String(est)],
+            };
+          }
+        }
+
+        for (;;) {
+          const n = randItem([].concat(params.terms ?? 2));
+          const ts = Array.from({ length: n }, term);
+          const signs = ts.slice(1).map(() => randItem([].concat(params.signs ?? ['+'])));
+          if (signs[0] === '−') ts.sort((p, q) => q.x - p.x); // the biggest first
+          // every running total above 0, exact and rounded
+          let ok = true;
+          for (let k = 2; k <= n; k++)
+            if (
+              value(
+                ts.slice(0, k).map((t) => t.x),
+                signs
+              ) <= 0 ||
+              value(
+                ts.slice(0, k).map((t) => t.r),
+                signs
+              ) <= 0
+            )
+              ok = false;
+          if (!ok) continue;
+          const exact = +value(
+            ts.map((t) => t.x),
+            signs
+          ).toFixed(decimals);
+          const est = value(
+            ts.map((t) => t.r),
+            signs
+          );
+          // each sign glued to its number (__ in a number-check, a no-break space in an mcq): lines break between terms only
+          const line = (show, glue = ' ') => ts.map((t, i) => (i ? `${signs[i - 1]}${glue}` : '') + show(t)).join(' ');
+          const expr = line((t) => nb(t.x), '__');
+          const plain = line((t) => nb(t.x, '\u00a0'), '\u00a0');
+
+          if (mode === 'grandeur') {
+            if (est / exact < 0.5 || est / exact > 2) continue;
+            const choices = shuffle([est / 10, est, est * 10]);
+            return {
+              type: 'mcq',
+              title: 'Quel est l’ordre de grandeur du résultat\u00a0?',
+              operation: plain,
+              mcqChoices: choices.map((c) => nb(c, '\u00a0')),
+              mcqAnswer: choices.indexOf(est),
+              mcqCompact: true,
+            };
+          }
+          if (mode === 'possible') {
+            const far = (w) => w > 0 && Math.abs(w - exact) >= 2 * n * place;
+            const wrongs = [exact * 10, exact / 10, exact + 10 * place, exact - 10 * place]
+              .map((w) => +w.toFixed(decimals))
+              .filter((w) => far(w) && (decimals || Number.isInteger(w)));
+            const right = Math.random() < 0.5 || !wrongs.length;
+            const shown = right ? exact : randItem(wrongs);
+            return {
+              type: 'mcq',
+              title: `${randItem(['Léa', 'Tom', 'Inès', 'Hugo', 'Jade', 'Nathan', 'Lina', 'Adam'])} a trouvé ce résultat. Est-ce possible\u00a0?`,
+              body: `<p>Arrondis ${PLACES[place]} pour vérifier.</p>`,
+              operation: `${plain}\u00a0=\u00a0${nb(shown, '\u00a0')}`,
+              mcqChoices: ['Oui', 'Non'],
+              mcqAnswer: right ? 0 : 1,
+              mcqCompact: true,
+            };
+          }
+          if (mode === 'direct')
+            return {
+              type: 'number-check',
+              title: `Arrondis chaque nombre ${PLACES[place]}, puis calcule.`,
+              operation: `${expr}__≈__?`,
+              answers: [String(est)],
+            };
+          return {
+            type: 'number-check',
+            title: `Arrondis chaque nombre ${PLACES[place]}, puis calcule.`,
+            operation: `${expr}__≈ ${line(() => '?')} = ?`,
+            answers: [...ts.map((t) => String(t.r)), String(est)],
+          };
+        }
+      },
+    },
+
     comparerNombresPaires: {
       generate: (params = {}) => {
         const min = params.min ?? 1;
@@ -924,6 +1122,133 @@
             : { blank: true, inputIdx: inputIdx++, answer: String(v) };
         });
         return { type: 'sequence', sequence: { items } };
+      },
+    },
+
+    // suitesRegle (CM1–CM2): arithmetic (+ / − a step) and geometric (× / ÷ a ratio) sequences.
+    //   params: mode — completer (sequence: 3 terms given, blanks, the last one given as a check) | regle
+    //     (« 12 ; 37 ; 62 ; 87 ; … » → « On ajoute ? ») | qcm (mcq: + 4, × 2…, the first two terms fit two
+    //     rules) | manquant (« 7 ; 14 ; ? ; 56 ; 112 ») | lointain (arithmetic: « le 10ᵉ nombre ? »);
+    //   kind (['ajouter', 'multiplier']), down (false | true | 'mixed': − / ÷), steps ([2…100]), ratios ([2, 3, 5, 10]),
+    //   max (10 000: the biggest term), startMax (500: arithmetic), decimals (false: geometric ÷ may go on into decimals, 2 at most),
+    //   terms (7: completer), places ([10, 12, 15, 20]: lointain)
+    suitesRegle: {
+      generate(params = {}) {
+        const mode = randItem([].concat(params.mode ?? 'completer'));
+        const kind = mode === 'lointain' ? 'ajouter' : randItem([].concat(params.kind ?? ['ajouter', 'multiplier']));
+        const dir = params.down ?? false;
+        const down = mode !== 'lointain' && (dir === 'mixed' ? Math.random() < 0.5 : !!dir);
+        const max = params.max ?? 10000;
+        const nb = (x, glue = '\u00a0') =>
+          String(+x.toFixed(2))
+            .replace('.', ',')
+            .replace(/^\d+/, (w) => w.replace(/\B(?=(\d{3})+$)/g, glue));
+        const ans = (x) => String(+x.toFixed(2)).replace('.', ',');
+        const n = mode === 'completer' ? (params.terms ?? 7) : mode === 'manquant' ? rand(5, 6) : 4;
+
+        // n terms, rising; reversed when going down
+        let seq;
+        for (;;) {
+          if (kind === 'ajouter') {
+            const d = randItem([].concat(params.steps ?? [2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 15, 25, 50, 100]));
+            // qcm: half the time the run starts at the step (4 ; 8 ; 12: « × 2 » fits the first two terms)
+            const start =
+              mode === 'qcm' && Math.random() < 0.5 ? d : rand(1, Math.max(1, (params.startMax ?? 500) - (n - 1) * d));
+            seq = Array.from({ length: n }, (_, i) => start + i * d);
+          } else {
+            const r = randItem([].concat(params.ratios ?? [2, 3, 5, 10]));
+            const top = Math.floor(max / r ** (n - 1));
+            if (top < 1) continue;
+            const s = rand(1, Math.min(top, 20));
+            seq = Array.from({ length: n }, (_, i) => s * r ** i);
+            // ÷ into decimals: the whole run shifted down by r or r², every term with 2 decimals at most
+            if (params.decimals && down) {
+              const j = randItem([1, 2]);
+              const shifted = seq.map((v) => v / r ** j);
+              if (
+                shifted.every((v) => Math.abs(v * 100 - Math.round(v * 100)) < 1e-9) &&
+                shifted.some((v) => !Number.isInteger(v))
+              )
+                seq = shifted;
+            }
+          }
+          if (seq.at(-1) <= max && seq[0] > 0) break;
+        }
+        if (down) seq.reverse();
+        const step = kind === 'ajouter' ? Math.abs(seq[1] - seq[0]) : Math.max(seq[1] / seq[0], seq[0] / seq[1]);
+        const rule = kind === 'ajouter' ? `${down ? '−' : '+'} ${step}` : `${down ? '÷' : '×'} ${+step.toFixed(2)}`;
+        const line = (xs) => xs.map((x) => nb(x)).join('\u00a0; '); // « ; » never starts a line
+
+        if (mode === 'completer') {
+          let inputIdx = 0;
+          const items = seq.map((v, i) =>
+            i < 3 || i === n - 1 ? { value: nb(v) } : { blank: true, inputIdx: inputIdx++, answer: ans(v) }
+          );
+          return { type: 'sequence', sequence: { items } };
+        }
+        if (mode === 'regle') {
+          const verb = { '+': 'On ajoute', '−': 'On enlève', '×': 'On multiplie par', '÷': 'On divise par' }[rule[0]];
+          return {
+            type: 'number-check',
+            bodyFirst: true,
+            body: `<p class="text-2xl font-bold">${line(seq)}\u00a0; …</p>`,
+            operation: `${verb} ?`,
+            answers: [ans(step)],
+          };
+        }
+        if (mode === 'qcm') {
+          // the first two terms fit a + and a × rule: only the whole run tells
+          const [a, b] = seq;
+          const apply = (r, x) => {
+            const k = Number(r.slice(2));
+            return { '+': x + k, '−': x - k, '×': x * k, '÷': x / k }[r[0]];
+          };
+          const fits = (r) => seq.every((v, i) => !i || Math.abs(apply(r, seq[i - 1]) - v) < 1e-9);
+          const [big, small] = [Math.max(a, b), Math.min(a, b)];
+          const [plus, times] = down ? ['−', '÷'] : ['+', '×'];
+          const gap = big - small;
+          // traps: a rule that fits the first two terms only, and near misses
+          const pool =
+            kind === 'multiplier'
+              ? [`${plus} ${gap}`, `${plus} ${step}`, `${times} ${step + 1}`]
+              : [
+                  `${plus} ${2 * gap}`,
+                  `${plus} ${gap + 1}`,
+                  ...(big % small === 0 ? [`${times} ${big / small}`] : [`${times} 2`]),
+                ];
+          const choices = shuffle(
+            [
+              rule,
+              ...shuffle(
+                [...new Set(pool)].filter((r) => r !== rule && Number.isInteger(Number(r.slice(2))) && !fits(r))
+              ),
+            ].slice(0, 4)
+          );
+          if (choices.length < 3) return generators.suitesRegle.generate(params);
+          return {
+            type: 'mcq',
+            title: 'Quelle est la règle de cette suite\u00a0?',
+            operation: line(seq),
+            mcqChoices: choices,
+            mcqAnswer: choices.indexOf(rule),
+            mcqCompact: true,
+          };
+        }
+        if (mode === 'manquant') {
+          const i = rand(1, n - 2);
+          const items = seq.map((v, k) => (k === i ? { blank: true, inputIdx: 0, answer: ans(v) } : { value: nb(v) }));
+          return { type: 'sequence', sequence: { items } };
+        }
+        // lointain: « 5 ; 9 ; 13 ; 17 ; … » the p-th term
+        const p = randItem([].concat(params.places ?? [10, 12, 15, 20]));
+        const d = seq[1] - seq[0];
+        return {
+          type: 'number-check',
+          bodyFirst: true,
+          body: `<p class="text-2xl font-bold">${line(seq)}\u00a0; …</p><p>Quel est le ${p}ᵉ nombre de la suite\u00a0?</p>`,
+          operation: `${p}ᵉ nombre\u00a0: ?`,
+          answers: [ans(seq[0] + (p - 1) * d)],
+        };
       },
     },
 

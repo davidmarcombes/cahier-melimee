@@ -2,6 +2,8 @@
 <div
   x-show="cur.type === 'number-check' && (cur.operation || cur.svg)"
   class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-8 mb-8">
+  {# bodyFirst: a word problem — the statement before the picture and the blanks #}
+  <div x-show="cur.bodyFirst" class="prose dark:prose-invert text-center text-lg max-w-none text-pretty mb-4" x-html="cur.bodyFirst ? cur.body : ''"></div>
   <template x-if="cur.svg">
     <div class="flex justify-center mb-6 max-sm:[&_svg]:max-w-full max-sm:[&_svg]:h-auto" x-html="window[cur.svg.gen](...Object.values(cur.svg.par))"></div>
   </template>
@@ -48,7 +50,7 @@
       </span>
     </template>
   </div>
-  <div class="prose dark:prose-invert text-center text-lg max-w-none" x-html="cur.body"></div>
+  <div class="prose dark:prose-invert text-center text-lg max-w-none" x-html="cur.bodyFirst ? '' : cur.body"></div>
 </div>
 <div x-show="cur.operation && cur.operation.includes('?')" class="flex items-center gap-3 mb-6">
   <button

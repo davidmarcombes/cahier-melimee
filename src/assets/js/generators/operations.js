@@ -383,6 +383,48 @@
       },
     },
 
+    // siAlorsDivision (CE1–CM1): a known fact gives another one. « Si 9 × 3 = 27, alors… » then
+    // « 27 ÷ ? = 9 » (the fact in the title, the blank in the operation).
+    //   params: mode — div (× given, ÷ asked) | mult (÷ given, × asked) | list; holes (['dernier',
+    //   'milieu', 'premier']: which number of the asked equation is blank), tables ([2…9]: one factor),
+    //   maxQ (10: the other one), scale ([1]: 10 or 100 multiplies the dividend of the asked division,
+    //   « Si 6 × 7 = 42, alors… 420 ÷ 7 = ? »)
+    siAlorsDivision: {
+      generate(params = {}) {
+        const mode = randItem([].concat(params.mode ?? 'div'));
+        const hole = randItem([].concat(params.holes ?? ['dernier', 'milieu', 'premier']));
+        const b = randItem([].concat(params.tables ?? [2, 3, 4, 5, 6, 7, 8, 9]));
+        const k = mode === 'div' ? randItem([].concat(params.scale ?? 1)) : 1;
+        const a = rand(2, k > 1 ? Math.min(params.maxQ ?? 10, 9) : (params.maxQ ?? 10)); // no « 500 ÷ 10 » muddle
+        const g = (n) => String(n).replace(/\B(?=(\d{3})+$)/g, '__');
+        const [x, y] = Math.random() < 0.5 ? [a, b] : [b, a]; // the given fact, either order
+        const blank = (terms, i) => terms.map((t, j) => (j === i ? '?' : g(t)));
+        if (mode === 'mult') {
+          // « Si 27 ÷ 3 = 9, alors… 9 × ? = 27 »
+          const [p, q] = Math.random() < 0.5 ? [a, b] : [b, a];
+          const i = { dernier: 2, milieu: 1, premier: 0 }[hole];
+          const t = blank([p, q, a * b], i);
+          return {
+            type: 'number-check',
+            title: `Si ${g(a * b)} ÷ ${b} = ${a}, alors…`.replace(/__/g, '\u00a0'),
+            operation: `${t[0]} × ${t[1]} = ${t[2]}`,
+            answers: [String([p, q, a * b][i])],
+          };
+        }
+        // « Si 9 × 3 = 27, alors… 27 ÷ ? = 9 », the divisor either factor
+        const d = Math.random() < 0.5 ? a : b;
+        const terms = [a * b * k, d, ((a * b) / d) * k];
+        const i = { dernier: 2, milieu: 1, premier: 0 }[hole];
+        const t = blank(terms, i);
+        return {
+          type: 'number-check',
+          title: `Si ${x} × ${y} = ${g(a * b)}, alors…`.replace(/__/g, '\u00a0'),
+          operation: `${t[0]} ÷ ${t[1]} = ${t[2]}`,
+          answers: [String(terms[i])],
+        };
+      },
+    },
+
     // Vrai/Faux — opérations
     // params: ops (['+','-','×','÷']), min, max, maxFactor, count, trueRatio, style ('standard'|'relational')
     vraiFauxOps: {
@@ -735,6 +777,509 @@
       },
     },
 
+    // calculPriorites: × and ÷ before + and − (CM1–CM2). A + or − always comes before a × or ÷, so
+    // calculating from left to right gives another result (the usual mistake: 5 + 3 × 4 = 32).
+    //   params: mode — direct « 5 + 3 × 4 = ? » | etape « 5 + &box(3 × 4) = 5 + ? = ? » | comparer
+    //     « 5 + 3 × 4 = ? et (5 + 3) × 4 = ? » | placer: mcq, which parentheses give the result
+    //     (a + b × c + d, only ×) | list (one per exercise);
+    //   div (false: ÷ too, always exact), double (false: two × or three terms, « 4 × 5 − 2 × 3 »,
+    //   « 7 + 2 × 6 − 5 »; direct and etape only), max (9: × factors and divisors), maxN (30: lone numbers)
+    calculPriorites: {
+      generate(params = {}) {
+        const mode = randItem([].concat(params.mode ?? 'direct'));
+        const max = params.max ?? 9;
+        const maxN = params.maxN ?? 30;
+        const pick = (op) => {
+          const c = rand(2, max),
+            b = rand(2, max);
+          return op === '×'
+            ? { txt: `${b} × ${c}`, v: b * c, f: b, op }
+            : { txt: `${b * c} ÷ ${c}`, v: b, f: b * c, op };
+        };
+        const prio = () => pick(params.div && Math.random() < 0.5 ? '÷' : '×');
+
+        if (mode === 'placer') {
+          for (;;) {
+            const [a, b, c, d] = [rand(2, maxN), rand(2, max), rand(2, max), rand(2, maxN)];
+            const [s1, s2] = [randItem(['+', '−']), randItem(['+', '−'])];
+            const op = (x, s, y) => (s === '+' ? x + y : x - y);
+            const exprs = [
+              [`${a} ${s1} ${b} × ${c} ${s2} ${d}`, op(op(a, s1, b * c), s2, d)],
+              [`(${a} ${s1} ${b}) × ${c} ${s2} ${d}`, op(op(a, s1, b) * c, s2, d)],
+              [`${a} ${s1} ${b} × (${c} ${s2} ${d})`, op(a, s1, b * op(c, s2, d))],
+              [`(${a} ${s1} ${b}) × (${c} ${s2} ${d})`, op(a, s1, b) * op(c, s2, d)],
+            ];
+            const vals = exprs.map((x) => x[1]);
+            // every bracket and every result whole and ≥ 0, four different results
+            if ([op(a, s1, b), op(c, s2, d), op(a, s1, b * c)].some((v) => v < 0) || vals.some((v) => v < 0)) continue;
+            if (new Set(vals).size < 4) continue;
+            const answer = rand(1, 3);
+            return {
+              type: 'mcq',
+              title: `Quel calcul donne ${vals[answer]}\u00a0?`,
+              body: '<p>Les parenthèses changent l’ordre des calculs.</p>',
+              mcqChoices: exprs.map(
+                (x) => `<span style="font-size:1.4rem;font-weight:800;white-space:nowrap">${x[0]}</span>`
+              ),
+              mcqAnswer: answer,
+            };
+          }
+        }
+
+        if (mode === 'comparer') {
+          for (;;) {
+            const s = randItem(['+', '−']);
+            const p = prio();
+            const a = p.op === '÷' ? rand(1, Math.floor(maxN / 2)) * Number(p.txt.split(' ÷ ')[1]) : rand(2, maxN);
+            const lone = s === '+' ? a + p.v : a - p.v;
+            const first = s === '+' ? a + p.f : a - p.f;
+            if (lone < 0 || first < 0) continue;
+            const rest = p.txt.slice(String(p.f).length); // « × 4 » / « ÷ 3 »
+            const paren = p.op === '×' ? first * (p.v / p.f) : first / (p.f / p.v);
+            if (paren === lone || !Number.isInteger(paren)) continue;
+            return {
+              type: 'number-check',
+              title: 'Calcule les deux. Les parenthèses changent-elles le résultat\u00a0?',
+              operation: `${a} ${s} ${p.txt} = ? et (${a} ${s} ${p.f})${rest} = ?`,
+              answers: [String(lone), String(paren)],
+            };
+          }
+        }
+
+        // direct / etape: blocks (a lone number or a × / ÷) joined by + and −, never below 0 on the way
+        const shapes = params.double
+          ? [
+              ['p', 'p'],
+              ['n', 'p', 'n'],
+              ['n', 'n', 'p'],
+            ]
+          : [['n', 'p']];
+        for (;;) {
+          const blocks = randItem(shapes).map((k) => (k === 'p' ? prio() : { v: rand(2, maxN) }));
+          const signs = blocks.slice(1).map(() => randItem(['+', '−']));
+          let total = blocks[0].v,
+            ok = true;
+          signs.forEach((s, i) => {
+            total = s === '+' ? total + blocks[i + 1].v : total - blocks[i + 1].v;
+            if (total < 0) ok = false;
+          });
+          if (!ok) continue;
+          const line = (show) => blocks.map((b, i) => (i ? `${signs[i - 1]} ` : '') + show(b)).join(' ');
+          // left to right, ignoring the priorities
+          const words = line((b) => b.txt ?? b.v).split(' ');
+          let ltr = Number(words[0]);
+          for (let i = 1; i < words.length; i += 2) {
+            const y = Number(words[i + 1]);
+            ltr = { '+': ltr + y, '−': ltr - y, '×': ltr * y, '÷': ltr / y }[words[i]];
+          }
+          if (ltr === total) continue;
+          if (mode === 'etape')
+            return {
+              type: 'number-check',
+              title: 'Calcule d’abord ce qui est encadré.',
+              operation: `${line((b) => (b.txt ? `&box(${b.txt})` : b.v))} = ${line((b) => (b.txt ? '?' : b.v))} = ?`,
+              answers: [...blocks.filter((b) => b.txt).map((b) => String(b.v)), String(total)],
+            };
+          return {
+            type: 'number-check',
+            title: 'Calcule. Les × et les ÷ d’abord\u00a0!',
+            operation: `${line((b) => b.txt ?? b.v)} = ?`,
+            answers: [String(total)],
+          };
+        }
+      },
+    },
+
+    // pourcentages (CM2): « 25 % de 80 = ? » — every result whole. Pictures: grille (hundred grid, percentGridSvg)
+    // and barre (whole = 100 %, cut in 100 / gcd(p, 100) parts, percentBarSvg).
+    //   params: mode — grille « ? % » of a coloured hundred grid | de « 25 % de 80 = ? » | etape « 30 % de 70
+    //     = 3 × ? = ? » under the title « 30 %, c’est 3 × 10 % » | quel « 20 sur 80 = ? % » | probleme
+    //     (soldes « 90 € − ? € = ? €»: réduction then prix soldé; part of a group; score in %) | cent
+    //     « 12/50 = ?/100 = ? % » (any part of a total in `totals`, [10, 20, 25, 50]; hint false
+    //     « 12 sur 50 = ? % »; context: a sentence instead) | list;
+    //   percents (by mode, e.g. [10, 25, 50]), visual (true: the bar on de / etape / quel / probleme),
+    //   maxTotal (200), round (true: totals are multiples of 10 too; false: « 25 % de 84 »),
+    //   step (5: grille, coloured squares by 5; 1 = any number)
+    pourcentages: {
+      generate(params = {}) {
+        const mode = randItem([].concat(params.mode ?? 'de'));
+        const visual = params.visual ?? true;
+        const maxTotal = params.maxTotal ?? 200;
+        const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+        const DEFAULTS = { etape: [20, 30, 40, 60, 70, 75, 80, 90], quel: [10, 20, 25, 50, 75] };
+        const p = randItem([].concat(params.percents ?? DEFAULTS[mode] ?? [10, 25, 50]));
+        const unit = 100 / gcd(p, 100); // the smallest whole that gives a whole result
+        const lot = params.round === false ? unit : (unit * 10) / gcd(unit, 10);
+        const total = lot * rand(Math.ceil((2 * unit) / lot), Math.max(2, Math.floor(maxTotal / lot)));
+        const value = (total * p) / 100;
+        const bar = (pc, ask) =>
+          visual && unit <= 20
+            ? { svg: { gen: 'percentBarSvg', par: { parts: unit, shaded: (pc * unit) / 100, total, ask } } }
+            : {};
+
+        if (mode === 'grille') {
+          const step = params.step ?? 5;
+          const filled = step * rand(1, Math.floor(99 / step));
+          return {
+            type: 'number-check',
+            title: 'Quel pourcentage de la grille est colorié\u00a0?',
+            body: 'La grille a 100 carreaux. Un carreau, c’est 1 %.',
+            operation: '? %',
+            answers: [String(filled)],
+            svg: { gen: 'percentGridSvg', par: { filled } },
+          };
+        }
+        if (mode === 'etape') {
+          const base = p % 10 === 0 ? 10 : 25;
+          const k = p / base;
+          const unitB = 100 / base,
+            lotB = params.round === false ? unitB : (unitB * 10) / gcd(unitB, 10),
+            t = lotB * rand(1, Math.floor(maxTotal / lotB));
+          return {
+            type: 'number-check',
+            title: `${p} %, c’est ${k} × ${base} %.`,
+            operation: `${p} % de ${t} = ${k} × ? = ?`,
+            answers: [String((t * base) / 100), String((t * p) / 100)],
+            ...(visual
+              ? { svg: { gen: 'percentBarSvg', par: { parts: unitB, shaded: k, total: t, ask: 'value' } } }
+              : {}),
+          };
+        }
+        if (mode === 'cent') {
+          // « ramener à 100 »: a total that divides 100 (or 200), any part — 12 sur 50 = 24/100 = 24 %
+          const t = randItem([].concat(params.totals ?? [10, 20, 25, 50]));
+          let v;
+          do
+            v = rand(2, t - 1); // from 2: « 1 élèves » never
+          while ((100 * v) % t);
+          const pc = (100 * v) / t;
+          if (params.context) {
+            const say = randItem([
+              `Tu réponds juste à <strong>${v}</strong> questions sur <strong>${t}</strong>.`,
+              `<strong>${v}</strong> élèves sur <strong>${t}</strong> ont un chien.`,
+              `<strong>${v}</strong> graines ont germé sur les <strong>${t}</strong> semées.`,
+            ]);
+            return {
+              type: 'number-check',
+              title: 'Quel pourcentage\u00a0?',
+              body: `<p>${say} Quel pourcentage est-ce\u00a0?</p>`,
+              operation: '? %',
+              answers: [String(pc)],
+            };
+          }
+          if (params.hint === false)
+            return {
+              type: 'number-check',
+              title: 'Quel pourcentage\u00a0?',
+              operation: `${v} sur ${t} = ? %`,
+              answers: [String(pc)],
+            };
+          return {
+            type: 'number-check',
+            title:
+              t < 100
+                ? `Sur ${t}\u00a0: multiplie par ${100 / t} pour arriver à 100.`
+                : `Sur ${t}\u00a0: divise par ${t / 100} pour arriver à 100.`,
+            operation: `&frac(${v},${t}) = ?/100 = ? %`,
+            answers: [String(pc), String(pc)],
+          };
+        }
+        if (mode === 'quel')
+          return {
+            type: 'number-check',
+            title: 'Quel pourcentage\u00a0?',
+            operation: `${value} sur ${total} = ? %`,
+            answers: [String(p)],
+            ...bar(p, 'percent'),
+          };
+        if (mode === 'probleme') {
+          const kind = randItem(['solde', 'groupe', 'score']);
+          if (kind === 'solde') {
+            const [obj, verb] = randItem([
+              ['Un vélo', 'Il est soldé'],
+              ['Un jeu de société', 'Il est soldé'],
+              ['Une veste', 'Elle est soldée'],
+              ['Une trottinette', 'Elle est soldée'],
+              ['Un ballon', 'Il est soldé'],
+            ]);
+            return {
+              type: 'number-check',
+              title: 'Les soldes\u00a0: calcule la réduction, puis le prix soldé.',
+              body: `<p>${obj} coûte <strong>${total}\u00a0€</strong>. ${verb} à <strong>−${p}\u00a0%</strong>.</p>`,
+              operation: `${total} € − ? € = ? €`,
+              answers: [String(value), String(total - value)],
+              ...bar(p, 'value'),
+            };
+          }
+          if (kind === 'groupe') {
+            // [start, total word, the part, question, word next to the answer box]
+            const [whole, unitWord, part, question, label] = randItem([
+              ['Dans une école de', 'élèves', 'viennent à vélo', 'Combien d’élèves viennent à vélo', 'élèves'],
+              ['Dans un sac de', 'billes', 'sont rouges', 'Combien de billes sont rouges', 'billes rouges'],
+              ['Dans un verger de', 'arbres', 'sont des pommiers', 'Combien y a-t-il de pommiers', 'pommiers'],
+              [
+                'Dans une course de',
+                'coureurs',
+                'ont un dossard bleu',
+                'Combien de coureurs ont un dossard bleu',
+                'coureurs',
+              ],
+            ]);
+            return {
+              type: 'number-check',
+              title: 'Une part du groupe',
+              body: `<p>${whole} <strong>${total}</strong> ${unitWord}, <strong>${p}\u00a0%</strong> ${part}. ${question}\u00a0?</p>`,
+              operation: `? ${label}`,
+              answers: [String(value)],
+              ...bar(p, 'value'),
+            };
+          }
+          // the number done, then the number of tries (the oracle reads them in that order)
+          const say = randItem([
+            (v, t) => `Tu réponds juste à <strong>${v}</strong> questions sur <strong>${t}</strong>.`,
+            (v, t) => `Tu marques <strong>${v}</strong> tirs au but sur <strong>${t}</strong>.`,
+            (v, t) => `<strong>${v}</strong> graines ont germé sur les <strong>${t}</strong> semées.`,
+          ]);
+          // a score stays small: 10 to 50 tries
+          const tries = lot * rand(Math.max(1, Math.ceil(10 / lot)), Math.max(1, Math.floor(50 / lot)));
+          return {
+            type: 'number-check',
+            title: 'Quel pourcentage\u00a0?',
+            body: `<p>${say((tries * p) / 100, tries)} Quel pourcentage de réussite\u00a0?</p>`,
+            operation: '? %',
+            answers: [String(p)],
+            ...(visual && unit <= 20
+              ? {
+                  svg: {
+                    gen: 'percentBarSvg',
+                    par: { parts: unit, shaded: (p * unit) / 100, total: tries, ask: 'percent' },
+                  },
+                }
+              : {}),
+          };
+        }
+        return {
+          type: 'number-check',
+          title: `Calcule ${p} % du nombre.`,
+          operation: `${p} % de ${total} = ?`,
+          answers: [String(value)],
+          ...bar(p, 'value'),
+        };
+      },
+    },
+
+    // problemesDivision (CE2–CM2): division word problems, the statement in the body, the answer with its unit.
+    //   params: mode — coupe (a length cut by traits de scie / coups de ciseaux: k cuts make k + 1 pieces;
+    //     ask longueur « ? cm » or traits) | intervalles (trees every d m along L m, one at each end: L ÷ d + 1;
+    //     ask nombre or ecart) | ranger (N things in boxes of b; ask exact, pleines, reste, toutes = one more box
+    //     when something is left) | partage (N things for p people; reste « Chacun : ? — reste : ? »; decimal:
+    //     euros shared to the cent) | list;
+    //   visual (false: decoupeSvg on coupe / intervalles), reste (false), ask (by mode),
+    //   coupe: maxPieces (6), step (5), maxPiece (50), meters (false: the length given in m, answer in cm);
+    //   intervalles: maxGaps (10), gaps ([2, 3, 4, 5, 10]); ranger / partage: minB / maxB (2–9), maxQ (10)
+    problemesDivision: {
+      generate(params = {}) {
+        const mode = randItem([].concat(params.mode ?? 'ranger'));
+        const visual = params.visual ?? false;
+        const ask = (dflt) => randItem([].concat(params.ask ?? dflt));
+        const nb = (x) =>
+          String(+x.toFixed(2))
+            .replace('.', ',')
+            .replace(/^\d+/, (w) => w.replace(/\B(?=(\d{3})+$)/g, '\u00a0'));
+        const S = (x) => `<strong>${x}</strong>`;
+        const de = (w) => (/^[aeéiouœ]/i.test(w) ? `d’${w}` : `de ${w}`); // « combien d’élèves »
+
+        if (mode === 'coupe') {
+          const OBJECTS = [
+            ['Une planche', 'la', 'scie'],
+            ['Une baguette de bois', 'la', 'scie'],
+            ['Un tuyau', 'le', 'scie'],
+            ['Une barre de métal', 'la', 'scie'],
+            ['Un ruban', 'le', 'ciseaux'],
+            ['Une ficelle', 'la', 'ciseaux'],
+            ['Un fil de laine', 'le', 'ciseaux'],
+            ['Une corde', 'la', 'ciseaux'],
+          ];
+          const [obj, pro, tool] = randItem(OBJECTS);
+          const cut = (n) =>
+            tool === 'scie' ? `trait${n > 1 ? 's' : ''} de scie` : `coup${n > 1 ? 's' : ''} de ciseaux`;
+          const step = params.step ?? 5;
+          const meters = params.meters ?? false;
+          for (;;) {
+            const k = rand(2, params.maxPieces ?? 6);
+            const piece = step * rand(2, Math.floor((params.maxPiece ?? 50) / step));
+            const L = k * piece;
+            if (meters && L % 10) continue; // « 1,5 m », not « 1,55 m »
+            const len = meters ? `${nb(L / 100)}\u00a0m` : `${nb(L)}\u00a0cm`;
+            const pic = (label) =>
+              visual ? { svg: { gen: 'decoupeSvg', par: { kind: 'coupe', pieces: k, total: len, piece: label } } } : {};
+            if (ask(['longueur', 'traits']) === 'traits')
+              return {
+                type: 'number-check',
+                bodyFirst: true,
+                body: `<p>${obj} mesure ${S(len)}. On ${pro} coupe en morceaux de ${S(`${piece}\u00a0cm`)}.</p><p>Combien de ${cut(2)} faut-il\u00a0?</p>`,
+                operation: `? ${tool === 'scie' ? 'traits' : 'coups'}`,
+                answers: [String(k - 1)],
+                ...pic(`${piece}\u00a0cm`),
+              };
+            return {
+              type: 'number-check',
+              bodyFirst: true,
+              body: `<p>${obj} mesure ${S(len)}. On fait ${S(`${k - 1} ${cut(k - 1)}`)} pour obtenir des morceaux de même longueur.</p><p>Quelle est la longueur d’un morceau\u00a0?</p>`,
+              operation: '? cm',
+              answers: [String(piece)],
+              ...pic('?'),
+            };
+          }
+        }
+
+        if (mode === 'intervalles') {
+          const PLACES = [
+            [
+              'arbres',
+              '🌳',
+              (d) => `On plante un arbre tous les ${d} le long d’une allée`,
+              'une allée',
+              'deux arbres voisins',
+            ],
+            [
+              'drapeaux',
+              '🚩',
+              (d) => `On plante un drapeau tous les ${d} le long d’une piste`,
+              'une piste',
+              'deux drapeaux voisins',
+            ],
+            [
+              'lampadaires',
+              '💡',
+              (d) => `On installe un lampadaire tous les ${d} le long d’une rue`,
+              'une rue',
+              'deux lampadaires voisins',
+            ],
+            [
+              'tournesols',
+              '🌻',
+              (d) => `On sème un tournesol tous les ${d} le long d’une bordure`,
+              'une bordure',
+              'deux tournesols voisins',
+            ],
+          ];
+          const [things, emoji, every, where, pair] = randItem(PLACES);
+          const g = rand(2, params.maxGaps ?? 10);
+          const d = randItem([].concat(params.gaps ?? [2, 3, 4, 5, 10])) * (things === 'lampadaires' ? 10 : 1);
+          const L = g * d;
+          const pic = (label) =>
+            visual
+              ? {
+                  svg: {
+                    gen: 'decoupeSvg',
+                    par: { kind: 'intervalles', pieces: g, total: `${L}\u00a0m`, piece: label, emoji },
+                  },
+                }
+              : {};
+          if (ask(['nombre', 'ecart']) === 'ecart')
+            return {
+              type: 'number-check',
+              bodyFirst: true,
+              body: `<p>Il y a ${S(`${g + 1} ${things}`)} le long d’${where} de ${S(`${L}\u00a0m`)}, un à chaque bout, tous à la même distance.</p><p>Quelle distance y a-t-il entre ${pair}\u00a0?</p>`,
+              operation: '? m',
+              answers: [String(d)],
+              ...pic('?'),
+            };
+          return {
+            type: 'number-check',
+            bodyFirst: true,
+            body: `<p>${every(S(`${d}\u00a0m`))} de ${S(`${L}\u00a0m`)}, avec un à chaque bout.</p><p>Combien de ${things} faut-il\u00a0?</p>`,
+            operation: `? ${things}`,
+            answers: [String(g + 1)],
+            ...pic(`${d}\u00a0m`),
+          };
+        }
+
+        const b = rand(params.minB ?? 2, params.maxB ?? 9);
+        const q = rand(2, params.maxQ ?? 10);
+        const r = params.reste ? rand(1, b - 1) : 0;
+        const N = q * b + r;
+
+        if (mode === 'partage') {
+          if (params.decimal) {
+            for (;;) {
+              const p = randItem([2, 4, 5, 10]);
+              const n = rand(p + 1, params.maxQ ?? 50);
+              if (n % p === 0) continue;
+              return {
+                type: 'number-check',
+                bodyFirst: true,
+                body: `<p>${S(`${p} amis`)} se partagent équitablement ${S(`${n}\u00a0€`)}.</p><p>Combien chacun reçoit-il\u00a0?</p>`,
+                operation: '? €',
+                answers: [...new Set([nb(n / p), (n / p).toFixed(2).replace('.', ',')])], // « 4,1 » or « 4,10 »
+              };
+            }
+          }
+          const GIFTS = [
+            ['billes', 'enfants'],
+            ['cartes', 'joueurs'],
+            ['bonbons', 'amis'],
+            ['autocollants', 'élèves'],
+            ['images', 'enfants'],
+          ];
+          const [things, who] = randItem(GIFTS);
+          const intro = `<p>On partage ${S(`${nb(N)} ${things}`)} équitablement entre ${S(`${b} ${who}`)}.</p>`;
+          if (r)
+            return {
+              type: 'number-check',
+              bodyFirst: true,
+              body: `${intro}<p>Chacun reçoit le plus possible. Combien chacun en reçoit-il, et combien en reste-t-il\u00a0?</p>`,
+              operation: 'Chacun__:__? Reste__:__?',
+              answers: [String(q), String(r)],
+            };
+          return {
+            type: 'number-check',
+            bodyFirst: true,
+            body: `${intro}<p>Combien ${de(things)} chacun reçoit-il\u00a0?</p>`,
+            operation: `? ${things}`,
+            answers: [String(q)],
+          };
+        }
+
+        // ranger: [things, gender (all: tous / toutes), container, full (pleines / pleins), the boxes, verb]
+        const BOXES = [
+          ['balles', 'toutes', 'boîtes', 'pleines', (x) => `dans des boîtes de ${S(`${x} balles`)}`, 'ranger'],
+          ['œufs', 'tous', 'boîtes', 'pleines', (x) => `dans des boîtes de ${S(`${x} œufs`)}`, 'ranger'],
+          [
+            'photos',
+            'toutes',
+            'pages',
+            'pleines',
+            (x) => `dans un album, à raison de ${S(`${x} photos`)} par page`,
+            'coller',
+          ],
+          ['bouteilles', 'toutes', 'packs', 'pleins', (x) => `dans des packs de ${S(`${x} bouteilles`)}`, 'ranger'],
+          ['livres', 'tous', 'étagères', 'pleines', (x) => `sur des étagères de ${S(`${x} livres`)}`, 'ranger'],
+          ['élèves', 'tous', 'minibus', 'pleins', (x) => `dans des minibus de ${S(`${x} places`)}`, 'transporter'],
+        ];
+        const [things, all, cont, full, boxes, verb] = randItem(BOXES.filter((x) => N <= 120 || x[0] !== 'élèves'));
+        const intro =
+          things === 'élèves'
+            ? `<p>${S(`${nb(N)} élèves`)} partent en sortie ${boxes(b)}.</p>`
+            : `<p>On ${verb === 'coller' ? 'colle' : 'range'} ${S(`${nb(N)} ${things}`)} ${boxes(b)}.</p>`;
+        const kind = r ? ask(['pleines', 'reste', 'toutes']) : 'exact';
+        const Q = {
+          exact: [`Combien ${de(cont)} faut-il\u00a0?`, cont, q],
+          pleines: [`Combien ${de(cont)} ${full} obtient-on\u00a0?`, cont, q],
+          reste: [`On remplit le plus de ${cont} possible. Combien ${de(things)} reste-t-il\u00a0?`, things, r],
+          toutes: [`Combien ${de(cont)} faut-il pour ${verb} ${all} les ${things}\u00a0?`, cont, q + 1],
+        }[kind];
+        return {
+          type: 'number-check',
+          bodyFirst: true,
+          body: `${intro}<p>${Q[0]}</p>`,
+          operation: `? ${Q[1]}`,
+          answers: [String(Q[2])],
+        };
+      },
+    },
+
     diviserDecimalParEntier: {
       generate(params = {}) {
         const divisors = params.divisors ?? [2, 3, 4, 5, 6, 7, 8, 9];
@@ -818,7 +1363,8 @@
     //   mult_input   —  ? × p = r        (find input)
     //   div_result   —  r ÷ p = ?        (find result = input)
     //   div_power    —  a × ? = r  or  r ÷ ? = a  (find the power)
-    // params: powers, maxDec, wholeMin, wholeMax, variants (array of hole types)
+    //   mult_power   —  a × ? = r                 (find the power, × only)
+    // params: powers, minDec (0), maxDec, wholeMin, wholeMax, variants (array of hole types)
     multDivTrou: {
       generate(params = {}) {
         const powers = params.powers ?? [10, 100, 1000];
@@ -829,8 +1375,8 @@
 
         const power = powers[rand(0, powers.length - 1)];
         const pExp = Math.round(Math.log10(power));
-        const d = rand(0, maxDec);
-        const whole = rand(wholeMin, wholeMax);
+        const d = rand(Math.min(params.minDec ?? 0, maxDec), maxDec);
+        const whole = rand(d ? wholeMin : Math.max(1, wholeMin), wholeMax); // never « 0 × 10 = 0 »
 
         let decStr = '';
         if (d > 0) {
@@ -870,12 +1416,17 @@
           operation = `${resultStr} \u00f7 ${powerStr} = ?`;
           answers = [inputStr];
         } else {
-          // div_power: randomly show as × or ÷ form
-          const asMult = rand(0, 1);
+          // div_power: randomly show as × or ÷ form; mult_power: always ×
+          const asMult = v === 'mult_power' || rand(0, 1);
           operation = asMult ? `${inputStr} × ? = ${resultStr}` : `${resultStr} \u00f7 ? = ${inputStr}`;
-          answers = [String(power), powerStr];
+          answers = [...new Set([String(power), powerStr])]; // « 1000 » or « 1 000 »
         }
 
+        // digit groups by three (« 1 000 » everywhere), and __ glue: a line breaks only next to the blank
+        operation = operation
+          .replace(/(?<![\d,])\d{4,}/g, (w) => w.replace(/\B(?=(\d{3})+$)/g, ' '))
+          .replace(/(\d)[\s\u202f\u00a0](?=\d)/g, '$1 ')
+          .replace(/[ \u202f\u00a0]/g, '__');
         return { type: 'number-check', operation, answers };
       },
     },

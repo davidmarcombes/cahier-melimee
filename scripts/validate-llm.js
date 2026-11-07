@@ -242,8 +242,20 @@ function buildPrompt({ data, body }) {
     case 'problem':
     case 'number-check': {
       const bodyText = strip(data.body || body || '');
-      const operationText = data.operation !== undefined ? String(data.operation) : null;
-      const answers = data.answers ? data.answers.join(' ou ') : fmt(data.answer);
+      const operationText =
+        data.operation !== undefined
+          ? String(data.operation)
+              .replace(/&box\(([^)]*)\)/g, '$1')
+              .replace(/__/g, ' ')
+          : null;
+      // several ? in one chain (« 5 + 3 × 4 = 5 + ? = ? »): one answer per box, in order — not alternatives
+      const holes = operationText ? (operationText.match(/\?/g) || []).length : 0;
+      const answers =
+        data.answers && holes > 1
+          ? data.answers.map((a, i) => `case ${i + 1} : ${a}`).join(' ; ') + ' (une réponse par ?, dans l’ordre)'
+          : data.answers
+            ? data.answers.join(' ou ')
+            : fmt(data.answer);
       // body is the instruction ("Arrondis à la dizaine..."), operation is the actual number/expression
       const instruction = strip(data.title || body || '');
       return [
@@ -337,8 +349,18 @@ function buildPrompt({ data, body }) {
     }
 
     case 'sequence': {
-      const given = (data.given || []).join(', ');
-      const answers = (data.answers || []).join(', ');
+      // cells (`items`: values and blanks, the blanks answered in order) or the older given / answers
+      const sq = data.sequence || data;
+      const items = Array.isArray(sq.items) ? sq.items : null;
+      const given = items
+        ? items.map((it) => (it.blank ? '?' : strip(String(it.value)))).join(' ; ')
+        : (sq.given || []).join(', ');
+      const answers = items
+        ? items
+            .filter((it) => it.blank)
+            .map((it, i) => `case ${i + 1} : ${it.answer}`)
+            .join(' ; ')
+        : (sq.answers || []).join(', ');
       return [
         `Type: suite de nombres`,
         title && `Contexte: ${title}`,

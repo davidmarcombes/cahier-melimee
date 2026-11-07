@@ -2,7 +2,7 @@
  * Per-generator answer checks for the oracle (scripts/check-answers.js), tested by
  * tests/gen-checks.test.js on real draws and on corrupted answers.
  */
-const { Unparseable, clean, num, same, fmt, checkEquation } = require('./arith.js');
+const { Unparseable, clean, tokenize, evaluate, num, same, fmt, checkEquation } = require('./arith.js');
 const { boardProblems } = require('./grid-board.js');
 const { readShape, shapeNames, turned, targetOf, readAngle, angleKind } = require('./shapes.js');
 const { readChance, readEvent, tileColour, countOf } = require('./hasard.js');
@@ -646,7 +646,262 @@ const GEN_CHECKS = {
     if (m[4] && !same(num(e.answers[0]) / Number(m[4]), v)) return `${n}/${d} ≠ ${e.answers[0]}/${m[4]}`;
     return same(num(e.answers[e.answers.length - 1]), v) ? null : `${n}/${d} ≠ ${e.answers.at(-1)}`;
   },
+  // « 5 + 3 × 4 = ? »: each line of a chain worth the first one (holes filled in order), whole and ≥ 0;
+  // a direct or boxed line must give another result from left to right. mcq: only the answer gives the title
+  calculPriorites: (e) => {
+    const val = (s, holes = []) =>
+      evaluate(tokenize(s.replace(/<[^>]*>/g, '').replace(/&box\(([^)]*)\)/g, '$1')), holes);
+    if (e.type === 'mcq') {
+      const target = Number((e.title.match(/donne (\d+)/) || [])[1]);
+      const hits = e.mcqChoices.map((c, i) => (same(val(c), target) ? i : -1)).filter((i) => i >= 0);
+      return hits.length === 1 && hits[0] === e.mcqAnswer ? null : `${target}: choices ${hits.join(', ')} fit`;
+    }
+    const answers = e.answers.map(num);
+    let h = 0;
+    for (const eq of e.operation.split(' et ')) {
+      const [first, ...rest] = eq.split(' = ');
+      const v = val(first);
+      if (!Number.isInteger(v) || v < 0) return `${first} = ${v}`;
+      for (const seg of rest) {
+        const n = (seg.match(/\?/g) || []).length;
+        if (!same(val(seg, answers.slice(h, h + n)), v)) return `${first} ≠ ${seg} with ${answers.slice(h, h + n)}`;
+        h += n;
+      }
+      if (!e.operation.includes(' et ')) {
+        const ltr = first
+          .replace(/&box\(([^)]*)\)/g, '$1')
+          .split(' ')
+          .reduce((acc, w, i, ws) => (i % 2 ? `(${acc} ${w} ${ws[i + 1]})` : i ? acc : w), '');
+        if (same(val(ltr), v)) return `${first}: left to right gives the same result`;
+      }
+    }
+    return h === answers.length ? null : `${answers.length} answers for ${h} holes`;
+  },
+  // « 25 % de 80 = ? », « 20 sur 80 = ? % », grid « ? % », soldes / group / score problems: every answer
+  // recomputed from the text, whole; the bar (whole = 100 %) or the grid must show the same numbers
+  pourcentages: (e) => {
+    const op = clean(e.operation);
+    const strong = [...String(e.body || '').matchAll(/<strong>−?(\d+)(?:[ \u00a0][€%])?<\/strong>/g)].map((m) =>
+      Number(m[1])
+    );
+    const a = e.answers.map(num);
+    let want, pc, total, base;
+    let m;
+    if (op === '? %' && e.svg && e.svg.gen === 'percentGridSvg') {
+      want = [e.svg.par.filled];
+    } else if ((m = op.match(/^(\d+) % de (\d+) = \?$/))) {
+      [pc, total] = [Number(m[1]), Number(m[2])];
+      want = [(pc * total) / 100];
+    } else if ((m = op.match(/^(\d+) % de (\d+) = (\d+) × \? = \?$/))) {
+      // the base percent is in the title: « 30 %, c’est 3 × 10 % »
+      const t = clean(e.title).match(/^(\d+) %, c’est (\d+) × (\d+) %\.$/);
+      [pc, total] = [Number(m[1]), Number(m[2])];
+      if (!t || Number(t[1]) !== pc || t[2] !== m[3] || Number(t[2]) * Number(t[3]) !== pc)
+        return `title « ${e.title} »`;
+      base = Number(t[3]);
+      want = [(base * total) / 100, (pc * total) / 100];
+    } else if ((m = op.match(/^&frac\((\d+),(\d+)\) = \?\/100 = \? %$/))) {
+      total = Number(m[2]);
+      pc = (100 * Number(m[1])) / total;
+      want = [pc, pc];
+    } else if ((m = op.match(/^(\d+) sur (\d+) = \? %$/))) {
+      total = Number(m[2]);
+      pc = (100 * Number(m[1])) / total;
+      want = [pc];
+    } else if ((m = op.match(/^(\d+) € − \? € = \? €$/))) {
+      [total, pc] = strong;
+      if (Number(m[1]) !== total) return `${op}: price ${total}`;
+      want = [(pc * total) / 100, total - (pc * total) / 100];
+    } else if (op === '? %') {
+      const [v, t] = strong;
+      [pc, total] = [(100 * v) / t, t];
+      want = [pc];
+    } else if (/^\? [^\d%€?]+$/.test(op)) {
+      [total, pc] = strong;
+      want = [(pc * total) / 100];
+    } else throw new Unparseable(`operation ${op}`);
+    if (!want.every(Number.isInteger)) return `${op}: ${want.join(' / ')} not whole`;
+    if (want.length !== a.length || want.some((w, i) => !same(w, a[i])))
+      return `${op}: ${want.join(' / ')}, declared ${e.answers.join(' / ')}`;
+    if (e.svg && e.svg.gen === 'percentBarSvg') {
+      // etape: one part = the base percent, the colour = pc; else the colour alone = pc
+      const { parts, shaded, total: t } = e.svg.par;
+      if (t !== total || !same((100 * shaded) / parts, pc) || (base && !same(100 / parts, base)))
+        return `bar ${shaded}/${parts} of ${t} for ${pc} % of ${total}`;
+    }
+    return null;
+  },
   // « ? < 33,47 < ? »: 33,46 and 33,48 — one step of the last decimal, written with as many decimals
+  // Estimates: each term rounded to the place named in the title (« à la dizaine »…), then computed.
+  // « 38,7 + 21,2 ≈ ? + ? = ? » / « … ≈ ? » / a problem « ≈ ? km » (sum when « en tout ») / mcq: the
+  // order of magnitude, « Est-ce possible ? » (Oui iff the result shown is exact), « as-tu assez ? »
+  estimerSommeDiff: (e) => {
+    const text = clean(`${e.title} ${e.body || ''}`);
+    const PLACES = { 'à l’unité': 1, 'à la dizaine': 10, 'à la centaine': 100, 'au millier': 1000 };
+    const place = Object.entries(PLACES).find(([k]) => text.includes(k))?.[1];
+    const round = (x) => Math.round(x / place) * place;
+    const parts = (expr) => clean(expr).split(/ ([+−]) /);
+    const value = (p, f = (x) => x) =>
+      p.reduce((t, w, i) => (i % 2 ? t : i ? (p[i - 1] === '+' ? t + f(num(w)) : t - f(num(w))) : f(num(w))), 0);
+    const strong = [...String(e.body || '').matchAll(/<strong>([^<]+)<\/strong>/g)].map((m) =>
+      num(clean(m[1]).replace(/ [^\d\s].*$/, ''))
+    );
+    if (e.type === 'mcq') {
+      const said = e.mcqChoices[e.mcqAnswer];
+      if (/assez/.test(text)) {
+        const [budget, ...prices] = strong;
+        const sum = prices.reduce((a, b) => a + b, 0);
+        const est = prices.reduce((a, b) => a + Math.round(b), 0);
+        if (sum <= budget !== est <= budget) return `the rounded prices (${est}) and the exact sum (${sum}) disagree`;
+        return said === (sum <= budget ? 'Oui' : 'Non') ? null : `${sum} € for ${budget} €: declared ${said}`;
+      }
+      if (/possible/.test(text)) {
+        const [expr, shown] = clean(e.operation).split(' = ');
+        const p = parts(expr);
+        const exact = value(p);
+        const ok = same(num(shown), exact);
+        if (!ok && Math.abs(num(shown) - exact) < p.length * place) return `${shown} too close to ${exact}`;
+        return said === (ok ? 'Oui' : 'Non') ? null : `${expr} = ${exact}, shown ${shown}: declared ${said}`;
+      }
+      // the order of magnitude: the choice closest to the exact result, by a factor
+      const exact = value(parts(e.operation));
+      const gap = (c) => Math.abs(Math.log10(num(c) / exact));
+      const best = e.mcqChoices.reduce((b, c) => (gap(c) < gap(b) ? c : b));
+      if (gap(best) > Math.log10(2)) return `no choice near ${exact}`;
+      return said === best ? null : `${exact}: ${best} is nearest, declared ${said}`;
+    }
+    if (!place) throw new Unparseable('no rounding place');
+    const a = e.answers.map(num);
+    const op = clean(e.operation);
+    if (op.startsWith('≈')) {
+      if (strong.length !== 2) throw new Unparseable('two values expected');
+      const est = /en tout/.test(text) ? round(strong[0]) + round(strong[1]) : round(strong[0]) - round(strong[1]);
+      return same(a[0], est) ? null : `≈ ${est}, declared ${e.answers[0]}`;
+    }
+    const [left, right] = op.split(' ≈ ');
+    const p = parts(left);
+    const want = [];
+    if (right !== '?') {
+      const holes = right.split(' = ')[0];
+      if (holes !== p.map((w, i) => (i % 2 ? w : '?')).join(' ')) return `the rounded line « ${holes} » ≠ « ${left} »`;
+      want.push(...p.filter((w, i) => i % 2 === 0).map((w) => round(num(w))));
+    }
+    want.push(value(p, round));
+    if (value(p) <= 0 || want.at(-1) <= 0) return 'a result below 0';
+    if (want.length !== a.length || want.some((w, i) => !same(w, a[i])))
+      return `want ${want.join(', ')}, declared ${e.answers.join(', ')}`;
+    return null;
+  },
+  // Division word problems, read from the <strong> values of the statement:
+  // cuts (k cuts → k + 1 pieces; a length in m answered in cm), trees « un à chaque bout » (L ÷ d + 1),
+  // sharing (« Chacun : ? — reste : ? », euros to the cent), boxes (pleines / reste / toutes = one more)
+  problemesDivision: (e) => {
+    const body = clean(e.body);
+    const strong = [...String(e.body || '').matchAll(/<strong>([^<]+)<\/strong>/g)].map((m) => clean(m[1]));
+    const val = (s) => {
+      const m = String(s ?? '').match(/^\d[\d ]*(?:,\d+)?/);
+      if (!m) throw new Unparseable(`no number in « ${s} »`);
+      return num(m[0].trim());
+    };
+    const [x, y] = strong.map(val);
+    const op = clean(e.operation);
+    let want;
+    if (/scie|ciseaux/.test(body)) {
+      const L = / m$/.test(strong[0]) ? Math.round(x * 100) : x;
+      want = op === '? cm' ? [L / (y + 1)] : [L / y - 1];
+    } else if (/chaque bout/.test(body)) {
+      want = op === '? m' ? [y / (x - 1)] : [y / x + 1];
+    } else if (/partag/.test(body)) {
+      if (op === '? €') want = [y / x];
+      else if (/reste/i.test(op)) want = [Math.floor(x / y), x % y];
+      else want = [x / y];
+    } else {
+      const [q, r] = [Math.floor(x / y), x % y];
+      if (/reste-t-il/.test(body)) want = [r];
+      else if (/obtient-on/.test(body)) want = [q];
+      else if (/faut-il pour/.test(body)) want = [Math.ceil(x / y)];
+      else if (r) return `${x} ÷ ${y} leaves ${r}: « faut-il ? » is ambiguous`;
+      else want = [q];
+    }
+    if (op !== '? €' && want.some((w) => !Number.isInteger(w) || w < 0))
+      return `not a whole answer: ${want.join(', ')}`;
+    const a = e.answers.map(num);
+    const ok =
+      op === '? €' ? a.every((v) => same(v, want[0])) : a.length === want.length && a.every((v, i) => same(v, want[i]));
+    return ok ? null : `want ${want.join(', ')}, declared ${e.answers.join(', ')}`;
+  },
+  // « Si 9 × 3 = 27, alors… » + « 27 ÷ ? = 9 »: the given fact holds, the equation holds with the answer,
+  // and it is the same family (its numbers are the fact's, the dividend and quotient maybe × 10 / × 100)
+  siAlorsDivision: (e) => {
+    const m = clean(e.title).match(/^Si (\d[\d ]*) ([×÷]) (\d+) = (\d[\d ]*), alors…$/);
+    if (!m) throw new Unparseable(`title « ${e.title} »`);
+    const [p, q, r] = [num(m[1]), num(m[3]), num(m[4])];
+    if (m[2] === '×' ? p * q !== r : p / q !== r) return `the fact « ${clean(e.title)} » is false`;
+    const bad = checkEquation(e.operation, e.answers);
+    if (bad) return bad;
+    const filled = clean(e.operation).replace('?', e.answers[0]);
+    const n = filled.split(/ [×÷=] /).map(num);
+    const family = [p, q, r];
+    const ok = [1, 10, 100].some((k) =>
+      n.every((v, i) => family.includes(v) || (i !== 1 && /÷/.test(filled) && family.includes(v / k)))
+    );
+    return ok ? null : `« ${filled} » is not from the fact « ${clean(e.title)} »`;
+  },
+  // Sequences « + / − a step » or « × / ÷ a ratio », read from what is shown: the run (cells, the line in
+  // the body or the operation) must follow one rule, and the answer is the next / missing / p-th term,
+  // the rule's number, or the only choice that fits the whole run
+  suitesRegle: (e) => {
+    const terms = (s) =>
+      clean(s)
+        .split(' ; ')
+        .filter((w) => w !== '…')
+        .map(num);
+    const near = (x, y) => Math.abs(x - y) < 1e-9;
+    const rule = (xs) => {
+      const d = xs[1] - xs[0];
+      if (xs.every((v, i) => !i || near(v - xs[i - 1], d))) return { d };
+      const r = xs[1] / xs[0];
+      if (xs.every((v, i) => !i || near(v / xs[i - 1], r))) return { r };
+      return null;
+    };
+    if (e.type === 'sequence') {
+      const xs = e.sequence.items.map((it) => num(clean(it.value ?? it.answer)));
+      return rule(xs) ? null : `no rule fits ${xs.join(' ; ')}`;
+    }
+    const line = String(e.body || '').match(/<p[^>]*>([^<]*)<\/p>/)?.[1];
+    if (e.type === 'mcq') {
+      const xs = terms(e.operation);
+      const fits = (c) => {
+        const [op, k] = [c[0], num(c.slice(2))];
+        return xs.every(
+          (v, i) =>
+            !i || near({ '+': xs[i - 1] + k, '−': xs[i - 1] - k, '×': xs[i - 1] * k, '÷': xs[i - 1] / k }[op], v)
+        );
+      };
+      const good = e.mcqChoices.filter(fits);
+      if (good.length !== 1) return `${good.length} choices fit ${xs.join(' ; ')}`;
+      return e.mcqChoices[e.mcqAnswer] === good[0]
+        ? null
+        : `« ${good[0]} » fits, declared « ${e.mcqChoices[e.mcqAnswer]} »`;
+    }
+    const a = num(e.answers[0]);
+    const op = clean(e.operation);
+    let m;
+    if ((m = op.match(/^(\d+)ᵉ nombre : \?$/))) {
+      const xs = terms(line);
+      const r = rule(xs);
+      if (!r || r.d === undefined) return 'not a + / − run';
+      return near(a, xs[0] + (Number(m[1]) - 1) * r.d) ? null : `term ${m[1]} is ${xs[0] + (Number(m[1]) - 1) * r.d}`;
+    }
+    if ((m = op.match(/^On (ajoute|enlève|multiplie par|divise par) \?$/))) {
+      const r = rule(terms(line));
+      if (!r) return 'no rule fits the run';
+      const want = { ajoute: r.d, enlève: -r.d, 'multiplie par': r.r, 'divise par': 1 / r.r }[m[1]];
+      return want > 0 && near(a, want) ? null : `want ${want}, declared ${e.answers[0]}`;
+    }
+    const xs = terms(op.replace('?', e.answers[0]));
+    return rule(xs) ? null : `no rule fits ${xs.join(' ; ')}`;
+  },
   precedentSuivantDecimal: (e, params = {}) => {
     const { number, answers, mask } = e.bounding;
     const k = (number.split(',')[1] || '').length;

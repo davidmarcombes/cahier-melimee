@@ -80,6 +80,93 @@ function mathGridSvg(cols, rows, filled, color = 'var(--p)') {
   );
 }
 
+// Hundred grid for percentages: 10 × 10 squares, `filled` coloured row by row; a thicker line cuts it
+// in four blocks of 25 so the squares can be counted by 5, 10 and 25.
+function percentGridSvg(filled) {
+  const s = 22,
+    X = 3;
+  let res = '';
+  for (let i = 0; i < 100; i++)
+    res += `<rect x="${X + (i % 10) * s}" y="${X + Math.floor(i / 10) * s}" width="${s}" height="${s}" fill="${i < filled ? 'var(--p)' : 'var(--sf,#fff)'}" fill-opacity="${i < filled ? 0.55 : 1}" stroke="var(--cs)" stroke-width="1"/>`;
+  const mid = X + 5 * s;
+  res +=
+    `<rect x="${X}" y="${X}" width="${10 * s}" height="${10 * s}" fill="none" stroke="var(--ct)" stroke-width="2"/>` +
+    `<line x1="${mid}" y1="${X}" x2="${mid}" y2="${X + 10 * s}" stroke="var(--ct)" stroke-width="2"/>` +
+    `<line x1="${X}" y1="${mid}" x2="${X + 10 * s}" y2="${mid}" stroke="var(--ct)" stroke-width="2"/>`;
+  return SVG.tag(10 * s + 2 * X, 10 * s + 2 * X, res, 'role="img" aria-label="Grille de 100 carreaux"');
+}
+
+// Percentage bar: one bar (the whole = 100 % = total) cut in `parts` equal parts, `shaded` coloured.
+// Percents above, quantities below; ask 'value' puts « ? » under the end of the colour,
+// 'percent' puts it above (the quantity is written), 'none' writes both.
+function percentBarSvg(parts, shaded, total, ask = 'value') {
+  const f = SVG.f,
+    font = `font-family="${SVG.font}" font-weight="700" text-anchor="middle"`;
+  const W = 300,
+    X = 30,
+    Y = 38,
+    H = 36,
+    w = W / parts;
+  const p = (100 * shaded) / parts,
+    v = (total * shaded) / parts;
+  const q = (x, y, txt, size = 18, color = 'var(--ct)') =>
+    `<text x="${f(x)}" y="${y}" font-size="${size}" ${font} fill="${color}">${txt}</text>`;
+  let s = `<rect x="${X}" y="${Y}" width="${f(w * shaded)}" height="${H}" fill="var(--p)" fill-opacity="0.45"/>`;
+  s += `<rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="none" stroke="var(--ct)" stroke-width="2"/>`;
+  for (let i = 1; i < parts; i++)
+    s += `<line x1="${f(X + i * w)}" y1="${Y}" x2="${f(X + i * w)}" y2="${Y + H}" stroke="var(--ct)" stroke-width="1.2"/>`;
+  const xe = X + shaded * w;
+  // every percent when there are few parts, else only 0 and 100 — none too close to the end of the colour
+  for (let i = 0; i <= parts; i++) {
+    const x = X + i * w;
+    if ((parts <= 5 || i === 0 || i === parts) && Math.abs(x - xe) >= 50)
+      s += q(x, Y - 11, `${(100 * i) / parts} %`, 16, 'var(--cs)');
+  }
+  s += `<line x1="${f(xe)}" y1="${Y - 7}" x2="${f(xe)}" y2="${Y + H + 7}" stroke="var(--a)" stroke-width="3"/>`;
+  s += ask === 'percent' ? q(xe, Y - 10, '?', 24, 'var(--a)') : q(xe, Y - 11, `${p} %`, 20, 'var(--a)');
+  // quantities: 0 left out when it would touch the end of the colour, the total one row lower
+  const low = X + W - xe < 40;
+  const yb = Y + H + 26;
+  if (xe - X >= 30) s += q(X, yb, '0');
+  s += q(X + W, low ? yb + 22 : yb, total);
+  s += ask === 'value' ? q(xe, yb + 2, '?', 24, 'var(--a)') : q(xe, yb, String(v).replace('.', ','), 20, 'var(--a)');
+  return `<svg viewBox="0 0 ${W + 2 * X} ${yb + (low ? 30 : 10)}" width="${W + 2 * X}" style="max-width:100%;height:auto" role="img" aria-label="Barre de pourcentage">${s}</svg>`;
+}
+
+// Cutting / spacing picture. kind 'coupe': a bar cut in `pieces` equal pieces by red cut lines;
+// kind 'intervalles': a path with an emoji (🌳…) at both ends and between `pieces` equal gaps.
+// `total` (« 200 cm ») over the whole length; `piece` (« 40 cm » or « ? ») under the first piece.
+function decoupeSvg(kind, pieces, total, piece, emoji = '🌳') {
+  const f = SVG.f,
+    font = `font-family="${SVG.font}" font-weight="700" text-anchor="middle"`;
+  const W = 300,
+    X = 30,
+    Y = 52,
+    w = W / pieces;
+  const q = (x, y, txt, size = 18, color = 'var(--ct)') =>
+    `<text x="${f(x)}" y="${y}" font-size="${size}" ${font} fill="${color}">${txt}</text>`;
+  // the total length: a double arrow above
+  let s = `<line x1="${X}" y1="18" x2="${X + W}" y2="18" stroke="var(--cs)" stroke-width="1.5"/>`;
+  s += `<path d="M${X + 7} 13 L${X} 18 L${X + 7} 23 M${X + W - 7} 13 L${X + W} 18 L${X + W - 7} 23" fill="none" stroke="var(--cs)" stroke-width="1.5"/>`;
+  s += `<rect x="${f(X + W / 2 - 42)}" y="6" width="84" height="22" fill="var(--sf)"/>${q(X + W / 2, 24, total)}`;
+  let yb;
+  if (kind === 'intervalles') {
+    s += `<line x1="${X}" y1="${Y + 22}" x2="${X + W}" y2="${Y + 22}" stroke="var(--cs)" stroke-width="3" stroke-linecap="round"/>`;
+    for (let i = 0; i <= pieces; i++)
+      s += `<text x="${f(X + i * w)}" y="${Y + 22}" font-size="${pieces > 8 ? 20 : 26}" text-anchor="middle">${emoji}</text>`;
+    yb = Y + 46;
+  } else {
+    s += `<rect x="${X}" y="${Y}" width="${W}" height="26" rx="3" fill="var(--p)" fill-opacity="0.35" stroke="var(--ct)" stroke-width="2"/>`;
+    for (let i = 1; i < pieces; i++)
+      s += `<line x1="${f(X + i * w)}" y1="${Y - 8}" x2="${f(X + i * w)}" y2="${Y + 34}" stroke="var(--a)" stroke-width="3" stroke-dasharray="5 3"/>`;
+    yb = Y + 52;
+  }
+  // the first piece / gap, measured below
+  s += `<path d="M${X} ${yb - 14} v6 H${f(X + w)} v-6" fill="none" stroke="var(--a)" stroke-width="2"/>`;
+  s += q(X + w / 2, yb + 12, piece, piece === '?' ? 24 : 18, 'var(--a)');
+  return `<svg viewBox="0 0 ${W + 2 * X} ${yb + 20}" width="${W + 2 * X}" style="max-width:100%;height:auto" role="img" aria-label="${kind === 'intervalles' ? 'Allée' : 'Découpage'}">${s}</svg>`;
+}
+
 function longueursSvg(objects) {
   if (!Array.isArray(objects) || objects.length < 2 || objects.length > 3) {
     throw new TypeError('longueursSvg expects two or three objects');
