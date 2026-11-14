@@ -534,7 +534,7 @@ Le problème n'est pas un énoncé court, mais une suite de scènes (type BD) o�
 🔥 ✅|Ratio Tables (informelles)|Pays-Bas|Tableau extensible (ajouter colonnes/opérations entre colonnes)|
 🔥 ✅|Comparaison d'expressions (< = >) sans calculer|Russie|Insérer le signe  vérifier le raisonnement |
 🔥 ✅|Familles de faits (4 équations)|USA / UK|Construire / compléter les 4 relations associées|
-🔥 ✅|Visualisation de cubes (3D)|Corée du Sud|Manipulateur 3D, vue rayons X, saisie des vues 2D|
+🔥|Visualisation de cubes (3D)|Corée du Sud|Manipulateur 3D, vue rayons X, saisie des vues 2D — pas encore fait (voir exercise-types-landscape.md)|
 🔥 ✅|Zahlenmauer (pyramide de nombres)|Allemagne|Cases cliquables, reconstruction montante/descendante
 🔥 ✅|Vrai/Faux équations|USA / UK|Bouton binaire + explication du signe =|
 🔥|Labyrinthe à contraintes|Hongrie|Chemin cliquable avec règles logiques (ex: uniquement multiples de 3)|

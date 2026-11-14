@@ -1,0 +1,55 @@
+{# hundred-board — the tableau des nombres, rows of ten. find: tap the mystery number (clues, or arrows from a
+   number: ↓ +10, → +1); fill: type the numbers that are missing (whole board, or a piece of it: only
+   cur.hb.cells drawn); color: tap the numbers of a pattern. Data: cur.hb, cells from the hbGrid getter #}
+<div x-show="cur.type === 'hundred-board'" class="mb-6">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle mb-3"></div>
+  <template x-if="cur.hb">
+    <div class="flex flex-col items-center gap-4">
+      <ul x-show="cur.hb.clues" class="js-hb-clues flex flex-col gap-1 px-4 py-3 rounded-xl border-2 border-amber-300 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/20 text-base font-semibold text-content-default max-w-md">
+        <template x-for="(c, k) in cur.hb.clues || []" :key="currentIndex + '-c' + k">
+          <li class="flex gap-2"><span aria-hidden="true">🔎</span><span x-text="c.text"></span></li>
+        </template>
+      </ul>
+      <template x-if="cur.hb.path">
+        <div class="js-hb-path flex flex-col items-center gap-1">
+          <p class="text-base font-semibold text-content-default text-center" x-text="`Pars de ${cur.hb.from}. Suis les flèches :`"></p>
+          <p class="text-4xl font-black text-primary-600 dark:text-primary-400 tracking-widest" :aria-label="cur.hb.text" x-text="cur.hb.path.map((m) => ({ d: '↓', u: '↑', r: '→', l: '←' })[m]).join(' ')"></p>
+          <p class="text-xs text-content-subtle" x-text="[...new Set(cur.hb.path)].map((m) => ({ d: '↓ = 10 de plus', u: '↑ = 10 de moins', r: '→ = 1 de plus', l: '← = 1 de moins' })[m]).join(' · ')"></p>
+        </div>
+      </template>
+      <p x-show="cur.hb.mode === 'color'" class="js-hb-rule text-base font-semibold text-content-default text-center text-balance max-w-md" x-text="cur.hb.text"></p>
+
+      <div class="js-hb grid"
+        :class="hbGrid.piece ? 'gap-1' : 'gap-0.5 p-1 rounded-xl bg-slate-300 dark:bg-slate-600 w-full max-w-md'"
+        :style="`grid-template-columns: repeat(${hbGrid.cols}, ${hbGrid.piece ? '3.5rem' : 'minmax(0, 1fr)'})`">
+        <template x-for="cell in hbGrid.cells" :key="currentIndex + '-' + cell.n">
+          <div class="aspect-square" :class="cell.drawn && hbGrid.piece ? 'rounded-md border-2 border-slate-300 dark:border-slate-600 overflow-hidden' : ''">
+            <template x-if="cell.drawn && cell.blank >= 0">
+              <input type="text" inputmode="numeric" autocomplete="off" :aria-label="`Case ${cell.r + 1}, ${cell.c + 1}`"
+                :value="hbInputs[cell.blank]"
+                @input="hbInputs = hbInputs.map((v, k) => (k === cell.blank ? $event.target.value : v)); hbHint = ''"
+                @keydown.enter="enterField($el, cell.blank)" :disabled="solved"
+                class="js-hb-input w-full h-full rounded-sm border-2 border-primary-400 bg-white dark:bg-slate-800 text-center font-bold tabular-nums text-primary-700 dark:text-primary-300 p-0 focus:outline-none focus:border-primary-600"
+                :class="hbGrid.piece ? 'text-lg' : 'text-[0.7rem] sm:text-sm'">
+            </template>
+            <template x-if="cell.drawn && cell.blank < 0">
+              <button type="button" @click="hbTap(cell.n)" :disabled="solved || cur.hb.mode === 'fill'"
+                :aria-label="cell.written ? String(cell.n) : `Case ${cell.r + 1}, ${cell.c + 1}`"
+                :aria-pressed="cur.hb.mode === 'fill' ? null : String(hbPick === cell.n || hbColored.includes(cell.n))"
+                class="js-hb-cell w-full h-full rounded-sm flex items-center justify-center font-bold tabular-nums transition-colors"
+                :class="[hbGrid.piece ? 'text-lg' : 'text-[0.7rem] sm:text-sm', hbCellClass(cell.n)]"
+                x-text="cell.written || (solved && cell.n === cur.hb.target) ? cell.n : ''"></button>
+            </template>
+          </div>
+        </template>
+      </div>
+
+      <button type="button" @click="check()" :disabled="solved || !hbReady"
+        class="px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+        :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+        <span x-show="!solved">Vérifier</span>
+        <span x-show="solved">Bravo !</span>
+      </button>
+    </div>
+  </template>
+</div>

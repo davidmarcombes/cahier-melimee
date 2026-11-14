@@ -1,0 +1,33 @@
+{# ten-frame — one or two boxes of 10: tap an empty cell to put a token in, a token to take it out.
+   Red tokens were there at the start (one more / one less); the model above shows the number (montre) #}
+<div x-show="cur.type === 'ten-frame'" class="mb-6">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle mb-3"></div>
+  <template x-if="cur.tf && cur.tf.show">
+    <div class="js-tf-model flex justify-center mb-4">
+      <span x-show="cur.tf.show.digit != null" class="text-6xl font-black text-primary-600 dark:text-primary-400" x-text="cur.tf.show.digit"></span>
+      <span x-show="cur.tf.show.dots != null" class="w-24" x-html="cur.tf.show.dots != null ? diceSvg(cur.tf.show.dots, 96) : ''"></span>
+    </div>
+  </template>
+  <div class="flex flex-col items-center gap-3">
+    <template x-for="f in (cur.tf ? cur.tf.frames || 1 : 0)" :key="currentIndex + '-f' + f">
+      <div class="js-tf grid grid-cols-5 gap-1 p-1.5 rounded-xl border-4 border-slate-500 dark:border-slate-400 bg-surface-subtle w-full max-w-sm">
+        <template x-for="k in 10" :key="currentIndex + '-' + f + '-' + k">
+          <button type="button" @click="tfTap((f - 1) * 10 + k - 1)" :disabled="solved"
+            class="js-tf-cell aspect-square rounded-md border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 flex items-center justify-center hover:border-primary-400"
+            :aria-label="tfCells[(f - 1) * 10 + k - 1] ? 'Jeton' : 'Case vide'">
+            <span x-show="tfCells[(f - 1) * 10 + k - 1]" class="w-3/4 h-3/4 rounded-full border-2"
+              :class="tfCells[(f - 1) * 10 + k - 1] === 1 ? 'bg-red-500 border-red-800' : 'bg-primary-500 border-primary-800'"></span>
+          </button>
+        </template>
+      </div>
+    </template>
+  </div>
+  <div class="flex justify-center mt-4">
+    <button type="button" @click="check()" :disabled="solved" aria-label="Vérifier"
+      class="px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+      :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
+      <span x-show="!solved" :class="kid ? 'text-3xl' : ''" x-text="kid ? '✅' : 'Vérifier'"></span>
+      <span x-show="solved" :class="kid ? 'text-3xl' : ''" x-text="kid ? '🎉' : 'Bravo !'"></span>
+    </button>
+  </div>
+</div>

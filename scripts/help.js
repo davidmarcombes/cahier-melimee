@@ -29,6 +29,8 @@ const desc = {
   'generate:maths': 'Generate math exercises',
   'prompt:problems': 'Build an LLM prompt that writes word problems (--level --classes --count --type)',
   'generate:report': 'Generate exercises coverage report (CSV)',
+  'coverage:programme':
+    'Programme coverage map: items with series, by level, section, strand and type (--level=, --gaps, --unmapped, --series=)',
   'generate:commit': 'Pre-commit: assign IDs + rebuild report + sync validation hashes',
   'validate:config': 'Validate project config',
   'validate:exercises': 'Validate exercise YAML files',

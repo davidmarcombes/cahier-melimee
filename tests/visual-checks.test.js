@@ -28,6 +28,11 @@ const CORRUPT = {
   compterGS: plusOne,
   compterObjets: plusOne,
   complementA10Emoji: plusOne,
+  sousLaTache: plusOne,
+  lireMesure: (e) => ({
+    ...e,
+    answers: [String(Math.round((e.thermometer.markers[0].value + e.thermometer.step) * 1e6) / 1e6).replace('.', ',')],
+  }),
   comparerGroupes: (e) => ({ ...e, cmpGroupAnswer: (e.cmpGroupAnswer + 1) % 3 }),
   magicColorGrid: (e) => {
     const cells = e.magicColor.cells.map((c) => ({ ...c }));

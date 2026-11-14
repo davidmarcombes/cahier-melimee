@@ -298,6 +298,11 @@ function solveAll() {
     },
     'grid-board': (e, w) => {
       const b = e.board;
+      if (b.mode === 'area') {
+        // the shipped figure; wrong: one square fewer
+        p.gbPaint = (w ? b.solution.slice(1) : b.solution).map((q) => [...q]);
+        return p.check();
+      }
       if (b.mode === 'draw') {
         const gcd = (x, y) => (y ? gcd(y, x % y) : Math.abs(x));
         let segs;
@@ -559,9 +564,8 @@ function solveAll() {
       p.check();
     },
     'number-line': (e, w) => {
-      if (e.nl?.mode === 'place') {
-        const [n, d] = String(e.answers[0]).replace(',', '.').split('/');
-        p.nlVal = w ? -987654 : Number(n) / (d ? Number(d) : 1);
+      if (e.nl?.mode === 'place' || e.nl?.mode === 'estimate') {
+        p.nlVal = w ? -987654 : toNum(e.answers[0]);
         return p.nlCheck();
       }
       return S.input(e, w);
@@ -587,6 +591,117 @@ function solveAll() {
         w
       );
       p.check();
+    },
+    'broken-calc': (e, w) => {
+      // Type the shipped solution on the keys; wrong: the second number plus one when its digits work
+      const [a, op, b] = e.calc.solution;
+      const type = (n) =>
+        String(n)
+          .split('')
+          .forEach((d) => p.calcKey(d));
+      p.calcKey('C');
+      type(a);
+      p.calcKey(op);
+      const wrong = [b + 1, b + 2, b + 3].find(
+        (x) =>
+          !String(x)
+            .split('')
+            .some((d) => e.calc.broken.includes(d))
+      );
+      if (w && wrong == null) return 'no-wrong';
+      type(w ? wrong : b);
+      p.calcKey('=');
+      if (!w && p.calcResult !== e.calc.target) throw new Error(`typed ${a} ${op} ${b}, display ${p.calcResult}`);
+    },
+    'dice-game': (e, w) => {
+      // Play a whole round: roll, close a group making the dice (fewest tiles), stop when none does.
+      // Wrong: « je ne peux plus » on the first roll — tiles 1…n can always make it, so it is refused
+      p.dgRoll();
+      if (w) return p.dgStop();
+      for (let k = 0; k < 40 && !p.dgOver; k++) {
+        if (!p.dgDice.length) p.dgRoll();
+        const move = p.dgMove;
+        if (!move) p.dgStop();
+        else for (const n of move) p.dgTap(n);
+      }
+    },
+    'hundred-board': (e, w) => {
+      // find: tap the target (wrong: a number next to it); color: the pattern (wrong: one missing);
+      // fill: type each blank (wrong: one more)
+      const hb = e.hb;
+      if (hb.mode === 'find') p.hbPick = w ? (hb.target === hb.start ? hb.target + 1 : hb.target - 1) : hb.target;
+      else if (hb.mode === 'color') p.hbColored = w ? hb.answer.slice(1) : [...hb.answer];
+      else p.hbInputs = hb.blanks.map((n) => String(w ? n + 1 : n));
+      p.check();
+    },
+    'target-blocks': (e, w) => {
+      // Put every tile at its place in the shipped solution (decoys stay in the tray); wrong: all in the tray
+      p.tbAt = w ? e.tb.tiles.map(() => null) : e.tb.solution.map((at) => at && [...at]);
+      p.check();
+    },
+    'strategy-game': (e, w) => {
+      // Play the winning move every time (the computer answers at once); wrong: the worst move, which
+      // loses against a computer that never errs — no wrong variant against one that may
+      const { total, moves, misere, smart } = e.sg;
+      if (w && smart < 1) return 'no-wrong';
+      const win = [!!misere];
+      for (let r = 1; r <= total; r++) win[r] = moves.some((m) => m <= r && !win[r - m]);
+      p._sgFast = true;
+      if (p.sgTurn === 'ordi') p._sgComputer();
+      while (p.sgTurn === 'eleve') {
+        const legal = moves.filter((m) => m <= p.sgLeft);
+        const good = legal.filter((m) => !win[p.sgLeft - m]);
+        const bad = legal.filter((m) => win[p.sgLeft - m]);
+        p.sgPlay(w ? (bad[0] ?? legal[0]) : good[0]);
+      }
+      if (w) p.check();
+      else if (p.sgWinner !== 'eleve') throw new Error(`lost the game: ${JSON.stringify(p.sgLog)}`);
+    },
+    tangram: (e, w) => {
+      // Put every piece on its place in the shipped solution; wrong: leave the first one in the tray
+      p.tgAt = e.tg.pieces.map((q, k) => (w && k === 0 ? q.start : q.sol));
+      p.check();
+    },
+    picross: (e, w) => {
+      // Colour the picture cell by cell (keyboard path); wrong: leave its first coloured cell empty
+      const cells = e.px.picture.join('').split('');
+      const skip = cells.indexOf('#');
+      p.pxMode = 1;
+      cells.forEach((c, i) => c === '#' && !(w && i === skip) && p.pxKey(i));
+      if (w) p.check();
+    },
+    'compte-est-bon': (e, w) => {
+      // Play the shipped solution step by step (tile values → the first unused tile with that value);
+      // wrong (useAll): stop one step short — the target is then never alone. Otherwise there is no wrong move.
+      const play = (a, op, b) => {
+        const at = (v, not) => p.cebTiles.findIndex((t, k) => !t.used && t.v === v && k !== not);
+        const i = at(a);
+        p.cebTap(i);
+        p.cebPickOp(op);
+        p.cebTap(at(b, i));
+      };
+      if (w && !e.ceb.useAll) return 'no-wrong';
+      const steps = w ? e.ceb.solution.slice(0, -1) : e.ceb.solution;
+      steps.forEach(([a, op, b]) => play(a, op, b));
+      if (w) p.check();
+    },
+    'ten-frame': (e, w) => {
+      // Tokens from the first cell on (the first box fills first); wrong: one token too many / too few
+      const { target, frames = 1 } = e.tf;
+      const n = w ? (target < 10 * frames ? target + 1 : target - 1) : target;
+      p.tfCells = Array.from({ length: 10 * frames }, (_, i) => (i < n ? 2 : 0));
+      p.check();
+    },
+    memory: (e, w) => {
+      // Turn each pair's two cards; wrong: two cards of different pairs
+      const at = (k) => p.memDeck.map((c, i) => (c.pair === k ? i : -1)).filter((i) => i >= 0);
+      if (w) {
+        p.memFlip(at(0)[0]);
+        p.memFlip(at(1)[0]);
+        if (p.memFound.length) throw new Error('two cards of different pairs kept as a pair');
+        return;
+      }
+      e.mem.pairs.forEach((_, k) => at(k).forEach((i) => p.memFlip(i)));
     },
     'money-pay': (e, w) => {
       // Greedy with the coins offered: the fewest pieces (euro denominations)
@@ -619,6 +734,30 @@ function solveAll() {
   for (const t of ['sequence', 'bounding', 'convert', 'number-forms', 'op-triangle']) S[t] = S.seq;
   for (const t of ['number-check', 'problem', 'fraction', 'base-10', 'ruler', 'thermometer']) S[t] = S.input;
   for (const t of ['bar-model', 'emoji-equations', 'count-objects', 'column-op']) S[t] = S.input;
+  // Bar model built by the pupil: each box gets its chip (wrong: first the boxes in reverse order, which
+  // must be refused), then the answer is typed
+  S['bar-model'] = (e, w) => {
+    if (e.bmBuild) {
+      const cells = e.bmBuild.rows.flatMap((r) => r.cells);
+      const place = (order) => {
+        const used = new Set();
+        cells.forEach((c, k) => {
+          const i = p.bmChips.findIndex((ch, j) => !used.has(j) && ch.v === order[k].want);
+          used.add(i);
+          p.bmTapChip(i);
+          p.bmTapCell(c.key);
+        });
+        p.check();
+      };
+      if (w) {
+        place([...cells].reverse());
+        if (p.bmBuilt) throw new Error('a model with the boxes reversed was accepted');
+      }
+      place(cells);
+      if (!p.bmBuilt) throw new Error(`right model refused: ${p.bmHint}`);
+    }
+    return S.input(e, w);
+  };
 
   // Enter checks one field alone (enterField / _fieldOk): with the right answers in, none may be judged wrong
   const FIELDS = { 'fill-table': 'tableInputs', 'calc-chain': 'ccInputs', decomp: 'decompInputs' };
@@ -626,6 +765,7 @@ function solveAll() {
   Object.assign(FIELDS, { 'coordinate-grid': 'cgInputs', 'fraction-check': 'rfInputs', 'decimal-triple': 'dtInputs' });
   FIELDS['jump-line'] = 'jlInputs';
   FIELDS['fraction-op'] = 'foInputs';
+  FIELDS['hundred-board'] = 'hbInputs';
   for (const t of ['sequence', 'bounding', 'convert', 'number-forms', 'op-triangle']) FIELDS[t] = 'seqInputs';
   const wrongFields = (t) => {
     if (t === 'estimation') return ['est', 'exact'].filter((k) => p._fieldOk(k) === false);

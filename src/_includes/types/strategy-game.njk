@@ -1,0 +1,81 @@
+{# strategy-game — a game against the computer, turn by turn. course: the numbers said so far on a track
+   (blue: the pupil, orange: the computer), the buttons are the numbers the pupil can say next.
+   allumettes: the sticks left, the buttons take 1, 2… A lost game is played again with a growing
+   hint; solved on a win. Data: cur.sg #}
+<div x-show="cur.type === 'strategy-game'" class="mb-6">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle mb-3"></div>
+  <template x-if="cur.sg">
+    <div class="flex flex-col items-center gap-4">
+      <p class="text-sm text-content-subtle text-center text-balance max-w-md"
+        x-text="cur.sg.kind === 'course'
+          ? `Chacun son tour, ajoute ${cur.sg.moves.join(', ').replace(/, (?=[^,]*$)/, ' ou ')} au nombre de l’autre. Celui qui dit ${cur.sg.total} a gagné.`
+          : `Chacun son tour, prends ${cur.sg.moves.join(', ').replace(/, (?=[^,]*$)/, ' ou ')} bâtonnets. Celui qui prend le dernier a ${cur.sg.misere ? 'perdu' : 'gagné'}.`"></p>
+
+      {# course: the track of numbers #}
+      <template x-if="cur.sg.kind === 'course'">
+        <div class="flex flex-col items-center gap-3 w-full">
+          <div class="flex items-center gap-3">
+            <span class="js-sg-said text-5xl font-black tabular-nums text-content-default" x-text="sgSaid"></span>
+            <span class="text-2xl text-content-subtle" aria-hidden="true">→</span>
+            <span class="flex items-center gap-1 px-3 py-1 rounded-xl border-4 border-amber-400 bg-amber-50 dark:bg-amber-900/20 text-3xl font-black tabular-nums text-content-default"><span aria-hidden="true">🏁</span><span x-text="cur.sg.total"></span></span>
+          </div>
+          <div class="grid gap-1 w-full max-w-md" :style="`grid-template-columns: repeat(${cur.sg.total > 30 ? 10 : Math.min(cur.sg.total, 10)}, minmax(0, 1fr))`" aria-hidden="true">
+            <template x-for="n in cur.sg.total" :key="currentIndex + '-' + n">
+              <span class="js-sg-cell aspect-square rounded-md border flex items-center justify-center text-xs sm:text-sm font-bold tabular-nums"
+                :class="sgSaidBy(n) === 'eleve' ? 'bg-primary-500 border-primary-600 text-white' : sgSaidBy(n) === 'ordi' ? 'bg-orange-400 border-orange-500 text-white' : n === cur.sg.total ? 'border-amber-400 border-2 text-content-default' : 'border-slate-200 dark:border-slate-700 text-content-subtle'"
+                x-text="n"></span>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      {# allumettes: the sticks left #}
+      <template x-if="cur.sg.kind === 'allumettes'">
+        <div class="flex flex-col items-center gap-2">
+          <div class="flex flex-wrap justify-center gap-2 max-w-md" role="img" :aria-label="`${sgLeft} bâtonnets`">
+            <template x-for="n in cur.sg.total" :key="currentIndex + '-' + n">
+              <span class="js-sg-stick sg-stick transition-opacity" :class="n > sgLeft ? 'opacity-10' : ''"></span>
+            </template>
+          </div>
+          <p class="text-lg font-bold text-content-default tabular-nums" x-text="`${sgLeft} bâtonnet${sgLeft > 1 ? 's' : ''}`"></p>
+        </div>
+      </template>
+
+      <p class="js-sg-status text-lg font-bold text-center" aria-live="polite"
+        :class="sgTurn === 'fin' ? (sgWinner === 'eleve' ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400') : 'text-content-default'"
+        x-text="sgTurn === 'eleve' ? 'À toi !' : sgTurn === 'ordi' ? 'L’ordinateur réfléchit…' : sgWinner === 'eleve' ? 'Tu as gagné ! 🎉' : 'L’ordinateur a gagné.'"></p>
+
+      <div x-show="sgTurn !== 'fin'" class="flex flex-wrap justify-center gap-2">
+        <template x-for="m in cur.sg.moves" :key="m">
+          <button type="button" @click="sgPlay(m)" :disabled="solved || sgTurn !== 'eleve' || m > sgLeft"
+            class="js-sg-move rounded-xl border-2 border-primary-400 bg-white dark:bg-slate-800 text-content-default font-bold transition-all active:scale-95 hover:bg-primary-50 dark:hover:bg-primary-900/30 disabled:opacity-40 flex flex-col items-center leading-tight"
+            :class="cur.sg.moves.length > 4 ? 'min-w-[3.25rem] px-2 py-1' : 'min-w-[4.5rem] px-4 py-2'"
+            :aria-label="cur.sg.kind === 'course' ? `Dire ${sgSaid + m}` : `Prendre ${m}`">
+            <template x-if="cur.sg.kind === 'course'">
+              <span class="flex flex-col items-center"><span class="text-xs text-content-subtle" x-text="`+${m}`"></span><span class="tabular-nums" :class="cur.sg.moves.length > 4 ? 'text-xl' : 'text-2xl'" x-text="sgSaid + m"></span></span>
+            </template>
+            <template x-if="cur.sg.kind === 'allumettes'">
+              <span class="text-lg" x-text="`Prendre ${m}`"></span>
+            </template>
+          </button>
+        </template>
+      </div>
+
+      <ol x-show="sgLog.length" class="flex flex-wrap justify-center gap-1.5 max-w-md text-sm" aria-label="Coups joués">
+        <template x-for="(s, k) in sgLog" :key="k">
+          <li class="px-2 py-0.5 rounded-full font-semibold tabular-nums"
+            :class="s.who === 'eleve' ? 'bg-sky-100 text-sky-900 dark:bg-sky-900/50 dark:text-sky-100' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200'"
+            x-text="(s.who === 'eleve' ? 'Toi : ' : 'Ordi : ') + (cur.sg.kind === 'course' ? cur.sg.total - s.left : `−${s.m}`)"></li>
+        </template>
+      </ol>
+
+      <template x-if="sgTurn === 'fin' && sgWinner !== 'eleve'">
+        <div class="flex flex-col items-center gap-3">
+          <p class="js-sg-hint text-sm font-semibold text-amber-700 dark:text-amber-300 text-center text-balance max-w-md" x-text="sgHint"></p>
+          <button type="button" @click="sgReplay()"
+            class="js-sg-replay px-6 py-2 rounded-xl bg-primary-500 text-white font-bold shadow-md hover:bg-primary-600">🔄 Rejouer</button>
+        </div>
+      </template>
+    </div>
+  </template>
+</div>

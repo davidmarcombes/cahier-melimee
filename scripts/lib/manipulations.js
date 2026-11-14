@@ -52,4 +52,20 @@ function manipulationText(svg) {
   return '';
 }
 
-module.exports = { readTensFrame, readDie, readBalance, manipulationText };
+// ten-frame: the number of tokens asked follows from what is shown (the number, the die) or from the
+// red tokens (one more / one less) and fits in the boxes; null when it does
+function tenFrameProblem(tf) {
+  if (!tf) return 'no ten-frame';
+  const cap = 10 * (tf.frames || 1);
+  const { given = 0, target, by = 1 } = tf;
+  const want =
+    tf.ask === 'plus' ? given + by : tf.ask === 'moins' ? given - by : tf.show && (tf.show.digit ?? tf.show.dots);
+  if (want == null) return `ask ${tf.ask} shows no number`;
+  if (target !== want) return `${tf.ask}: ${want} tokens expected, target ${target}`;
+  if (target < 0 || target > cap || given > cap) return `${target} tokens (${given} given) do not fit in ${cap} cells`;
+  if (tf.ask === 'moins' ? given < by : tf.ask === 'plus' ? target === given : target < 1)
+    return `${tf.ask} by ${by} from ${given}: nothing to do`;
+  return null;
+}
+
+module.exports = { readTensFrame, readDie, readBalance, manipulationText, tenFrameProblem };

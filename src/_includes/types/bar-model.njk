@@ -2,13 +2,58 @@
 <div x-show="cur.type === 'bar-model'" class="space-y-4">
 
   {# ── Bar diagram ── #}
-  <div x-html="cur.bmSvg" class="w-full"></div>
+  <div x-show="!cur.bmBuild" x-html="cur.bmSvg" class="w-full"></div>
 
   {# ── Optional question text ── #}
   <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle"></div>
 
+  {# ── Build mode: tap a chip, then its box (a box tapped again sends its chip back) ── #}
+  <template x-if="cur.bmBuild">
+    <div class="space-y-4">
+      <p x-show="!bmBuilt" class="text-center text-sm font-semibold text-content-default">Construis le schéma : touche un nombre, puis sa case.</p>
+      <div class="space-y-3">
+        <template x-for="(row, r) in cur.bmBuild.rows" :key="r">
+          <div>
+            <div x-show="row.label" x-text="row.label" class="text-xs text-content-subtle mb-1"></div>
+            <div class="flex w-full gap-1">
+              <template x-for="cell in row.cells" :key="cell.key">
+                <div :style="{ flex: cell.w + ' 1 0%' }" class="min-w-[3rem]">
+                  <button type="button" @click="bmTapCell(cell.key)" :disabled="bmBuilt"
+                    :aria-label="bmAt(cell.key) ? 'Case : ' + bmAt(cell.key) : 'Case vide'"
+                    class="w-full h-12 rounded-lg border-2 text-lg font-extrabold transition-colors"
+                    :class="[
+                      cell.dashed ? 'border-dashed' : '',
+                      bmBuilt ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
+                        : bmAt(cell.key) ? 'border-primary-500 bg-primary-100 dark:bg-primary-900/30 text-content-default'
+                        : bmPick !== null ? 'border-primary-400 bg-surface-subtle hover:bg-primary-50 dark:hover:bg-primary-900/20'
+                        : 'border-slate-300 dark:border-slate-600 bg-surface-subtle'
+                    ]"
+                    x-text="bmAt(cell.key)"></button>
+                  <div x-show="cell.name" x-text="cell.name" class="text-[11px] text-center text-content-subtle mt-0.5"></div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div x-show="!bmBuilt" class="flex flex-wrap justify-center gap-2 min-h-[3rem]">
+        <template x-for="(chip, i) in bmChips" :key="i">
+          <button type="button" x-show="chip.at === null" @click="bmTapChip(i)"
+            class="min-w-[3rem] px-3 h-12 rounded-xl border-2 text-lg font-extrabold transition-all active:scale-95"
+            :class="bmPick === i ? 'border-primary-600 bg-primary-500 text-white shadow-md' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default hover:border-primary-400'"
+            x-text="chip.v"></button>
+        </template>
+      </div>
+      <div x-show="!bmBuilt" class="flex justify-center">
+        <button type="button" @click="check()" :disabled="!bmFull"
+          class="px-5 py-3 font-bold rounded-2xl bg-primary-500 text-white hover:bg-primary-600 shadow-md transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">Vérifier le schéma</button>
+      </div>
+      <p x-show="bmBuilt && !solved" class="text-center text-sm font-semibold text-green-700 dark:text-green-300">Bon schéma ! Calcule maintenant ce que cache le ?.</p>
+    </div>
+  </template>
+
   {# ── Answer input ── #}
-  <div class="flex items-center justify-center gap-3">
+  <div x-show="bmBuilt" class="flex items-center justify-center gap-3">
     <input
       type="text"
       inputmode="numeric"

@@ -171,10 +171,17 @@
   "Il y a six oiseaux. Deux oiseaux se cachent sous le chapeau. Combien d'oiseaux vois-tu encore ?": "instructions/722bc9f0cdcea385.ogg",
   "Touche tous les carrés.": "instructions/144d6dcedb5360ba.ogg",
   "Touche tous les triangles.": "instructions/a1a80f8d9fdf4133.ogg",
+  "Pose les pièces sur le dessin.": "instructions/8ca98a4eb4f0d478.ogg",
   "Touche le plus lourd.": "instructions/26177597773e3e5c.ogg",
   "Touche le plus léger.": "instructions/4e52bd8243e1c5e4.ogg",
   "Combien de jetons ?": "instructions/2f99b102755bd2cf.ogg",
   "Combien de jetons pour remplir la boîte ?": "instructions/adaa15dbaa302dfe.ogg",
+  "Mets autant de jetons que le nombre.": "instructions/91f722ab108fb85f.ogg",
+  "Mets autant de jetons que de points sur le dé.": "instructions/d3ad2f96c47aeafc.ogg",
+  "Ajoute un jeton.": "instructions/301974d981cc9d70.ogg",
+  "Enlève un jeton.": "instructions/e4c644a75600dd95.ogg",
   "Combien ?": "instructions/711c85fc7514c7ab.ogg",
-  "Touche la case où arrive la grenouille.": "instructions/e2d8f415008c0660.ogg"
+  "Touche la case où arrive la grenouille.": "instructions/e2d8f415008c0660.ogg",
+  "Retourne deux cartes. Trouve les paires.": "instructions/f0eaafb27e3b22e4.ogg",
+  "Combien y en a-t-il sous la tache ?": "instructions/1812e26a609c593b.ogg"
 }

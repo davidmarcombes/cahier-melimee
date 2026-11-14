@@ -25,6 +25,16 @@ const { Unparseable, clean, tokenize, evaluate, num, same, fmt, checkEquation } 
 const { GEN_CHECKS } = require('./lib/gen-checks.js');
 const { WORD_PROBLEM_CHECKS } = require('./lib/word-problems.js');
 const { VISUAL_CHECKS, VISUAL_GEN_CHECKS, clockSvg } = require('./lib/visual-checks.js');
+const { checkMemory } = require('./lib/memory.js');
+const { tenFrameProblem } = require('./lib/manipulations.js');
+const { cebProblem } = require('./lib/compte-est-bon.js');
+const { bcProblem } = require('./lib/broken-calc.js');
+const { pxProblem } = require('./lib/picross.js');
+const { tgProblem } = require('./lib/tangram.js');
+const { tbProblem } = require('./lib/target-blocks.js');
+const { sgProblem } = require('./lib/strategy-game.js');
+const { hbProblem } = require('./lib/hundred-board.js');
+const { dgProblem } = require('./lib/dice-game.js');
 
 // ─── Units ────────────────────────────────────────────────────────────────────
 
@@ -176,9 +186,32 @@ const CHECKS = {
   },
   'column-op': (e) => {
     const c = e.colOp;
+    const digits = (cells) => num(cells.map((x) => (typeof x === 'number' ? e.answers[x] : x)).join(''));
+    if (c.operation === '÷') {
+      // quotient × divisor + remainder = dividend, remainder < divisor (remainder: last step row)
+      const D = num(c.dividend.join('')),
+        d = num(c.divisor.join(''));
+      const q = digits(c.quotient);
+      const r = c.remainder ? digits(c.remainder) : digits(c.rows.at(-1)?.cells.filter((x) => x !== ' ') ?? []);
+      return q * d + r === D && r < d ? null : `${D} ÷ ${d}: quotient ${q}, remainder ${r}`;
+    }
     const top = num(c.top.join('')),
       bottom = num((c.bottom || []).join(''));
-    let k = 0;
+    // × by 2 digits: partial row k = top × k-th digit from the right, shifted
+    for (const [k, row] of (c.partials || []).entries()) {
+      const want =
+        top *
+        Number(
+          c.bottom
+            .join('')
+            .trim()
+            .at(-1 - k)
+        ) *
+        10 ** k;
+      if (digits(row.filter((x) => x !== ' ')) !== want)
+        return `partial ${k + 1} of ${top} × ${bottom} should be ${want}`;
+    }
+    let k = c.resultStart || 0;
     const res = num(c.result.map((d) => (d === '?' ? e.answers[k++] : d)).join(''));
     const want = num(`${top} ${c.operation} ${bottom}`);
     return same(res, want) ? null : `${top} ${c.operation} ${bottom} = ${fmt(want)}, answer digits give ${fmt(res)}`;
@@ -323,6 +356,25 @@ const CHECKS = {
   },
 };
 CHECKS['compare-expressions'] = CHECKS.compare;
+// Every pair goes together, no two pairs match the same value (scripts/lib/memory.js)
+CHECKS.memory = (e) => checkMemory(e.mem);
+CHECKS['ten-frame'] = (e) => tenFrameProblem(e.tf);
+// The target can be reached, and the solution shipped with the exercise does it (scripts/lib/compte-est-bon.js)
+CHECKS['compte-est-bon'] = (e) => cebProblem(e.ceb);
+// The target holds a broken digit, one operation reaches it, the shipped solution works (scripts/lib/broken-calc.js)
+CHECKS['broken-calc'] = (e) => bcProblem(e.calc);
+// The clues match the picture and have one solution; calculation labels are worth their number (scripts/lib/picross.js)
+CHECKS.picross = (e) => pxProblem(e.px);
+// The solution covers the silhouette without overlap, the pieces start in the tray (scripts/lib/tangram.js)
+CHECKS.tangram = (e) => tgProblem(e.tg);
+// The shipped placement gives every block its target with its operation (scripts/lib/target-blocks.js)
+CHECKS['target-blocks'] = (e) => tbProblem(e.tb);
+// The pupil's seat can always win against the computer (scripts/lib/strategy-game.js)
+CHECKS['strategy-game'] = (e) => sgProblem(e.sg);
+// Clues point to one number, arrows stay on the board, the pattern is the rule's (scripts/lib/hundred-board.js)
+CHECKS['hundred-board'] = (e) => hbProblem(e.hb);
+// Every first roll can be played, the dice and tiles are in range (scripts/lib/dice-game.js)
+CHECKS['dice-game'] = (e) => dgProblem(e.dg);
 
 // ─── Run ──────────────────────────────────────────────────────────────────────
 

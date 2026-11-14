@@ -1,10 +1,228 @@
 /**
- * Generators — Logique — énigmes, grilles (futoshiki, kenken, numberlink), labyrinthes, diagrammes de Venn.
+ * Generators — Logique — énigmes, grilles (futoshiki, kenken, numberlink, picross), labyrinthes, diagrammes de Venn,
+ * jeux de stratégie contre l'ordinateur (jeuStrategie), Ferme la boîte aux dés (fermeLaBoite).
  * Browser: registers into window.AppGenerators (needs generators/_core.js first) · Node: module.exports
  */
 (function (root) {
   const { rand, randItem, shuffle } =
     typeof module !== 'undefined' && module.exports ? require('./_core.js') : root.GenCore;
+
+  // Picross pictures ('#' coloured), every one with a single solution (tests/picross.test.js)
+  const PICROSS = {
+    coeur5: { name: 'un cœur', emoji: '❤️', color: '#ef4444', rows: ['.#.#.', '#####', '#####', '.###.', '..#..'] },
+    maison5: { name: 'une maison', emoji: '🏠', color: '#f97316', rows: ['..#..', '.###.', '#####', '.#.#.', '.###.'] },
+    sapin5: { name: 'un sapin', emoji: '🎄', color: '#16a34a', rows: ['..#..', '.###.', '#####', '..#..', '..#..'] },
+    poisson5: {
+      name: 'un poisson',
+      emoji: '🐟',
+      color: '#0ea5e9',
+      rows: ['.....', '.##.#', '####.', '.##.#', '.....'],
+    },
+    champignon5: {
+      name: 'un champignon',
+      emoji: '🍄',
+      color: '#dc2626',
+      rows: ['.###.', '#####', '#####', '..#..', '.###.'],
+    },
+    fleche5: { name: 'une flèche', emoji: '⬆️', color: '#8b5cf6', rows: ['..#..', '.###.', '#.#.#', '..#..', '..#..'] },
+    chat5: { name: 'un chat', emoji: '🐱', color: '#f59e0b', rows: ['#...#', '#####', '#.#.#', '#####', '.###.'] },
+    bateau5: { name: 'un bateau', emoji: '⛵', color: '#2563eb', rows: ['..#..', '..##.', '..###', '..#..', '#####'] },
+    croix5: { name: 'une croix', emoji: '➕', color: '#e11d48', rows: ['..#..', '..#..', '#####', '..#..', '..#..'] },
+    etoile5: { name: 'une étoile', emoji: '⭐', color: '#eab308', rows: ['..#..', '#####', '.###.', '.#.#.', '#...#'] },
+    tasse5: { name: 'une tasse', emoji: '☕', color: '#92400e', rows: ['.....', '####.', '#####', '####.', '.##..'] },
+    chat8: {
+      name: 'un chat',
+      emoji: '🐱',
+      color: '#f59e0b',
+      rows: ['.#....#.', '.##..##.', '.######.', '##.##.##', '########', '###..###', '.######.', '..####..'],
+    },
+    coeur8: {
+      name: 'un cœur',
+      emoji: '❤️',
+      color: '#ef4444',
+      rows: ['.##..##.', '########', '########', '########', '.######.', '..####..', '...##...', '........'],
+    },
+    maison8: {
+      name: 'une maison',
+      emoji: '🏠',
+      color: '#f97316',
+      rows: ['...##...', '..####..', '.######.', '########', '.#....#.', '.#.##.#.', '.#.##.#.', '.######.'],
+    },
+    sapin8: {
+      name: 'un sapin',
+      emoji: '🎄',
+      color: '#16a34a',
+      rows: ['...##...', '..####..', '.######.', '..####..', '.######.', '########', '...##...', '...##...'],
+    },
+    fusee8: {
+      name: 'une fusée',
+      emoji: '🚀',
+      color: '#6366f1',
+      rows: ['...##...', '..####..', '..#..#..', '..####..', '..####..', '.######.', '##.##.##', '#..##..#'],
+    },
+    poisson8: {
+      name: 'un poisson',
+      emoji: '🐟',
+      color: '#0ea5e9',
+      rows: ['........', '..####..', '#.######', '####.###', '#.######', '..####..', '........', '........'],
+    },
+    bateau8: {
+      name: 'un bateau',
+      emoji: '⛵',
+      color: '#2563eb',
+      rows: ['...#....', '...##...', '...###..', '...####.', '...#....', '########', '.######.', '..####..'],
+    },
+    champignon8: {
+      name: 'un champignon',
+      emoji: '🍄',
+      color: '#dc2626',
+      rows: ['..####..', '.##..##.', '########', '#..##..#', '########', '..#..#..', '..#..#..', '..####..'],
+    },
+    papillon8: {
+      name: 'un papillon',
+      emoji: '🦋',
+      color: '#a855f7',
+      rows: ['##....##', '###..###', '########', '.######.', '..####..', '.######.', '###..###', '##....##'],
+    },
+    pomme10: {
+      name: 'une pomme',
+      emoji: '🍎',
+      color: '#dc2626',
+      rows: [
+        '.....#....',
+        '....#.....',
+        '..##.###..',
+        '.########.',
+        '##########',
+        '##########',
+        '##########',
+        '.########.',
+        '.########.',
+        '..##..##..',
+      ],
+    },
+    sapin10: {
+      name: 'un sapin',
+      emoji: '🎄',
+      color: '#16a34a',
+      rows: [
+        '....##....',
+        '...####...',
+        '..######..',
+        '...####...',
+        '..######..',
+        '.########.',
+        '..######..',
+        '##########',
+        '....##....',
+        '....##....',
+      ],
+    },
+    coeur10: {
+      name: 'un cœur',
+      emoji: '❤️',
+      color: '#ef4444',
+      rows: [
+        '.###..###.',
+        '##########',
+        '##########',
+        '##########',
+        '##########',
+        '.########.',
+        '..######..',
+        '...####...',
+        '....##....',
+        '..........',
+      ],
+    },
+    fusee10: {
+      name: 'une fusée',
+      emoji: '🚀',
+      color: '#6366f1',
+      rows: [
+        '....##....',
+        '...####...',
+        '...#..#...',
+        '...####...',
+        '...####...',
+        '...####...',
+        '..######..',
+        '.##.##.##.',
+        '.#..##..#.',
+        '....##....',
+      ],
+    },
+    maison10: {
+      name: 'une maison',
+      emoji: '🏠',
+      color: '#f97316',
+      rows: [
+        '....##....',
+        '...####...',
+        '..######..',
+        '.########.',
+        '##########',
+        '.#......#.',
+        '.#.##.#.#.',
+        '.#.##...#.',
+        '.#.##...#.',
+        '.########.',
+      ],
+    },
+    chat10: {
+      name: 'un chat',
+      emoji: '🐱',
+      color: '#f59e0b',
+      rows: [
+        '.#......#.',
+        '.##....##.',
+        '.########.',
+        '.#.####.#.',
+        '.########.',
+        '.###..###.',
+        '..######..',
+        '..######..',
+        '.########.',
+        '##########',
+      ],
+    },
+    etoile10: {
+      name: 'une étoile',
+      emoji: '⭐',
+      color: '#eab308',
+      rows: [
+        '....##....',
+        '....##....',
+        '...####...',
+        '##########',
+        '.########.',
+        '..######..',
+        '..######..',
+        '.###..###.',
+        '.##....##.',
+        '##......##',
+      ],
+    },
+  };
+  // A clue n written as a calculation with `op` (null when none fits): « 2+3 », « 8−3 », « 2×3 »,
+  // « 12÷2 », « ½ de 12 », « 2,5+3,5 »
+  function picrossLabel(op, n) {
+    if (op === '+') return n >= 2 ? ((a) => `${a}+${n - a}`)(rand(1, n - 1)) : null;
+    if (op === '−') return ((b) => `${n + b}−${b}`)(rand(1, 9));
+    if (op === '×') {
+      const ds = [2, 3, 4, 5].filter((d) => n % d === 0 && n / d >= 2);
+      return ds.length ? ((d) => `${n / d}×${d}`)(randItem(ds)) : null;
+    }
+    if (op === '÷') return ((d) => `${n * d}÷${d}`)(rand(2, 9));
+    if (op === 'frac') {
+      const ways = [`½ de ${2 * n}`, `¼ de ${4 * n}`, `⅓ de ${3 * n}`];
+      if (n % 3 === 0) ways.push(`¾ de ${(4 * n) / 3}`);
+      if (n % 2 === 0) ways.push(`⅔ de ${(3 * n) / 2}`);
+      return randItem(ways);
+    }
+    if (op === 'dec') return n >= 2 ? ((a) => `${a},5+${n - a - 1},5`)(rand(0, n - 2)) : null;
+    return null;
+  }
 
   const generators = {
     // Symbolic value MCQ: which emoji combination equals the target?
@@ -638,9 +856,11 @@
     },
 
     /* ── KenKen ─────────────────────────────────────────────────────── */
+    // params: size (3), ops (['+', '-', '×', '÷'] — e.g. ['+', '-'] before × and ÷ are taught)
     kenkenPuzzle: {
       generate(params = {}) {
         const size = params.size || 3;
+        const allowed = params.ops || ['+', '-', '×', '÷'];
         // Build valid latin square
         const canonical = Array.from({ length: size }, (_, r) =>
           Array.from({ length: size }, (_, c) => ((r + c) % size) + 1)
@@ -671,7 +891,7 @@
             ];
             if (v2 !== 0 && v1 % v2 === 0) ops.push({ op: '÷', target: v1 / v2 });
             if (v1 !== 0 && v2 % v1 === 0) ops.push({ op: '÷', target: v2 / v1 });
-            const chosen = randItem(ops);
+            const chosen = randItem(ops.filter((o) => allowed.includes(o.op)));
             const cageId = cages.length;
             cages.push({
               op: chosen.op,
@@ -1184,6 +1404,71 @@
           title: 'Classe les figures',
           venn: { labelA: theme.labelA, labelB: theme.labelB, items },
         };
+      },
+    },
+
+    // jeuStrategie: strategy-game — course à N (say the next number by adding one of `moves`, who says
+    //   N wins) or allumettes (take `moves` sticks, who takes the last one wins — loses when misere)
+    //   against the computer. The pupil gets the seat that can always win (the computer starts when
+    //   the start is a losing position); the computer plays its best move with probability smart.
+    //   kind (course), total (20, or [min, max]), moves ([1, 2], or a list of sets to pick from),
+    //   misere (false), smart (1)
+    jeuStrategie: {
+      generate(params = {}) {
+        const total = Array.isArray(params.total) ? rand(params.total[0], params.total[1]) : params.total || 20;
+        const moves = Array.isArray(params.moves?.[0]) ? randItem(params.moves) : params.moves || [1, 2];
+        const misere = !!params.misere;
+        // win[r]: the player to move with r steps left can force a win (scripts/lib/strategy-game.js)
+        const win = [misere];
+        for (let r = 1; r <= total; r++) win[r] = moves.some((m) => m <= r && !win[r - m]);
+        const sg = { kind: params.kind || 'course', total, moves, misere, smart: params.smart ?? 1 };
+        sg.first = win[total] ? 'eleve' : 'ordi';
+        return { type: 'strategy-game', sg };
+      },
+    },
+
+    // fermeLaBoite: dice-game — Ferme la boîte (shut the box): tiles 1…`tiles` (9), roll `dice` (2) dice, close
+    //   open tiles that add up to the dice. oneDie (false): one die only once the open tiles make 6 or less.
+    //   The round ends when no group of open tiles makes the dice; the score is what is left open.
+    fermeLaBoite: {
+      generate(params = {}) {
+        const dg = { kind: 'boite', tiles: params.tiles || 9, dice: params.dice || 2 };
+        if (params.oneDie) dg.oneDie = true;
+        return { type: 'dice-game', dg };
+      },
+    },
+
+    // picrossImage: picross — colour the cells so that each row and each column has the runs of its
+    //   numbers; the picture appears. Pictures drawn by hand, each with one solution only (checked by
+    //   scripts/lib/picross.js). size (5 | 8 | 10), pictures (names, default all of that size), labels
+    //   (clues written as calculations worth the number: ['+', '−'], ['×', '÷'], ['frac', 'dec']…)
+    picrossImage: {
+      pictures: PICROSS,
+      generate(params = {}) {
+        const size = params.size || 5;
+        const names = params.pictures || Object.keys(PICROSS).filter((k) => PICROSS[k].rows.length === size);
+        const pic = PICROSS[randItem(names)];
+        const runs = (line) => {
+          const out = [];
+          let n = 0;
+          for (const c of line + '.') {
+            if (c === '#') n++;
+            else if (n) (out.push(n), (n = 0));
+          }
+          return out.length ? out : [0];
+        };
+        const rows = pic.rows.map(runs);
+        const cols = [...pic.rows[0]].map((_, j) => runs(pic.rows.map((r) => r[j]).join('')));
+        const px = { rows, cols, picture: pic.rows, name: pic.name, emoji: pic.emoji, color: pic.color };
+        if (params.labels) {
+          const label = (n) => {
+            const ways = params.labels.map((op) => picrossLabel(op, n)).filter(Boolean);
+            return ways.length ? randItem(ways) : String(n);
+          };
+          px.rowLabels = rows.map((c) => c.map(label));
+          px.colLabels = cols.map((c) => c.map(label));
+        }
+        return { type: 'picross', px };
       },
     },
 

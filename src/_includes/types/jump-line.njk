@@ -15,10 +15,15 @@
                   <input type="text" inputmode="decimal" x-model="jlInputs[cell.j]" @keydown.enter="enterField($el, cell.j)" @input="jlErrors = []" :disabled="solved" placeholder="?" :aria-label="'Saut ' + (cell.j + 1)" class="w-14 h-9 text-center rounded-lg border-2 font-bold text-base focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': jlErrors.includes(cell.j), 'border-slate-300 dark:border-slate-600': !solved && !jlErrors.includes(cell.j) }" />
                   <span class="text-xs text-content-subtle leading-4" x-text="jlView.unit"></span>
                 </div>
-                <svg viewBox="0 0 100 24" preserveAspectRatio="none" class="w-full h-6 text-primary-500" aria-hidden="true">
-                  <path d="M3,23 Q50,-6 95,21" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
-                  <path d="M89,15 L96,22 L86,23" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
-                </svg>
+                {# Arc stretched to the jump's width, landing vertically; head drawn unstretched at its end #}
+                <div class="relative w-[calc(100%+2rem)] h-6 text-primary-500" aria-hidden="true">
+                  <svg viewBox="0 0 100 24" preserveAspectRatio="none" class="absolute inset-0 w-full h-full">
+                    <path d="M3,23 C30,-4 96,-4 96,17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                  </svg>
+                  <svg viewBox="0 0 10 8" class="absolute bottom-0 left-[96%] -translate-x-1/2 w-2.5 h-2">
+                    <path d="M0,0 L10,0 L5,8 Z" fill="currentColor" />
+                  </svg>
+                </div>
               </div>
             </template>
             <template x-if="cell.p !== undefined">

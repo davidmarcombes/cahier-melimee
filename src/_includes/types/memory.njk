@@ -1,0 +1,18 @@
+{# memory — cards face down, turn two: a pair stays up, two cards that do not go together turn back.
+   faceUp: every card shown, tap two that go together. Card faces: memoryCardHtml() in svg.js #}
+<div x-show="cur.type === 'memory'" class="mb-6">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle mb-3"></div>
+  <div class="js-memory grid gap-2 mx-auto" :style="`grid-template-columns:repeat(${memCols},minmax(0,1fr));max-width:${memCols * 7}rem`">
+    <template x-for="(c, i) in memDeck" :key="currentIndex + '-' + i">
+      <button type="button" @click="memFlip(i)" :disabled="solved || memFound.includes(i)"
+        class="js-memory-card mem-card" :class="{ 'is-up': memUp(i), 'is-open': cur.mem && cur.mem.faceUp && memOpen.includes(i), 'is-found': memFound.includes(i), 'is-miss': memMiss.includes(i) }"
+        :aria-label="memUp(i) ? 'Carte' : 'Carte retournée'">
+        <span class="mem-back" aria-hidden="true">?</span>
+        <span class="mem-face" x-html="memoryCardHtml(c)"></span>
+      </button>
+    </template>
+  </div>
+  {% if level !== 'GS' %}
+  <p x-show="memTries" class="text-center text-xs text-content-subtle mt-3">Essais : <span x-text="memTries"></span></p>
+  {% endif %}
+</div>

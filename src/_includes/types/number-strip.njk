@@ -1,7 +1,8 @@
 <div x-show="cur.type === 'number-strip'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-8">
-  <div class="flex justify-center gap-1.5 sm:gap-2 overflow-x-auto pb-2" role="group" aria-label="Bande numérique">
+  {# Cells shrink to fit 9 on a phone; safe center keeps the first cell visible if a long strip still overflows #}
+  <div class="flex [justify-content:safe_center] gap-1 sm:gap-2 overflow-x-auto pb-2" role="group" aria-label="Bande numérique">
     <template x-for="(cell, i) in (cur.stripCells || [])" :key="i">
-      <div class="flex-1 min-w-[3.25rem]">
+      <div class="flex-1 min-w-[1.75rem] max-w-[4.5rem]">
         <template x-if="cell !== null">
           <div class="js-number-strip-cell h-14 sm:h-16 flex items-center justify-center rounded-xl bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-xl sm:text-2xl font-bold text-content-default text-center"
                :style="kid ? '--n:' + symbolCount(cell) : ''">

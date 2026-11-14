@@ -1,8 +1,9 @@
-{# column-op — vertical arithmetic with coloured digit tiles #}
+{# column-op — vertical arithmetic with coloured digit tiles; × by 2 digits adds partial-product rows,
+   ÷ is the French potence (cells hold a digit, ' ' or a field index) #}
 <div x-show="cur.type === 'column-op' && cur.body" class="prose dark:prose-invert text-center text-sm max-w-none mb-2 text-content-subtle"
      x-html="cur.body"></div>
 <div x-show="cur.type === 'column-op'" class="flex justify-center my-2">
-  <template x-if="cur.colOp">
+  <template x-if="cur.colOp && cur.colOp.operation !== '÷'">
     <div class="inline-block">
       <table class="border-separate border-spacing-1">
         <tbody>
@@ -40,6 +41,37 @@
             </td>
           </tr>
 
+          {# ── × by 2 digits: partial products (shifted 0s written in), then a second line ── #}
+          <template x-for="(row, ri) in (cur.colOp.partials || [])" :key="'p'+ri">
+            <tr>
+              <td class="text-center text-2xl font-bold text-content-default align-middle" x-text="ri === cur.colOp.partials.length - 1 ? '+' : ''"></td>
+              <template x-for="(c, i) in row" :key="'p'+ri+'-'+i">
+                <td>
+                  <template x-if="typeof c === 'number'">
+                    <input type="text" inputmode="numeric" maxlength="2"
+                         :value="trouInputs[c] || ''"
+                         @input="trouInputs[c] = $event.target.value.replace(/[^0-9]/g,'').slice(-1); $event.target.value = trouInputs[c]"
+                         @keydown.enter="enterField($el, c)"
+                         :disabled="solved"
+                         class="w-11 h-11 text-xl text-center rounded-lg border-2 font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+                         :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : showError ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : colOpColor(row.length - 1 - i)"
+                         placeholder="?" />
+                  </template>
+                  <template x-if="typeof c !== 'number'">
+                    <div class="w-11 h-11 text-xl flex items-center justify-center rounded-lg border-2 font-bold select-none"
+                       :class="c === ' ' ? 'border-transparent' : colOpColor(row.length - 1 - i)"
+                       x-text="c === ' ' ? '' : c"></div>
+                  </template>
+                </td>
+              </template>
+            </tr>
+          </template>
+          <tr x-show="cur.colOp.partials">
+            <td :colspan="(cur.colOp.top || []).length + 1" class="p-0">
+              <div class="border-t-2 border-slate-500 dark:border-slate-400 my-0.5 mx-1"></div>
+            </td>
+          </tr>
+
           {# ── result row ── #}
           <tr>
             <td></td>
@@ -66,6 +98,79 @@
 
         </tbody>
       </table>
+    </div>
+  </template>
+  {# ── division posée: dividend and steps on the left, divisor and quotient in the potence ── #}
+  <template x-if="cur.colOp && cur.colOp.operation === '÷'">
+    <div class="inline-flex items-start">
+      <table class="border-separate border-spacing-1">
+        <tbody>
+          <tr>
+            <td class="w-5"></td>
+            <template x-for="(d, i) in cur.colOp.dividend" :key="'dv'+i">
+              <td><div class="w-9 h-10 text-lg flex items-center justify-center rounded-lg border-2 font-bold select-none"
+                       :class="d === ' ' ? 'border-transparent' : colOpColor(cur.colOp.dividend.length - 1 - i)"
+                       x-text="d === ' ' ? '' : d"></div></td>
+            </template>
+          </tr>
+          <template x-for="(row, ri) in cur.colOp.rows" :key="'dr'+ri">
+            <tr>
+              <td class="text-center text-xl font-bold text-content-default align-middle" x-text="row.sign"></td>
+              <template x-for="(c, i) in row.cells" :key="'dr'+ri+'-'+i">
+                <td :class="row.sign && typeof c === 'number' ? 'border-b-2 border-slate-500 dark:border-slate-400' : ''">
+                  <template x-if="typeof c === 'number'">
+                    <input type="text" inputmode="numeric" maxlength="2"
+                         :value="trouInputs[c] || ''"
+                         @input="trouInputs[c] = $event.target.value.replace(/[^0-9]/g,'').slice(-1); $event.target.value = trouInputs[c]"
+                         @keydown.enter="enterField($el, c)"
+                         :disabled="solved"
+                         class="w-9 h-10 text-lg text-center rounded-lg border-2 font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+                         :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : showError ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : colOpColor(row.cells.length - 1 - i)"
+                         placeholder="?" />
+                  </template>
+                  <template x-if="typeof c !== 'number'">
+                    <div class="w-9 h-10"></div>
+                  </template>
+                </td>
+              </template>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <div class="border-l-2 border-slate-500 dark:border-slate-400 mt-1">
+        <div class="flex gap-1 px-1 pb-1 border-b-2 border-slate-500 dark:border-slate-400">
+          <template x-for="(d, i) in cur.colOp.divisor" :key="'ds'+i">
+            <div class="w-9 h-10 text-lg flex items-center justify-center rounded-lg border-2 font-bold select-none"
+                       :class="d === ' ' ? 'border-transparent' : 'border-slate-300 dark:border-slate-600 text-content-default'"
+                       x-text="d === ' ' ? '' : d"></div>
+          </template>
+        </div>
+        <div class="flex gap-1 px-1 pt-1">
+          <template x-for="(c, qi) in cur.colOp.quotient" :key="'q'+qi">
+            <input type="text" inputmode="numeric" maxlength="2"
+                         :value="trouInputs[c] || ''"
+                         @input="trouInputs[c] = $event.target.value.replace(/[^0-9]/g,'').slice(-1); $event.target.value = trouInputs[c]"
+                         @keydown.enter="enterField($el, c)"
+                         :disabled="solved"
+                         class="w-9 h-10 text-lg text-center rounded-lg border-2 font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+                         :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : showError ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : 'border-primary-300 dark:border-primary-700'"
+                         placeholder="?" />
+          </template>
+        </div>
+        <div x-show="cur.colOp.remainder" class="flex items-center gap-1 px-1 pt-2">
+          <span class="text-sm text-content-subtle mr-1">reste</span>
+          <template x-for="(c, k) in (cur.colOp.remainder || [])" :key="'rm'+k">
+            <input type="text" inputmode="numeric" maxlength="2"
+                         :value="trouInputs[c] || ''"
+                         @input="trouInputs[c] = $event.target.value.replace(/[^0-9]/g,'').slice(-1); $event.target.value = trouInputs[c]"
+                         @keydown.enter="enterField($el, c)"
+                         :disabled="solved"
+                         class="w-9 h-10 text-lg text-center rounded-lg border-2 font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+                         :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : showError ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : 'border-slate-300 dark:border-slate-600'"
+                         placeholder="?" />
+          </template>
+        </div>
+      </div>
     </div>
   </template>
 </div>

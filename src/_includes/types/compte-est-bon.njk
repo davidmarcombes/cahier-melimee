@@ -1,0 +1,42 @@
+{# compte-est-bon — tap a number, an operation, another number: the two tiles become their result.
+   Solved as soon as a tile is the target (useAll: the last tile left). Data: cur.ceb #}
+<div x-show="cur.type === 'compte-est-bon'" class="mb-6">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle mb-3"></div>
+  <template x-if="cur.ceb">
+    <div class="flex flex-col items-center gap-4">
+      <div class="flex items-center gap-3 px-6 py-2 rounded-2xl border-4 border-amber-400 bg-amber-50 dark:bg-amber-900/20">
+        <span class="text-3xl" aria-hidden="true">🎯</span>
+        <span class="js-ceb-target text-5xl font-black text-content-default tabular-nums" x-text="cur.ceb.target"></span>
+      </div>
+      <p x-show="cur.ceb.useAll" class="text-sm text-content-subtle -mt-2">Utilise tous les nombres.</p>
+      <div class="flex flex-wrap justify-center gap-2 min-h-[4rem]">
+        <template x-for="(t, i) in cebTiles" :key="currentIndex + '-' + i">
+          <button type="button" x-show="!t.used" @click="cebTap(i)" :disabled="solved"
+            class="js-ceb-tile min-w-[4rem] h-16 px-3 rounded-xl border-2 text-2xl font-bold tabular-nums transition-all active:scale-95"
+            :class="cebSel === i ? 'border-primary-500 bg-primary-100 dark:bg-primary-900/40 ring-4 ring-primary-300 scale-105' : solved && t.v === cur.ceb.target ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : t.made ? 'border-amber-400 bg-amber-50 dark:bg-amber-900/20 text-content-default' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default hover:border-primary-400'"
+            x-text="t.v"></button>
+        </template>
+      </div>
+      <div class="flex gap-2">
+        <template x-for="op in cur.ceb.ops" :key="op">
+          <button type="button" @click="cebPickOp(op)" :disabled="solved || cebSel === null" :aria-label="{ '+': 'plus', '−': 'moins', '×': 'fois', '÷': 'divisé par' }[op]"
+            class="js-ceb-op w-14 h-14 rounded-full border-2 text-3xl font-bold transition-all active:scale-95 disabled:opacity-40"
+            :class="cebOp === op ? 'border-primary-500 bg-primary-500 text-white' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default hover:border-primary-400'"
+            x-text="op"></button>
+        </template>
+      </div>
+      <ol x-show="cebSteps.length" class="text-lg font-semibold text-content-default tabular-nums space-y-0.5 text-center">
+        <template x-for="(s, k) in cebSteps" :key="k">
+          <li x-text="`${s.a} ${s.op} ${s.b} = ${s.r}`"></li>
+        </template>
+      </ol>
+      <p x-show="cebHint" class="text-sm font-semibold text-amber-700 dark:text-amber-300" x-text="cebHint"></p>
+      <div class="flex gap-2">
+        <button type="button" @click="cebUndo()" :disabled="solved || !cebSteps.length"
+          class="px-4 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default font-bold disabled:opacity-40">↶ Annuler</button>
+        <button type="button" @click="cebReset()" :disabled="solved || !cebSteps.length"
+          class="px-4 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default font-bold disabled:opacity-40">🔄 Recommencer</button>
+      </div>
+    </div>
+  </template>
+</div>

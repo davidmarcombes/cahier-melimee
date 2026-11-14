@@ -7,6 +7,44 @@
     typeof module !== 'undefined' && module.exports ? require('./_core.js') : root.GenCore;
 
   const generators = {
+    // lireMesure: read a measuring jug (contenance) or a scale dial (masse) — drawn by svg.js
+    // (thermometerExerciseSvg, kind jug | dial). The value sits on a graduation; `between` keeps it off
+    // the numbered ones so the pupil counts the small steps from the number below.
+    // params: kind ('jug' | 'dial'), scales [{ min (0), max, step, label, unit }], between (true), body
+    lireMesure: {
+      generate(params = {}) {
+        const kind = params.kind === 'dial' ? 'dial' : 'jug';
+        const DEFAULT =
+          kind === 'jug'
+            ? { max: 1000, step: 50, label: 100, unit: 'mL' }
+            : { max: 1000, step: 20, label: 100, unit: 'g' };
+        const sc = { min: 0, ...randItem(params.scales ?? [DEFAULT]) };
+        const k = (v) => Math.round(v * 1e6) / 1e6;
+        const n = Math.round((sc.max - sc.min) / sc.step);
+        const onLabel = (v) => Math.abs((v - sc.min) / sc.label - Math.round((v - sc.min) / sc.label)) < 1e-6;
+        const all = Array.from({ length: n - 1 }, (_, i) => k(sc.min + (i + 1) * sc.step));
+        const off = all.filter((v) => !onLabel(v));
+        const value = randItem((params.between ?? true) && off.length ? off : all);
+        return {
+          type: 'thermometer',
+          ...(params.title && { title: params.title }), // the series file names the instrument
+          body:
+            params.body ??
+            `<p>Regarde le nombre écrit juste avant, puis compte les petits traits : chacun vaut <strong>${String(sc.step).replace('.', ',')} ${sc.unit}</strong>.</p>`,
+          thermometer: {
+            kind,
+            min: sc.min,
+            max: sc.max,
+            step: sc.step,
+            label: sc.label,
+            unit: sc.unit,
+            markers: [{ value }],
+          },
+          answers: [String(value).replace('.', ',')],
+        };
+      },
+    },
+
     perimetreFormes: {
       generate: (params = {}) => {
         const shapes = ['square', 'rectangle', 'triangle'];

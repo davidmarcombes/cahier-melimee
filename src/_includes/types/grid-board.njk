@@ -1,5 +1,6 @@
 {# Grid-board — robot on a square grid: follow a program (tap the arrival), write one (arrow buttons), find the wrong instruction (debug);
-   colour the mirror image of a figure across an axis (mirror); or draw segments between grid points (draw) #}
+   colour the mirror image of a figure across an axis (mirror), or a figure of a given area (area); or draw segments
+   between grid points (draw) #}
 <div x-show="cur.type === 'grid-board'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4 mb-8">
   <div class="prose dark:prose-invert text-center text-sm max-w-none mb-3 text-content-subtle" x-show="cur.body" x-html="cur.body"></div>
   <template x-if="cur.board">
@@ -27,11 +28,11 @@
       </template>
 
       {# Grid #}
-      <div x-show="cur.board.mode !== 'draw'" class="relative grid gap-1 mx-auto" :style="'grid-template-columns: repeat(' + cur.board.cols + ', minmax(0, 1fr)); max-width: ' + Math.min(24, cur.board.cols * 4) + 'rem'">
+      <div x-show="cur.board.mode !== 'draw'" class="relative grid mx-auto" :class="cur.board.mode === 'area' ? 'gap-0' : 'gap-1'" :style="'grid-template-columns: repeat(' + cur.board.cols + ', minmax(0, 1fr)); max-width: ' + Math.min(24, cur.board.cols * 4) + 'rem'">
         <template x-for="cell in gbCells" :key="cell.r + '-' + cell.c">
           <button type="button" @click="gbTapCell(cell.r, cell.c)" :disabled="solved || cell.lock" :aria-label="cell.label"
-            class="js-gb-cell relative aspect-square rounded-lg border-2 flex items-center justify-center text-2xl sm:text-3xl leading-none disabled:cursor-default"
-            :class="cell.cls">
+            class="js-gb-cell relative aspect-square flex items-center justify-center text-2xl sm:text-3xl leading-none disabled:cursor-default"
+            :class="[cur.board.mode === 'area' ? 'border' : 'rounded-lg border-2', cell.cls]">
             <span x-text="cell.txt"></span>
             <span x-show="cell.txt === '🤖' && gbHeading !== null" class="absolute inset-0 z-10 pointer-events-none" :style="{ transform: 'rotate(' + gbHeading + 'deg)' }" aria-hidden="true"><span class="js-gb-heading absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 text-base sm:text-lg leading-none text-primary-600 dark:text-primary-400">▲</span></span>
           </button>
@@ -68,8 +69,8 @@
       </template>
 
       {# Vérifier: write and mirror always, follow above maternelle (a kid's tap checks at once); debug taps check #}
-      <div x-show="cur.board.mode === 'write' || cur.board.mode === 'mirror' || cur.board.mode === 'draw' || (cur.board.mode === 'follow' && !kid)" class="flex justify-center mt-4">
-        <button type="button" @click="check()" :disabled="solved || (cur.board.mode === 'write' ? !gbProg.length : cur.board.mode === 'mirror' ? !gbPaint.length : cur.board.mode === 'draw' ? !gbSegs.length : !gbPick)"
+      <div x-show="cur.board.mode === 'write' || cur.board.mode === 'mirror' || cur.board.mode === 'area' || cur.board.mode === 'draw' || (cur.board.mode === 'follow' && !kid)" class="flex justify-center mt-4">
+        <button type="button" @click="check()" :disabled="solved || (cur.board.mode === 'write' ? !gbProg.length : cur.board.mode === 'mirror' || cur.board.mode === 'area' ? !gbPaint.length : cur.board.mode === 'draw' ? !gbSegs.length : !gbPick)"
           class="px-8 py-3 text-lg font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
           :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
           <span x-show="!solved">Vérifier</span>

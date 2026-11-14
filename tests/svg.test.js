@@ -499,3 +499,28 @@ describe('moneySvg', () => {
     expect(moneySvg([2000, 3])).not.toContain('3 c');
   });
 });
+
+// ─── memoryCardHtml ───────────────────────────────────────────────────────────
+const { diceSvg, memoryCardHtml } = new Function(appSrc + '\nreturn { diceSvg, memoryCardHtml };')();
+
+describe('memoryCardHtml', () => {
+  it('draws n pips, on two dice (5 + rest) above 6', () => {
+    for (let n = 1; n <= 10; n++) {
+      const out = diceSvg(n);
+      expect(validateXml(out).valid).toBe(true);
+      expect(out.match(/<circle/g)).toHaveLength(n);
+      expect(out.match(/<rect/g)).toHaveLength(n > 6 ? 2 : 1);
+    }
+  });
+  it('draws a rod per ten and a square per unit', () => {
+    const out = memoryCardHtml({ blocks: 37 });
+    expect(validateXml(out).valid).toBe(true);
+    expect(out.match(/fill="var\(--p\)"/g)).toHaveLength(3);
+    expect(out.match(/fill="var\(--orange\)"/g)).toHaveLength(7);
+  });
+  it('shows n emojis and keeps text cards as given', () => {
+    const rows = memoryCardHtml({ emoji: '🍎', n: 7 }).match(/<span>(.*?)<\/span>/g);
+    expect(rows.map((r) => [...r.matchAll(/🍎/g)].length)).toEqual([5, 2]);
+    expect(memoryCardHtml({ text: 'quatre-vingt-dix-neuf' })).toBe('quatre-vingt-dix-neuf');
+  });
+});

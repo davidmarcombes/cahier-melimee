@@ -87,6 +87,22 @@ const TYPE_CHOICES = [
     name: 'fraction-op     — Ajouter / soustraire des fractions avec un dessin (bandes, disques, droite)',
     value: 'fraction-op',
   },
+  { name: 'memory          — Memory : retrouver les paires de cartes qui vont ensemble', value: 'memory' },
+  { name: 'ten-frame       — Boîte de 10 : mettre ou enlever des jetons', value: 'ten-frame' },
+  { name: 'compte-est-bon  — Le compte est bon : atteindre la cible avec les nombres', value: 'compte-est-bon' },
+  { name: 'broken-calc     — Calculatrice cassée : afficher un nombre sans les touches cassées', value: 'broken-calc' },
+  { name: 'strategy-game   — Jeu de stratégie contre l’ordinateur (course à 20, allumettes)', value: 'strategy-game' },
+  {
+    name: 'target-blocks   — Blocs cibles : placer des nombres dans des blocs qui se chevauchent',
+    value: 'target-blocks',
+  },
+  { name: 'dice-game       — Jeu de dés : Ferme la boîte', value: 'dice-game' },
+  {
+    name: 'hundred-board   — Tableau des nombres : nombre mystère, déplacements, morceaux, motifs',
+    value: 'hundred-board',
+  },
+  { name: 'tangram         — Tangram : poser les pièces sur la silhouette', value: 'tangram' },
+  { name: 'picross         — Picross : colorier les cases d’après les nombres, un dessin apparaît', value: 'picross' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -124,6 +140,17 @@ const TEMPLATES = {
   'jump-line': 'kind: temps\npoints: ["8:45", "9:00", "10:00", "10:20"]\nhide: []',
   'fraction-op': 'a: "1/2"\nb: "1/4"\nop: "+"\nmodel: bande',
   'money-pay': 'amount: 735\ncoins: [500, 200, 100, 50, 20, 10, 5]\nfewest: false\nshowTotal: true',
+  'broken-calc': 'target: 47\nbroken: ["7"]\nops: ["+", "−"]',
+  'strategy-game': 'kind: course\ntotal: 20\nmoves: [1, 2]\nsmart: 1',
+  'dice-game': 'generator: fermeLaBoite\nparams:\n  tiles: 9\n  oneDie: true',
+  'hundred-board': 'generator: tableauNombres\nparams:\n  mode: find\n  clues: [[dizaines, unites]]',
+  'target-blocks': 'generator: blocsCibles\nparams:\n  layout: deux\n  values: [1, 9]',
+  tangram: 'generator: tangramFigure\nparams:\n  figures: [bateau, maison]',
+  picross: 'name: "un cœur"\nemoji: "❤️"\npicture:\n  - ".#.#."\n  - "#####"\n  - "#####"\n  - ".###."\n  - "..#.."',
+  'compte-est-bon': 'numbers: [3, 7, 8, 25]\ntarget: 183\nuseAll: false',
+  'ten-frame': 'ask: plus\ngiven: 4\ntarget: 5',
+  memory:
+    'pairs:\n  - ["3 × 4", "12"]\n  - [{dots: 5}, "5"]\n  - [{pie: "1/4"}, {frac: "1/4"}]\n  - [{clock: "3:15"}, "3 h 15"]',
   ruler: 'min: 0\nmax: 10\ndivisions: 10\nmarkers:\n  - label: "A"\n    value: ',
   'click-blocks':
     'columns:\n  - label: "100"\n    value: 100\n    color: "#dc2626"\n    answer: 0\n    max: 9\n  - label: "10"\n    value: 10\n    color: "#7c3aed"\n    answer: 0\n    max: 9\n  - label: "1"\n    value: 1\n    color: "#2563eb"\n    answer: 0\n    max: 9',

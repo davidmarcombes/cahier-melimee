@@ -1,0 +1,54 @@
+{# target-blocks — number tiles dragged from the tray onto overlapping dashed blocks; a tile in an overlap
+   counts for each block around it. The legend shows each block's target (with its operation) and what
+   its tiles make (live). Board and tray share one box measured in board units (cur.tb.w wide), tiles
+   placed by % of it. Data: cur.tb #}
+<div x-show="cur.type === 'target-blocks'" class="mb-6">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle mb-3"></div>
+  <template x-if="cur.tb">
+    <div class="flex flex-col items-center gap-3">
+      <p x-show="!solved && !kid" class="text-sm text-content-subtle text-center text-balance max-w-md"
+        x-text="(cur.tb.blocks.length > 1 ? 'Fais glisser les nombres dans les blocs. Un nombre posé là où deux blocs se croisent compte pour les deux.' : 'Fais glisser les nombres dans le bloc.')"></p>
+
+      {# Legend: target and what the tiles make, per block #}
+      <div class="flex flex-wrap justify-center gap-4" role="list" aria-label="Nombres cibles">
+        <template x-for="(b, k) in cur.tb.blocks" :key="currentIndex + '-l' + k">
+          <div class="js-tb-target flex flex-col items-center gap-1" role="listitem"
+            :aria-label="`Bloc ${k + 1} : ${tbOp(k) === '+' ? '' : tbOp(k) + ' '}${b.target}` + (tbValue(k) !== '' ? `, tu as ${tbValue(k)}` : '')">
+            <span class="text-2xl font-black tabular-nums flex items-center gap-0.5" :style="`color:${b.color}`">
+              <span x-show="tbOp(k) !== '+' || b.op" class="mr-1 w-7 h-7 rounded-md border-2 flex items-center justify-center text-lg leading-none" :style="`border-color:${b.color}`" x-text="tbOp(k)"></span><span x-text="b.target"></span>
+              <span x-show="tbDone(k)" class="text-green-600 text-xl" aria-hidden="true">✓</span>
+            </span>
+            <span x-show="cur.tb.live" class="min-w-[3.5rem] h-10 px-2 rounded-lg border-[3px] border-dashed flex items-center justify-center text-lg font-bold tabular-nums text-content-default whitespace-nowrap"
+              :style="`border-color:${b.color};background:${b.color}22`" x-text="tbValue(k)"></span>
+          </div>
+        </template>
+      </div>
+
+      {# Board (blocks) and tray, one box #}
+      <div x-ref="tbBoard" class="js-tb relative w-full max-w-md select-none touch-none"
+        :style="`aspect-ratio:${cur.tb.w} / ${tbFullH}`"
+        @pointermove="tbMove($event)" @pointerup="tbUp()" @pointercancel="tbUp()" @pointerdown="tbTap($event)">
+        <template x-for="(b, k) in cur.tb.blocks" :key="currentIndex + '-b' + k">
+          <div class="js-tb-block absolute rounded-xl border-[3px] border-dashed transition-colors"
+            :style="`left:${(b.x / cur.tb.w) * 100}%;top:${(b.y / tbFullH) * 100}%;width:${(b.s / cur.tb.w) * 100}%;height:${(b.s / tbFullH) * 100}%;border-color:${b.color};background:${b.color}${tbDone(k) ? '3a' : '1f'}`"
+            aria-hidden="true"></div>
+        </template>
+        <div class="absolute inset-x-0 bottom-0 rounded-xl bg-slate-100 dark:bg-slate-800"
+          :style="`top:${((cur.tb.h + 0.3) / tbFullH) * 100}%`" aria-hidden="true"></div>
+        <template x-for="i in tbZ" :key="currentIndex + '-t' + i">
+          <button type="button" class="js-tb-tile absolute -translate-x-1/2 -translate-y-1/2 rounded-xl bg-slate-700 dark:bg-slate-200 text-white dark:text-slate-900 font-black tabular-nums shadow-md flex items-center justify-center cursor-grab active:cursor-grabbing outline-none focus-visible:ring-4 focus-visible:ring-primary-400"
+            :class="[tbSel === i ? 'ring-4 ring-primary-400 scale-110' : '', String(cur.tb.tiles[i]).length > 2 ? 'text-base' : 'text-xl']"
+            :style="`left:${(tbPos(i)[0] / cur.tb.w) * 100}%;top:${(tbPos(i)[1] / tbFullH) * 100}%;width:${(tbTile / cur.tb.w) * 100}%;aspect-ratio:1`"
+            :aria-label="`Nombre ${cur.tb.tiles[i]}` + (tbAt[i] ? (tbBlocksOf(i).length ? `, dans le bloc ${tbBlocksOf(i).map((k) => k + 1).join(' et ')}` : ', hors des blocs') : '')"
+            @pointerdown="tbDown(i, $event)" @keydown="tbKey(i, $event)"
+            x-text="cur.tb.tiles[i]"></button>
+        </template>
+      </div>
+
+      <p x-show="solved" class="js-tb-reveal text-xl font-bold text-green-600 dark:text-green-400">Tous les blocs ont leur nombre ! 🎉</p>
+      <button type="button" x-show="!solved" @click="tbReset()" :disabled="!tbAt.some(Boolean)"
+        class="px-4 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default font-bold disabled:opacity-40"
+        aria-label="Recommencer"><span aria-hidden="true">🔄</span><span x-show="!kid"> Recommencer</span></button>
+    </div>
+  </template>
+</div>

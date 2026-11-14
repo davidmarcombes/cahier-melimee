@@ -121,8 +121,6 @@ module.exports = {
       fontFamily: ${JSON.stringify(tokens.typography?.fonts || {}, null, 2)},
       fontSize: ${JSON.stringify(tokens.typography?.sizes || {}, null, 2)},
       spacing: ${JSON.stringify(tokens.spacing || {}, null, 2)},
-      // Short screens (laptop 768p at 100 %): tighter vertical spacing, see agents/conventions.md
-      screens: { short: { raw: "(max-height: 800px)" } }
     }
   },
   // CSS budget: no --tw-*-opacity variables on every color utility (~12 KB).
@@ -136,7 +134,9 @@ module.exports = {
   },
   // « x-show="!dark" » in theme-toggle.njk would emit an !important copy of the .dark tokens
   blocklist: ['!dark'],
-  plugins: []
+  // Short screens (laptop 768p at 100 %): tighter vertical spacing, see agents/conventions.md. A variant,
+  // not a raw entry in theme.screens: a raw screen turns off every max-* variant (max-sm: …)
+  plugins: [({ addVariant }) => addVariant('short', '@media (max-height: 800px)')]
 };
 `;
 

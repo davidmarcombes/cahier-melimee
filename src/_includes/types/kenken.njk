@@ -17,17 +17,16 @@
               :style="`
                 left:${c * 4.5}rem; top:${r * 4.5}rem;
                 width:4.375rem; height:4.375rem;
-                border-top: ${r===0 || cur.kenken.cells[r-1][c].cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cage-border);
-                border-left: ${c===0 || rowCells[c-1].cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cage-border);
-                border-right: ${c===cur.kenken.size-1 || rowCells[c+1]?.cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cage-border);
-                border-bottom: ${r===cur.kenken.size-1 || cur.kenken.cells[r+1]?.[c]?.cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cage-border);
+                border-top: ${r===0 || cur.kenken.cells[r-1][c].cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cs);
+                border-left: ${c===0 || rowCells[c-1].cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cs);
+                border-right: ${c===cur.kenken.size-1 || rowCells[c+1]?.cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cs);
+                border-bottom: ${r===cur.kenken.size-1 || cur.kenken.cells[r+1]?.[c]?.cageId !== cell.cageId ? '3px solid' : '1px solid'} var(--cs);
               `"
               :class="{
                 'bg-red-50 dark:bg-red-900/20': !solved && kkErrors.includes(r * cur.kenken.size + c),
                 'bg-green-50 dark:bg-green-900/20': solved,
                 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700': !solved && !kkErrors.includes(r * cur.kenken.size + c)
-              }"
-              style="--cage-border: rgb(71 85 105)">
+              }">
 
               {# Cage label — small corner overlay #}
               <span x-show="cell.label"

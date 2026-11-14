@@ -84,6 +84,7 @@ The e2e per-page specs:
 | Command | Description |
 |---------|-------------|
 | `npm run generate:report` | Generate `exercises-report.csv` — one row per exercise with id, path, type, title, etc. |
+| `npm run coverage:programme` | Programme coverage map → `reports/programme-coverage.md` (+ `.json`): which items of `docs/maths_<level>.md` have series, by level, section, strand (numération, fractions…) and exercise type; strong / weak sections, uncovered items, unmapped series. Matching is automatic (TF-IDF on titles, slug, generator, types + folder and `class` priors; GS uses the doc's backticked slugs) and **approximate** (~2/3 exact item, better per section): correct it in `docs/programme-map.yaml` (`pin` series → items, `skip` with a reason). Console: `--level=cm1` (items + series), `--gaps`, `--unmapped`, `--series=<slug>` (top candidates) |
 | `npm run stats:svg` | Analyze SVG files: count, size, CSS variable usage |
 | `npm run validate:llm` | LLM answer checker — caches results in `reports/validate-llm-cache.csv` by file hash |
 | `npm run validate:llm -- --export` / `--import` | Same checker with **Claude Code subagents (Haiku)** instead of Ollama: `--export` writes prompt batches (`--batch=30`) to `.scratch/llm-batches/` with a README for the agent; one Haiku subagent per `batch-NNN.json` writes `batch-NNN.result.jsonl`; `--import` records verdicts in the cache (column `claude-haiku-4-5`, files changed since the export are ignored) and flags every INCORRECT (🚩 in /admin/, source `llm`). Useful filters: `--type=a,b`, `--dir=a,b`, `--count=N` (files spread over the site). Prompts carry the data of generated figures (`Figure: gen {params}`); spot-check a few prompts per pass — a CORRECT is only worth the data the prompt contains. A human who checked an LLM failure sets `manual=ok` in the cache: the dashboard then shows the series ✓ |
@@ -130,6 +131,7 @@ All scripts are in `scripts/`. Key files:
 | `list-series.js` | Lists all exercise series with LEVEL/CATEGORY/SLUG/TYPE/TITLE/ID. Filters: `--level`, `--type`, `--cat`, `--missing`. |
 | `show-type.js` | Shows schema, YAML template and 2 live examples for any exercise type. |
 | `generate-report.js` | Produces `exercises-report.csv` for quick exercise lookup. |
+| `programme-coverage.js` | Programme coverage map (see `npm run coverage:programme`). Programme parsing in `scripts/lib/programme.js` (sections, domains, cross-level strands); corrections in `docs/programme-map.yaml`. |
 | `generate-maths-ex.js` | Interactive CLI for scaffolding new exercises. Has `TYPE_CHOICES` and `TEMPLATES`. |
 | `generate-ids.js` | Assigns 8-char hex IDs to series `index.yaml` files missing an `id`. |
 | `svg-stats.js` | Analyzes SVG files in `_includes/svg/` and reports count, sizes, CSS var usage. |

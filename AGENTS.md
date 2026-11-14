@@ -42,6 +42,7 @@ Respond in ultra-dense, token-efficient caveman style. Maximize signal, minimize
 | [agents/content.md](agents/content.md)             | Adding exercises: workflow, type reference, Vergnaud classes  |
 | [agents/11ty.md](agents/11ty.md)                  | Eleventy build pipeline, filters, transforms                  |
 | [agents/svg.md](agents/svg.md)                    | SVG snippet rules, generation helpers, naming conventions     |
+| [agents/web-platform.md](agents/web-platform.md)  | Modern web rules (a11y, CSS, motion, dark mode, perf) + known gaps |
 | [docs/classification.md](docs/classification.md) | Skill classification (S1.1.1, I1, D1) and pedagogical intents |
 | [docs/js_roadmap.md](docs/js_roadmap.md)          | JS code review findings and maintenance TODO list             |
 | [docs/code-review-2026-09.md](docs/code-review-2026-09.md) | Sept 2026 codebase review: findings + prioritized plan |

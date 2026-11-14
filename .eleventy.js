@@ -4,6 +4,11 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const arith = require('./scripts/lib/arith.js'); // French-notation arithmetic (shared with the answer oracle)
+const { normalizeCard } = require('./scripts/lib/memory.js'); // memory card shorthand (shared with the validator)
+const { cebSolve } = require('./scripts/lib/compte-est-bon.js'); // le compte est bon: a solution for the solver
+const { bcSolve } = require('./scripts/lib/broken-calc.js'); // calculatrice cassée: a solution for the solver
+const { pxClues } = require('./scripts/lib/picross.js'); // picross: clues from the picture
+const { sgFirst } = require('./scripts/lib/strategy-game.js'); // strategy game: who starts
 const {
   loadGenerators,
   readFlags,
@@ -66,6 +71,8 @@ function genBarModelSvg(bm) {
     // Parts
     const y2 = PY + BAR_H + GAP;
     const STROKES = ['var(--a)', 'var(--green)', 'var(--purple)'];
+    // Space between two parts; the outer edges stay aligned with the whole bar
+    const HGAP = 10;
     let x = PX;
     for (let i = 0; i < parts.length; i++) {
       const pw = Math.max(4, (parts[i].val / wholeNum) * W);
@@ -73,11 +80,13 @@ function genBarModelSvg(bm) {
       const fill = parts[i].isUnk ? 'var(--sc)' : stroke;
       const fillOp = parts[i].isUnk ? '1' : '0.2';
       const dash = parts[i].isUnk ? ' stroke-dasharray="6,4"' : '';
-      s += `<rect x="${x + 1}" y="${y2}" width="${pw - 3}" height="${BAR_H}" rx="4" fill="${fill}" fill-opacity="${fillOp}" stroke="${stroke}" stroke-width="2"${dash}/>`;
+      const rx = x + (i > 0 ? HGAP / 2 : 0);
+      const rw = Math.max(4, pw - (i > 0 ? HGAP / 2 : 0) - (i < parts.length - 1 ? HGAP / 2 : 0));
+      s += `<rect x="${rx}" y="${y2}" width="${rw}" height="${BAR_H}" rx="4" fill="${fill}" fill-opacity="${fillOp}" stroke="${stroke}" stroke-width="2"${dash}/>`;
       const tSize = parts[i].isUnk ? 22 : 15;
-      s += `<text x="${x + 1 + (pw - 3) / 2}" y="${y2 + BAR_H / 2 + 6}" text-anchor="middle" font-size="${tSize}" font-weight="700" fill="${parts[i].isUnk ? 'var(--cs)' : stroke}" ${F}>${parts[i].label}</text>`;
+      s += `<text x="${rx + rw / 2}" y="${y2 + BAR_H / 2 + 6}" text-anchor="middle" font-size="${tSize}" font-weight="700" fill="${parts[i].isUnk ? 'var(--cs)' : stroke}" ${F}>${parts[i].label}</text>`;
       if (hasPartLabels && bm.partLabels[i])
-        s += `<text x="${x + 1 + (pw - 3) / 2}" y="${y2 + BAR_H + 16}" text-anchor="middle" font-size="10" fill="var(--cs)" ${F}>${bm.partLabels[i]}</text>`;
+        s += `<text x="${rx + rw / 2}" y="${y2 + BAR_H + 16}" text-anchor="middle" font-size="10" fill="var(--cs)" ${F}>${bm.partLabels[i]}</text>`;
       x += pw;
     }
     s += '</svg>';
@@ -124,6 +133,45 @@ function genBarModelSvg(bm) {
     return s;
   }
   return '';
+}
+
+// ── Bar model built by the pupil (bm.build) ──────────────────────────────────
+// Rows of boxes drawn to scale (w: % of the longest bar); the pupil puts each chip — the numbers of
+// the statement, the « ? », and `extra` numbers that are not used — in a box. Comparison: the dashed
+// box after the shorter bar is the gap.
+function barModelBuild(bm) {
+  const num = (v) => parseFloat(String(v).replace(/\s/g, '').replace(',', '.'));
+  const val = (v) => (String(v) === '?' ? num(bm.answer) : num(v));
+  const pct = (v, of) => Math.round((v / of) * 1000) / 10;
+  let rows;
+  if (bm.mode === 'part-whole') {
+    const whole = val(bm.whole);
+    rows = [
+      { label: bm.wholeLabel || '', cells: [{ key: 'whole', want: String(bm.whole), w: 100 }] },
+      {
+        label: '',
+        cells: bm.parts.map((p, i) => ({
+          key: 'p' + i,
+          want: String(p),
+          w: pct(val(p), whole),
+          name: (bm.partLabels || [])[i] || '',
+        })),
+      },
+    ];
+  } else {
+    const ref = val(bm.ref),
+      comp = val(bm.compared),
+      top = Math.max(ref, comp);
+    const diff = bm.diff !== undefined ? String(bm.diff) : '?';
+    const bar = (key, v, label) => {
+      const cells = [{ key, want: String(bm[key]), w: pct(v, top) }];
+      if (v < top) cells.push({ key: 'diff', want: diff, w: pct(top - v, top), dashed: true });
+      return { label: label || '', cells };
+    };
+    rows = [bar('ref', ref, bm.refLabel), bar('compared', comp, bm.compLabel)];
+  }
+  const wants = rows.flatMap((r) => r.cells.map((c) => c.want));
+  return { mode: bm.mode, rows, chips: [...wants, ...(bm.extra || []).map(String)] };
 }
 
 module.exports = async function (eleventyConfig) {
@@ -600,6 +648,73 @@ module.exports = async function (eleventyConfig) {
           if (ex.data.askDen) item.fo.askDen = true;
         }
 
+        // Memory: pairs of cards (text or a drawing), shuffled by the player; `sum`: the two values add up to it
+        if (ex.data.type === 'memory' && Array.isArray(ex.data.pairs)) {
+          const text = (s) => md.renderInline(interpolate(s));
+          item.mem = { pairs: ex.data.pairs.map((p) => p.map((c) => normalizeCard(c, text))) };
+          if (ex.data.sum != null) item.mem.sum = Number(ex.data.sum);
+          if (ex.data.faceUp) item.mem.faceUp = true;
+        }
+
+        // Strategy game: course à N / allumettes; the pupil gets the seat that can always win
+        if (ex.data.type === 'strategy-game' && ex.data.total != null) {
+          const d = ex.data;
+          const sg = { kind: d.kind || 'course', total: Number(d.total), moves: (d.moves || [1, 2]).map(Number) };
+          sg.misere = !!d.misere;
+          sg.smart = d.smart ?? 1;
+          sg.first = sgFirst(sg);
+          item.sg = sg;
+        }
+
+        // Picross: the picture ('#' coloured) gives the clues; name / emoji / color shown once solved
+        if (ex.data.type === 'picross' && Array.isArray(ex.data.picture)) {
+          const d = ex.data;
+          item.px = {
+            ...pxClues(d.picture),
+            picture: d.picture,
+            name: d.name,
+            emoji: d.emoji,
+            color: d.color || '#6366f1',
+          };
+          if (d.rowLabels) item.px.rowLabels = d.rowLabels.map((r) => r.map(String));
+          if (d.colLabels) item.px.colLabels = d.colLabels.map((r) => r.map(String));
+        }
+
+        // Calculatrice cassée: target, broken keys (digits or operations), keys on the calculator
+        if (ex.data.type === 'broken-calc' && ex.data.target != null) {
+          const bc = { target: Number(ex.data.target), broken: (ex.data.broken || []).map(String) };
+          bc.ops = ex.data.ops || ['+', '−', '×', '÷'];
+          bc.max = Number(ex.data.max || 999);
+          bc.solution = bcSolve(bc.target, bc.broken, bc);
+          if (!bc.solution) throw new Error(`broken-calc ${ex.inputPath}: ${bc.target} cannot be made`);
+          item.calc = bc;
+        }
+
+        // Le compte est bon: numbers, target, operations allowed; the build finds a solution (fails if none)
+        if (ex.data.type === 'compte-est-bon' && Array.isArray(ex.data.numbers)) {
+          const ceb = { numbers: ex.data.numbers.map(Number), target: Number(ex.data.target) };
+          ceb.ops = ex.data.ops || ['+', '−', '×', '÷'];
+          if (ex.data.useAll) ceb.useAll = true;
+          ceb.solution = cebSolve(ceb.numbers, ceb.target, ceb);
+          if (!ceb.solution) throw new Error(`compte-est-bon ${ex.inputPath}: ${ceb.target} cannot be reached`);
+          item.ceb = ceb;
+        }
+
+        // Ten-frame: tap cells to put tokens in (target), `given` red tokens at the start
+        if (ex.data.type === 'ten-frame' && ex.data.target != null) {
+          const d = ex.data;
+          item.tf = {
+            ask: d.ask || 'montre',
+            frames: Number(d.frames || 1),
+            given: Number(d.given || 0),
+            target: Number(d.target),
+          };
+          if (d.by != null) item.tf.by = Number(d.by);
+          if (d.show != null)
+            item.tf.show = typeof d.show === 'object' ? { dots: Number(d.show.dots) } : { digit: Number(d.show) };
+          if (d.tenFirst) item.tf.tenFirst = true;
+        }
+
         // Money pay: tap coins and notes to make `amount` (cents)
         if (ex.data.type === 'money-pay' && ex.data.amount != null) {
           item.mp = {
@@ -919,6 +1034,7 @@ module.exports = async function (eleventyConfig) {
           const bm = { ...ex.data.bm, answer: String(ex.data.answer ?? '') };
           item.bmSvg = genBarModelSvg(bm);
           if (ex.data.unit) item.unit = String(ex.data.unit);
+          if (bm.build) item.bmBuild = barModelBuild(bm);
         }
 
         if (ex.data.type === 'guided-problem' && ex.data.story && ex.data.steps) {
@@ -1007,6 +1123,15 @@ module.exports = async function (eleventyConfig) {
           item.thermometer = {
             min: Number(interpolate(String(ex.data.min ?? 0))),
             max: Number(interpolate(String(ex.data.max ?? 30))),
+            ...(ex.data.step ? { step: Number(ex.data.step) } : {}),
+            // Measuring jug / scale dial: numbers every `label`, the unit on the drawing and by the input
+            ...(['jug', 'dial'].includes(ex.data.kind)
+              ? {
+                  kind: ex.data.kind,
+                  label: Number(ex.data.label ?? ex.data.step * 10),
+                  unit: String(ex.data.unit || ''),
+                }
+              : {}),
             markers: (ex.data.markers || []).map((m) => ({
               value: Number(interpolate(String(m.value))),
             })),
@@ -1023,6 +1148,15 @@ module.exports = async function (eleventyConfig) {
             value: ex.data.value != null ? Number(interpolate(String(ex.data.value))) : null,
             label: String(ex.data.label || 'A'),
           };
+          // Estimate mode: only the ends are labelled (step = whole range unless given), the click is
+          // accepted within `tolerance` (default 5 % of the range)
+          if (item.nl.mode === 'estimate') {
+            if (ex.data.step == null) item.nl.step = item.nl.max - item.nl.min;
+            item.nl.tolerance =
+              ex.data.tolerance != null
+                ? Number(interpolate(String(ex.data.tolerance)))
+                : (item.nl.max - item.nl.min) * 0.05;
+          }
         }
 
         if (ex.data.type === 'coordinate-grid') {
@@ -1140,7 +1274,63 @@ module.exports = async function (eleventyConfig) {
           };
         }
 
-        if (ex.data.type === 'column-op') {
+        // Division posée (potence): dividend | divisor, quotient under the divisor, under the dividend the
+        // products (−) and remainders with the next digit lowered. Cells hold a digit, ' ', or the index of
+        // their field in `answers`, numbered in the order of the algorithm (quotient digit, product, remainder).
+        // `products: false` writes the remainders only; `steps: false` asks the quotient and remainder alone.
+        if (ex.data.type === 'column-op' && ex.data.operation === '÷') {
+          const D = String(ex.data.top).replace(/\s+/g, '');
+          const d = Number(String(ex.data.bottom).replace(/\s+/g, ''));
+          if (!/^\d+$/.test(D) || !(d > 0) || Number(D) < d)
+            throw new Error(`column-op ÷: whole dividend ≥ divisor expected (${D} ÷ ${d}) in ${ex.inputPath}`);
+          const cols = D.length;
+          const answers = [];
+          const field = (digit) => answers.push(String(digit)) - 1;
+          const blank = () => Array(cols).fill(' ');
+          const put = (row, n, end) =>
+            String(n)
+              .split('')
+              .forEach((c, i, a) => (row.cells[end - a.length + 1 + i] = field(c)));
+          const steps = ex.data.steps !== false;
+          const products = ex.data.products !== false;
+          const rows = [];
+          const quotient = [];
+          let j = 0;
+          let part = Number(D[0]);
+          while (part < d) part = part * 10 + Number(D[++j]);
+          let remRow = null;
+          for (;;) {
+            const q = Math.floor(part / d);
+            quotient.push(field(q));
+            if (steps && q > 0) {
+              if (products) {
+                const row = { sign: '−', cells: blank() };
+                put(row, q * d, j);
+                rows.push(row);
+              }
+              remRow = { sign: '', cells: blank() };
+              put(remRow, part - q * d, j);
+              rows.push(remRow);
+            }
+            const rem = part - q * d;
+            if (j === cols - 1) break;
+            j++;
+            if (steps) remRow.cells[j] = field(D[j]);
+            part = rem * 10 + Number(D[j]);
+          }
+          const r = Number(D) % d;
+          item.colOp = {
+            operation: '÷',
+            dividend: D.split(''),
+            divisor: String(d).split(''),
+            rows,
+            quotient,
+            // without the steps the remainder gets its own fields
+            remainder: steps ? null : String(r).split('').map(field),
+            blanks: answers.length,
+          };
+          item.answers = answers;
+        } else if (ex.data.type === 'column-op') {
           const clean = (s) => String(s).replace(/\s+/g, '');
           const isDecSep = (c) => c === ',' || c === '.';
           const top = clean(ex.data.top || '');
@@ -1219,6 +1409,31 @@ module.exports = async function (eleventyConfig) {
                 item.answers.push(resDigits[pos] || '0');
               }
             }
+          }
+          // × by 2 digits or more: one partial product per digit of the multiplier, its shifted 0s written in,
+          // then the sum. Their fields come first in `answers` (result fields from resultStart on).
+          // `partials: false` keeps the result row alone.
+          const op = item.colOp.operation;
+          if (op === '×' && bottom && bottom.length > 1 && !hasDecimal && ex.data.partials !== false) {
+            if (bottom.includes('0'))
+              throw new Error(
+                `column-op ×: multiplier ${bottom} has a 0 digit (no partial row for it) in ${ex.inputPath}`
+              );
+            const width = item.colOp.top.length;
+            const partAnswers = [];
+            item.colOp.partials = bottom
+              .split('')
+              .reverse()
+              .map((digit, k) => {
+                const p = String(Number(top) * Number(digit));
+                const cells = (p + '0'.repeat(k)).padStart(width, ' ').split('');
+                return cells.map((c, i) => (c === ' ' || i >= width - k ? c : partAnswers.push(c) - 1));
+              });
+            if (item.colOp.partials.some((row) => row.length > width))
+              throw new Error(`column-op ×: partial products wider than the result in ${ex.inputPath}`);
+            item.colOp.resultStart = partAnswers.length;
+            item.colOp.blanks = partAnswers.length + item.answers.length;
+            item.answers = [...partAnswers, ...item.answers];
           }
         }
 
@@ -1554,6 +1769,16 @@ module.exports = async function (eleventyConfig) {
       'jump-line',
       'money-pay',
       'fraction-op',
+      'memory',
+      'ten-frame',
+      'compte-est-bon',
+      'broken-calc',
+      'picross',
+      'tangram',
+      'strategy-game',
+      'target-blocks',
+      'hundred-board',
+      'dice-game',
     ];
     const CSV_CLASSES = [
       'A1.1',

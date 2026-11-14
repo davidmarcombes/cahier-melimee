@@ -1,6 +1,6 @@
 {
   "name": "eleventy-tailwind-template",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Eleventy + Tailwind CSS + Alpine.js starter template",
   "scripts": {
     "help": "node scripts/help.js",
@@ -40,6 +40,7 @@
     "generate:ids": "node scripts/generate-ids.js",
     "generate:maths": "node scripts/generate-maths-ex.js",
     "generate:report": "node scripts/generate-report.js",
+    "coverage:programme": "node scripts/programme-coverage.js",
     "generate:commit": "npm run normalize:eol:write && npm run generate:ids && npm run generate:report && npm run sync:human-validations:write && npm run sync:llm-cache:write",
     "generate:clone-prompt": "node scripts/prompt-to-clone.js",
     "validate:config": "node scripts/validate-config.js",

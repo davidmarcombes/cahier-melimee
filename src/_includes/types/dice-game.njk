@@ -1,0 +1,39 @@
+{# dice-game — Ferme la boîte: tiles 1…n; « Lance les dés », then tap open tiles that add up to the dice (they
+   close at once; too much: refused). « Je ne peux plus jouer » ends the round (refused while a move exists).
+   Score: the tiles left open. Data: cur.dg #}
+<div x-show="cur.type === 'dice-game'" class="mb-6">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle mb-3"></div>
+  <template x-if="cur.dg">
+    <div class="flex flex-col items-center gap-4">
+      <p x-show="!dgOver" class="text-sm text-content-subtle text-center text-balance max-w-md">Lance les dés, puis ferme des cases qui font le même total. Ferme toutes les cases si tu peux !</p>
+
+      {# The box: open tiles show their number, closed ones are turned down #}
+      <div class="js-dg-box flex flex-wrap justify-center gap-1.5 p-2 rounded-2xl bg-amber-800 dark:bg-amber-900 shadow-inner max-w-md" role="group" aria-label="Les cases">
+        <template x-for="n in cur.dg.tiles" :key="currentIndex + '-' + n">
+          <button type="button" @click="dgTap(n)" :disabled="solved || dgOver || !dgDice.length || !dgOpen[n - 1]"
+            :aria-label="dgOpen[n - 1] ? `Case ${n}` : `Case ${n}, fermée`" :aria-pressed="String(dgPicked.includes(n))"
+            class="js-dg-tile w-10 h-14 sm:w-11 sm:h-16 rounded-md text-2xl font-black tabular-nums flex items-center justify-center transition-all"
+            :class="!dgOpen[n - 1] ? 'bg-amber-950/60 text-transparent shadow-inner' : dgPicked.includes(n) ? 'bg-primary-500 text-white -translate-y-1 shadow-lg' : 'bg-amber-50 text-amber-900 shadow hover:-translate-y-0.5'"
+            x-text="n"></button>
+        </template>
+      </div>
+
+      {# Dice, or the roll button #}
+      <div class="flex items-center justify-center gap-3 min-h-[5rem]">
+        <template x-for="(d, k) in dgDice" :key="currentIndex + '-d' + k + '-' + d">
+          <span class="js-dg-die w-16 h-16" x-html="diceSvg(d, 64)"></span>
+        </template>
+        <span x-show="dgDice.length" class="text-2xl font-bold text-content-default tabular-nums" x-text="`= ${dgTotal}`"></span>
+        <button x-show="!dgDice.length && !dgOver" type="button" @click="dgRoll()" :disabled="solved"
+          class="js-dg-roll px-6 py-3 rounded-xl bg-primary-500 text-white text-lg font-bold shadow-md hover:bg-primary-600 active:scale-95">🎲 Lance les dés</button>
+      </div>
+      <p x-show="dgDice.length && dgPicked.length" class="text-base font-semibold text-content-default tabular-nums" x-text="`${dgPicked.join(' + ')} = ${dgPicked.reduce((a, b) => a + b, 0)}`"></p>
+
+      <button x-show="dgDice.length && !dgOver" type="button" @click="dgStop()" :disabled="solved"
+        class="js-dg-stop px-4 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default font-bold">✋ Je ne peux plus jouer</button>
+
+      <p x-show="dgOver" class="js-dg-score text-lg font-bold text-center text-green-600 dark:text-green-400" aria-live="polite"
+        x-text="dgLeft === 0 ? 'Tu as fermé toutes les cases ! 🎉' : `Partie finie ! Il reste ${dgLeft} points dans la boîte.`"></p>
+    </div>
+  </template>
+</div>

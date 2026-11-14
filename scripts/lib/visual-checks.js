@@ -15,7 +15,7 @@ const { readShape, shapeNames, sides, angles } = require('./shapes.js');
 // The page's drawing functions (browser script, no exports)
 const SVG_JS = new Function(
   fs.readFileSync(path.join(__dirname, '../../src/assets/js/svg.js'), 'utf8') +
-    '\nreturn { clockSvg, moneySvg, rulerExerciseSvg };'
+    '\nreturn { clockSvg, moneySvg, rulerExerciseSvg, thermometerExerciseSvg };'
 )();
 
 const attr = (tag, name) => {
@@ -69,6 +69,40 @@ function countObjects(e) {
   const want = target ? Number(target[1]) - n : n;
   if (target && want <= 0) return `${n} ${kinds[0]} drawn: nothing to add to reach ${target[1]}`;
   return e.answers.some((a) => same(num(a), want)) ? null : `${n} ${kinds[0]} drawn, declared ${e.answers.join(' / ')}`;
+}
+
+// Splat: the card says how many in all, the emojis left showing are counted; none may sit under the
+// splat, which must be big enough for what it hides. The peek picture: the same ones, plus the hidden ones.
+function splat(e) {
+  const svg = String(e.svgHtml || '');
+  const card = svg.match(/<text data-total="1"[^>]*>(\d+)<\/text>/);
+  const blot = svg.match(/data-splat="([\d.]+) ([\d.]+) ([\d.]+)"/);
+  if (!card || !blot) throw new Unparseable('no total card or no splat');
+  const total = Number(card[1]);
+  const [cx, cy, reach] = blot.slice(1).map(Number);
+  const { count, problems } = scattered(svg);
+  if (problems.length) return problems.join('; ');
+  const kinds = Object.keys(count);
+  if (kinds.length !== 1) throw new Unparseable(`${kinds.length} kinds of objects`);
+  const seen = texts(svg).filter((t) => t.text === kinds[0]);
+  const under = seen.find((t) => Math.hypot(t.x - cx, t.y - cy) < reach + t.size / 2);
+  if (under) return `${under.text} at (${fmt(under.x)}, ${fmt(under.y)}) is partly under the splat`;
+  const want = total - seen.length;
+  if (want < 1) return `${seen.length} showing out of ${total}: nothing is hidden`;
+  const size = seen[0] ? seen[0].size : 30;
+  if (Math.PI * (reach / 1.35) ** 2 < want * size * size * 0.8) return `a splat of ${fmt(reach)} cannot hide ${want}`;
+  if (e.svgFull) {
+    const all = texts(e.svgFull).filter((t) => t.text === kinds[0]);
+    if (all.length !== total) return `the peek shows ${all.length}, the card says ${total}`;
+    if (!seen.every((t) => all.some((a) => a.x === t.x && a.y === t.y)))
+      return 'the peek does not show the same objects in the same places';
+    const hid = all.filter((a) => !seen.some((t) => t.x === a.x && t.y === a.y));
+    if (hid.some((a) => Math.hypot(a.x - cx, a.y - cy) + a.size / 2 > reach))
+      return 'an object of the peek is not where the splat falls';
+  }
+  return e.answers.some((a) => same(num(a), want))
+    ? null
+    : `${total} in all, ${seen.length} showing: ${want} under the splat, declared ${e.answers.join(' / ')}`;
 }
 
 // « Il y a ___ de 🐝 que de 🌸. » → Autant (0) · Plus (1) · Moins (2), as on the buttons
@@ -148,6 +182,62 @@ function moneyQuestions(e) {
   return null;
 }
 
+// Thermometer, measuring jug, scale dial as drawn: the numbered graduations give the scale (a height, or an
+// angle around the dial's centre); the liquid, the red column or the needle must stop on a graduation
+function gauge(e) {
+  const r = e.thermometer;
+  if (!r) throw new Unparseable('no thermometer');
+  const svg = SVG_JS.thermometerExerciseSvg(r);
+  const lines = [...svg.matchAll(/<line\b([^>]*)\/>/g)].map(([, a]) => ({
+    x1: Number(attr(a, 'x1')),
+    y1: Number(attr(a, 'y1')),
+    x2: Number(attr(a, 'x2')),
+    y2: Number(attr(a, 'y2')),
+    level: /data-level|data-needle/.test(a),
+  }));
+  const needle = lines.find((l) => l.level);
+  const dial = r.kind === 'dial';
+  let pos, marker, ticks, labels;
+  const numbers = texts(svg).filter((t) => /^-?\d+(?:,\d+)?$/.test(t.text));
+  if (dial) {
+    if (!needle) throw new Unparseable('dial without a needle');
+    const [cx, cy] = [needle.x1, needle.y1];
+    pos = (x, y) => (Math.atan2(x - cx, cy - y) * 180) / Math.PI; // degrees, 0 = up, clockwise
+    marker = pos(needle.x2, needle.y2);
+    ticks = lines.filter((l) => !l.level).map((l) => pos(l.x1, l.y1));
+    labels = numbers.map((t) => ({ p: pos(t.x, t.y - 4), v: num(t.text) }));
+  } else {
+    pos = (y) => y;
+    ticks = lines.filter((l) => !l.level && l.y1 === l.y2).map((l) => l.y1);
+    labels = numbers.map((t) => ({ p: t.y - 4, v: num(t.text) }));
+    if (r.kind === 'jug') {
+      if (!needle) throw new Unparseable('jug without a level');
+      marker = needle.y1;
+    } else {
+      const col = svg.match(/<rect x="[\d.]+" y="([\d.]+)" width="10" height="[\d.]+" fill="#ef4444"/);
+      marker = col ? Number(col[1]) : Math.max(...ticks); // no column: the lowest graduation
+    }
+  }
+  if (labels.length < 2) throw new Unparseable('fewer than two numbers on the scale');
+  const [p, q] = [labels[0], labels[labels.length - 1]];
+  const valueAt = (x) => p.v + ((x - p.p) * (q.v - p.v)) / (q.p - p.p);
+  for (const l of labels)
+    if (Math.abs(valueAt(l.p) - l.v) > Math.abs(q.v - p.v) * 0.002) return `${l.v} is not where the scale puts it`;
+  const ps = [...new Set(ticks.map((t) => t.toFixed(2)))].map(Number).sort((a, b) => a - b);
+  const px = dial ? 100 * (Math.PI / 180) : 1; // a degree on the dial ≈ 2 px at the tick ring
+  const gap = Math.min(...ps.slice(1).map((t, i) => (t - ps[i]) * px));
+  if (gap < 4) return `graduations ${fmt(Math.round(gap * 10) / 10)} px apart: too close to read`;
+  if (!ps.some((t) => Math.abs(t - marker) < (dial ? 0.3 : 0.5)))
+    return `the ${dial ? 'needle' : 'level'} at ${fmt(valueAt(marker))} is between two graduations`;
+  // On a graduation: its value, to the step of the scale (the drawing's coordinates are rounded)
+  const stepVal = Math.abs(valueAt(ps[1]) - valueAt(ps[0]));
+  const nice = Math.pow(10, Math.floor(Math.log10(stepVal)) - 1);
+  const want = Math.round(Math.round(valueAt(marker) / nice) * nice * 1e6) / 1e6;
+  return e.answers.some((a) => same(num(a), want))
+    ? null
+    : `the ${r.kind || 'thermometer'} shows ${fmt(want)}, declared ${e.answers.join(' / ')}`;
+}
+
 // Ruler as drawn: labelled whole-unit ticks give the scale; the marker must sit on a graduation
 function ruler(e) {
   if (!e.ruler) throw new Unparseable('no ruler');
@@ -178,12 +268,14 @@ function ruler(e) {
   else if (markers.length === 1) want = markers[0].value;
   else if (markers.length === 2) want = Math.round(Math.abs(markers[1].value - markers[0].value) * 10000) / 10000;
   if (want === undefined) throw new Unparseable(`${markers.length} markers`);
+  // « Combien de millimètres ? » on a ruler graduated in cm: 4,7 cm is read 47 mm
+  if (/millimètres/i.test(clean(e.title))) want = Math.round(want * 10 * 10000) / 10000;
   return e.answers.some((a) => same(num(a), want))
     ? null
     : `the ruler shows ${fmt(want)}, declared ${e.answers.join(' / ')}`;
 }
 
-// « 1 à 4 », « Pair », « Multiple de 7 », « Non multiple », « 3 » (direct) → predicate on a cell
+// « 1 à 4 », « Pair », « Multiple de 7 » / « Divisible par 9 », « Non multiple » / « Non divisible », « 3 » (direct) → predicate on a cell
 function colourRule(label, labels) {
   const l = clean(label).toLowerCase();
   let m;
@@ -191,8 +283,8 @@ function colourRule(label, labels) {
   if (/^\d+$/.test(l)) return (n) => n === Number(l);
   if (l === 'pair') return (n) => n % 2 === 0;
   if (l === 'impair') return (n) => n % 2 !== 0;
-  if ((m = l.match(/^multiple de (\d+)$/))) return (n) => n % Number(m[1]) === 0;
-  if (l === 'non multiple') {
+  if ((m = l.match(/^(?:multiple de|divisible par) (\d+)$/))) return (n) => n % Number(m[1]) === 0;
+  if (l === 'non multiple' || l === 'non divisible') {
     const others = labels.filter((x) => x !== label).map((x) => colourRule(x, labels));
     return (n) => !others.some((f) => f(n));
   }
@@ -244,6 +336,7 @@ const VISUAL_CHECKS = {
   'compare-groups': compareGroups,
   'magic-color': magicColor,
   ruler,
+  thermometer: gauge,
 };
 
 // By generator, when the type alone does not say how to read the drawing
@@ -259,6 +352,7 @@ const VISUAL_GEN_CHECKS = {
     }
     return null;
   },
+  sousLaTache: splat,
   porteMonnaie: moneyQuestions,
   compterEuros: moneyQuestions,
   vennFormes: vennShapes,

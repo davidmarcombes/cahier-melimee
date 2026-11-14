@@ -111,7 +111,281 @@
     return String(rand(min, max));
   }
 
+  // Hundred board (tableau des nombres): texts and rules, checked word for word by scripts/lib/hundred-board.js
+  const HB_ARROWS = { d: '↓', u: '↑', r: '→', l: '←' };
+  const hbDigit = (n, p) => Math.floor(n / p) % 10;
+  const HB_CLUES = {
+    unites: {
+      text: (v) => `Mon chiffre des unités est ${v}.`,
+      holds: (v, n) => hbDigit(n, 1) === v,
+      of: (t) => hbDigit(t, 1),
+    },
+    dizaines: {
+      text: (v) => `Mon chiffre des dizaines est ${v}.`,
+      holds: (v, n) => hbDigit(n, 10) === v,
+      of: (t) => hbDigit(t, 10),
+    },
+    centaines: {
+      text: (v) => `Mon chiffre des centaines est ${v}.`,
+      holds: (v, n) => hbDigit(n, 100) === v,
+      of: (t) => hbDigit(t, 100),
+    },
+    entre: {
+      text: (v) => `Je suis entre ${v[0]} et ${v[1]}.`,
+      holds: (v, n) => n > v[0] && n < v[1],
+      of: (t) => {
+        const a = t - rand(1, 6);
+        return [a, a + rand(8, 12)].map((x, i) => (i ? Math.max(x, t + 1) : x));
+      },
+    },
+    pair: { text: () => 'Je suis un nombre pair.', holds: (v, n) => n % 2 === 0, ok: (t) => t % 2 === 0 },
+    impair: { text: () => 'Je suis un nombre impair.', holds: (v, n) => n % 2 === 1, ok: (t) => t % 2 === 1 },
+    somme: {
+      text: (v) => `Si on ajoute mes chiffres, on trouve ${v}.`,
+      holds: (v, n) =>
+        String(n)
+          .split('')
+          .reduce((s, d) => s + Number(d), 0) === v,
+      of: (t) =>
+        String(t)
+          .split('')
+          .reduce((s, d) => s + Number(d), 0),
+    },
+    apres: {
+      text: (v) => `Je suis juste après ${v}.`,
+      holds: (v, n) => n === v + 1,
+      of: (t) => t - 1,
+      col: (c) => c > 0,
+    },
+    avant: {
+      text: (v) => `Je suis juste avant ${v}.`,
+      holds: (v, n) => n === v - 1,
+      of: (t) => t + 1,
+      col: (c) => c < 9,
+    },
+    dessous: {
+      text: (v) => `Je suis juste en dessous de ${v}.`,
+      holds: (v, n) => n === v + 10,
+      of: (t) => t - 10,
+      row: (r) => r > 0,
+    },
+    dessus: {
+      text: (v) => `Je suis juste au-dessus de ${v}.`,
+      holds: (v, n) => n === v - 10,
+      of: (t) => t + 10,
+      row: (r, R) => r < R - 1,
+    },
+    plus: { text: (v) => `Je suis plus grand que ${v}.`, holds: (v, n) => n > v, of: (t) => t - rand(1, 9) },
+    moins: { text: (v) => `Je suis plus petit que ${v}.`, holds: (v, n) => n < v, of: (t) => t + rand(1, 9) },
+  };
+  const HB_RULES = {
+    unites: (r) => `Colorie tous les nombres dont le chiffre des unités est ${r.v}.`,
+    dizaines: (r) => `Colorie tous les nombres dont le chiffre des dizaines est ${r.v}.`,
+    pas: (r) =>
+      `Colorie de ${r.step} en ${r.step} : ${r.from}, ${r.from + r.step}, ${r.from + 2 * r.step}… jusqu’à ${r.to}.`,
+  };
+  // Pieces of the board for « morceau » ([row, col] offsets from the centre)
+  const HB_SHAPES = {
+    croix: [
+      [0, 0],
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1],
+    ],
+    ligne: [
+      [0, -1],
+      [0, 0],
+      [0, 1],
+      [0, 2],
+    ],
+    colonne: [
+      [-1, 0],
+      [0, 0],
+      [1, 0],
+      [2, 0],
+    ],
+    carre: [
+      [0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 1],
+    ],
+    L: [
+      [-1, 0],
+      [0, 0],
+      [1, 0],
+      [1, 1],
+    ],
+    T: [
+      [0, -1],
+      [0, 0],
+      [0, 1],
+      [1, 0],
+    ],
+    escalier: [
+      [0, 0],
+      [0, 1],
+      [1, 1],
+      [1, 2],
+      [2, 2],
+    ],
+    grandeCroix: [
+      [0, 0],
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1],
+      [-1, -1],
+      [1, 1],
+    ],
+    rectangle: [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+      [1, 0],
+      [1, 1],
+      [1, 2],
+    ],
+  };
+
   const generators = {
+    // tableauNombres: hundred-board — the tableau des nombres, rows of ten from `start` (1: 1…100,
+    //   0: 0…99, 301: 301…400; a list: one at random), `rows` (10). mode:
+    //   find, kind mystere — tap the number of the clues: `clues` is a list of clue sets to pick from
+    //     (unites, dizaines, centaines, entre, pair, impair, somme, apres, avant, dessous, dessus, plus,
+    //     moins), the set must point to one number only
+    //   find, kind deplacements — from a number follow `steps` ([2, 4]) arrows among `moves` (['d', 'r']:
+    //     ↓ +10, → +1; 'u' ↑, 'l' ←); `hide`: only the start number is written (and `landmarks`, e.g. [1, 100])
+    //   fill, kind trous — `blanks` ([4, 6]) holes in the board to type
+    //   fill, kind morceau — only a piece of the board is drawn (`shapes`: croix, ligne, colonne, carre,
+    //     L, T, escalier, grandeCroix, rectangle), one number given (`given`: 1), the others to type
+    //   color — `rules`: [{ k: 'unites' }, { k: 'dizaines' }, { k: 'pas', step: [2, 5], from: [1, 9] }], at most
+    //     `maxCount` (12) numbers to colour (a pas rule stops there: « … jusqu’à 47 »)
+    tableauNombres: {
+      generate(params = {}) {
+        const start = Array.isArray(params.start) ? randItem(params.start) : (params.start ?? 1);
+        const rows = params.rows || 10;
+        const last = start + rows * 10 - 1;
+        const mode = params.mode || 'find';
+        const kind = params.kind || { find: 'mystere', fill: 'trous', color: 'motif' }[mode];
+        const pickN = (v, d) => (Array.isArray(v) ? rand(v[0], v[1]) : (v ?? d));
+        const all = Array.from({ length: rows * 10 }, (_, i) => start + i);
+        const at = (n) => [Math.floor((n - start) / 10), (n - start) % 10];
+        const hb = { mode, start, rows };
+
+        if (mode === 'find' && kind === 'deplacements') {
+          const moves = params.moves || ['d', 'r'];
+          const D = { d: [1, 0], u: [-1, 0], r: [0, 1], l: [0, -1] };
+          for (let t = 0; t < 200; t++) {
+            const from = randItem(all);
+            let [r, c] = at(from);
+            const path = [];
+            const steps = pickN(params.steps, 3);
+            for (let s = 0; s < steps; s++) {
+              const ok = moves.filter((m) => {
+                const [nr, nc] = [r + D[m][0], c + D[m][1]];
+                return nr >= 0 && nr < rows && nc >= 0 && nc <= 9;
+              });
+              if (!ok.length) break;
+              const m = randItem(ok);
+              path.push(m);
+              [r, c] = [r + D[m][0], c + D[m][1]];
+            }
+            const target = start + r * 10 + c;
+            if (path.length !== steps || target === from) continue;
+            // the arrows in board order (all ↓ then all →) read more easily for the youngest
+            if (params.sorted) path.sort((a, b) => moves.indexOf(a) - moves.indexOf(b));
+            Object.assign(hb, { target, from, path });
+            hb.text = `Pars de ${from}. Suis les flèches : ${path.map((m) => HB_ARROWS[m]).join(' ')}`;
+            if (params.hide) {
+              hb.hide = true;
+              hb.shown = [
+                from,
+                ...(params.landmarks || []).filter((n) => n !== target && n !== from && n >= start && n <= last),
+              ];
+            }
+            return { type: 'hundred-board', ...(params.title && { title: params.title }), hb };
+          }
+        }
+
+        if (mode === 'find') {
+          const sets = params.clues || [['dizaines', 'unites']];
+          for (let t = 0; t < 300; t++) {
+            const target = randItem(all);
+            const [r, c] = at(target);
+            const set = randItem(sets);
+            const clues = [];
+            let ok = true;
+            for (const k of set) {
+              const C = HB_CLUES[k];
+              if ((C.ok && !C.ok(target)) || (C.col && !C.col(c)) || (C.row && !C.row(r, rows))) ok = false;
+              const v = C.of ? C.of(target) : undefined;
+              if (!ok) break;
+              if (Array.isArray(v) ? v[0] < 0 : typeof v === 'number' && v < 0) ok = false;
+              const clue = v === undefined ? { k } : { k, v };
+              clue.text = C.text(v);
+              clues.push(clue);
+            }
+            if (!ok) continue;
+            const fits = all.filter((n) => clues.every((cl) => HB_CLUES[cl.k].holds(cl.v, n)));
+            if (fits.length !== 1) continue;
+            Object.assign(hb, { target, clues });
+            return { type: 'hundred-board', ...(params.title && { title: params.title }), hb };
+          }
+        }
+
+        if (mode === 'fill' && kind === 'morceau') {
+          const names = params.shapes || Object.keys(HB_SHAPES);
+          for (let t = 0; t < 200; t++) {
+            const shape = HB_SHAPES[randItem(names)];
+            const [r0, c0] = at(randItem(all));
+            const cells = shape.map(([dr, dc]) => [r0 + dr, c0 + dc]);
+            if (cells.some(([r, c]) => r < 0 || r >= rows || c < 0 || c > 9)) continue;
+            const nums = cells.map(([r, c]) => start + r * 10 + c).sort((a, b) => a - b);
+            const given = shuffle([...nums]).slice(0, params.given || 1);
+            hb.cells = nums;
+            hb.blanks = nums.filter((n) => !given.includes(n));
+            return { type: 'hundred-board', ...(params.title && { title: params.title }), hb };
+          }
+        }
+
+        if (mode === 'fill') {
+          const k = pickN(params.blanks, 5);
+          hb.blanks = shuffle([...all])
+            .slice(0, k)
+            .sort((a, b) => a - b);
+          return { type: 'hundred-board', ...(params.title && { title: params.title }), hb };
+        }
+
+        // color
+        const rules = params.rules || [{ k: 'unites' }];
+        const maxCount = params.maxCount || 12;
+        for (let t = 0; t < 200; t++) {
+          const spec = randItem(rules);
+          let rule;
+          if (spec.k === 'pas') {
+            const step = pickN(spec.step, 5);
+            const from = start + pickN(spec.from, step) - (start % 10 === 1 ? 1 : 0);
+            if (from < start || from > last) continue;
+            const to = Math.min(from + step * (maxCount - 1), from + step * Math.floor((last - from) / step));
+            if ((to - from) / step + 1 < 3) continue;
+            rule = { k: 'pas', from, step, to };
+          } else rule = { k: spec.k, v: pickN(spec.v, rand(0, 9)) };
+          const answer = all.filter((n) =>
+            rule.k === 'pas'
+              ? n >= rule.from && n <= rule.to && (n - rule.from) % rule.step === 0
+              : hbDigit(n, rule.k === 'unites' ? 1 : 10) === rule.v
+          );
+          if (answer.length < 2 || answer.length > Math.max(maxCount, 10)) continue;
+          Object.assign(hb, { rule, answer, text: HB_RULES[rule.k](rule) });
+          return { type: 'hundred-board', ...(params.title && { title: params.title }), hb };
+        }
+        throw new Error('tableauNombres: no board for these params');
+      },
+    },
+
+    // dicteeNombre: hear a number, write it in digits (voice exercise)
     // dicteeNombre: hear a number, write it in digits (voice exercise)
     // params: min (1), max (999999999), decimals (0), tricky (0.5 — share of 11–16 / 70–99)
     dicteeNombre: {
@@ -188,7 +462,14 @@
         return {
           type: 'ruler',
           title: `Lis la valeur indiqu\u00e9e par ${label}`,
-          ruler: { min, max, divisions, subdivisions, markers: [{ label, value }] },
+          ruler: {
+            min,
+            max,
+            divisions,
+            subdivisions,
+            markers: [{ label, value }],
+            ...(params.labelDivisions && { labelDivisions: true }),
+          },
           answers: [answer],
         };
       },
@@ -716,33 +997,38 @@
       },
     },
 
-    // decomp: additive place-value decomposition — centaines, dizaines, unités (CE2)
+    // decomp: additive place-value decomposition — one box per digit of maxVal: dizaines, unités (CP,
+    //   10–99) · centaines, dizaines, unités (CE2) · up to centaines de mille (CM2, written 345 678)
     // params: minVal (100), maxVal (999)
     decompoAdditif: {
       generate(params = {}) {
         const min = params.minVal ?? 100;
         const max = params.maxVal ?? 999;
         const num = rand(min, max);
-        const h = Math.floor(num / 100);
-        const t = Math.floor((num % 100) / 10);
-        const u = num % 10;
+        const PLACES = [
+          'unités',
+          'dizaines',
+          'centaines',
+          'unités de mille',
+          'dizaines de mille',
+          'centaines de mille',
+        ];
+        const n = String(max).length;
+        const digits = String(num).padStart(n, '0');
         return {
           type: 'decomp',
           title: 'Décompose ce nombre.',
           decomp: {
-            number: String(num),
-            parts: [
-              { label: 'centaines', answer: String(h), inputIdx: 0 },
-              { label: 'dizaines', answer: String(t), inputIdx: 1 },
-              { label: 'unités', answer: String(u), inputIdx: 2 },
-            ],
+            number: num >= 10000 ? String(num).replace(/\B(?=(\d{3})+$)/g, '\u00a0') : String(num),
+            parts: [...digits].map((d, i) => ({ label: PLACES[n - 1 - i], answer: d, inputIdx: i })),
           },
         };
       },
     },
 
-    // decomp: additive decomposition with decimals — dizaines, unités, dixièmes, centièmes (CM1)
-    // params: minInt (10), maxInt (99)
+    // decomp: additive decomposition with decimals — dizaines, unités, dixièmes, centièmes (CM1), and
+    //   millièmes with decimals: 3 (CM2)
+    // params: minInt (10), maxInt (99), decimals (2 | 3)
     decompoAdditifDecimal: {
       generate(params = {}) {
         const minInt = params.minInt ?? 10;
@@ -752,7 +1038,8 @@
         const centiemes = rand(1, 9);
         const dizaines = Math.floor(intPart / 10);
         const unites = intPart % 10;
-        const numStr = `${intPart},${dixiemes}${centiemes}`;
+        const milliemes = params.decimals === 3 ? rand(1, 9) : null;
+        const numStr = `${intPart},${dixiemes}${centiemes}${milliemes ?? ''}`;
         return {
           type: 'decomp',
           title: 'Décompose ce nombre décimal.',
@@ -764,6 +1051,7 @@
               { comma: true },
               { label: 'dixièmes', answer: String(dixiemes), inputIdx: 2 },
               { label: 'centièmes', answer: String(centiemes), inputIdx: 3 },
+              ...(milliemes === null ? [] : [{ label: 'millièmes', answer: String(milliemes), inputIdx: 4 }]),
             ],
           },
         };

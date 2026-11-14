@@ -1119,6 +1119,11 @@ function rulerExerciseSvg(r) {
     if (u < range) {
       for (let d = 1; d < divs; d++) {
         s += `<line x1="${x + (d * uw) / divs}" y1="${Y - 12}" x2="${x + (d * uw) / divs}" y2="${Y}" stroke="currentColor" stroke-width="1.5"/>`;
+        // labelDivisions: each tenth written under its tick (hundredths rulers: no counting from the unit)
+        if (r.labelDivisions) {
+          const v = String(Math.round((r.min + u + d / divs) * 1000) / 1000).replace('.', ',');
+          s += `<text x="${x + (d * uw) / divs}" y="${Y + 14}" text-anchor="middle" fill="currentColor" font-size="9" opacity="0.7">${v}</text>`;
+        }
       }
       if (subs > 0) {
         for (let d = 0; d < divs; d++) {
@@ -1140,14 +1145,105 @@ function rulerExerciseSvg(r) {
   return s;
 }
 
+// Graduations of a jug or a dial: every `step`, longer every `label / 2` when it falls on a step, a number every `label`
+function scaleTicks(r) {
+  const k = (v) => Math.round(v * 1e6) / 1e6;
+  const step = r.step,
+    label = r.label ?? step * 10,
+    half = label / 2;
+  const onStep = (v, by) => Math.abs(v / by - Math.round(v / by)) < 1e-6;
+  const out = [];
+  for (let i = 0; k(r.min + i * step) <= r.max; i++) {
+    const v = k(r.min + i * step);
+    out.push({
+      v,
+      kind: onStep(v - r.min, label) ? 'label' : onStep(v - r.min, half) && onStep(half, step) ? 'half' : 'step',
+    });
+  }
+  return out;
+}
+const scaleText = (v) => String(v).replace('.', ',');
+
+// Measuring jug: liquid up to markers[0].value; graduations on the left wall, the unit at the top
+function jugSvg(r) {
+  const W = 200,
+    TOP = 34,
+    BOT = 292,
+    X0 = 46,
+    X1 = 150,
+    H = BOT + 14;
+  const Y0 = BOT - 12,
+    Y1 = TOP + 24; // min and max
+  const y = (v) => Y0 - ((v - r.min) * (Y0 - Y1)) / (r.max - r.min);
+  const val = r.markers?.[0]?.value ?? r.min;
+  const F = 'font-family="system-ui,sans-serif"';
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="mx-auto" style="max-height:460px;width:auto" xmlns="http://www.w3.org/2000/svg">`;
+  // Handle, then the body (a spout at the top right)
+  s += `<path d="M${X1} ${TOP + 40} C${X1 + 46} ${TOP + 40} ${X1 + 46} ${TOP + 150} ${X1} ${TOP + 150}" fill="none" stroke="#94a3b8" stroke-width="10" stroke-linecap="round"/>`;
+  const body = `M${X0 - 6} ${TOP} L${X0} ${BOT - 10} Q${X0} ${BOT} ${X0 + 10} ${BOT} L${X1 - 10} ${BOT} Q${X1} ${BOT} ${X1} ${BOT - 10} L${X1} ${TOP + 10} L${X1 + 12} ${TOP}`;
+  s += `<path d="${body} Z" fill="white" fill-opacity="0.85"/>`;
+  // Liquid: clipped by the body
+  s += `<clipPath id="jug-in"><path d="${body} Z"/></clipPath>`;
+  const ly = y(val);
+  if (val > r.min) {
+    s += `<rect x="${X0 - 8}" y="${ly}" width="${X1 - X0 + 24}" height="${BOT - ly}" fill="#7dd3fc" fill-opacity="0.75" clip-path="url(#jug-in)"/>`;
+  }
+  s += `<line data-level="1" x1="${X0 - 2}" y1="${ly}" x2="${X1}" y2="${ly}" stroke="#0284c7" stroke-width="2.5"/>`;
+  s += `<path d="${body}" fill="none" stroke="#64748b" stroke-width="3" stroke-linejoin="round"/>`;
+  // Graduations
+  for (const t of scaleTicks(r)) {
+    const ty = y(t.v),
+      len = t.kind === 'label' ? 22 : t.kind === 'half' ? 15 : 9;
+    s += `<line x1="${X0 + 1}" y1="${ty}" x2="${X0 + 1 + len}" y2="${ty}" stroke="#334155" stroke-width="${t.kind === 'label' ? 2 : 1.2}"/>`;
+    if (t.kind === 'label')
+      s += `<text x="${X0 + 28}" y="${ty + 4}" fill="#1e293b" font-size="12" font-weight="600" ${F}>${scaleText(t.v)}</text>`;
+  }
+  s += `<text x="${(X0 + X1) / 2}" y="${TOP - 12}" text-anchor="middle" fill="#64748b" font-size="13" font-weight="700" ${F}>${r.unit || ''}</text>`;
+  return s + '</svg>';
+}
+
+// Scale dial (kitchen scale, bathroom scale): min … max over 300°, the needle on markers[0].value
+function dialSvg(r) {
+  const W = 260,
+    C = 130,
+    R = 112,
+    SWEEP = 300;
+  const ang = (v) => (-SWEEP / 2 + ((v - r.min) * SWEEP) / (r.max - r.min)) * (Math.PI / 180); // 0 = straight up
+  const at = (a, d) => [C + d * Math.sin(a), C - d * Math.cos(a)];
+  const f = (v) => Math.round(v * 100) / 100;
+  const val = r.markers?.[0]?.value ?? r.min;
+  const F = 'font-family="system-ui,sans-serif"';
+  let s = `<svg viewBox="0 0 ${W} ${W}" width="${W}" height="${W}" class="mx-auto" style="max-height:420px;width:auto" xmlns="http://www.w3.org/2000/svg">`;
+  s += `<circle cx="${C}" cy="${C}" r="${R + 10}" fill="#e2e8f0" stroke="#64748b" stroke-width="3"/>`;
+  s += `<circle cx="${C}" cy="${C}" r="${R}" fill="white"/>`;
+  for (const t of scaleTicks(r)) {
+    const a = ang(t.v),
+      len = t.kind === 'label' ? 16 : t.kind === 'half' ? 11 : 6;
+    const [x1, y1] = at(a, R - 2),
+      [x2, y2] = at(a, R - 2 - len);
+    s += `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="#334155" stroke-width="${t.kind === 'label' ? 2 : 1.2}"/>`;
+    if (t.kind === 'label') {
+      const [lx, ly] = at(a, R - 32);
+      s += `<text x="${f(lx)}" y="${f(ly + 4)}" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600" ${F}>${scaleText(t.v)}</text>`;
+    }
+  }
+  s += `<text x="${C}" y="${C + 46}" text-anchor="middle" fill="#64748b" font-size="15" font-weight="700" ${F}>${r.unit || ''}</text>`;
+  const [nx, ny] = at(ang(val), R - 8);
+  s += `<line data-needle="1" x1="${C}" y1="${C}" x2="${f(nx)}" y2="${f(ny)}" stroke="#dc2626" stroke-width="3" stroke-linecap="round"/>`;
+  s += `<circle cx="${C}" cy="${C}" r="7" fill="#dc2626"/>`;
+  return s + '</svg>';
+}
+
 function thermometerExerciseSvg(r) {
   if (!r) return '';
+  if (r.kind === 'jug') return jugSvg(r);
+  if (r.kind === 'dial') return dialSvg(r);
   const min = r.min ?? 0;
   const max = r.max ?? 30;
   const range = max - min;
   if (range <= 0) return '';
 
-  const PPD = 12;
+  const PPD = Math.max(12, Math.round(240 / range)); // short ranges (fever 35–42) get room for half-degree ticks
   const CX = 44;
   const HALF_OW = 8; // half outer tube width → tube is 16px wide
   const HALF_IW = 5; // half mercury column width → column is 10px wide
@@ -1167,7 +1263,7 @@ function thermometerExerciseSvg(r) {
   const GRAY = '#94a3b8';
   const DARK = '#334155';
 
-  let s = `<svg viewBox="0 0 ${SVG_W} ${SVG_H}" class="mx-auto" style="max-height:460px;width:auto">`;
+  let s = `<svg viewBox="0 0 ${SVG_W} ${SVG_H}" width="${SVG_W}" height="${SVG_H}" class="mx-auto" style="max-height:460px;width:auto">`;
 
   // Bulb fill (always red)
   s += `<circle cx="${CX}" cy="${BULB_CY}" r="${BULB_R}" fill="${RED}"/>`;
@@ -1187,9 +1283,9 @@ function thermometerExerciseSvg(r) {
   // Bulb border
   s += `<circle cx="${CX}" cy="${BULB_CY}" r="${BULB_R}" fill="none" stroke="${GRAY}" stroke-width="2"/>`;
 
-  // Ticks and labels — half-degree steps, labels every 5°
+  // Ticks and labels — half-degree steps (r.step: 1 = whole degrees only), labels every 5°
   const LABEL_STEP = range <= 10 ? 2 : 5;
-  for (let t = min; t <= max + 0.001; t += 0.5) {
+  for (let t = min; t <= max + 0.001; t += r.step ?? 0.5) {
     const y = BOT_Y - (t - min) * PPD;
     const isWhole = Math.abs(t - Math.round(t)) < 0.001;
     const isLabel = isWhole && Math.round(t) % LABEL_STEP === 0;
@@ -1233,7 +1329,9 @@ function numberLineSvg(nl) {
     const x = PAD + (v - min) * uw;
     s += `<line x1="${x}" y1="${LY - 10}" x2="${x}" y2="${LY + 6}" stroke="currentColor" stroke-width="2"/>`;
     const lbl = Number.isInteger(v) ? String(v) : String(Math.round(v * 1000) / 1000).replace('.', ',');
-    s += `<text x="${x}" y="${LY + 21}" text-anchor="middle" fill="currentColor" font-size="12" font-weight="500">${lbl}</text>`;
+    // Estimate mode: inner ticks stay as landmarks, only the two ends carry a number
+    if (nl.mode !== 'estimate' || v <= min + 1e-9 || v >= max - 1e-9)
+      s += `<text x="${x}" y="${LY + 21}" text-anchor="middle" fill="currentColor" font-size="12" font-weight="500">${lbl}</text>`;
 
     // Minor ticks (subdivisions) between this major tick and the next
     if (subs > 0 && v < max - 1e-9) {
@@ -1248,7 +1346,7 @@ function numberLineSvg(nl) {
   }
 
   // Named point in read mode
-  if (nl.mode !== 'place' && nl.value != null) {
+  if ((nl.mode || 'read') === 'read' && nl.value != null) {
     const mx = PAD + (nl.value - min) * uw;
     const lbl = nl.label || 'A';
     s += `<circle cx="${mx}" cy="${LY}" r="6" class="fill-primary-500"/>`;
@@ -1419,6 +1517,61 @@ function clockSvg(hour, minute, size = 72) {
     <line x1="${c}" y1="${c}" x2="${mx}" y2="${my}" stroke="var(--p)" stroke-width="${mw}" stroke-linecap="round"/>
     <circle cx="${c}" cy="${c}" r="${pr}" fill="var(--ct)"/>`;
   return SVG.tag(size, size, res);
+}
+
+// Die faces: 1–6 the usual pips; 7–10 on two dice, 5 and the rest (the GS constellations)
+function diceSvg(n, size = 48) {
+  const PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+  const die = (k, x) =>
+    `<rect x="${x + 2}" y="2" width="86" height="86" rx="14" fill="var(--sf)" stroke="var(--ct)" stroke-width="3"/>` +
+    PIPS[k]
+      .map((p) => `<circle cx="${x + 22 + (p % 3) * 23}" cy="${22 + Math.floor(p / 3) * 23}" r="8" fill="var(--ct)"/>`)
+      .join('');
+  const faces = n > 6 ? [5, n - 5] : [n];
+  const w = faces.length * 90 + (faces.length - 1) * 8;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} 90" width="${SVG.f((size * w) / 90)}" height="${size}" role="img" aria-label="${n} points" style="max-width:100%;height:auto">${faces.map((k, i) => die(k, i * 98)).join('')}</svg>`;
+}
+
+// Memory card face (type memory): dots, fingers, n emojis (rows of 5), a shaded disc, a clock,
+// base-10 blocks or a stacked fraction; text cards are already HTML
+function memoryCardHtml(c) {
+  if (c.dots != null) return diceSvg(c.dots);
+  if (c.fingers != null) return mainsSvg(c.fingers > 5 ? [5, c.fingers - 5] : [c.fingers]);
+  if (c.emoji) {
+    // Rows of k, sized to the card (container units): 4 as 2 × 2, 6–10 as 5 and the rest
+    const k = c.n <= 3 ? c.n : c.n === 4 ? 2 : 5;
+    const rows = [];
+    for (let i = 0; i < c.n; i += k) rows.push(`<span>${c.emoji.repeat(Math.min(k, c.n - i))}</span>`);
+    const size = { 1: 45, 2: 32, 3: 25, 5: 16 }[k];
+    return `<span class="mem-emoji" style="font-size:${size}cqi" role="img" aria-label="${c.n} ${c.emoji}">${rows.join('')}</span>`;
+  }
+  if (c.pie) return slicedPieSvg(c.pie[1], c.pie[0], 60);
+  if (c.clock) return clockSvg(c.clock[0], c.clock[1], 60);
+  if (c.blocks != null) {
+    // Tens as striped rods, units two by two from the bottom (base10Render's units are too small here)
+    const U = 10,
+      t = Math.floor(c.blocks / 10) % 10,
+      u = c.blocks % 10;
+    let g = '';
+    for (let i = 0; i < t; i++) {
+      const x = 2 + i * (U + 5);
+      g += `<rect x="${x}" y="2" width="${U}" height="${10 * U}" fill="var(--p)" stroke="var(--ct)" stroke-width="1"/>`;
+      for (let k = 1; k < 10; k++)
+        g += `<line x1="${x}" y1="${2 + k * U}" x2="${x + U}" y2="${2 + k * U}" stroke="var(--sf)" stroke-width="1"/>`;
+    }
+    const ux = 2 + t * (U + 5) + (t ? 4 : 0);
+    for (let i = 0; i < u; i++)
+      g += `<rect x="${ux + (i % 2) * (U + 2)}" y="${2 + 10 * U - (Math.floor(i / 2) + 1) * (U + 2) + 2}" width="${U}" height="${U}" fill="var(--orange)" stroke="var(--ct)" stroke-width="1"/>`;
+    const w = ux + (u ? 2 * U + 4 : 0);
+    return `<svg viewBox="0 0 ${w} ${10 * U + 4}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${c.blocks}">${g}</svg>`;
+  }
+  if (c.frac)
+    return `<span class="frac" style="font-size:min(24cqi,2rem)"><span class="fn">${c.frac[0]}</span><span class="fd">${c.frac[1]}</span></span>`;
+  // Short texts (a number, « 6 × 7 ») big, long ones (« quatre-vingt-dix-neuf ») at the base size
+  const plain = String(c.text).replace(/<[^>]*>/g, '');
+  const len = plain.replace(/\s/g, '').length + 0.4 * (plain.match(/\s/g) || []).length;
+  if (len > 8) return c.text;
+  return `<span style="font-size:min(2.5rem,${Math.round(100 / Math.max(len, 3))}cqi)">${c.text}</span>`;
 }
 
 function objectMeasureSvg(emoji) {

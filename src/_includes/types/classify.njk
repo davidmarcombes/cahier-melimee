@@ -1,6 +1,7 @@
 {# Classify — drag items into labelled category boxes #}
 {# Data shape: { type:'classify', categories:[{id,label},...], items:[{html,cat},...] } #}
 <div x-show="cur.type === 'classify'" class="space-y-4">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle"></div>
 
   {# Category boxes #}
   <template x-if="cur.categories">

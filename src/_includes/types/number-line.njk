@@ -1,27 +1,28 @@
-{# Number line — read mode: type the labeled value; place mode: click to place a point #}
+{# Number line — read mode: type the labeled value; place mode: click to place a point;
+   estimate mode: only the ends are labelled, click roughly where the number goes (tolerance) #}
 <div x-show="cur.type === 'number-line'" class="bg-surface-subtle rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 mb-8">
   <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
        x-show="cur.body" x-html="cur.body"></div>
 
-  <p x-show="cur.nl && cur.nl.mode === 'place'"
+  <p x-show="cur.nl && cur.nl.mode !== 'read'"
      class="text-center text-base font-semibold mb-4 text-content-default">
-    Place le nombre
+    <span x-text="cur.nl && cur.nl.mode === 'estimate' ? 'Place à peu près le nombre' : 'Place le nombre'"></span>
     <span class="text-primary-600 dark:text-primary-400 font-bold"
           x-html="cur.answers && String(cur.answers[0]).replace(/^(\d+)\/(\d+)$/, '<span class=&quot;frac text-xl&quot;><span class=&quot;fn&quot;>$1</span><span class=&quot;fd&quot;>$2</span></span>')"></span>
-    sur la droite graduée.
+    <span x-text="cur.nl && cur.nl.mode === 'estimate' ? 'sur la droite.' : 'sur la droite graduée.'"></span>
   </p>
 
   <div class="relative"
-       @click="cur.nl && cur.nl.mode === 'place' && !solved && nlPlace($event)"
-       :class="cur.nl && cur.nl.mode === 'place' && !solved ? 'cursor-crosshair' : ''">
+       @click="cur.nl && cur.nl.mode !== 'read' && !solved && nlPlace($event)"
+       :class="cur.nl && cur.nl.mode !== 'read' && !solved ? 'cursor-crosshair' : ''">
     <svg viewBox="0 0 500 90" class="w-full text-content-default" x-html="numberLineSvg"></svg>
-    <svg x-show="cur.nl && cur.nl.mode === 'place' && nlVal !== null"
+    <svg x-show="cur.nl && cur.nl.mode !== 'read' && nlVal !== null"
          viewBox="0 0 500 90"
          class="absolute inset-0 w-full h-full pointer-events-none"
          x-html="nlMarkerSvg"></svg>
   </div>
 
-  <div x-show="cur.nl && cur.nl.mode === 'place'" class="flex justify-center mt-4">
+  <div x-show="cur.nl && cur.nl.mode !== 'read'" class="flex justify-center mt-4">
     <button
       type="button"
       @click="nlCheck()"

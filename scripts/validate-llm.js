@@ -28,6 +28,7 @@ const { walk: boardWalk, shortest: boardShortest, mirrorTarget, drawSolution } =
 const { readShape } = require('./lib/shapes.js');
 const { chanceText, tileColour } = require('./lib/hasard.js');
 const { manipulationText } = require('./lib/manipulations.js');
+const { normalizeCard } = require('./lib/memory.js');
 // Angle drawings (trouverAngles, comparerAngles, rangerAngles): the polyline end–vertex–end as coordinates
 const angleText = (svg) => {
   const m = String(svg).match(/<polyline\b[^>]*\spoints="([^"]+)"/);
@@ -114,6 +115,16 @@ const LLM_TYPES = new Set([
   'jump-line',
   'money-pay',
   'fraction-op',
+  'memory',
+  'ten-frame',
+  'compte-est-bon',
+  'broken-calc',
+  'picross',
+  'tangram',
+  'strategy-game',
+  'target-blocks',
+  'hundred-board',
+  'dice-game',
 ]);
 
 // ─── ANSI colours ────────────────────────────────────────────────────────────
@@ -574,6 +585,14 @@ function buildPrompt({ data, body }) {
     case 'number-line': {
       const bodyText = strip(body || '');
       const place = data.mode === 'place';
+      if (data.mode === 'estimate')
+        return [
+          `Type: droite graduée — seules les deux extrémités ${fmt(data.min)} et ${fmt(data.max)} portent un nombre ; l'élève clique à peu près où se trouve ${fmt(data.answer)} (tolérance ±${fmt(data.tolerance ?? (Number(data.max) - Number(data.min)) * 0.05)})`,
+          strip(body || '') && `Question: ${strip(body || '')}`,
+          `Vérifie que ${fmt(data.answer)} est entre ${fmt(data.min)} et ${fmt(data.max)}.`,
+        ]
+          .filter(Boolean)
+          .join('\n');
       return [
         place
           ? `Type: droite graduée — l'élève doit placer le nombre ${fmt(data.answer)} sur une graduation`
@@ -617,6 +636,24 @@ function buildPrompt({ data, body }) {
           `Figure donnée (${b.rows} lignes × ${b.cols} colonnes):\n${draw(rows.map((row) => row.map((x) => (x === 'o' ? '.' : x))))}`,
           `Réponse proposée (figure complétée):\n${draw(rows)}`,
           `Question: les cases o sont-elles exactement les symétriques des cases # (sans case en trop ni manquante) ?`,
+        ]
+          .filter(Boolean)
+          .join('\n');
+      }
+      if (b.mode === 'area') {
+        const model = new Set((b.model || []).map(String));
+        const sol = new Set((b.solution || []).map(String));
+        const draw = Array.from({ length: b.rows }, (_, r) =>
+          Array.from({ length: b.cols }, (_, c) =>
+            model.has(`${r},${c}`) ? '#' : sol.has(`${r},${c}`) ? 'o' : '.'
+          ).join(' ')
+        ).join('\n');
+        return [
+          `Type: colorier une figure sur un quadrillage (aire en carreaux, périmètre en côtés de carreau) — # = figure bleue donnée, o = une réponse possible, . = vide. Toute figure d'un seul morceau, sans trou, qui respecte la consigne est acceptée.`,
+          title && `Consigne: ${title}`,
+          (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+          `Quadrillage (${b.rows} lignes × ${b.cols} colonnes):\n${draw}`,
+          `Vérifie que la consigne est claire et que la réponse o la respecte.`,
         ]
           .filter(Boolean)
           .join('\n');
@@ -821,6 +858,8 @@ function buildPrompt({ data, body }) {
         title && `Titre: ${title}`,
         `Énoncé: ${strip(data.body || body || '')}`,
         `Schéma: ${bars}`,
+        bm.build &&
+          `L'élève construit lui-même ce schéma en plaçant les nombres de l'énoncé et le « ? » dans les cases${bm.extra ? ` ; ${bm.extra.join(', ')} : données inutiles, à laisser de côté` : ''}.`,
         `Réponse proposée: ${fmt(data.answer)} ${data.unit || ''}`,
         `Vérifie la réponse ET que le schéma correspond à l'énoncé.`,
       ]
@@ -892,6 +931,196 @@ function buildPrompt({ data, body }) {
         conv.length && `Étape 1 attendue (même dénominateur): ${conv.join(' ; ')}`,
         `Réponse proposée: ${R}/${D}`,
         `Vérifie le calcul${conv.length ? ", que l'étape 1 est juste" : ''} et que l'énoncé correspond au calcul (un problème doit bien demander cette opération).`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'broken-calc': {
+      const bc =
+        data.calc || (data.target != null && { target: data.target, broken: data.broken || [], ops: data.ops });
+      if (!bc) return null;
+      return [
+        `Type: calculatrice cassée — l'élève doit faire afficher un nombre sans utiliser les touches cassées (calculatrice simple, de gauche à droite)`,
+        title && `Consigne: ${title}`,
+        `Nombre à afficher: ${bc.target}`,
+        `Touches cassées: ${bc.broken.join(', ')}`,
+        `Touches d'opération présentes: ${(bc.ops || ['+', '−', '×', '÷']).join(' ')}`,
+        bc.solution && `Une solution: ${bc.solution.join(' ')} = ${bc.target}`,
+        `Vérifie que le nombre ne peut pas être tapé directement et que la solution est juste.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'dice-game': {
+      const dg = data.dg;
+      if (!dg) return null;
+      return [
+        `Type: jeu de dés « Ferme la boîte » — cases 1 à ${dg.tiles}, ${dg.dice} dé${dg.dice > 1 ? 's' : ''}${dg.oneDie ? ' (un seul dé quand les cases ouvertes font 6 ou moins)' : ''} ; l'élève ferme des cases ouvertes dont la somme est le total des dés, la partie finit quand ce n'est plus possible.`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Vérifie que la consigne correspond au jeu et convient au niveau.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'hundred-board': {
+      const hb = data.hb;
+      if (!hb) return null;
+      const last = hb.start + (hb.rows || 10) * 10 - 1;
+      const task =
+        hb.mode === 'find'
+          ? hb.path
+            ? `${hb.text} (↓ = +10, → = +1, ↑ = −10, ← = −1) — l'élève touche la case d'arrivée${hb.hide ? ' ; les nombres ne sont pas écrits, sauf le départ' : ''}. Réponse : ${hb.target}`
+            : `Nombre mystère : ${hb.clues.map((c) => c.text).join(' ')} — l'élève touche le nombre. Réponse : ${hb.target}`
+          : hb.mode === 'fill'
+            ? `Nombres à écrire dans les cases vides : ${hb.blanks.join(', ')}${hb.cells ? ` (seul un morceau du tableau est dessiné : ${hb.cells.join(', ')})` : ''}`
+            : `${hb.text} — à colorier : ${hb.answer.join(', ')}`;
+      return [
+        `Type: tableau des nombres de ${hb.start} à ${last}, en lignes de 10.`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        task,
+        `Vérifie que la consigne correspond et convient au niveau.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'target-blocks': {
+      const tb = data.tb;
+      if (!tb) return null;
+      const op = (b) => b.op || tb.op || '+';
+      return [
+        `Type: blocs cibles — l'élève place des nombres dans des blocs qui se chevauchent ; un nombre dans un chevauchement compte pour chaque bloc ; chaque bloc doit donner son nombre cible avec son opération`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Nombres: ${tb.tiles.join(', ')} · cibles: ${tb.blocks.map((b) => `${op(b)} ${b.target}`).join(' ; ')}`,
+        `Vérifie que la consigne correspond et que les nombres conviennent au niveau.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'strategy-game': {
+      const sg = data.sg;
+      if (!sg) return null;
+      const rule =
+        sg.kind === 'course'
+          ? `course à ${sg.total} : chacun son tour ajoute ${sg.moves.join(' ou ')} ; celui qui dit ${sg.total} gagne`
+          : `${sg.total} bâtonnets : chacun son tour en prend ${sg.moves.join(' ou ')} ; celui qui prend le dernier ${sg.misere ? 'perd' : 'gagne'}`;
+      return [
+        `Type: jeu de stratégie contre l'ordinateur (${rule}). ${sg.first === 'eleve' ? "L'élève" : "L'ordinateur"} commence ; l'élève peut toujours gagner s'il trouve la stratégie.`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Vérifie que la consigne correspond au jeu et convient au niveau.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'tangram': {
+      const tg = data.tg;
+      if (!tg) return null;
+      return [
+        `Type: tangram — l'élève fait glisser ${tg.pieces.length} pièces sur une silhouette grise pour la recouvrir exactement${tg.turn ? ' (il peut tourner et retourner les pièces)' : ' (pièces déjà dans le bon sens)'}`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Figure: ${tg.name}`,
+        `Vérifie que la consigne correspond à cette activité et au niveau.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'picross': {
+      const px = data.px || (Array.isArray(data.picture) && { picture: data.picture, name: data.name });
+      if (!px) return null;
+      return [
+        `Type: picross (nonogramme) — l'élève colorie les cases d'après les nombres de chaque ligne et colonne ; un dessin apparaît`,
+        title && `Consigne: ${title}`,
+        `Dessin (# = colorié):\n${px.picture.join('\n')}`,
+        `Ce que le dessin doit représenter: ${px.name}`,
+        px.rowLabels && `Nombres des lignes écrits en calculs: ${px.rowLabels.map((r) => r.join(' ')).join(' | ')}`,
+        `Vérifie que le dessin ressemble bien à ${px.name}${px.rowLabels ? ' et que chaque calcul est juste pour le niveau' : ''}.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'compte-est-bon': {
+      const ceb =
+        data.ceb ||
+        (Array.isArray(data.numbers) && {
+          numbers: data.numbers,
+          target: data.target,
+          useAll: data.useAll,
+          ops: data.ops,
+        });
+      if (!ceb) return null;
+      return [
+        `Type: le compte est bon — l'élève combine les nombres deux par deux (chaque résultat remplace les deux nombres) pour atteindre la cible`,
+        title && `Consigne: ${title}`,
+        `Nombres: ${ceb.numbers.join(', ')}`,
+        `Cible: ${ceb.target}`,
+        `Opérations permises: ${(ceb.ops || ['+', '−', '×', '÷']).join(' ')} (soustraction positive, division exacte)`,
+        ceb.useAll && `Il faut utiliser tous les nombres.`,
+        ceb.solution &&
+          `Solution trouvée par le programme: ${ceb.solution.map(([a, op, b, r]) => `${a} ${op} ${b} = ${r}`).join(' ; ')}`,
+        `Vérifie que la cible est atteignable et que la consigne est claire pour un élève.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'ten-frame': {
+      const tf = data.tf;
+      if (!tf) return null;
+      return [
+        `Type: boîte de 10 (${tf.frames > 1 ? `${tf.frames} boîtes` : 'une boîte'} de 2 × 5 cases) — l'élève touche les cases pour mettre ou enlever des jetons`,
+        title && `Consigne affichée: ${title}`,
+        data.say && `Consigne dite: ${data.say}`,
+        tf.show && (tf.show.digit != null ? `Nombre affiché: ${tf.show.digit}` : `Dé affiché: ${tf.show.dots} points`),
+        `Jetons rouges déjà dans la boîte au départ: ${tf.given}`,
+        `Nombre de jetons attendu à la fin: ${tf.target}`,
+        tf.tenFirst && `La première boîte doit être pleine avant de mettre des jetons dans la deuxième.`,
+        `Vérifie que le nombre attendu correspond à la consigne.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'memory': {
+      const mem =
+        data.mem ||
+        (Array.isArray(data.pairs) && { pairs: data.pairs.map((p) => p.map((c) => normalizeCard(c))), sum: data.sum });
+      if (!mem) return null;
+      const card = (c) =>
+        c.text != null
+          ? `« ${strip(c.text)} »`
+          : c.dots != null
+            ? `dé${c.dots > 6 ? 's' : ''} : ${c.dots} points`
+            : c.fingers != null
+              ? `mains : ${c.fingers} doigts levés`
+              : c.emoji
+                ? `${c.n} × ${c.emoji}`
+                : c.pie
+                  ? `disque partagé en ${c.pie[1]} parts égales, ${c.pie[0]} coloriée(s)`
+                  : c.frac
+                    ? `fraction ${c.frac[0]}/${c.frac[1]}`
+                    : c.clock
+                      ? `horloge à aiguilles : ${c.clock[0]} h ${String(c.clock[1]).padStart(2, '0')}`
+                      : `blocs base dix : ${c.blocks}`;
+      return [
+        `Type: memory — cartes retournées, l'élève retrouve les paires de cartes qui vont ensemble`,
+        title && `Consigne: ${title}`,
+        mem.sum != null
+          ? `Deux cartes vont ensemble quand leurs nombres font ${mem.sum} à eux deux.`
+          : `Deux cartes vont ensemble quand elles représentent le même nombre (ou la même heure).`,
+        ...mem.pairs.map((p, k) => `Paire ${k + 1}: ${card(p[0])} ↔ ${card(p[1])}`),
+        `Vérifie que chaque paire va bien ensemble et qu'aucune carte ne va aussi avec une carte d'une autre paire.`,
       ]
         .filter(Boolean)
         .join('\n');

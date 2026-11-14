@@ -1,0 +1,39 @@
+{# tangram — slide the pieces from the tray onto the grey silhouette; they land on whole points of the
+   lattice. A tap turns a piece a quarter turn (unless cur.tg.turn is false), ↔ flips the piece picked
+   last. Solved as soon as the silhouette is covered exactly. Pieces are drawn in 7 fixed slots (no
+   x-for inside an svg); the viewBox is set by x-effect (the HTML parser lowercases :viewBox), slot n showing piece tgZ[n] (tgHas: also while the next exercise's pieces are not set up yet) so that the piece picked last is on top. Data: cur.tg #}
+<div x-show="cur.type === 'tangram'" class="mb-6">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle mb-3"></div>
+  <template x-if="cur.tg">
+    <div class="flex flex-col items-center gap-3">
+      <p x-show="!solved && !kid" class="text-sm text-content-subtle text-center text-balance max-w-md"
+        x-text="cur.tg.turn ? 'Fais glisser les pièces sur la silhouette. Touche une pièce pour la tourner.' : 'Fais glisser les pièces sur la silhouette.'"></p>
+      <svg class="js-tg w-full max-w-lg select-none touch-none" x-effect="$el.setAttribute('viewBox', `-0.1 -0.1 ${cur.tg.w + 0.2} ${cur.tg.h + 0.2}`)"
+        role="group" :aria-label="`Tangram : ${cur.tg.name}`"
+        @pointermove="tgMove($event)" @pointerup="tgUp()" @pointercancel="tgUp()">
+        <rect x="0" :y="cur.tg.boardH" :width="cur.tg.w" :height="cur.tg.h - cur.tg.boardH" rx="0.4" class="fill-slate-100 dark:fill-slate-800"></rect>
+        <g x-html="tgSilhouetteSvg"></g>
+        {% for n in range(0, 7) %}
+        <polygon x-show="tgHas({{ n }})" :points="tgHas({{ n }}) ? tgPoints(tgZ[{{ n }}]) : ''"
+          :fill="tgHas({{ n }}) ? cur.tg.pieces[tgZ[{{ n }}]].color : 'none'"
+          class="js-tg-piece outline-none" :class="solved ? '' : 'cursor-grab'"
+          :stroke="tgSel === tgZ[{{ n }}] && !solved ? 'var(--ct)' : 'white'" :stroke-width="tgSel === tgZ[{{ n }}] && !solved ? 0.1 : 0.06" stroke-linejoin="round"
+          fill-opacity="0.92" tabindex="0" role="button"
+          :aria-label="tgHas({{ n }}) ? `Pièce ${tgZ[{{ n }}] + 1}` : ''"
+          @pointerdown="tgDown(tgZ[{{ n }}], $event)" @keydown="tgKey(tgZ[{{ n }}], $event)"></polygon>
+        {% endfor %}
+      </svg>
+      <p x-show="solved" class="js-tg-reveal text-xl font-bold text-content-default flex items-center gap-2">
+        <span class="text-4xl" aria-hidden="true" x-text="cur.tg.emoji"></span><span x-text="`Bravo, c’est ${cur.tg.name} !`"></span>
+      </p>
+      <div x-show="!solved" class="flex flex-wrap justify-center gap-2">
+        <button type="button" x-show="cur.tg.turn" @click="tgFlip()" :disabled="tgSel === null"
+          class="js-tg-flip px-4 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default font-bold disabled:opacity-40"
+          aria-label="Retourner la pièce choisie"><span aria-hidden="true">↔</span><span x-show="!kid"> Retourner</span></button>
+        <button type="button" @click="tgReset()"
+          class="px-4 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default font-bold"
+          aria-label="Recommencer"><span aria-hidden="true">🔄</span><span x-show="!kid"> Recommencer</span></button>
+      </div>
+    </div>
+  </template>
+</div>

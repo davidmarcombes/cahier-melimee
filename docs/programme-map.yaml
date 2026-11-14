@@ -1,0 +1,220 @@
+# programme-map.yaml — hand corrections for scripts/programme-coverage.js (npm run coverage:programme).
+#
+# The script matches each series to the programme items of its level (docs/maths_<level>.md) by text
+# similarity. When it gets one wrong or finds nothing, correct it here:
+#
+#   pin:   series → the items it covers (replaces the automatic match)
+#   skip:  series that cover no programme item, with the reason (logic games, missing item in the doc…)
+#
+# Series key: "level/slug", or "level/topic/slug" when the slug exists in two folders.
+# Item reference: a fragment of the item text (accents and case ignored; an exact text wins over
+# fragments), "§Section title" for every item of a section, or an item id ("cm1:division#3",
+# shown by `--level=<level>` and in reports/programme-coverage.json).
+# `node scripts/programme-coverage.js --series=<slug>` shows the 5 best automatic candidates.
+
+pin:
+  # ── GS (items are in English in docs/maths_gs.md: only backticked links match by themselves)
+  gs/ajouter-ensemble-01: ["Parts-whole"]
+  gs/doigts-en-tout-01: ["Count fingers", "Parts-whole"]
+  gs/doigts-01: ["Count fingers"]
+  gs/ranger-tailles-01: ["Order 3 objects by length"]
+  gs/plus-moins-01: ["Compare at a glance"]
+  gs/partie-visible-01: ["Missing part"]
+  gs/tangram-01: ["Puzzle / tiling"]
+  gs/balance-01: ["Heavier / lighter"]
+  gs/boite-dix-01: ["Count up to 6, then up to 10"]
+  gs/boite-dix-remplir-01: ["Digit → collection"]
+  gs/boite-dix-remplir-02: ["gs:decouvrir-les-nombres-quantites#7"]
+  gs/ecoute-nombre-01: ["Digit → collection"]
+  gs/jeu-oie-01: ["Board game"]
+  gs/memory-01: ["Digit ↔ dice pattern"]
+  gs/memory-02: ["Digit ↔ dice pattern"]
+  gs/sous-la-tache-01: ["Missing part", "Ways to make a number"]
+
+  # ── CP
+  cp/passage-par-10: ["Les compléments à 10", "Additions jusqu'à 20"]
+  cp/transformations-01: ["Problèmes additifs en une étape"]
+  cp/ferme-la-boite-01: ["Trouver les additions correspondant à une somme jusqu'à 10"]
+  cp/grouper-10-01: ["Les compléments à 10"]
+  cp/grouper-10-02: ["Les compléments à 10"]
+  cp/memory-complements-01: ["Les compléments à 10"]
+  cp/robot-ecrire-01: ["suite d'instructions qui code un déplacement"]
+  cp/course-a-10-01: ["Ajouter ou soustraire 1 ou 2"]
+  cp/boites-dix-20-01: ["Compter des dizaines et des unités jusqu'à 20"]
+  cp/memory-nombres-01: ["Compter jusqu'à 10", "Construire des collections de cardinal donné"]
+
+  # ── CE1
+  ce1/passage-par-10: ["Additions jusqu'à 18"]
+  ce1/comparaison-referent-01: ["Additifs en une étape"]
+  ce1/construire-schema-01: ["Additifs en une étape"]
+  ce1/guide-etat-initial-01: ["Additifs en une étape"]
+  ce1/guided-a2: ["Additifs en une étape"]
+  ce1/transformation-inconnue-01: ["Additifs en une étape"]
+  ce1/schemas-barres-01: ["Additifs en une étape", "Additifs en deux étapes"]
+  ce1/blocs-cibles-01: ["Trouver les additions correspondant à une somme jusqu'à 18"]
+  ce1/ferme-la-boite-01: ["Trouver les additions correspondant à une somme jusqu'à 18"]
+  ce1/machine-fonctions: ["Additions jusqu'à 10", "Soustraire : nombres jusqu'à 9"]
+  ce1/memory-calculs-01: ["Tables d'addition et de multiplication dans les deux sens"]
+  ce1/course-a-20-01: ["Addition et Soustraction : nombres jusqu'à 20"]
+  ce1/blocs-valeur-02: ["Unités, dizaines et centaines"]
+  ce1/blocs-valeur-position-01: ["Unités, dizaines et centaines", "Relations unités / dizaines / centaines"]
+
+  # ── CE2
+  ce2/calcule-et-verifie: ["Mémoriser les tables de multiplication", "Associer multiplication et division"]
+  ce2/trouver-erreur-01: ["§Additions posées", "Soustraire des nombres à deux chiffres, avec retenue"]
+  ce2/balance-01: ["Additions à trou jusqu'à 20"]
+  ce2/balance-02: ["Additions à trou jusqu'à 20"]
+  ce2/bilan-proportion-01: ["Multiplicatifs en une étape"]
+  ce2/guided-m1: ["Multiplicatifs en une étape"]
+  ce2/construire-schema-01: ["Problèmes à une ou deux étapes", "Additifs en une étape"]
+  ce2/piege-du-capitaine: ["Problèmes à une ou deux étapes"]
+  ce2/equilibrer-add-01: ["Additions à trou jusqu'à 20"]
+  ce2/equilibrer-add-02: ["Additions à trou jusqu'à 20"]
+  ce2/familles-faits: ["Additions à trou jusqu'à 20", "Soustractions à trou jusqu'à 18"]
+  ce2/ferme-la-boite-01: ["Additions jusqu'à 20"]
+  ce2/arrondir-millier: ["Estimer à la dizaine la plus proche"]
+  ce2/coloriage-magique-01: ["Encadrer des nombres"]
+
+  # ── CM1
+  cm1/fact-family-add: ["Additions à trou", "Soustractions à trou"]
+  cm1/fact-family-grandes: ["Égalités inverses de multiplication et de division"]
+  cm1/familles-faits: ["Égalités inverses de multiplication et de division"]
+  cm1/payer-01: ["Additionner des nombres décimaux"]
+  cm1/compter-porte-monnaie-01: ["Additionner des nombres décimaux"]
+  cm1/guided-proportionnalite: ["Multiplicatifs parties-tout en une étape"]
+  cm1/compte-est-bon-01: ["Calcul contenant des parenthèses"]
+
+  # ── CM2
+  cm2/recomposer-01: ["Décomposer des nombres entiers"]
+  cm2/compte-est-bon-01: ["Calcul contenant une ou deux paires de parenthèses"]
+  cm2/equilibrer-mult-01: ["Nombre manquant dans une égalité à trous"]
+  cm2/centimes-en-euros: ["Relations unités / dixièmes / centièmes"]
+  cm2/compter-porte-monnaie: ["Additionner des nombres décimaux"]
+  cm2/rendre-monnaie-billet: ["Soustraire des nombres décimaux"]
+
+  # ── second pass (series below the matching threshold)
+  cp/problemes-inverses: ["Problèmes additifs en une étape"]
+  cp/formes-tournees-01: ["Reconnaître disque, carré, rectangle, triangle dans un assemblage"]
+  ce1/problemes-inverses: ["Additifs en une étape"]
+  ce1/calcule-et-verifie: ["Tables d'addition et de multiplication dans les deux sens"]
+  ce2/comparaison-referent-01: ["Additifs en une étape (parties-tout, comparaison)"]
+  ce2/vocabulaire-01: ["Mots « termes »"]
+  ce2/base10-02: ["Décomposer des nombres jusqu'à 9 999", "Relations entre unités de numération"]
+  ce2/convertir-centaines-dizaines: ["Relations entre unités de numération"]
+  ce2/convertir-dizaines-unites: ["Relations entre unités de numération"]
+  ce2/arrondir-dizaine: ["Estimer à la dizaine la plus proche"]
+  ce2/arrondir-dizaine-01: ["Estimer à la dizaine la plus proche"]
+  ce2/arrondir-centaine: ["Estimer à la dizaine la plus proche"]
+  cm1/equilibrer-sub-01: ["Soustractions à trou"]
+  cm1/formes-tournees-01: ["Nommer par leur définition"]
+  cm1/position-chiffre-01: ["Décomposer des nombres entiers"]
+  cm1/centimes-en-euros: ["Relations unités / dixièmes / centièmes"]
+  cm1/suites-horaires-demi: ["Heure : lire l'heure"]
+  cm1/calendrier-01: ["§Durées et dates"]
+  cm1/zoo-01: ["Mixtes en deux ou trois étapes"]
+  cm1/mesures/classer-tableaux-01: ["Lire et interpréter un tableau"]
+  cm1/donnees/classer-tableaux-01: ["Lire et interpréter un tableau"]
+  cm1/equations-emojis-02: ["Valeur d'un nombre inconnu représenté par un symbole"]
+  cm2/chiffres-01: ["Lire, écrire et nommer les grands nombres"]
+  cm2/suites-horaires-quart: ["Heure : positionner les aiguilles"]
+  cm2/sauts-a-trouver-01: ["§Durées"]
+  cm2/classer-tableaux-01: ["Lire et interpréter un tableau"]
+  cm2/coupes-intervalles-01: ["Problèmes de dénombrement"]
+  cm2/equations-emojis-01: ["Problèmes algébriques (symboles"]
+  cm2/equations-emojis-facile: ["Problèmes algébriques (symboles"]
+
+  # ── CE gap work (2026-11-13): new series, and existing ones the matcher missed
+  ce1/paquets-egaux-01: ["ce1:approche-de-la-multiplication#1", "ce1:approche-de-la-multiplication#2", "ce1:approche-de-la-multiplication#3", "ce1:les-quatre-operations-2#1"]
+  ce1/signe-fois-01: ["ce1:les-quatre-operations-2#1", "ce1:approche-de-la-multiplication#3"]
+  ce1/multiplication-tourner-01: ["ce1:les-quatre-operations-2#2", "ce1:multiplication#3", "ce1:multiplication#1"]
+  ce1/presque-doubles-01: ["ce1:addition-a-un-chiffre#6", "ce1:addition-a-un-chiffre#7", "ce1:addition-a-un-chiffre#8"]
+  ce1/changer-ordre-addition-01: ["ce1:addition-a-un-chiffre#12", "ce1:addition-a-un-chiffre#13"]
+  ce1/pose-addition-02: ["ce1:addition-a-plusieurs-chiffres#2", "ce1:addition-a-plusieurs-chiffres#3", "ce1:addition-a-plusieurs-chiffres#4", "ce1:addition-a-plusieurs-chiffres#5", "ce1:additions-et-soustractions#7"]
+  ce1/pose-addition-01: ["ce1:additions-et-soustractions#10"]
+  ce1/pose-soustraction-01: ["ce1:soustraction-a-plusieurs-chiffres#2", "ce1:soustraction-a-plusieurs-chiffres#3", "ce1:soustraction-a-plusieurs-chiffres#4", "ce1:soustraction-a-plusieurs-chiffres#5", "ce1:additions-et-soustractions#10"]
+  ce1/solides-01: ["ce1:les-solides#1", "ce1:les-solides#2", "ce1:les-solides#3", "ce1:solides-2#2"]
+  ce1/pair-impair-classer-01: ["Nombres pairs et impairs", "ce1:les-quatre-operations-2#3"]
+  ce1/pairs-impairs: ["Nombres pairs et impairs", "ce1:les-quatre-operations-2#3"]
+  ce1/mixtes-deux-etapes-01: ["ce1:resolution-de-problemes-2#4"]
+  ce1/fractions-unitaires-01: ["ce1:fractions-nouveau-au-ce1-2#1"]
+  ce1/numerateur-denominateur-01: ["ce1:fractions-nouveau-au-ce1-2#2", "ce1:fractions-nouveau-au-ce1-2#3"]
+  ce1/arrondir-dizaine: ["ce1:nombres#5"]
+  ce1/doubles-moities: ["ce1:soustraction-a-un-chiffre#5", "ce1:additions-et-soustractions#3", "ce1:calcul-mental-2#4"]
+  ce1/compter-cubes-01: ["ce1:reperage-dans-l-espace-2#2"]
+  ce1/longueurs-01: ["ce1:longueurs#3", "ce1:longueurs#4", "ce1:longueurs-2#1"]
+  ce1/figures-01: ["ce1:se-reperer-dans-l-espace#5", "ce1:se-reperer-dans-l-espace#6"]
+  ce1/ajouter-100: ["ce1:addition-a-plusieurs-chiffres#8", "ce1:soustraction-a-plusieurs-chiffres#8", "ce1:additions-et-soustractions#9"]
+  ce1/decomposer-centaines-01: ["Recomposer des nombres jusqu'à 999", "Unités, dizaines et centaines"]
+  ce2/proprietes-multiplication-01: ["ce2:comprendre-la-multiplication#4"]
+  ce2/multiplication-01: ["ce2:comprendre-la-multiplication#1", "ce2:comprendre-la-multiplication#2", "ce2:comprendre-la-multiplication#3"]
+  ce2/pose-soustraction-02: ["ce2:soustractions-posees#1", "ce2:soustractions-posees#2", "ce2:soustractions-posees#3", "ce2:soustractions-posees#4"]
+  ce2/formes-tournees-01: ["ce2:espace-et-geometrie-2#2", "ce2:les-figures-planes#1"]
+  ce2/division-sens-01: ["ce2:comprendre-la-division#2", "ce2:comprendre-la-division#3", "ce2:les-quatre-operations-2#2"]
+
+  # ── Plans (2026-11-14): plans.js series
+  cp/plan-classe-01: ["cp:reperage-dans-l-espace-2#2", "cp:se-reperer-dans-l-espace#3"]
+  ce1/plan-quartier-01: ["ce1:reperage-dans-l-espace-2#1", "ce1:se-reperer-dans-l-espace#3", "ce1:se-reperer-dans-l-espace#1"]
+  ce2/plan-ville-01: ["ce2:se-reperer-dans-l-espace#1", "ce2:se-reperer-dans-l-espace#3"]
+  cm1/plan-ville-01: ["cm1:se-reperer-sur-un-quadrillage#1"]
+  cm2/plan-echelle-01: ["cm2:se-reperer-sur-un-quadrillage#2"]
+  # ── Figures and their properties (2026-11-14): trouverFormes targets + proprietesFigure
+  cp/cotes-sommets-01: ["cp:les-figures-planes#1", "cp:geometrie-plane-2#2"]
+  ce1/cotes-sommets-01: ["ce1:geometrie-plane-2#1", "ce1:geometrie-plane-2#2", "ce1:l-angle-droit#1"]
+  ce2/angles-droits-figures-01: ["ce2:les-figures-planes#2", "ce2:les-angles#1", "ce2:espace-et-geometrie-2#2"]
+  cm1/triangles-classer-01: ["cm1:les-figures-planes#3", "cm1:espace-et-geometrie-2#4", "cm1:espace-et-geometrie-2#1"]
+  cm1/quadrilateres-proprietes-01: ["cm1:les-figures-planes#4", "cm1:espace-et-geometrie-2#5", "cm1:les-figures-planes#2"]
+  cm2/trapezes-polygones-01: ["cm2:espace-et-geometrie-2#2", "cm2:espace-et-geometrie-2#3", "cm2:les-figures-planes#2"]
+  cm2/triangles-codes-01: ["cm2:les-figures-planes#1", "cm2:espace-et-geometrie-2#1"]
+  # ── Geometry, drawn (2026-11-13): solides.js / espace.js series
+  cp/positions-01: ["cp:se-reperer-dans-l-espace#2", "cp:reperage-dans-l-espace-2#1"]
+  cp/solides-reconnaitre-01: ["cp:les-figures-planes#3", "cp:les-figures-planes#5", "cp:les-figures-planes#6", "cp:solides-2#1"]
+  cp/solides-faces-01: ["cp:les-figures-planes#4", "cp:les-figures-planes#8", "cp:solides-2#2"]
+  ce1/positions-01: ["ce1:se-reperer-dans-l-espace#2", "ce1:reperage-dans-l-espace-2#1"]
+  ce1/solides-reconnaitre-01: ["ce1:les-solides#1", "ce1:les-solides#3", "ce1:solides-2#1"]
+  ce1/solides-compter-01: ["ce1:les-solides#2", "ce1:les-solides#5", "ce1:solides-2#2"]
+  ce1/cercle-01: ["ce1:se-reperer-dans-l-espace#7", "ce1:geometrie-plane-2#1"]
+  ce1/angle-droit-trouver-01: ["ce1:l-angle-droit#1", "ce1:geometrie-plane-2#3"]
+  ce2/solides-faces-01: ["ce2:les-solides#1", "ce2:les-solides#2", "ce2:les-solides#3", "ce2:espace-et-geometrie-2#1"]
+  ce2/patrons-cube-01: ["ce2:les-solides#4", "ce2:espace-et-geometrie-2#1"]
+  ce2/droites-01: ["ce2:les-droites#1", "ce2:les-droites#2"]
+  ce2/cercle-01: ["ce2:les-figures-planes#4"]
+  ce2/axes-symetrie-01: ["ce2:la-symetrie#1", "ce2:espace-et-geometrie-2#4"]
+  cm1/solides-reconnaitre-01: ["cm1:les-solides#1", "cm1:les-solides#2", "cm1:les-solides#3", "cm1:espace-et-geometrie-2#8"]
+  cm1/droites-01: ["cm1:les-droites#1", "cm1:les-droites#2", "cm1:espace-et-geometrie-2#3"]
+  cm1/cercle-01: ["cm1:les-figures-planes#5", "cm1:espace-et-geometrie-2#2"]
+  cm1/axes-symetrie-gen-01: ["cm1:la-symetrie#1", "cm1:espace-et-geometrie-2#7"]
+  cm2/solides-perspective-01: ["cm2:les-solides#1", "cm2:les-solides#2", "cm2:espace-et-geometrie-2#6"]
+  cm2/droites-01: ["cm2:les-droites#1", "cm2:les-droites#2"]
+  cm2/axes-symetrie-gen-01: ["cm2:la-symetrie#1", "cm2:espace-et-geometrie-2#5"]
+  cm2/cercle-vocabulaire-01: ["cm2:les-figures-planes#3"]
+
+skip:
+  gs/robot-01: "item manquant dans docs/maths_gs.md (coder un déplacement)"
+  ce1/memory-lettres-01: "item manquant dans docs/maths_ce1.md (écrire les nombres en lettres)"
+  ce1/grille-01: "logique (transversal)"
+  ce1/grille-02: "logique (transversal)"
+  ce2/jeux-strategie-01: "logique (transversal)"
+  cm1/jeux-strategie-01: "logique (transversal)"
+  cm1/loisirs-01: "logique (transversal)"
+  cm2/futoshiki-5x5: "logique (transversal)"
+  cm2/kenken-6x6: "logique (transversal)"
+  cm2/numberlink-6x6: "logique (transversal)"
+  cm1/proportionnalite-01: "item manquant dans docs/maths_cm1.md (proportionnalité)"
+  cm1/pourcentages: "item manquant dans docs/maths_cm1.md (proportionnalité, pourcentages)"
+  cp/venn-emojis: "logique (transversal)"
+  ce1/futoshiki-4x4: "logique (transversal)"
+  ce1/kenken-3x3: "logique (transversal)"
+  ce1/numberlink-4x4: "logique (transversal)"
+  ce2/futoshiki-4x4: "logique (transversal)"
+  ce2/kenken-3x3: "logique (transversal)"
+  ce2/kenken-4x4: "logique (transversal)"
+  ce2/numberlink-4x4: "logique (transversal)"
+  ce2/venn-emojis: "logique (transversal)"
+  ce2/venn-formes: "logique (transversal)"
+  ce2/grilles-01: "logique (transversal)"
+  ce2/enigmes-logiques-01: "logique (transversal)"
+  cm1/futoshiki-5x5: "logique (transversal)"
+  cm1/kenken-5x5: "logique (transversal)"
+  cm1/numberlink-5x5: "logique (transversal)"
+  cm1/venn-emojis: "logique (transversal)"
+  cm2/venn-emojis: "logique (transversal)"

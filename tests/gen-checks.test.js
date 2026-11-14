@@ -206,6 +206,27 @@ const CORRUPT = {
   },
   // One shape to find is left out of the answers
   trouverFormes: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
+  planVille: (e) =>
+    e.type === 'mcq'
+      ? { ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }
+      : { ...e, answers: [String(Number(e.answers[0]) + 1)] },
+  planClasse: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),
+  proprietesFigure: (e) =>
+    e.type === 'mcq'
+      ? { ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }
+      : { ...e, answers: [String(Number(e.answers[0]) + 1)] },
+  // Cubes and areas: another count, another tile / choice, a coloured figure that misses a square
+  compterCubes: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),
+  vueCubes: (e) => ({ ...e, tileAnswers: [(e.tileAnswers[0] + 1) % e.tiles.length] }),
+  patronsCube: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
+  patronsPave: (e) => ({
+    ...e,
+    tileAnswers: [...e.tileAnswers, e.tiles.findIndex((_, i) => !e.tileAnswers.includes(i))],
+  }),
+  faceOpposee: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),
+  aireQuadrillage: (e) => ({ ...e, answers: [String(Number(e.answers[0].replace(',', '.')) + 1).replace('.', ',')] }),
+  comparerAires: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % 3 }),
+  colorierAire: (e) => ({ ...e, board: { ...e.board, solution: e.board.solution.slice(1) } }),
   trouverAngles: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
   comparerAngles: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % 3 }),
   suiteQuarts: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % 4 }),
@@ -218,6 +239,15 @@ const CORRUPT = {
   boiteDix: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),
   jeuOie: (e) => ({ ...e, tileAnswers: [e.tileAnswers[0] - 1] }),
   balanceGS: (e) => ({ ...e, tileAnswers: [1 - e.tileAnswers[0]] }),
+  // Solids and drawn geometry (lib/solides.js, lib/espace.js): another answer
+  trouverSolides: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
+  compterSolide: (e) => ({ ...e, answers: [String(Number(e.answers[0]) + 1)] }),
+  nommerSolide: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),
+  droitesPositions: (e) =>
+    e.type === 'mcq' ? { ...e, mcqAnswer: (e.mcqAnswer + 1) % 3 } : { ...e, tileAnswers: e.tileAnswers.slice(1) },
+  cercleVocabulaire: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),
+  axeSymetrie: (e) => ({ ...e, tileAnswers: e.tileAnswers.slice(1) }),
+  positionsEspace: (e) => ({ ...e, mcqAnswer: (e.mcqAnswer + 1) % e.mcqChoices.length }),
 };
 
 describe('per-generator oracle checks', () => {

@@ -1,0 +1,56 @@
+{# picross — the numbers beside a row (above a column) are the runs of coloured cells in it, in order.
+   Press a cell to colour it (or cross it out in ✕ mode), slide to paint a line; a number line is
+   greyed once right. Solved when every line is right: the picture shows in its colour. Data: cur.px #}
+<div x-show="cur.type === 'picross'" class="mb-6">
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-sm text-center max-w-none text-content-subtle mb-3"></div>
+  <template x-if="cur.px">
+    <div class="flex flex-col items-center gap-3">
+      <p x-show="!solved" class="text-sm text-content-subtle text-center text-balance max-w-md">Chaque nombre dit combien de cases colorier à la suite, dans l’ordre, avec au moins une case vide entre deux groupes.</p>
+      <div class="js-px grid select-none touch-none max-w-full"
+        :class="cur.px.rowLabels ? 'text-[0.7rem]' : 'text-sm'"
+        :style="`width:max-content;gap:2px;grid-template-columns:auto repeat(${cur.px.cols.length}, minmax(0, 2.6rem))`"
+        @pointerdown="pxDown($event)" @pointermove="pxMove($event)" @pointerup.window="pxUp()" @pointercancel.window="pxUp()">
+        <div></div>
+        <template x-for="(clue, j) in cur.px.cols" :key="currentIndex + '-c' + j">
+          <div class="js-px-col flex flex-col items-center justify-end pb-1 font-bold leading-tight tabular-nums transition-opacity"
+            :class="pxDone(false, j) ? 'opacity-30' : 'text-content-default'">
+            <template x-for="(n, k) in clue" :key="k"><span :class="cur.px.colLabels ? 'px-chip' : ''" x-text="pxClue(false, j, k)"></span></template>
+          </div>
+        </template>
+        <template x-for="(clue, i) in cur.px.rows" :key="currentIndex + '-r' + i">
+          <div class="contents">
+            <div class="js-px-row flex items-center justify-end gap-1.5 pr-1.5 font-bold tabular-nums transition-opacity"
+              :class="pxDone(true, i) ? 'opacity-30' : 'text-content-default'">
+              <template x-for="(n, k) in clue" :key="k"><span class="whitespace-nowrap" :class="cur.px.rowLabels ? 'px-chip' : ''" x-text="pxClue(true, i, k)"></span></template>
+            </div>
+            <template x-for="j in cur.px.cols.length" :key="currentIndex + '-' + i + '-' + j">
+              <button type="button" :data-px="i * cur.px.cols.length + j - 1" @click="$event.detail === 0 && pxKey(i * cur.px.cols.length + j - 1)" :disabled="solved"
+                class="js-px-cell aspect-square rounded-sm border flex items-center justify-center text-slate-400 dark:text-slate-500 font-bold"
+                :class="pxCells[i * cur.px.cols.length + j - 1] === 1 ? (solved ? 'border-transparent' : 'bg-slate-700 dark:bg-slate-200 border-slate-700 dark:border-slate-200') : solved ? 'border-slate-200 dark:border-slate-700' : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600'"
+                :style="(pxCells[i * cur.px.cols.length + j - 1] === 1 && solved ? `background:${cur.px.color};` : '') + pxBlockShadow(i, j - 1)"
+                :aria-label="`Ligne ${i + 1}, colonne ${j}` + ['', ', coloriée', ', barrée'][pxCells[i * cur.px.cols.length + j - 1]]">
+                <span x-show="pxCells[i * cur.px.cols.length + j - 1] === 2 && !solved" aria-hidden="true">✕</span>
+              </button>
+            </template>
+          </div>
+        </template>
+      </div>
+      <p x-show="solved" class="js-px-reveal text-xl font-bold text-content-default flex items-center gap-2">
+        <span class="text-4xl" aria-hidden="true" x-text="cur.px.emoji"></span><span x-text="`C’est ${cur.px.name} !`"></span>
+      </p>
+      <div x-show="!solved" class="flex flex-wrap justify-center gap-2">
+        <div class="inline-flex rounded-xl border-2 border-slate-300 dark:border-slate-600 overflow-hidden" role="group" aria-label="Outil">
+          <button type="button" @click="pxMode = 1" :aria-pressed="pxMode === 1"
+            class="js-px-fill px-4 py-2 font-bold flex items-center gap-2"
+            :class="pxMode === 1 ? 'bg-primary-500 text-white' : 'bg-white dark:bg-slate-800 text-content-default'">
+            <span class="w-4 h-4 rounded-sm bg-current" aria-hidden="true"></span>Colorier</button>
+          <button type="button" @click="pxMode = 2" :aria-pressed="pxMode === 2"
+            class="js-px-cross px-4 py-2 font-bold"
+            :class="pxMode === 2 ? 'bg-primary-500 text-white' : 'bg-white dark:bg-slate-800 text-content-default'">✕ Barrer</button>
+        </div>
+        <button type="button" @click="pxClear()" :disabled="!pxCells.some(Boolean)"
+          class="px-4 py-2 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-content-default font-bold disabled:opacity-40">🔄 Effacer</button>
+      </div>
+    </div>
+  </template>
+</div>

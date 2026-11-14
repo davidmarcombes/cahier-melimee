@@ -1,6 +1,7 @@
 {# Compare Solutions — two worked solutions side by side, click the correct one #}
 <div x-show="cur.type === 'compare-solutions'" class="mb-8">
 
+  <div x-show="cur.body" x-html="cur.body" class="prose dark:prose-invert text-base text-center max-w-none mb-3"></div>
   <p class="text-sm text-content-subtle text-center mb-5 italic">Clique sur la bonne solution.</p>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">

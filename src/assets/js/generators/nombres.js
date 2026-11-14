@@ -881,6 +881,106 @@
       },
     },
 
+    // sousLaTache (Splat!): the total is written on a card, a paint splat hides some of the objects —
+    // how many under it? With `peek` (ms) the whole set shows first, then the splat falls (👀 shows it again).
+    // params: total (number or [min, max], [3, 6]), hidden ([1, total − 1]), peek (0), title, say
+    sousLaTache: {
+      generate(params = {}) {
+        const SETS = ['🐞', '🍎', '🐟', '🌸', '🦆', '🎈', '⭐', '🐢', '🍓', '🐥', '🦋', '🍒'];
+        const pick = (v, lo, hi) => (Array.isArray(v) ? rand(v[0], v[1]) : (v ?? rand(lo, hi)));
+        const total = pick(params.total, 3, 6);
+        const [hLo, hHi] = params.hidden ?? [1, total - 1];
+        const hidden = rand(Math.max(1, hLo), Math.min(total - 1, hHi));
+        const emoji = randItem(SETS);
+        const W = 320,
+          H = total > 10 ? 240 : 210,
+          SIZE = total > 10 ? 28 : 32,
+          CARD = { x: 6, y: 6, w: 66, h: 58 };
+        const inCard = (x, y, pad) =>
+          x > CARD.x - pad && x < CARD.x + CARD.w + pad && y > CARD.y - pad && y < CARD.y + CARD.h + pad;
+
+        for (let attempt = 0; attempt < 200; attempt++) {
+          // The splat: big enough for the hidden objects, inside the frame, clear of the card
+          const core = Math.max(40, SIZE * 0.72 * Math.sqrt(hidden) + SIZE * 0.55);
+          const reach = core * 1.35; // farthest point of the blob and its drops
+          const cx = reach + 4 + Math.random() * (W - 2 * reach - 8);
+          const cy = reach + 4 + Math.random() * (H - 2 * reach - 8);
+          if (cx - reach < CARD.x + CARD.w + 4 && cy - reach < CARD.y + CARD.h + 4) continue;
+          // Hidden objects (shown in the peek only), inside the core
+          const under = [];
+          for (let t = 0; t < 600 && under.length < hidden; t++) {
+            const a = Math.random() * 2 * Math.PI,
+              d = Math.sqrt(Math.random()) * (core - SIZE * 0.55);
+            const p = { x: cx + d * Math.cos(a), y: cy + d * Math.sin(a) };
+            if (under.every((q) => Math.hypot(q.x - p.x, q.y - p.y) >= SIZE * 1.05)) under.push(p);
+          }
+          if (under.length < hidden) continue;
+          // Visible objects, apart, clear of the splat and the card
+          const seen = [];
+          for (let t = 0; t < 3000 && seen.length < total - hidden; t++) {
+            const p = {
+              x: SIZE / 2 + 6 + Math.random() * (W - SIZE - 12),
+              y: SIZE / 2 + 6 + Math.random() * (H - SIZE - 12),
+            };
+            if (inCard(p.x, p.y, SIZE / 2 + 4)) continue;
+            if (Math.hypot(p.x - cx, p.y - cy) < reach + SIZE / 2 + 6) continue;
+            if (seen.every((q) => Math.hypot(q.x - p.x, q.y - p.y) >= SIZE * 1.3)) seen.push(p);
+          }
+          if (seen.length < total - hidden) continue;
+
+          // Blob: a wobbly circle between core and 1.15 × core, plus a few drops up to `reach`
+          const N = 14,
+            off = Math.random() * 2 * Math.PI;
+          const pts = Array.from({ length: N }, (_, i) => {
+            const a = off + (i / N) * 2 * Math.PI,
+              r = core * (1 + Math.random() * 0.15);
+            return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+          });
+          const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+          const f = (v) => Math.round(v * 10) / 10;
+          let d = `M${mid(pts[N - 1], pts[0])
+            .map(f)
+            .join(' ')}`;
+          pts.forEach(
+            (p, i) =>
+              (d += ` Q${f(p[0])} ${f(p[1])} ${mid(p, pts[(i + 1) % N])
+                .map(f)
+                .join(' ')}`)
+          );
+          const drops = Array.from({ length: 4 }, (_, i) => {
+            const a = off + ((i + 0.5) / 4) * 2 * Math.PI + Math.random() * 0.6,
+              r = core * (0.1 + Math.random() * 0.06),
+              dist = core * 1.1 + r * 0.5;
+            return `<circle cx="${f(cx + dist * Math.cos(a))}" cy="${f(cy + dist * Math.sin(a))}" r="${f(r)}"/>`;
+          }).join('');
+          const splat = `<g data-splat="${f(cx)} ${f(cy)} ${f(reach)}" fill="var(--purple, #a855f7)"><path d="${d} Z"/>${drops}</g>`;
+
+          const em = (p) =>
+            `<text x="${Math.round(p.x)}" y="${Math.round(p.y)}" text-anchor="middle" dominant-baseline="central" font-size="${SIZE}">${emoji}</text>`;
+          const card =
+            `<rect x="${CARD.x}" y="${CARD.y}" width="${CARD.w}" height="${CARD.h}" rx="12" fill="none" stroke="var(--p, #6366f1)" stroke-width="3"/>` +
+            `<text data-total="1" x="${CARD.x + CARD.w / 2}" y="${CARD.y + 26}" text-anchor="middle" dominant-baseline="central" font-size="30" font-weight="800" fill="var(--p, #6366f1)">${total}</text>` +
+            `<text x="${CARD.x + CARD.w / 2}" y="${CARD.y + CARD.h - 9}" text-anchor="middle" font-size="11" fill="var(--cs, #64748b)">en tout</text>`;
+          const svg = (body, label) =>
+            `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${label}">${card}${body}</svg>`;
+          const seenSvg = seen.map(em).join('');
+          const item = {
+            type: 'count-objects',
+            title: params.title ?? `Il y en a <strong>${total}</strong> en tout. Combien sous la tache ?`,
+            svgHtml: svg(seenSvg + splat, `${total} en tout, une tache en cache une partie`),
+            answers: [String(hidden)],
+          };
+          if (params.say) item.say = params.say;
+          if (params.peek > 0) {
+            item.svgFull = svg(seenSvg + under.map(em).join(''), `${total} en tout`);
+            item.peek = params.peek;
+          }
+          return item;
+        }
+        throw new Error(`sousLaTache: no room for ${total} objects, ${hidden} under the splat`);
+      },
+    },
+
     // complementA10Nombre: fill-in-the-blank "N + ? = 10" or "? + N = 10"
     // params: min (1), max (9)
     complementA10Nombre: {
@@ -1280,6 +1380,46 @@
       },
     },
 
+    // boiteDixRemplir: ten-frame — tap the cells of a box of 10 (two boxes above 10) to put tokens in or take
+    //   them out. The spoken instruction (say) is fixed by `ask` and `show`.
+    //   ask montre (show the number: `show` digit / des), plus (`by` more than the red tokens, default 1),
+    //   moins (`by` fewer); min / max (the number shown, or the red tokens), frames (1; 2 = up to 20),
+    //   tenFirst (the first box full before the second one)
+    boiteDixRemplir: {
+      generate(params = {}) {
+        const ask = params.ask || 'montre';
+        const by = params.by ?? 1;
+        const frames = params.frames ?? 1;
+        const cap = 10 * frames;
+        const tf = { ask, frames };
+        if (params.tenFirst) tf.tenFirst = true;
+        if (ask === 'montre') {
+          const n = rand(params.min ?? 1, Math.min(params.max ?? cap, cap));
+          const show = params.show || 'digit';
+          Object.assign(tf, { given: 0, target: n, show: show === 'des' ? { dots: n } : { digit: n } });
+          return {
+            type: 'ten-frame',
+            title: 'Montre-moi',
+            say:
+              show === 'des'
+                ? 'Mets autant de jetons que de points sur le dé.'
+                : 'Mets autant de jetons que le nombre.',
+            tf,
+          };
+        }
+        const plus = ask === 'plus';
+        const g = rand(Math.max(params.min ?? 1, plus ? 0 : by), Math.min(params.max ?? cap, plus ? cap - by : cap));
+        Object.assign(tf, { given: g, target: plus ? g + by : g - by, by });
+        const what = by === 1 ? 'un jeton' : `${by} jetons`;
+        return {
+          type: 'ten-frame',
+          title: by === 1 ? (plus ? 'Un de plus' : 'Un de moins') : plus ? `Ajoute ${what}.` : `Enlève ${what}.`,
+          say: plus ? `Ajoute ${what}.` : `Enlève ${what}.`,
+          tf,
+        };
+      },
+    },
+
     // jeuOie: tile-select (GS) — a die and a frog on a track of cells: tap the cell it lands on (surcomptage
     //   from its cell). Cells are square tiles in one row, all blank but the frog's, so `positional` (the answer is a place).
     //   params: die ([1, 3] dots), start ([0, 2] — the frog's cell), after ([1, 3] cells past the landing one)
@@ -1313,6 +1453,120 @@
           tileAnswers: [start + d],
           positional: true,
         };
+      },
+    },
+
+    // memoryPaires: memory — pairs of cards that go together (scripts/lib/memory.js checks every deck)
+    //   kind quantites (GS–CP): numbers min–max (1–6); faces `left` / `right`: chiffre / des / doigts /
+    //        objets / mixte (des, doigts or objets, card by card) — default chiffre ↔ des
+    //   kind complements: two numbers that add up to `sum` (10), multiples of `step` (1)
+    //   kind calculs: « 6 × 7 » ↔ 42 — op add / sub / mul / double / moitie / mixte, operands min–max
+    //        (2–9), tables (mul, [2…9])
+    //   kind blocs: base-10 blocks ↔ the number, min–max (11–59)
+    //   kind fractions: shaded disc ↔ written fraction (dens [2, 3, 4, 6, 8]); right decimal: written
+    //        fraction ↔ decimal number (dens [2, 4, 5, 10, 100])
+    //   kind heures: clock ↔ « 3 h 15 », step (15) minutes; text chiffres / mots (« 3 h et quart ») /
+    //        soir (« 15 h 15 »)
+    //   pairs (6), faceUp (every card shown: tap two that go together)
+    memoryPaires: {
+      generate(params = {}) {
+        const kind = params.kind || 'quantites';
+        const count = params.pairs ?? 6;
+        const dec = (v) => String(Math.round(v * 1000) / 1000).replace('.', ',');
+        const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+        // count pairs from make(), whose values `key` are all different (no card matches two pairs)
+        const deal = (make, key = (p) => p.v) => {
+          const pairs = [];
+          const seen = new Set();
+          for (let tries = 0; pairs.length < count && tries < 500; tries++) {
+            const p = make();
+            if (p && !seen.has(key(p))) {
+              seen.add(key(p));
+              pairs.push(p);
+            }
+          }
+          if (pairs.length < count) throw new Error(`memoryPaires: only ${pairs.length} different pairs for ${count}`);
+          return pairs;
+        };
+        let pairs;
+        let sum;
+
+        if (kind === 'quantites') {
+          const OBJ = ['🍎', '🐟', '⭐', '🐞', '🌸', '🚗', '🎈', '🐥'];
+          const face = (f, n) => {
+            const k = f === 'mixte' ? randItem(['des', 'doigts', 'objets']) : f;
+            if (k === 'chiffre') return { text: String(n) };
+            if (k === 'des') return { dots: n };
+            if (k === 'doigts') return { fingers: n };
+            return { emoji: randItem(OBJ), n };
+          };
+          const [left, right] = [params.left || 'chiffre', params.right || 'des'];
+          const ns = deal(() => ({ v: rand(params.min ?? 1, params.max ?? 6) }));
+          pairs = ns.map(({ v }) => [face(left, v), face(right, v)]);
+        } else if (kind === 'complements') {
+          sum = params.sum ?? 10;
+          const step = params.step ?? 1;
+          // a ≤ sum − a: the pair {3, 7} once; 5 + 5 is two « 5 » cards
+          const as = deal(() => ({ v: step * rand(1, Math.floor(sum / 2 / step)) }));
+          pairs = as.map(({ v }) => [{ text: String(v) }, { text: String(sum - v) }]);
+        } else if (kind === 'calculs') {
+          const [lo, hi] = [params.min ?? 2, params.max ?? 9];
+          const tables = params.tables || [2, 3, 4, 5, 6, 7, 8, 9];
+          const ops = params.op === 'mixte' ? ['add', 'sub', 'mul'] : [params.op || 'mul'];
+          const one = () => {
+            const op = randItem(ops);
+            if (op === 'mul') {
+              const a = randItem(tables),
+                b = rand(lo, hi);
+              return rand(0, 1) ? { e: `${a} × ${b}`, v: a * b } : { e: `${b} × ${a}`, v: a * b };
+            }
+            const a = rand(lo, hi),
+              b = rand(lo, hi);
+            if (op === 'add') return { e: `${a} + ${b}`, v: a + b };
+            if (op === 'sub')
+              return a === b ? null : { e: `${Math.max(a, b)} − ${Math.min(a, b)}`, v: Math.abs(a - b) };
+            if (op === 'double') return { e: `double de ${a}`, v: 2 * a };
+            return { e: `moitié de ${2 * a}`, v: a };
+          };
+          pairs = deal(one).map(({ e, v }) => [{ text: e }, { text: String(v) }]);
+        } else if (kind === 'blocs') {
+          pairs = deal(() => ({ v: rand(params.min ?? 11, params.max ?? 59) })).map(({ v }) => [
+            { blocks: v },
+            { text: String(v) },
+          ]);
+        } else if (kind === 'fractions') {
+          const decimal = params.right === 'decimal';
+          const dens = params.dens || (decimal ? [2, 4, 5, 10, 100] : [2, 3, 4, 6, 8]);
+          const one = () => {
+            const d = randItem(dens),
+              n = rand(1, d - 1);
+            // Tenths as tenths (30/100 is 3/10); other fractions in lowest terms
+            if (d === 100 ? n % 10 === 0 : d !== 10 && gcd(n, d) > 1) return null;
+            return { n, d, v: n / d };
+          };
+          pairs = deal(one).map(({ n, d, v }) =>
+            decimal ? [{ frac: [n, d] }, { text: dec(v) }] : [{ pie: [n, d] }, { frac: [n, d] }]
+          );
+        } else if (kind === 'heures') {
+          const step = params.step ?? 15;
+          const text = params.text || 'chiffres';
+          const AFTER = { 0: '', 5: 'cinq', 10: 'dix', 15: 'et quart', 20: 'vingt', 25: 'vingt-cinq', 30: 'et demie' };
+          const BEFORE = { 35: 'vingt-cinq', 40: 'vingt', 45: 'le quart', 50: 'dix', 55: 'cinq' };
+          const say = (h, m) => {
+            if (text === 'soir') return `${h + 12} h${m ? ' ' + String(m).padStart(2, '0') : ''}`;
+            if (text === 'chiffres') return `${h} h${m ? ' ' + String(m).padStart(2, '0') : ''}`;
+            if (m <= 30) return `${h} h${m ? ' ' + AFTER[m] : ''}`;
+            return `${(h % 12) + 1} h moins ${BEFORE[m]}`;
+          };
+          // soir: 1 h – 11 h of the afternoon (13 h – 23 h)
+          const one = () => ({ h: rand(1, text === 'soir' ? 11 : 12), m: step * rand(0, 60 / step - 1) });
+          pairs = deal(one, (t) => `${t.h}:${t.m}`).map(({ h, m }) => [{ clock: [h, m] }, { text: say(h, m) }]);
+        } else throw new Error(`memoryPaires: unknown kind ${kind}`);
+
+        const mem = { pairs };
+        if (sum != null) mem.sum = sum;
+        if (params.faceUp) mem.faceUp = true;
+        return { type: 'memory', mem };
       },
     },
   };

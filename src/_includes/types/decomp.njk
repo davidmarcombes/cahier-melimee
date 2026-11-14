@@ -6,7 +6,8 @@
        x-text="cur.decomp?.number"></div>
 
   {# Decomposition rows #}
-  <div class="flex flex-col items-center gap-3">
+  {# Rows aligned on their left inside a centred block (long labels: « centaines de mille ») #}
+  <div class="flex justify-center"><div class="flex flex-col items-start gap-3">
     <template x-for="(part, i) in (cur.decomp?.parts || [])" :key="i">
       <div>
         {# Comma separator row #}
@@ -34,7 +35,7 @@
         </div>
       </div>
     </template>
-  </div>
+  </div></div>
 
   {# Verify button #}
   <div class="flex justify-center">

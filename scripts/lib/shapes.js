@@ -50,30 +50,41 @@ const convex = (pts) => {
   return signs.every((x) => x === signs[0] && x !== 0);
 };
 
-// → { names: Set of what the shape is ('carre', 'rectangle', 'losange', …), unclear: [reasons] }
+// → { names: Set of what the shape is ('carre', 'rectangle', 'losange', …), unclear: [reasons],
+//     soft: [reasons that matter only for some questions — sides almost equal in a triangle, a corner
+//     almost right in a trapèze] }
 function shapeNames(shape) {
   const names = new Set();
   const unclear = [];
-  if (!shape) return { names, unclear: ['no shape in the tile'] };
+  const soft = [];
+  if (!shape) return { names, unclear: ['no shape in the tile'], soft };
   if (shape.kind === 'circle') names.add('disque');
   if (shape.kind === 'ellipse') {
     if (shape.ratio < 1 + SIDE) names.add('disque');
     else if (shape.ratio < 1.25) unclear.push('ellipse almost a circle');
     else names.add('ovale');
   }
-  if (shape.kind !== 'polygon') return { names, unclear };
+  if (shape.kind !== 'polygon') return { names, unclear, soft };
   const { pts } = shape;
-  if (!convex(pts)) return { names, unclear: ['polygon is not convex'] };
+  if (!convex(pts)) return { names, unclear: ['polygon is not convex'], soft };
   const a = angles(pts);
   const s = sides(pts);
   const isRight = (x) => Math.abs(x - 90) < RIGHT;
   const nearRight = (x) => !isRight(x) && Math.abs(x - 90) < NEAR_ANGLE;
   const ratio = (x, y) => Math.max(x, y) / Math.min(x, y);
   if (Math.min(...a) < 15) unclear.push(`angle of ${Math.min(...a).toFixed(0)}°: too flat`);
+  // A corner this open hides a side: a pentagon would pass for a quadrilateral
+  if (Math.max(...a) > 160) unclear.push(`corner of ${Math.max(...a).toFixed(0)}°: almost flat`);
   if (pts.length === 3) {
     names.add('triangle');
     if (a.some(isRight)) names.add('triangleRectangle');
     if (a.some(nearRight)) unclear.push('triangle almost right');
+    const eq = [0, 1, 2].map((i) => ratio(s[i], s[(i + 1) % 3]) < 1 + SIDE);
+    if (eq.some(Boolean)) names.add('triangleIsocele');
+    if (eq.every(Boolean)) names.add('triangleEquilateral');
+    if (!eq.some(Boolean) && !a.some(isRight)) names.add('triangleQuelconque');
+    const close = [0, 1, 2].some((i) => !eq[i] && ratio(s[i], s[(i + 1) % 3]) < 1.12);
+    if (close) soft.push('two sides almost equal');
   } else if (pts.length === 4) {
     names.add('quadrilatere');
     const edge = (i) => sub(pts[(i + 1) % 4], pts[i]);
@@ -85,15 +96,19 @@ function shapeNames(shape) {
     if (right && equal) names.add('carre');
     if (pairs[0] && pairs[1]) names.add('parallelogramme');
     if (pairs[0] !== pairs[1]) names.add('trapeze');
+    if (pairs[0] !== pairs[1] && a.some(isRight)) names.add('trapezeRectangle');
+    const tilt = (u, v) => (Math.asin(Math.min(1, Math.abs(cross(u, v)) / (len(u) * len(v)))) * 180) / Math.PI;
+    if ([tilt(edge(0), edge(2)), tilt(edge(1), edge(3))].some((t) => t >= RIGHT && t < 6))
+      unclear.push('two sides almost parallel');
+    if (!right && a.some(nearRight)) soft.push('a corner almost right');
     if (right && !equal && ratio(s[0], s[1]) < NEAR_RATIO) unclear.push('rectangle almost a square');
     if (!right && a.every((x) => Math.abs(x - 90) < NEAR_ANGLE)) unclear.push('almost a rectangle');
     if (!equal && ratio(Math.max(...s), Math.min(...s)) < 1.08) unclear.push('sides almost equal');
   } else if (pts.length === 5 || pts.length === 6) {
-    const regular = ratio(Math.max(...s), Math.min(...s)) < 1 + SIDE;
-    if (regular) names.add(pts.length === 5 ? 'pentagone' : 'hexagone');
-    else unclear.push('polygon not regular');
+    names.add(pts.length === 5 ? 'pentagone' : 'hexagone');
+    if (Math.min(...s) / Math.max(...s) < 0.3) unclear.push('a side too short to see');
   } else unclear.push(`${pts.length} sides`);
-  return { names, unclear };
+  return { names, unclear, soft };
 }
 
 // Turned: no side within 12° of horizontal or vertical (a square on its tip, a triangle on a corner)
@@ -148,6 +163,14 @@ function angleKind(deg) {
 // Plural words of the instruction → shape name
 const TARGETS = [
   [/triangles? rectangles?/, 'triangleRectangle'],
+  [/triangles? isocèles?/, 'triangleIsocele'],
+  [/triangles? équilatéra(l|ux)/, 'triangleEquilateral'],
+  [/trapèzes? rectangles?/, 'trapezeRectangle'],
+  [/trapèzes?/, 'trapeze'],
+  [/parallélogrammes?/, 'parallelogramme'],
+  [/quadrilatères?/, 'quadrilatere'],
+  [/pentagones?/, 'pentagone'],
+  [/hexagones?/, 'hexagone'],
   [/carrés?/, 'carre'],
   [/rectangles?/, 'rectangle'],
   [/losanges?/, 'losange'],
@@ -160,4 +183,52 @@ const targetOf = (text) => {
   return null;
 };
 
-module.exports = { readShape, shapeNames, sides, angles, turned, targetOf, readAngle, angleKind };
+// Codes drawn on a polygon: <line data-code> ticks (each belongs to the side whose midpoint is nearest,
+// within 8 px) and <polyline data-code> right-angle marks (belong to the vertex they start 7 px from)
+// → problems: [] when the ticks mark exactly the equal sides (same count ⇔ equal) and the squares
+// exactly the right angles
+function codeProblems(svg, pts) {
+  const s = String(svg || '');
+  const n = pts.length;
+  const out = [];
+  const S = sides(pts);
+  const A = angles(pts);
+  const ticks = Array(n).fill(0);
+  for (const t of s.match(/<line\b[^>]*data-code[^>]*>/g) || []) {
+    const g = (k) => num((t.match(new RegExp(`\\s${k}="([^"]+)"`)) || [])[1]);
+    const m = [(g('x1') + g('x2')) / 2, (g('y1') + g('y2')) / 2];
+    const d = pts.map((p, i) => {
+      const q = pts[(i + 1) % n];
+      return len(sub(m, [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]));
+    });
+    const i = d.indexOf(Math.min(...d));
+    if (d[i] > 8) out.push('a tick off every side');
+    else ticks[i]++;
+  }
+  const marked = new Set();
+  for (const t of s.match(/<polyline\b[^>]*data-code[^>]*>/g) || []) {
+    const q = (t.match(/points="([^"]+)"/) || ['', ''])[1]
+      .trim()
+      .split(/\s+/)
+      .map((p) => p.split(',').map(num));
+    // the corner of the little square is the vertex + both 7 px legs: the vertex is q0 + q2 − q1
+    const v = [q[0][0] + q[2][0] - q[1][0], q[0][1] + q[2][1] - q[1][1]];
+    const i = pts.findIndex((p) => len(sub(p, v)) < 1);
+    if (i < 0) out.push('a right-angle mark off every vertex');
+    else marked.add(i);
+  }
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++) {
+      const equal = Math.max(S[i], S[j]) / Math.min(S[i], S[j]) < 1 + SIDE;
+      const same = ticks[i] > 0 && ticks[i] === ticks[j];
+      if (equal !== same)
+        out.push(`sides ${i} and ${j}: ${equal ? 'equal' : 'not equal'}, coded ${same ? 'equal' : 'not'}`);
+    }
+  A.forEach((a, i) => {
+    const right = Math.abs(a - 90) < RIGHT;
+    if (right !== marked.has(i)) out.push(`corner ${i}: ${right ? 'right, not coded' : 'coded right, is not'}`);
+  });
+  return out;
+}
+
+module.exports = { readShape, shapeNames, codeProblems, sides, angles, turned, targetOf, readAngle, angleKind };

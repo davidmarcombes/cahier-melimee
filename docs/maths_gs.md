@@ -60,7 +60,7 @@ Status: `[✓]` done and validated by hand · `[~]` exists, not validated / need
 
 - [✓] **`count-objects` tap mode**: in GS, 3 big number buttons around the answer instead of the input; `flash` (ms) hides the picture after a short look. Generator `compterGS` (layouts scattered / row / dice — 2 dice above 6, `mixSizes`, `flash`). Fingers layout still to do (needs a hand SVG).
 - [_] `count-objects` fingers layout (needs a hand SVG) · `facile`
-- [_] **`ten-frame`** (boîte de 10 / boîte à œufs): tap empty cells to put tokens in; read a frame (« combien ? »); « one more / one less ».
+- [✓] **`ten-frame`** (boîte de 10): tap empty cells to put tokens in (`boiteDixRemplir`: show a digit / a die, one more, one less) — `boite-dix-remplir-01` · `facile`, `-02` · `moyen`; reading a frame is `boiteDix` (`boite-dix-01`).
 - [_] **Row / train picker** for ranks: a fixed row of items (no shuffle), tap the 3rd / the last / the next-to-last; start marker on the left or the right (🔵 … 🔴).
 - [_] **One-to-one pairing**: tap a 🐰 then a 🥕 to pair them; answer « autant / il en manque / il y en a trop ». Possibly `matching` in kid mode.
 - [_] **Board game (jeu de l'oie)**: pawn on a 1-to-10 strip, dice (dice pattern or digit), tap the arrival square; moving forward and backward; find the starting square.
@@ -124,7 +124,7 @@ Status: `[✓]` done and validated by hand · `[~]` exists, not validated / need
 - [✓] Find every square / triangle in any orientation, square / not a square (`applications` `formes-tournees-01`, voice) · `moyen` — « same shape as the model » still to do
 - [_] Sort into 4 families (square, rectangle, triangle, disc), rotated, non-equilateral · `moyen`
 - [_] Name the shape (spoken « Où est le triangle ? ») · `moyen`
-- [_] Puzzle / tiling: rebuild a model with up to 4 pieces · `facile` · up to 8 pieces · `moyen` (later — needs a tangram-like type)
+- [x] Puzzle / tiling: rebuild a model with up to 4 pieces · `facile` (`tangram` type, `geometrie/tangram-01`: places drawn, pieces already the right way round) · up to 8 pieces · `moyen` (later)
 
 ## Content to do — Grandeurs
 

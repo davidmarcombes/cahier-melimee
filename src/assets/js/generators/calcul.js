@@ -973,6 +973,223 @@
         }
       },
     },
+
+    // calculatriceCassee: broken-calc — make the calculator show the target without its broken keys.
+    //   The broken digits are digits of the target (it cannot be typed directly); the target is kept only
+    //   when one operation between two typable numbers (≤ max) gives it.
+    //   target [min, max] ([20, 99]), digits (1 broken digit), brokenOps ([] — e.g. ['+']), ops (keys on
+    //   the calculator, ['+', '−', '×', '÷']), max (999: biggest number typed)
+    calculatriceCassee: {
+      generate(params = {}) {
+        const [tMin, tMax] = params.target || [20, 99];
+        const ops = params.ops || ['+', '−', '×', '÷'];
+        const max = params.max ?? 999;
+        const typable = (n, broken) =>
+          !String(n)
+            .split('')
+            .some((d) => broken.includes(d));
+        for (let tries = 0; tries < 100; tries++) {
+          const target = rand(tMin, tMax);
+          const digits = [...new Set(String(target))];
+          const n = params.digits ?? 1;
+          if (digits.length < n) continue;
+          const broken = [...shuffle(digits).slice(0, n), ...(params.brokenOps || [])];
+          // One operation that works: [a, op, b] with typable numbers
+          let solution = null;
+          for (const op of shuffle(ops.filter((o) => !broken.includes(o)))) {
+            const as = shuffle(Array.from({ length: max }, (_, i) => i + 1)).filter((a) => typable(a, broken));
+            for (const a of as) {
+              const b = op === '+' ? target - a : op === '−' ? a - target : op === '×' ? target / a : a / target;
+              if (Number.isInteger(b) && b >= (op === '×' || op === '÷' ? 2 : 1) && b <= max && typable(b, broken)) {
+                solution = [a, op, b];
+                break;
+              }
+            }
+            if (solution) break;
+          }
+          if (!solution) continue;
+          return { type: 'broken-calc', calc: { target, broken, ops, max, solution } };
+        }
+        throw new Error('calculatriceCassee: no target can be made with these keys');
+      },
+    },
+
+    // blocsCibles: target-blocks — drop the number tiles into overlapping blocks so that each block's
+    //   tiles, combined with its operation, give its target (a tile in an overlap counts for each block
+    //   around it). The tiles are drawn region by region of the layout, the targets computed from them.
+    //   layout (un | deux | chaine | trio, or a list to pick from), op ('+' or '×'; no − or ÷: their
+    //   order cannot be shown on the board), ops (a list: each block draws its own), values ([1, 9]), perRegion
+    //   ([0, 1] tiles in each region; every block gets at least one), decoys (0: extra tiles nowhere),
+    //   minTiles (one a block), minPerBlock (1: tiles in each block — 2 for × to multiply), live (true: each block shows what its
+    //   tiles make)
+    blocsCibles: {
+      generate(params = {}) {
+        const LAYOUTS = {
+          un: { w: 12, h: 9, blocks: [[3, 1, 6.5]] },
+          deux: {
+            w: 12,
+            h: 11.5,
+            blocks: [
+              [0.5, 4.5, 6.5],
+              [5, 0.5, 6.5],
+            ],
+          },
+          chaine: {
+            w: 12,
+            h: 9,
+            blocks: [
+              [0.25, 3.5, 5],
+              [3.5, 0.5, 5],
+              [6.75, 3.5, 5],
+            ],
+          },
+          trio: {
+            w: 12,
+            h: 11.5,
+            blocks: [
+              [0.5, 0.5, 6.5],
+              [5, 0.5, 6.5],
+              [2.75, 4.5, 6.5],
+            ],
+          },
+        };
+        const COLOURS = ['#7c3aed', '#db2777', '#0891b2', '#ea580c'];
+        const OP = {
+          '+': (v) => v.reduce((a, b) => a + b, 0),
+          '×': (v) => v.reduce((a, b) => a * b, 1),
+        };
+        const layout = LAYOUTS[Array.isArray(params.layout) ? randItem(params.layout) : params.layout || 'deux'];
+        const blocks = layout.blocks.map(([x, y, s]) => ({ x, y, s }));
+        const inside = ([x, y]) =>
+          blocks.map((b, i) => (x > b.x && x < b.x + b.s && y > b.y && y < b.y + b.s ? i : -1)).filter((i) => i >= 0);
+        // Regions (which blocks a point is in), each with the sample point farthest from every block edge
+        const regions = new Map();
+        for (let y = 0.25; y < layout.h; y += 0.25)
+          for (let x = 0.25; x < layout.w; x += 0.25) {
+            const key = inside([x, y]).join('');
+            if (!key) continue;
+            const room = Math.min(
+              ...blocks.flatMap((b) => [
+                Math.abs(x - b.x),
+                Math.abs(x - b.x - b.s),
+                Math.abs(y - b.y),
+                Math.abs(y - b.y - b.s),
+              ])
+            );
+            if (!regions.has(key) || room > regions.get(key).room) regions.set(key, { key, at: [x, y], room });
+          }
+        const [lo, hi] = params.values || [1, 9];
+        const [rMin, rMax] = params.perRegion || [0, 1];
+        // A new tile is often a multiple or a divisor of one already drawn (÷ and × need them)
+        const draw = (placed) => {
+          if (placed.length && Math.random() < 0.6) {
+            const v = randItem(placed)[0];
+            const f = rand(2, 5);
+            const near = [v * f, v % f === 0 ? v / f : null, v + rand(1, 5)].filter((x) => x && x >= lo && x <= hi);
+            if (near.length) return randItem(near);
+          }
+          return rand(lo, hi);
+        };
+        for (let tries = 0; tries < 3000; tries++) {
+          const ops = blocks.map(() => (params.ops ? randItem(params.ops) : params.op || '+'));
+          const placed = []; // [value, point]
+          for (const r of regions.values())
+            for (let n = rand(rMin, rMax); n > 0; n--) placed.push([draw(placed), r.at]);
+          const values = blocks.map((_, k) => placed.filter(([, at]) => inside(at).includes(k)).map(([v]) => v));
+          if (
+            values.some((v) => v.length < (params.minPerBlock ?? 1)) ||
+            placed.length < Math.max(2, params.minTiles ?? blocks.length)
+          )
+            continue;
+          const targets = values.map((v, k) => OP[ops[k]](v));
+          // every block its own target: three blocks sharing one tile in the middle all make the same
+          if (targets.some((t) => t === null || t < 1) || new Set(targets).size < targets.length) continue;
+          if (params.maxTarget && targets.some((t) => t > params.maxTarget)) continue;
+          for (let d = 0; d < (params.decoys || 0); d++) placed.push([rand(lo, hi), null]);
+          const order = shuffle(placed.map((_, i) => i));
+          const tb = {
+            w: layout.w,
+            h: layout.h,
+            blocks: blocks.map((b, k) => ({
+              ...b,
+              target: targets[k],
+              color: COLOURS[k],
+              ...(params.ops && { op: ops[k] }),
+            })),
+            tiles: order.map((i) => placed[i][0]),
+            solution: order.map((i) => placed[i][1]),
+            op: params.ops ? undefined : params.op || '+',
+            useAll: !params.decoys,
+            live: params.live !== false,
+          };
+          if (!tb.op) delete tb.op;
+          return { type: 'target-blocks', tb };
+        }
+        throw new Error('blocsCibles: no puzzle found with these params');
+      },
+    },
+
+    // compteEstBon: compte-est-bon — reach the target by combining the numbers two at a time (a op b
+    //   replaces a and b). Breadth-first search of every reachable result; the target is one first
+    //   reached after `minSteps` operations at least.
+    //   count (4) numbers drawn in pool ([1, 10]), big (one more drawn there, e.g. [25, 50, 75, 100]),
+    //   ops (['+', '−', '×', '÷']), target [min, max] ([20, 60]), minSteps (2), useAll (Mathador:
+    //   every number used)
+    compteEstBon: {
+      generate(params = {}) {
+        const ops = params.ops || ['+', '−', '×', '÷'];
+        const [tMin, tMax] = params.target || [20, 60];
+        const [lo, hi] = params.pool || [1, 10];
+        const minSteps = params.minSteps ?? 2;
+        const OP = {
+          '+': (a, b) => a + b,
+          '−': (a, b) => (a > b ? a - b : null),
+          '×': (a, b) => a * b,
+          '÷': (a, b) => (b > 1 && a % b === 0 ? a / b : null),
+        };
+        for (let tries = 0; tries < 40; tries++) {
+          const numbers = Array.from({ length: (params.count ?? 4) - (params.big ? 1 : 0) }, () => rand(lo, hi));
+          if (params.big) numbers.push(randItem(params.big));
+          const start = [...numbers].sort((x, y) => x - y);
+          const prev = new Map([[start.join(','), null]]); // state → { from, step }
+          const first = new Map(); // value → [depth, state where it first appears]
+          let level = [start];
+          for (let d = 1; level.length; d++) {
+            const next = [];
+            for (const st of level)
+              for (let i = 0; i < st.length; i++)
+                for (let j = 0; j < st.length; j++)
+                  for (const op of ops) {
+                    if (i === j || ((op === '+' || op === '×') && j < i)) continue;
+                    const r = OP[op](st[i], st[j]);
+                    if (r == null || r > 10000) continue;
+                    const t = st
+                      .filter((_, k) => k !== i && k !== j)
+                      .concat(r)
+                      .sort((x, y) => x - y);
+                    const key = t.join(',');
+                    if (prev.has(key)) continue;
+                    prev.set(key, { from: st.join(','), step: [st[i], op, st[j], r] });
+                    const v = params.useAll ? (t.length === 1 ? r : null) : r;
+                    if (v != null && !first.has(v)) first.set(v, [d, key]);
+                    next.push(t);
+                  }
+            level = next;
+          }
+          const targets = [...first].filter(
+            ([v, [d]]) => v >= tMin && v <= tMax && d >= minSteps && !numbers.includes(v)
+          );
+          if (!targets.length) continue;
+          const [target, [, key]] = randItem(targets);
+          const solution = [];
+          for (let k = key; prev.get(k); k = prev.get(k).from) solution.unshift(prev.get(k).step);
+          const ceb = { numbers: shuffle(numbers), target, ops, solution };
+          if (params.useAll) ceb.useAll = true;
+          return { type: 'compte-est-bon', ceb };
+        }
+        throw new Error('compteEstBon: no target in range for these numbers');
+      },
+    },
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = generators;

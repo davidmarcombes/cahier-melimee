@@ -4,9 +4,14 @@
  */
 const { Unparseable, clean, tokenize, evaluate, num, same, fmt, checkEquation } = require('./arith.js');
 const { boardProblems } = require('./grid-board.js');
-const { readShape, shapeNames, turned, targetOf, readAngle, angleKind } = require('./shapes.js');
+const { readShape, shapeNames, codeProblems, angles, turned, targetOf, readAngle, angleKind } = require('./shapes.js');
 const { readChance, readEvent, tileColour, countOf } = require('./hasard.js');
 const { readTensFrame, readDie, readBalance } = require('./manipulations.js');
+const { CUBE_CHECKS } = require('./cubes.js');
+const { AREA_CHECKS } = require('./aires.js');
+const { SOLID_CHECKS } = require('./solides.js');
+const { SPACE_CHECKS } = require('./espace.js');
+const { PLAN_CHECKS } = require('./plans.js');
 
 // Generated exercises whose answer is not an "operation = ?" the type checks can read. Each check
 // recomputes the answer from what the pupil SEES (title, labels, tiles, rule text) — never from
@@ -218,6 +223,9 @@ const DECOMP_PLACES = {
   unités: 1,
   centaines: 100,
   milliers: 1000,
+  'unités de mille': 1000,
+  'dizaines de mille': 10000,
+  'centaines de mille': 100000,
   dixièmes: 0.1,
   centièmes: 0.01,
   millièmes: 0.001,
@@ -268,6 +276,13 @@ const quartsOf = (svg) => {
 };
 
 const GEN_CHECKS = {
+  // Cube stacks, views and nets (lib/cubes.js)
+  ...CUBE_CHECKS,
+  ...SOLID_CHECKS,
+  ...SPACE_CHECKS,
+  ...PLAN_CHECKS,
+  // Areas on squared paper and area boards (lib/aires.js)
+  ...AREA_CHECKS,
   // Open line « pour aller à »: the title's start / end are the line's ends, the line goes up, and every
   // point in between is a round landmark (a whole hour; a whole euro; a ten)
   compterEnAvancant: (e) => {
@@ -1027,15 +1042,73 @@ const GEN_CHECKS = {
     const shapes = e.tiles.map(readShape);
     const named = shapes.map(shapeNames);
     named.forEach((n, i) => n.unclear.forEach((u) => out.push(`tile ${i}: ${u}`)));
+    // Sides almost equal matter when the question is about equal sides; a corner almost right when it is
+    // about trapèzes
+    const softFor = /triangleIsocele|triangleEquilateral/.test(target)
+      ? /sides/
+      : /trapeze/.test(target)
+        ? /corner/
+        : null;
+    if (softFor)
+      named.forEach((n, i) => n.soft.filter((u) => softFor.test(u)).forEach((u) => out.push(`tile ${i}: ${u}`)));
+    const drawn = (name) => named.some((n) => n.names.has(name));
+    if (target === 'trapeze' && drawn('parallelogramme'))
+      out.push('a parallelogram is drawn: it is a trapèze or not depending on the definition');
+    if (target === 'parallelogramme' && (drawn('rectangle') || drawn('losange')))
+      out.push('a rectangle or rhombus is drawn: it is a parallelogram too');
     const want = named.map((n, i) => (n.names.has(target) ? i : -1)).filter((i) => i >= 0);
     const got = [...e.tileAnswers].sort((a, b) => a - b);
     if (String(want) !== String(got)) out.push(`${target} tiles are [${want}], declared [${got}]`);
     const inclusive = /toutes les figures qui sont/.test(e.title);
     if (!inclusive && (target === 'rectangle' || target === 'losange') && named.some((n) => n.names.has('carre')))
       out.push('a square is drawn, but the instruction does not say it counts');
-    if (params.turn !== 'none' && target !== 'disque' && !want.some((i) => turned(shapes[i])))
-      out.push('no answer is turned');
+    if (!inclusive && target === 'triangleIsocele' && drawn('triangleEquilateral'))
+      out.push('an equilateral triangle is drawn, but the instruction does not say it counts');
+    const anyTurn = ['disque', 'pentagone', 'hexagone'].includes(target);
+    if (params.turn !== 'none' && !anyTurn && !want.some((i) => turned(shapes[i]))) out.push('no answer is turned');
     if (new Set(e.tiles).size !== e.tiles.length) out.push('two tiles are the same');
+    return out.length ? out.join('; ') : null;
+  },
+  // One figure, a property: read back from the polygon (lib/shapes.js), the codes too when drawn
+  proprietesFigure: (e) => {
+    const pics = String(e.body || '').match(/<svg\b[\s\S]*?<\/svg>/g) || [];
+    if (pics.length !== 1) return `${pics.length} drawings in the body`;
+    const shape = readShape(pics[0]);
+    if (!shape || shape.kind !== 'polygon') return 'no polygon drawn';
+    const n = shapeNames(shape);
+    const out = [...n.unclear];
+    const coded = /data-code/.test(pics[0]);
+    if (coded) out.push(...codeProblems(pics[0], shape.pts));
+    const op = String(e.operation || '');
+    const isRight = (a) => Math.abs(a - 90) < 1.5;
+    let want;
+    if (/côtés\.$|sommets\.$/.test(op)) want = String(shape.pts.length);
+    else if (/angle\(s\)__droit\(s\)$/.test(op)) {
+      out.push(...n.soft.filter((u) => /corner/.test(u)));
+      if (shape.pts.length > 4 && angles(shape.pts).some((a) => !isRight(a) && Math.abs(a - 90) < 8))
+        out.push('a corner almost right');
+      want = String(angles(shape.pts).filter(isRight).length);
+    } else if (/paires de côtés parallèles/.test(e.title)) {
+      if (shape.pts.length !== 4) return 'not a quadrilateral';
+      const pairs = n.names.has('parallelogramme') ? 2 : n.names.has('trapeze') ? 1 : 0;
+      want = e.mcqChoices.indexOf(['aucune', '1 paire', '2 paires'][pairs]);
+      if (want < 0) return `${pairs} pairs: not among the choices`;
+    } else if (/ce triangle/.test(e.title)) {
+      if (shape.pts.length !== 3) return 'not a triangle';
+      if (!coded) out.push(...n.soft.filter((u) => /sides/.test(u)));
+      const NAME = {
+        'un triangle rectangle': 'triangleRectangle',
+        'un triangle isocèle': 'triangleIsocele',
+        'un triangle équilatéral': 'triangleEquilateral',
+        'un triangle quelconque': 'triangleQuelconque',
+      };
+      const truth = e.mcqChoices.map((c) => n.names.has(NAME[c]));
+      if (e.mcqChoices.some((c) => !NAME[c])) out.push('a choice is not a triangle name');
+      if (truth.filter(Boolean).length !== 1) out.push(`${truth.filter(Boolean).length} choices are true`);
+      want = truth.indexOf(true);
+    } else return `unknown question « ${e.title} » / « ${op} »`;
+    const got = e.type === 'mcq' ? e.mcqAnswer : String(e.answers[0]);
+    if (String(got) !== String(want)) out.push(`answer is ${want}, declared ${got}`);
     return out.length ? out.join('; ') : null;
   },
   // Angles: each drawing is measured again (lib/shapes.js readAngle) — kind, order, comparison

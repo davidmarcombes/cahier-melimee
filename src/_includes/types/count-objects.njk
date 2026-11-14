@@ -4,10 +4,17 @@
   {# Scattered SVG — with `flash`, hidden after a short look; 👀 shows it again #}
   <div class="flex justify-center">
     <div class="relative rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-surface-subtle overflow-hidden">
-      <div x-html="cur.svgHtml" :class="countHidden && 'invisible'"></div>
+      <div x-show="!splatPeek" x-html="cur.svgHtml" :class="countHidden && 'invisible'"></div>
+      {# Splat with `peek`: the whole set first, then the splat; 👀 shows the whole set again #}
+      <div x-show="splatPeek" x-html="cur.svgFull"></div>
       <button type="button" x-show="countHidden" @click="countShow()" aria-label="Revoir"
         class="absolute inset-0 flex items-center justify-center text-6xl hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">👀</button>
     </div>
+  </div>
+
+  <div x-show="cur.svgFull && !solved" class="flex justify-center -mt-3">
+    <button type="button" @click="countShow()" :disabled="splatPeek" aria-label="Revoir tout"
+      class="w-14 h-14 rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-3xl shadow hover:border-primary-400 transition-colors disabled:opacity-40">👀</button>
   </div>
 
   {% if level === 'GS' %}

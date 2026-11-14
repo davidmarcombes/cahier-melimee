@@ -3,6 +3,38 @@ import { renderOpShorthands, normalizeAnswer, groupDigits } from './utils.js';
 import { SETTINGS } from './constants.js';
 import { applyVoiceRate, voiceRate } from './voice-speed.js';
 
+/* Tangram: a piece's corners flipped (f), turned r quarter turns clockwise, moved to their box at (0, 0);
+   the quarter-triangles ('x,y,q') a piece covers at [x, y, r, f] — each unit square is cut by its two
+   diagonals into 4 (as scripts/lib/tangram.js) */
+function tgOrient(pts, r, f) {
+  let p = pts.map(([x, y]) => [f ? -x : x, y]);
+  for (let k = 0; k < r % 4; k++) p = p.map(([x, y]) => [-y, x]);
+  const [mx, my] = [Math.min(...p.map((q) => q[0])), Math.min(...p.map((q) => q[1]))];
+  return p.map(([x, y]) => [x - mx, y - my]);
+}
+const TG_CENTRES = [
+  [0.5, 1 / 6],
+  [5 / 6, 0.5],
+  [0.5, 5 / 6],
+  [1 / 6, 0.5],
+];
+function tgCells(pts, [x, y, r, f]) {
+  const p = tgOrient(pts, r, f);
+  const inside = (px, py) => {
+    let c = false;
+    for (let i = 0, j = p.length - 1; i < p.length; j = i++)
+      if (p[i][1] > py !== p[j][1] > py && px < ((p[j][0] - p[i][0]) * (py - p[i][1])) / (p[j][1] - p[i][1]) + p[i][0])
+        c = !c;
+    return c;
+  };
+  const out = [];
+  const [w, h] = [Math.max(...p.map((q) => q[0])), Math.max(...p.map((q) => q[1]))];
+  for (let j = 0; j < h; j++)
+    for (let i = 0; i < w; i++)
+      TG_CENTRES.forEach(([cx, cy], q) => inside(i + cx, j + cy) && out.push(`${i + x},${j + y},${q}`));
+  return out;
+}
+
 // Value of a sort / drag-sort item: "3 050", "4,5", "3/4", an HTML fraction. NaN for pictures, which keep
 // their listed order (the comparator then returns NaN, treated as equal by the stable sort).
 // Mirrored in tests/e2e/solve.spec.js and scripts/validate-llm.js.
@@ -171,7 +203,9 @@ export function seriesPlayer(exercises, seriesId) {
     countChoices: [], // count-objects (maternelle): number buttons instead of the input
     countWrong: null, // count-objects: wrong number just tapped
     countHidden: false, // count-objects with `flash`: picture hidden after a short look
+    splatPeek: false, // count-objects with `peek` (Splat): the whole set shows before the splat
     _countTimer: null,
+    _peekTimer: null,
     userInput: '',
     trouInputs: [],
     showError: false,
@@ -228,6 +262,7 @@ export function seriesPlayer(exercises, seriesId) {
     huntNext: 1,
     huntError: -1,
     nlVal: null,
+    nlHint: '',
     cgInputs: ['', ''],
     cgPoint: null,
     bcValues: [],
@@ -282,6 +317,71 @@ export function seriesPlayer(exercises, seriesId) {
 
     mpPicked: [], // money-pay: coins / notes put down by the pupil, in cents
     mpHint: '', // money-pay: why the last payment was refused
+
+    calcEntry: '', // broken-calc: number being typed
+    calcAcc: null, // broken-calc: value before the pending operation
+    calcOp: null, // broken-calc: pending operation
+    calcResult: null, // broken-calc: what « = » gave
+    calcTape: [], // broken-calc: the calculation typed, as tokens
+    calcHint: '', // broken-calc: what the last « = » gave instead of the target
+
+    cebTiles: [], // compte-est-bon: { v, used, made } — the numbers, then each step's result
+    cebSel: null, // compte-est-bon: tile picked first
+    cebOp: null, // compte-est-bon: operation picked
+    cebSteps: [], // compte-est-bon: { a, op, b, r, i, j } in order
+    cebHint: '', // compte-est-bon: why the last step was refused / what is missing
+
+    tbAt: [], // target-blocks: per tile its centre [x, y] on the board (units), null in the tray
+    tbSel: null, // target-blocks: tile picked by a tap (the next tap on the board puts it there)
+    tbZ: [], // target-blocks: tiles drawing order, the one moved last on top
+    _tbDrag: null, // target-blocks: { i, cx, cy, x0, y0, moved } while a tile is dragged
+    tbHint: '', // target-blocks: why the last check failed
+
+    dgOpen: [], // dice-game: per tile (1…n) true while open
+    dgDice: [], // dice-game: the dice on the table ([] before a roll)
+    dgPicked: [], // dice-game: tiles picked towards the dice total
+    dgOver: false, // dice-game: the round is over (no move left, or every tile closed)
+    dgBest: null, // dice-game: best score on this exercise (lowest)
+    dgNope: 0, // dice-game: « je ne peux plus » refused this roll (the hint grows)
+    dgHint: '', // dice-game: why the last action was refused
+    bmChips: [], // bar-model build: [{ v, at }] — at: the box holding the chip, null in the tray
+    bmPick: null, // bar-model build: chip picked, waiting for its box
+    bmBuilt: false, // bar-model build: the model is right, the answer can be typed
+    bmHint: '', // bar-model build: why the model is not right yet
+
+    hbPick: null, // hundred-board (find): the number tapped
+    hbColored: [], // hundred-board (color): the numbers coloured
+    hbInputs: [], // hundred-board (fill): one per blank, in cur.hb.blanks order
+    hbHint: '', // hundred-board: why the last check failed
+
+    sgLeft: 0, // strategy-game: steps left (course: total − number said; allumettes: sticks left)
+    sgLog: [], // strategy-game: { who: 'eleve' | 'ordi', m, left } in order
+    sgTurn: null, // strategy-game: 'eleve' | 'ordi' | 'fin'
+    sgWinner: null, // strategy-game: who won the game on screen
+    sgLosses: 0, // strategy-game: games lost on this exercise (the hints grow with them)
+    _sgTimer: null,
+    _sgFast: false, // strategy-game: the computer answers at once (e2e solver)
+
+    tgAt: [], // tangram: per piece [x, y, r, f] (x, y fractional while dragged)
+    tgSel: null, // tangram: piece picked last (flip button, keyboard)
+    tgZ: [], // tangram: drawing order, the piece picked last on top
+    _tgDrag: null, // tangram: { k, cx, cy, x0, y0, moved } while a piece is dragged
+    tgHint: '', // tangram: why the last check failed
+
+    pxCells: [], // picross: per cell (row by row) 0 empty, 1 coloured, 2 crossed out
+    pxMode: 1, // picross: what a tap puts (1 colour, 2 cross)
+    _pxStroke: null, // picross: { from, was, value, axis } while the finger paints
+    pxHint: '', // picross: why the last check failed
+
+    tfCells: [], // ten-frame: per cell 0 empty, 1 token there at the start (red), 2 token put by the pupil
+    tfHint: '', // ten-frame: why the last check failed
+
+    memDeck: [], // memory: the cards, shuffled ({…card, pair})
+    memOpen: [], // memory: deck indices turned up, not yet matched (0–2)
+    memFound: [], // memory: deck indices of the pairs found
+    memMiss: [], // memory: the two cards that do not go together, until they turn back
+    memTries: 0, // memory: pairs of cards turned
+    _memTimer: null,
 
     ffInputs: [], // fact-family: one input per equation (4 total)
     ffErrors: [], // fact-family: indices of wrong equations
@@ -407,6 +507,19 @@ export function seriesPlayer(exercises, seriesId) {
         W = 420,
         LY = 58;
       const mx = PAD + (this.nlVal - min) * (W / range);
+      // Estimate mode: the point carries the asked number (its own value would give the answer away);
+      // once solved, a green tick shows the exact spot
+      if (this.cur.nl.mode === 'estimate') {
+        const ax = PAD + (sortValue(this.cur.answers?.[0]) - min) * (W / range);
+        return (
+          (this.solved
+            ? `<line x1="${ax}" y1="${LY - 12}" x2="${ax}" y2="${LY + 8}" stroke="#16a34a" stroke-width="3"/>`
+            : '') +
+          `<circle cx="${mx}" cy="${LY}" r="6" class="fill-primary-500"/>` +
+          `<line x1="${mx}" y1="${LY - 6}" x2="${mx}" y2="${LY - 15}" stroke-width="2" class="stroke-primary-500"/>` +
+          `<text x="${mx}" y="${LY - 19}" text-anchor="middle" font-size="13" font-weight="700" class="fill-primary-600 dark:fill-primary-400">${String(this.cur.answers?.[0])}</text>`
+        );
+      }
       const { step = 1, subdivisions = 0 } = this.cur.nl;
       const den = subdivisions > 0 && step === 1 ? subdivisions : 0;
       const lbl =
@@ -512,7 +625,7 @@ export function seriesPlayer(exercises, seriesId) {
       this.countChoices = this.kid && _e.type === 'count-objects' ? this._nearChoices(Number(_e.answers?.[0])) : [];
       this.countShow();
       const _blanks = String(_e.operation ?? '').split('?').length - 1;
-      const _colOpBlanks = _e.colOp ? (_e.colOp.result || []).filter((d) => d === '?').length : 0;
+      const _colOpBlanks = _e.colOp ? (_e.colOp.blanks ?? (_e.colOp.result || []).filter((d) => d === '?').length) : 0;
       this.trouInputs = _blanks + _colOpBlanks > 0 ? Array(_blanks + _colOpBlanks).fill('') : [];
 
       const _ia = _e.sequence || _e.bounding || _e.convert || _e.forms || _e.opTri;
@@ -613,6 +726,7 @@ export function seriesPlayer(exercises, seriesId) {
       this.userInput = '';
       this.showError = false;
       this.nlVal = null;
+      this.nlHint = '';
       this.cgInputs = ['', ''];
       this.cgPoint = null;
       this.matchSelected = null;
@@ -699,6 +813,41 @@ export function seriesPlayer(exercises, seriesId) {
       this.foErrors = [];
       this.mpPicked = [];
       this.mpHint = '';
+
+      this.tgReset(_e);
+      this.tbReset(_e);
+      this.sgLosses = 0;
+      this.sgReset(_e);
+      this.pxCells = _e.px ? new Array(_e.px.rows.length * _e.px.cols.length).fill(0) : [];
+      this.pxMode = 1;
+      this._pxStroke = null;
+      this.pxHint = '';
+      this.tfCells = _e.tf ? Array.from({ length: 10 * (_e.tf.frames || 1) }, (_, i) => (i < _e.tf.given ? 1 : 0)) : [];
+      this.tfHint = '';
+      this.dgBest = null;
+      this.dgReset(_e);
+      this.bmPick = null;
+      this.bmBuilt = !_e.bmBuild;
+      this.bmHint = '';
+      this.bmChips = _e.bmBuild ? this._bmShuffle(_e.bmBuild.chips.map((v) => ({ v, at: null }))) : [];
+      this.hbPick = null;
+      this.hbColored = [];
+      this.hbInputs = _e.hb && _e.hb.blanks ? _e.hb.blanks.map(() => '') : [];
+      this.hbHint = '';
+      this.cebReset(_e);
+      this.calcClear();
+
+      clearTimeout(this._memTimer);
+      const deck = _e.mem ? _e.mem.pairs.flatMap((p, k) => p.map((c) => ({ ...c, pair: k }))) : [];
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      this.memDeck = deck;
+      this.memOpen = [];
+      this.memFound = [];
+      this.memMiss = [];
+      this.memTries = 0;
 
       this.classifyPlacements = {};
       this.classifySelected = null;
@@ -899,9 +1048,10 @@ export function seriesPlayer(exercises, seriesId) {
         W = 420;
       const raw = min + (svgX - PAD) / (W / range);
       const clamped = Math.max(min, Math.min(max, raw));
-      const snapStep = subdivisions > 0 ? step / subdivisions : step;
+      const snapStep = this.cur.nl.mode === 'estimate' ? range / 200 : subdivisions > 0 ? step / subdivisions : step;
       const snapped = Math.round(clamped / snapStep) * snapStep;
       this.nlVal = Math.round(snapped * 1e9) / 1e9;
+      this.nlHint = '';
     },
 
     ipCheck(idx) {
@@ -990,8 +1140,11 @@ export function seriesPlayer(exercises, seriesId) {
       if (this.solved || this.nlVal === null || !this.cur.nl) return;
       const { step = 1, subdivisions = 0 } = this.cur.nl;
       const snapStep = subdivisions > 0 ? step / subdivisions : step;
-      const tol = snapStep * 0.51;
+      const est = this.cur.nl.mode === 'estimate';
+      const tol = est ? this.cur.nl.tolerance + 1e-9 : snapStep * 0.51;
       const isCorrect = (this.cur.answers || []).some((a) => Math.abs(sortValue(a) - this.nlVal) <= tol);
+      // Estimate mode: say which way to move
+      this.nlHint = est && !isCorrect ? (this.nlVal < sortValue(this.cur.answers?.[0]) ? 'right' : 'left') : '';
       if (isCorrect) {
         this.solvedFlags[this.currentIndex] = true;
         this.showError = false;
@@ -1201,6 +1354,78 @@ export function seriesPlayer(exercises, seriesId) {
       return [...new Set(this.cur.board.shape.map((p) => String(this.gbMirror(p))))].filter((k) => !own.has(k));
     },
 
+    // Area: what is wrong with the coloured figure ('' when it answers the board) — same rules as
+    // scripts/lib/grid-board.js areaCheck: one piece, no hole, not touching the model, the area, then the task
+    get gbAreaHint() {
+      const b = this.cur.board;
+      const cells = this.gbPaint;
+      const k = (p) => p[0] + ',' + p[1];
+      const set = new Set(cells.map(k));
+      const model = new Set((b.model || []).map(k));
+      const n4 = ([r, c]) => [
+        [r + 1, c],
+        [r - 1, c],
+        [r, c + 1],
+        [r, c - 1],
+      ];
+      const sides = (list, has) => list.reduce((t, p) => t + n4(p).filter((q) => !has.has(k(q))).length, 0);
+      const want = b.model ? b.model.length : b.area;
+      if (cells.length !== want)
+        return `Ta figure a ${cells.length} carreau${cells.length > 1 ? 'x' : ''} : il en faut ${want}.`;
+      const seen = new Set([k(cells[0])]);
+      const todo = [cells[0]];
+      while (todo.length)
+        for (const q of n4(todo.pop()))
+          if (set.has(k(q)) && !seen.has(k(q))) {
+            seen.add(k(q));
+            todo.push(q);
+          }
+      if (seen.size !== set.size) return 'Les carreaux doivent se toucher par un côté : une seule figure.';
+      // a hole: an empty square the border cannot reach
+      const out = new Set();
+      const go = [];
+      for (let r = -1; r <= b.rows; r++)
+        for (let c = -1; c <= b.cols; c++)
+          if (r < 0 || c < 0 || r === b.rows || c === b.cols) {
+            out.add(k([r, c]));
+            go.push([r, c]);
+          }
+      while (go.length)
+        for (const q of n4(go.pop()))
+          if (q[0] >= -1 && q[1] >= -1 && q[0] <= b.rows && q[1] <= b.cols && !out.has(k(q)) && !set.has(k(q))) {
+            out.add(k(q));
+            go.push(q);
+          }
+      if (out.size + set.size !== (b.rows + 2) * (b.cols + 2)) return 'Ta figure a un trou.';
+      if (cells.some((p) => n4(p).some((q) => model.has(k(q))))) return 'Ne colle pas ta figure à la figure bleue.';
+      const per = sides(cells, set);
+      if (b.task === 'perimetre' && per !== b.perimeter) return `Son périmètre mesure ${per} : il faut ${b.perimeter}.`;
+      if (b.task === 'autre-perimetre' && per === sides(b.model, model))
+        return `Elle a le même périmètre que la figure bleue (${per}) : change sa forme.`;
+      if (b.task === 'meme-aire') {
+        const shape = (list) => {
+          const forms = [];
+          for (const flip of [1, -1])
+            for (let t = 0; t < 4; t++) {
+              let c = list.map(([r, q]) => [r, flip * q]);
+              for (let i = 0; i < t; i++) c = c.map(([r, q]) => [q, -r]);
+              const r0 = Math.min(...c.map((p) => p[0]));
+              const q0 = Math.min(...c.map((p) => p[1]));
+              forms.push(
+                c
+                  .map(([r, q]) => [r - r0, q - q0])
+                  .sort((x, y) => x[0] - y[0] || x[1] - y[1])
+                  .join(';')
+              );
+            }
+          return forms.sort()[0];
+        };
+        if (shape(cells) === shape(b.model))
+          return 'C’est la même forme que la figure bleue : invente une autre forme.';
+      }
+      return '';
+    },
+
     // Mirror: a vertical / horizontal axis drawn over the grid, in the 0.25rem gap between two cells
     get gbAxis() {
       const b = this.cur.board;
@@ -1216,6 +1441,24 @@ export function seriesPlayer(exercises, seriesId) {
       const b = this.cur.board;
       if (!b || b.mode === 'draw') return [];
       const at = (list, r, c) => (list || []).find((k) => k[0] === r && k[1] === c);
+      if (b.mode === 'area') {
+        const cells = [];
+        for (let r = 0; r < b.rows; r++)
+          for (let c = 0; c < b.cols; c++) {
+            const lock = !!at(b.model, r, c);
+            const painted = !!at(this.gbPaint, r, c);
+            const cls = lock
+              ? 'border-primary-700 bg-primary-500'
+              : !painted
+                ? 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'
+                : this.solved
+                  ? 'border-green-700 bg-green-500'
+                  : 'border-amber-600 bg-amber-400';
+            const label = `ligne ${r + 1}, colonne ${c + 1}` + (lock ? ', modèle' : painted ? ', coloriée' : '');
+            cells.push({ r, c, txt: '', cls, lock, label });
+          }
+        return cells;
+      }
       if (b.mode === 'mirror') {
         const target = new Set(this.gbTarget);
         const cells = [];
@@ -1290,8 +1533,8 @@ export function seriesPlayer(exercises, seriesId) {
     gbTapCell(r, c) {
       const b = this.cur.board;
       if (this.solved || !b) return;
-      if (b.mode === 'mirror') {
-        if (b.shape.some((k) => k[0] === r && k[1] === c)) return;
+      if (b.mode === 'mirror' || b.mode === 'area') {
+        if ((b.shape || b.model || []).some((k) => k[0] === r && k[1] === c)) return;
         const rest = this.gbPaint.filter((k) => k[0] !== r || k[1] !== c);
         this.gbPaint = rest.length < this.gbPaint.length ? rest : [...this.gbPaint, [r, c]];
         return;
@@ -1350,6 +1593,809 @@ export function seriesPlayer(exercises, seriesId) {
       this.vennPlacements = updated;
       this.vennSelected = null;
       this.vennErrors = [];
+    },
+
+    /* Calculatrice cassée — a pocket calculator: each operation applies to the result so far */
+    get calcPrompt() {
+      const bc = this.cur.calc;
+      if (!bc) return '';
+      const keys = bc.broken.map((k) => `<b>${k}</b>`);
+      const list = keys.length === 1 ? keys[0] : `${keys.slice(0, -1).join(', ')} et ${keys[keys.length - 1]}`;
+      return `${keys.length === 1 ? 'La touche' : 'Les touches'} ${list} ${keys.length === 1 ? 'est cassée' : 'sont cassées'}. Fais afficher <b class="text-3xl">${bc.target}</b>.`;
+    },
+
+    get calcDisplay() {
+      const v = this.calcEntry || (this.calcResult ?? this.calcAcc ?? 0);
+      return String(v).replace('.', ',');
+    },
+
+    calcBroken(k) {
+      return !!this.cur.calc && this.cur.calc.broken.map(String).includes(k);
+    },
+
+    calcHas(k) {
+      return !'÷×−+'.includes(k) || !!(this.cur.calc && this.cur.calc.ops.includes(k));
+    },
+
+    calcClear() {
+      this.calcEntry = '';
+      this.calcAcc = null;
+      this.calcOp = null;
+      this.calcResult = null;
+      this.calcTape = [];
+      this.calcHint = '';
+    },
+
+    _calcApply(a, op, b) {
+      const r = op === '+' ? a + b : op === '−' ? a - b : op === '×' ? a * b : a / b;
+      return Math.round(r * 1e6) / 1e6;
+    },
+
+    calcKey(k) {
+      if (this.solved || this.calcBroken(k) || !this.calcHas(k)) return;
+      this.calcHint = '';
+      if (k === 'C') return this.calcClear();
+      if (/\d/.test(k)) {
+        if (this.calcResult !== null) this.calcClear();
+        if (this.calcEntry.length < 6) this.calcEntry = this.calcEntry === '0' ? k : this.calcEntry + k;
+        return;
+      }
+      const v = this.calcEntry === '' ? null : Number(this.calcEntry);
+      if (k === '=') {
+        if (this.calcOp === null || v === null) return;
+        if (this.calcOp === '÷' && v === 0) {
+          this.calcClear();
+          this.calcHint = 'On ne peut pas diviser par 0.';
+          return;
+        }
+        this.calcResult = this._calcApply(this.calcAcc, this.calcOp, v);
+        this.calcTape = [...this.calcTape, v, '=', String(this.calcResult).replace('.', ',')];
+        this.calcAcc = null;
+        this.calcOp = null;
+        this.calcEntry = '';
+        return this.check();
+      }
+      // An operation: carry on from the result, apply the pending one, or change it
+      if (v === null) {
+        if (this.calcResult !== null) {
+          this.calcAcc = this.calcResult;
+          this.calcResult = null;
+          this.calcTape = [String(this.calcAcc).replace('.', ',')];
+        } else if (this.calcOp !== null) this.calcTape = this.calcTape.slice(0, -1);
+        else return;
+      } else if (this.calcOp !== null) {
+        if (this.calcOp === '÷' && v === 0) {
+          this.calcClear();
+          this.calcHint = 'On ne peut pas diviser par 0.';
+          return;
+        }
+        this.calcAcc = this._calcApply(this.calcAcc, this.calcOp, v);
+        this.calcTape = [...this.calcTape, v];
+      } else {
+        this.calcAcc = v;
+        this.calcTape = [v];
+      }
+      this.calcOp = k;
+      this.calcEntry = '';
+      this.calcTape = [...this.calcTape, k];
+    },
+
+    /* Le compte est bon — a number, an operation, a number: the two tiles become their result */
+    cebReset(e = this.cur) {
+      this.cebTiles = e && e.ceb ? e.ceb.numbers.map((v) => ({ v, used: false, made: false })) : [];
+      this.cebSel = null;
+      this.cebOp = null;
+      this.cebSteps = [];
+      this.cebHint = '';
+    },
+
+    cebTap(i) {
+      if (this.solved || this.cebTiles[i].used) return;
+      if (this.cebSel === null || this.cebOp === null || this.cebSel === i) {
+        this.cebSel = this.cebSel === i ? null : i;
+        this.cebOp = null;
+        return;
+      }
+      const [a, b, op] = [this.cebTiles[this.cebSel].v, this.cebTiles[i].v, this.cebOp];
+      const r =
+        op === '+'
+          ? a + b
+          : op === '×'
+            ? a * b
+            : op === '−'
+              ? a > b
+                ? a - b
+                : null
+              : b > 1 && a % b === 0
+                ? a / b
+                : null;
+      this.cebOp = null;
+      if (r == null) {
+        this.cebHint =
+          op === '−'
+            ? `${a} − ${b} : il faut enlever un nombre plus petit.`
+            : `${a} ÷ ${b} : la division doit tomber juste.`;
+        this.cebSel = null;
+        return;
+      }
+      const tiles = [...this.cebTiles];
+      tiles[this.cebSel] = { ...tiles[this.cebSel], used: true };
+      tiles[i] = { ...tiles[i], used: true };
+      tiles.push({ v: r, used: false, made: true });
+      this.cebTiles = tiles;
+      this.cebSteps = [...this.cebSteps, { a, op, b, r, i: this.cebSel, j: i }];
+      this.cebSel = null;
+      this.cebHint = '';
+      const left = tiles.filter((t) => !t.used).map((t) => t.v);
+      const { target, useAll } = this.cur.ceb;
+      if (useAll ? left.length === 1 : left.includes(target)) this.check();
+      else if (useAll && left.includes(target)) this.cebHint = 'Le compte est bon… mais utilise tous les nombres !';
+    },
+
+    cebPickOp(op) {
+      if (this.solved || this.cebSel === null) return;
+      this.cebOp = this.cebOp === op ? null : op;
+    },
+
+    cebUndo() {
+      const s = this.cebSteps[this.cebSteps.length - 1];
+      if (this.solved || !s) return;
+      const tiles = this.cebTiles.slice(0, -1);
+      tiles[s.i] = { ...tiles[s.i], used: false };
+      tiles[s.j] = { ...tiles[s.j], used: false };
+      this.cebTiles = tiles;
+      this.cebSteps = this.cebSteps.slice(0, -1);
+      this.cebSel = null;
+      this.cebOp = null;
+      this.cebHint = '';
+    },
+
+    /* Target blocks — drag the number tiles from the tray onto the blocks (or tap a tile, then the
+       spot); a tile in an overlap counts for each block around it. Each block shows what its tiles
+       make (live); solved as soon as every block makes its target (and every tile is used, useAll). */
+    tbReset(e = this.cur) {
+      const tiles = e && e.tb ? e.tb.tiles : [];
+      this.tbAt = tiles.map(() => null);
+      this.tbZ = tiles.map((_, i) => i);
+      this.tbSel = null;
+      this._tbDrag = null;
+      this.tbHint = '';
+    },
+    // Tile size and tray layout (units of the board): rows of tiles under it
+    get tbTile() {
+      return 1.7;
+    },
+    get tbPerRow() {
+      return Math.floor((this.cur.tb.w + 0.5) / (this.tbTile + 0.5));
+    },
+    get tbFullH() {
+      const rows = Math.ceil(this.cur.tb.tiles.length / this.tbPerRow);
+      return this.cur.tb.h + 0.6 + rows * (this.tbTile + 0.5);
+    },
+    tbHome(i) {
+      const { w, h, tiles } = this.cur.tb;
+      const [n, T] = [this.tbPerRow, this.tbTile];
+      const row = Math.floor(i / n);
+      const inRow = Math.min(n, tiles.length - row * n);
+      const x0 = (w - inRow * T - (inRow - 1) * 0.5) / 2;
+      return [x0 + (i % n) * (T + 0.5) + T / 2, h + 0.6 + row * (T + 0.5) + T / 2];
+    },
+    tbPos(i) {
+      return this.tbAt[i] || this.tbHome(i);
+    },
+    // The blocks a tile on the board is in
+    tbBlocksOf(i) {
+      const at = this.tbAt[i];
+      if (!at) return [];
+      return this.cur.tb.blocks
+        .map((b, k) => (at[0] > b.x && at[0] < b.x + b.s && at[1] > b.y && at[1] < b.y + b.s ? k : -1))
+        .filter((k) => k >= 0);
+    },
+    tbOp(k) {
+      return this.cur.tb.blocks[k].op || this.cur.tb.op || '+';
+    },
+    // What block k's tiles make: a number, '' when empty
+    tbValue(k) {
+      const v = this.cur.tb.tiles.filter((_, i) => this.tbBlocksOf(i).includes(k));
+      if (!v.length) return '';
+      return this.tbOp(k) === '×' ? v.reduce((a, b) => a * b, 1) : v.reduce((a, b) => a + b, 0);
+    },
+    tbDone(k) {
+      return this.tbValue(k) === this.cur.tb.blocks[k].target;
+    },
+    _tbUnits(ev) {
+      const box = this.$refs.tbBoard.getBoundingClientRect();
+      const u = this.cur.tb.w / box.width;
+      return [(ev.clientX - box.left) * u, (ev.clientY - box.top) * u];
+    },
+    // Where a tile lands: on the board, or back in the tray (null). On the board it slides to the nearest
+    // spot where the whole tile is in the region its centre is in, so it never seems to be in a block
+    // it does not count for
+    _tbDrop(i, [x, y]) {
+      const { w, h, blocks } = this.cur.tb;
+      const r = this.tbTile / 2;
+      const at = [...this.tbAt];
+      if (y > h) at[i] = null;
+      else {
+        const p = [Math.min(Math.max(x, r), w - r), Math.min(Math.max(y, r), h - r)];
+        const key = blocks.map((b) => p[0] > b.x && p[0] < b.x + b.s && p[1] > b.y && p[1] < b.y + b.s);
+        const m = r + 0.05;
+        const fits = ([cx, cy]) =>
+          blocks.every((b, k) =>
+            key[k]
+              ? cx - m >= b.x && cx + m <= b.x + b.s && cy - m >= b.y && cy + m <= b.y + b.s
+              : cx + m <= b.x || cx - m >= b.x + b.s || cy + m <= b.y || cy - m >= b.y + b.s
+          );
+        let [best, far] = [fits(p) ? p : null, Infinity];
+        if (!best)
+          for (let cy = r; cy <= h - r; cy += 0.1)
+            for (let cx = r; cx <= w - r; cx += 0.1) {
+              const d = Math.hypot(cx - p[0], cy - p[1]);
+              if (d < far && fits([cx, cy])) [best, far] = [[cx, cy], d];
+            }
+        at[i] = best || p;
+      }
+      this.tbAt = at;
+      this.tbZ = [...this.tbZ.filter((j) => j !== i), i];
+      this.tbHint = '';
+    },
+    tbDown(i, ev) {
+      if (this.solved) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      this.$refs.tbBoard.setPointerCapture(ev.pointerId);
+      const [x0, y0] = this.tbPos(i);
+      this._tbDrag = { i, cx: ev.clientX, cy: ev.clientY, x0, y0, moved: false };
+      this.tbZ = [...this.tbZ.filter((j) => j !== i), i];
+    },
+    tbMove(ev) {
+      const d = this._tbDrag;
+      if (!d) return;
+      const u = this.cur.tb.w / this.$refs.tbBoard.getBoundingClientRect().width;
+      const [dx, dy] = [(ev.clientX - d.cx) * u, (ev.clientY - d.cy) * u];
+      if (!d.moved && Math.abs(dx) + Math.abs(dy) < 0.3) return;
+      d.moved = true;
+      const at = [...this.tbAt];
+      at[d.i] = [d.x0 + dx, d.y0 + dy];
+      this.tbAt = at;
+    },
+    tbUp() {
+      const d = this._tbDrag;
+      if (!d) return;
+      this._tbDrag = null;
+      if (!d.moved) {
+        this.tbSel = this.tbSel === d.i ? null : d.i;
+        return;
+      }
+      this._tbDrop(d.i, this.tbAt[d.i]);
+      this.tbSel = null;
+      this._tbSolvedYet();
+    },
+    // A tap on the board (or the tray) with a tile picked puts it there
+    tbTap(ev) {
+      if (this.solved || this.tbSel === null || this._tbDrag) return;
+      this._tbDrop(this.tbSel, this._tbUnits(ev));
+      this.tbSel = null;
+      this._tbSolvedYet();
+    },
+    tbKey(i, ev) {
+      if (this.solved) return;
+      const move = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[ev.key];
+      if (ev.key === 'Escape') this._tbDrop(i, [0, this.cur.tb.h + 1]);
+      else if (move) {
+        const [x, y] = this.tbAt[i] || [this.cur.tb.w / 2, this.cur.tb.h - 1];
+        this._tbDrop(i, [x + move[0], Math.min(y + move[1], this.cur.tb.h - 0.5)]);
+      } else return;
+      ev.preventDefault();
+      this._tbSolvedYet();
+    },
+    _tbSolvedYet() {
+      const { blocks, useAll } = this.cur.tb;
+      if (!blocks.every((_, k) => this.tbDone(k))) return;
+      if (useAll !== false && this.tbAt.some((a, i) => !this.tbBlocksOf(i).length)) return;
+      this.check();
+    },
+
+    /* Strategy game — the pupil and the computer take turns; a move takes m of the steps left (course:
+       the number said goes up by m; allumettes: m sticks go). The pupil has the seat that can always
+       win; a lost game can be played again, with a hint that grows with each loss. Solved on a win. */
+    sgReset(e = this.cur) {
+      clearTimeout(this._sgTimer);
+      const sg = e && e.sg;
+      this.sgLeft = sg ? sg.total : 0;
+      this.sgLog = [];
+      this.sgWinner = null;
+      this.sgTurn = sg ? sg.first : null;
+      if (sg && sg.first === 'ordi') this._sgTimer = setTimeout(() => this._sgComputer(), 900);
+    },
+    get sgWin() {
+      const { total, moves, misere } = this.cur.sg;
+      const win = [!!misere];
+      for (let r = 1; r <= total; r++) win[r] = moves.some((m) => m <= r && !win[r - m]);
+      return win;
+    },
+    get sgSaid() {
+      return this.cur.sg.total - this.sgLeft;
+    },
+    // Who said each number (course): 'eleve' | 'ordi' | undefined
+    sgSaidBy(n) {
+      const t = this.cur.sg.total;
+      const at = this.sgLog.find((s) => t - s.left === n);
+      return at && at.who;
+    },
+    sgPlay(m) {
+      if (this.solved || this.sgTurn !== 'eleve' || m > this.sgLeft) return;
+      this._sgApply('eleve', m);
+      if (this.sgTurn !== 'ordi') return;
+      if (this._sgFast) this._sgComputer();
+      else this._sgTimer = setTimeout(() => this._sgComputer(), 900);
+    },
+    // Its best move (to a position the pupil cannot win) with probability smart, else any move
+    _sgComputer() {
+      clearTimeout(this._sgTimer);
+      if (this.sgTurn !== 'ordi') return;
+      const { moves, smart } = this.cur.sg;
+      const legal = moves.filter((m) => m <= this.sgLeft);
+      const good = legal.filter((m) => !this.sgWin[this.sgLeft - m]);
+      const pick = (list) => list[Math.floor(Math.random() * list.length)];
+      this._sgApply('ordi', good.length && Math.random() < smart ? pick(good) : pick(legal));
+    },
+    _sgApply(who, m) {
+      this.sgLeft -= m;
+      this.sgLog = [...this.sgLog, { who, m, left: this.sgLeft }];
+      const other = who === 'eleve' ? 'ordi' : 'eleve';
+      if (this.sgLeft > 0) return (this.sgTurn = other);
+      this.sgTurn = 'fin';
+      this.sgWinner = this.cur.sg.misere ? other : who;
+      if (this.sgWinner === 'eleve') this.check();
+      else this.sgLosses++;
+    },
+    sgReplay() {
+      if (!this.solved) this.sgReset();
+    },
+    // The hint after each lost game: a question, a key position, then every winning position
+    get sgHint() {
+      const { kind, total, misere } = this.cur.sg;
+      const n = this.sgLosses;
+      if (!n) return '';
+      const win = this.sgWin;
+      if (kind === 'course') {
+        // numbers to say: the computer then has a position it cannot win
+        const keys = Array.from({ length: total }, (_, i) => i + 1).filter((s) => !win[total - s]);
+        const key = keys.filter((s) => s < total).pop();
+        if (n === 1) return `Astuce : quel nombre dois-tu dire pour que l’ordinateur ne puisse pas dire ${total} ?`;
+        if (n === 2 && key)
+          return `Si tu dis ${key}, l’ordinateur ne peut pas dire ${total} : toi, tu le diras juste après. Et avant ${key} ?`;
+        return `Les nombres gagnants : ${keys.join(', ')}. Dis-les à chaque fois !`;
+      }
+      // sticks to leave to the computer
+      const keys = Array.from({ length: total }, (_, r) => r).filter((r) => r > 0 && !win[r]);
+      const goal = misere ? 'qu’il soit obligé de prendre le dernier' : 'que tu puisses prendre le dernier';
+      const plural = (r) => `${r} bâtonnet${r > 1 ? 's' : ''}`;
+      if (n === 1 || !keys.length) return `Astuce : combien de bâtonnets dois-tu laisser à l’ordinateur pour ${goal} ?`;
+      if (n === 2)
+        return `Laisse ${plural(keys[0])} à l’ordinateur : il a perdu.${keys[1] ? ` Et avant, laisse-lui ${plural(keys[1])}…` : ''}`;
+      return `Laisse toujours à l’ordinateur ${keys.join(', ')} bâtonnets.`;
+    },
+
+    /* Tangram — drag a piece (it lands on whole points), tap it to turn it a quarter turn, ↔ flips the
+       piece picked last; keyboard: arrows move it, Enter turns, F flips. Solved as soon as the pieces
+       cover the silhouette exactly, whichever way. */
+    tgReset(e = this.cur) {
+      const pieces = e && e.tg ? e.tg.pieces : [];
+      this.tgAt = pieces.map((p) => [...p.start]);
+      this.tgZ = pieces.map((_, k) => k);
+      this.tgSel = null;
+      this._tgDrag = null;
+      this.tgHint = '';
+    },
+    // Slot n of the drawing holds a piece of this exercise (the previous one's order lingers for a
+    // moment when the next exercise has fewer pieces)
+    tgHas(n) {
+      const k = this.tgZ[n];
+      return k !== undefined && !!this.cur.tg && k < this.cur.tg.pieces.length && !!this.tgAt[k];
+    },
+    tgPoints(k) {
+      const [x, y, r, f] = this.tgAt[k];
+      return tgOrient(this.cur.tg.pieces[k].pts, r, f)
+        .map(([a, b]) => `${a + x},${b + y}`)
+        .join(' ');
+    },
+    // The grey silhouette (each piece's place: seams hidden, or dashed when `outlines`)
+    get tgSilhouetteSvg() {
+      const { tg } = this.cur;
+      if (!tg) return '';
+      const line = tg.outlines
+        ? 'stroke="var(--cs)" stroke-width="0.05" stroke-dasharray="0.25 0.15"'
+        : 'stroke="var(--tg-sil)" stroke-width="0.04"';
+      return tg.pieces
+        .map((p) => `<polygon points="${this.tgSolPoints(p)}" fill="var(--tg-sil)" ${line} stroke-linejoin="round"/>`)
+        .join('');
+    },
+    tgSolPoints(p) {
+      const [x, y, r, f] = p.sol;
+      return tgOrient(p.pts, r, f)
+        .map(([a, b]) => `${a + x},${b + y}`)
+        .join(' ');
+    },
+    _tgBox(k, r = this.tgAt[k][2], f = this.tgAt[k][3]) {
+      const p = tgOrient(this.cur.tg.pieces[k].pts, r, f);
+      return [Math.max(...p.map((q) => q[0])), Math.max(...p.map((q) => q[1]))];
+    },
+    // Whole point, the piece kept inside the drawing
+    _tgPlace(k, x, y, r, f) {
+      const [bw, bh] = this._tgBox(k, r, f);
+      const { w, h } = this.cur.tg;
+      const at = [...this.tgAt];
+      at[k] = [Math.min(Math.max(Math.round(x), 0), w - bw), Math.min(Math.max(Math.round(y), 0), h - bh), r, f];
+      this.tgAt = at;
+      this.tgHint = '';
+    },
+    _tgTop(k) {
+      this.tgZ = [...this.tgZ.filter((i) => i !== k), k];
+      this.tgSel = k;
+    },
+    tgDown(k, ev) {
+      if (this.solved) return;
+      ev.preventDefault();
+      ev.currentTarget.ownerSVGElement.setPointerCapture(ev.pointerId);
+      this._tgTop(k);
+      this._tgDrag = { k, cx: ev.clientX, cy: ev.clientY, x0: this.tgAt[k][0], y0: this.tgAt[k][1], moved: false };
+    },
+    tgMove(ev) {
+      const d = this._tgDrag;
+      if (!d) return;
+      const svg = ev.currentTarget;
+      const u = this.cur.tg.w / svg.getBoundingClientRect().width; // units per pixel
+      const [dx, dy] = [(ev.clientX - d.cx) * u, (ev.clientY - d.cy) * u];
+      if (Math.abs(dx) + Math.abs(dy) > 0.25) d.moved = true;
+      if (!d.moved) return;
+      const at = [...this.tgAt];
+      at[d.k] = [d.x0 + dx, d.y0 + dy, at[d.k][2], at[d.k][3]];
+      this.tgAt = at;
+    },
+    tgUp() {
+      const d = this._tgDrag;
+      if (!d) return;
+      this._tgDrag = null;
+      const [x, y, r, f] = this.tgAt[d.k];
+      if (d.moved) this._tgPlace(d.k, x, y, r, f);
+      else this.tgTurn(d.k);
+      this._tgSolvedYet();
+    },
+    // A quarter turn clockwise about the piece's middle
+    tgTurn(k) {
+      if (this.solved || !this.cur.tg.turn) return;
+      const [x, y, r, f] = this.tgAt[k];
+      const [bw, bh] = this._tgBox(k);
+      this._tgPlace(k, x + (bw - bh) / 2, y + (bh - bw) / 2, (r + 1) % 4, f);
+    },
+    tgFlip(k = this.tgSel) {
+      if (this.solved || k === null || !this.cur.tg.turn) return;
+      const [x, y, r, f] = this.tgAt[k];
+      this._tgPlace(k, x, y, r, f ? 0 : 1);
+      this._tgSolvedYet();
+    },
+    tgKey(k, ev) {
+      if (this.solved) return;
+      const [x, y, r, f] = this.tgAt[k];
+      const move = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[ev.key];
+      this.tgSel = k; // not brought on top: the focused slot would then show another piece
+      if (move) this._tgPlace(k, x + move[0], y + move[1], r, f);
+      else if (ev.key === 'Enter' || ev.key === ' ') this.tgTurn(k);
+      else if (ev.key === 'f' || ev.key === 'F') this.tgFlip(k);
+      else return;
+      ev.preventDefault();
+      this._tgSolvedYet();
+    },
+    // null when the pieces cover the silhouette exactly, else what is wrong (for the pupil)
+    tgProblem() {
+      const { pieces } = this.cur.tg;
+      const target = new Set(pieces.flatMap((p) => tgCells(p.pts, p.sol)));
+      const seen = new Set();
+      let out = 0;
+      for (let k = 0; k < pieces.length; k++)
+        for (const c of tgCells(pieces[k].pts, this.tgAt[k])) {
+          if (seen.has(c)) return 'Deux pièces se chevauchent.';
+          if (!target.has(c)) out++;
+          seen.add(c);
+        }
+      if (out) return 'Une pièce dépasse de la silhouette.';
+      return seen.size === target.size ? null : 'Il reste des trous : pose toutes les pièces sur la silhouette.';
+    },
+    _tgSolvedYet() {
+      if (!this.tgProblem()) this.check();
+    },
+
+    /* Picross — a press colours (or crosses out) a cell, or empties it when it already holds that;
+       sliding paints the same along the row or the column it starts on. Solved once every row and
+       column has the runs of its numbers. */
+    pxRuns(line) {
+      const out = [];
+      let n = 0;
+      for (const c of [...line, 0]) {
+        if (c === 1) n++;
+        else if (n) (out.push(n), (n = 0));
+      }
+      return out.length ? out : [0];
+    },
+    pxLine(isRow, i) {
+      const w = this.cur.px.cols.length;
+      return isRow ? this.pxCells.slice(i * w, (i + 1) * w) : this.cur.px.rows.map((_, r) => this.pxCells[r * w + i]);
+    },
+    pxDone(isRow, i) {
+      const clue = (isRow ? this.cur.px.rows : this.cur.px.cols)[i];
+      return this.pxRuns(this.pxLine(isRow, i)).join() === clue.join();
+    },
+    // A thicker gap before every fifth line on the big grids (10 × 10), easier to count on
+    pxBlock(k) {
+      return k > 0 && k % 5 === 0 && this.cur.px.cols.length > 8;
+    },
+    // The line drawn in the gap before cell (i, j) when it starts a block (a shadow: the cell keeps its size)
+    pxBlockShadow(i, j) {
+      const sh = [this.pxBlock(j) && '-2px 0 0 0 var(--cs)', this.pxBlock(i) && '0 -2px 0 0 var(--cs)'].filter(Boolean);
+      return sh.length ? `box-shadow:${sh.join(',')}` : '';
+    },
+    pxClue(isRow, i, k) {
+      const { px } = this.cur;
+      const labels = isRow ? px.rowLabels : px.colLabels;
+      return labels ? labels[i][k].replace(/([+−×÷])/, '$1\u200b') : (isRow ? px.rows : px.cols)[i][k];
+    },
+    _pxIndex(ev) {
+      const el = document.elementFromPoint(ev.clientX, ev.clientY);
+      const cell = el && el.closest('[data-px]');
+      return cell ? Number(cell.dataset.px) : null;
+    },
+    pxDown(ev) {
+      const i = this._pxIndex(ev);
+      if (this.solved || i === null) return;
+      ev.preventDefault();
+      const was = this.pxCells[i];
+      this._pxStroke = { from: i, was, value: was === this.pxMode ? 0 : this.pxMode, axis: null };
+      this._pxPaint(i);
+    },
+    pxMove(ev) {
+      if (!this._pxStroke) return;
+      const i = this._pxIndex(ev);
+      if (i !== null) this._pxPaint(i);
+    },
+    pxUp() {
+      if (!this._pxStroke) return;
+      this._pxStroke = null;
+      this._pxSolvedYet();
+    },
+    // Keyboard (Enter / Space on a cell): same as a press without sliding
+    pxKey(i) {
+      if (this.solved) return;
+      const cells = [...this.pxCells];
+      cells[i] = cells[i] === this.pxMode ? 0 : this.pxMode;
+      this.pxCells = cells;
+      this._pxSolvedYet();
+    },
+    // Every cell from the start of the stroke to i (brought back onto its row or column)
+    _pxPaint(i) {
+      const s = this._pxStroke;
+      const w = this.cur.px.cols.length;
+      const [r0, c0, r1, c1] = [Math.floor(s.from / w), s.from % w, Math.floor(i / w), i % w];
+      if (!s.axis && i !== s.from) s.axis = Math.abs(c1 - c0) >= Math.abs(r1 - r0) ? 'row' : 'col';
+      const cells = [...this.pxCells];
+      const [a, b] = s.axis === 'col' ? [r0, r1] : [c0, c1];
+      for (let k = Math.min(a, b); k <= Math.max(a, b); k++) {
+        const j = s.axis === 'col' ? k * w + c0 : r0 * w + k;
+        // A stroke that colours does not wipe crosses away, and the other way round
+        if (s.value === 0 ? cells[j] === s.was : !cells[j] || j === s.from) cells[j] = s.value;
+      }
+      this.pxCells = cells;
+      this.pxHint = '';
+    },
+    _pxSolvedYet() {
+      const { rows, cols } = this.cur.px;
+      if (rows.every((_, i) => this.pxDone(true, i)) && cols.every((_, j) => this.pxDone(false, j))) this.check();
+    },
+    pxClear() {
+      this.pxCells = this.pxCells.map(() => 0);
+      this.pxHint = '';
+    },
+
+    /* Ten-frame — a tap puts a token in an empty cell or takes one out */
+    /* Dice game — Ferme la boîte: roll, then tap open tiles adding up to the dice (closed as soon as they make
+       it, refused when they go over). « Je ne peux plus jouer » ends the round, refused while a move exists. */
+    dgReset(e = this.cur) {
+      const dg = e && e.dg;
+      this.dgOpen = dg ? Array(dg.tiles).fill(true) : [];
+      this.dgDice = [];
+      this.dgPicked = [];
+      this.dgOver = false;
+      this.dgNope = 0;
+      this.dgHint = '';
+    },
+    get dgTotal() {
+      return this.dgDice.reduce((a, b) => a + b, 0);
+    },
+    get dgLeft() {
+      return this.dgOpen.reduce((s, o, i) => s + (o ? i + 1 : 0), 0);
+    },
+    // A group of open tiles making the dice, or null (fewest tiles)
+    get dgMove() {
+      const t = this.dgTotal;
+      const open = this.dgOpen.map((o, i) => (o ? i + 1 : 0)).filter((n) => n && n <= t);
+      let best = null;
+      const go = (i, left, picked) => {
+        if (!left) {
+          if (!best || picked.length < best.length) best = picked;
+          return;
+        }
+        for (let j = i; j < open.length; j++) if (open[j] <= left) go(j + 1, left - open[j], [...picked, open[j]]);
+      };
+      if (t) go(0, t, []);
+      return best;
+    },
+    dgRoll() {
+      if (this.solved || this.dgOver || this.dgDice.length) return;
+      const one = this.cur.dg.oneDie && this.dgLeft <= 6;
+      const n = one ? 1 : this.cur.dg.dice;
+      this.dgDice = Array.from({ length: n }, () => 1 + Math.floor(Math.random() * 6));
+      this.dgPicked = [];
+      this.dgNope = 0;
+      this.dgHint = '';
+    },
+    dgTap(n) {
+      if (this.solved || this.dgOver || !this.dgDice.length || !this.dgOpen[n - 1]) return;
+      this.dgHint = '';
+      if (this.dgPicked.includes(n)) return (this.dgPicked = this.dgPicked.filter((x) => x !== n));
+      const picked = [...this.dgPicked, n];
+      const sum = picked.reduce((a, b) => a + b, 0);
+      if (sum > this.dgTotal) {
+        this.dgHint = `${picked.join(' + ')} = ${sum} : c’est plus que ${this.dgTotal}.`;
+        this.dgPicked = [];
+        return this._flashError();
+      }
+      this.dgPicked = picked;
+      if (sum < this.dgTotal) return;
+      // the dice are made: those tiles close, next roll
+      this.dgOpen = this.dgOpen.map((o, i) => o && !picked.includes(i + 1));
+      this.dgPicked = [];
+      this.dgDice = [];
+      if (!this.dgLeft) this._dgEnd();
+    },
+    dgStop() {
+      if (this.solved || this.dgOver || !this.dgDice.length) return;
+      const move = this.dgMove;
+      if (move) {
+        this.dgNope++;
+        this.dgHint =
+          this.dgNope === 1
+            ? `Si, tu peux encore : cherche des cases ouvertes qui font ${this.dgTotal}.`
+            : `Essaie ${move.join(' + ')}.`;
+        this.dgPicked = [];
+        return this._flashError();
+      }
+      this._dgEnd();
+    },
+    _dgEnd() {
+      this.dgOver = true;
+      this.dgBest = this.dgBest == null ? this.dgLeft : Math.min(this.dgBest, this.dgLeft);
+      this.check();
+    },
+    dgReplay() {
+      const best = this.dgBest;
+      this.dgReset();
+      this.dgBest = best;
+    },
+
+    /* Hundred board — rows of ten from cur.hb.start. find: tap the mystery number; fill: type the blanks;
+       color: tap to colour / uncolour. Only cur.hb.cells are drawn when set (a piece of the board),
+       framed to their rows and columns. */
+    get hbGrid() {
+      const hb = this.cur.hb;
+      const all = Array.from({ length: (hb.rows || 10) * 10 }, (_, i) => hb.start + i);
+      const nums = hb.cells || all;
+      const rc = (n) => [Math.floor((n - hb.start) / 10), (n - hb.start) % 10];
+      const rs = nums.map((n) => rc(n)[0]);
+      const cs = nums.map((n) => rc(n)[1]);
+      const [r0, r1, c0, c1] = [Math.min(...rs), Math.max(...rs), Math.min(...cs), Math.max(...cs)];
+      const cells = [];
+      for (let r = r0; r <= r1; r++)
+        for (let c = c0; c <= c1; c++) {
+          const n = hb.start + r * 10 + c;
+          const blank = hb.blanks ? hb.blanks.indexOf(n) : -1;
+          const drawn = !hb.cells || hb.cells.includes(n);
+          const written = drawn && blank < 0 && (!hb.hide || (hb.shown || []).includes(n));
+          cells.push({ n, r, c, drawn, blank, written });
+        }
+      return { cols: c1 - c0 + 1, cells, piece: !!hb.cells };
+    },
+    hbTap(n) {
+      if (this.solved) return;
+      this.hbHint = '';
+      if (this.cur.hb.mode === 'find') this.hbPick = this.hbPick === n ? null : n;
+      else if (this.cur.hb.mode === 'color')
+        this.hbColored = this.hbColored.includes(n) ? this.hbColored.filter((x) => x !== n) : [...this.hbColored, n];
+    },
+    hbCellClass(n) {
+      const hb = this.cur.hb;
+      if (this.solved && hb.mode === 'find' && n === hb.target) return 'bg-green-500 text-white';
+      if (this.hbPick === n) return 'bg-primary-500 text-white';
+      if (this.hbColored.includes(n)) return 'bg-amber-400 text-slate-900';
+      if (hb.path && n === hb.from)
+        return 'bg-sky-100 dark:bg-sky-900/50 text-content-default ring-2 ring-inset ring-sky-500';
+      const plain = 'bg-white dark:bg-slate-800 text-content-default';
+      return hb.mode === 'fill' || this.solved ? plain : `${plain} hover:bg-primary-50 dark:hover:bg-primary-900/30`;
+    },
+    // Does n meet a mystery-number clue (same rules as scripts/lib/hundred-board.js)
+    _hbClue(c, n) {
+      const d = (p) => Math.floor(n / p) % 10;
+      const sum = String(n)
+        .split('')
+        .reduce((s, x) => s + Number(x), 0);
+      const holds = {
+        unites: () => d(1) === c.v,
+        dizaines: () => d(10) === c.v,
+        centaines: () => d(100) === c.v,
+        entre: () => n > c.v[0] && n < c.v[1],
+        pair: () => n % 2 === 0,
+        impair: () => n % 2 === 1,
+        somme: () => sum === c.v,
+        apres: () => n === c.v + 1,
+        avant: () => n === c.v - 1,
+        dessous: () => n === c.v + 10,
+        dessus: () => n === c.v - 10,
+        plus: () => n > c.v,
+        moins: () => n < c.v,
+      }[c.k];
+      return !holds || holds();
+    },
+    get hbReady() {
+      const m = this.cur.hb && this.cur.hb.mode;
+      if (m === 'find') return this.hbPick != null;
+      if (m === 'color') return this.hbColored.length > 0;
+      return this.hbInputs.every((v) => String(v).trim());
+    },
+    tfTap(i) {
+      if (this.solved) return;
+      const cells = [...this.tfCells];
+      cells[i] = cells[i] ? 0 : 2;
+      this.tfCells = cells;
+      this.tfHint = '';
+    },
+
+    /* Memory — 6 cards on 3 columns, 10 and 20 on 5, else 4 */
+    get memCols() {
+      const n = this.memDeck.length;
+      return n <= 6 ? 3 : n % 5 === 0 ? 5 : 4;
+    },
+
+    memUp(i) {
+      return !!this.cur.mem?.faceUp || this.memOpen.includes(i) || this.memFound.includes(i);
+    },
+
+    // Turn a card; the second one either completes a pair (both stay up) or both turn back — at once
+    // when a third card is tapped
+    memFlip(i) {
+      if (this.solved || this.memOpen.includes(i) || this.memFound.includes(i)) return;
+      if (this.memMiss.length) {
+        clearTimeout(this._memTimer);
+        this.memOpen = [];
+        this.memMiss = [];
+      }
+      this.memOpen = [...this.memOpen, i];
+      if (this.memOpen.length < 2) return;
+      this.memTries++;
+      const [a, b] = this.memOpen;
+      if (this.memDeck[a].pair === this.memDeck[b].pair) {
+        this.memFound = [...this.memFound, a, b];
+        this.memOpen = [];
+        if (this.memFound.length === this.memDeck.length) this.check();
+        return;
+      }
+      this.memMiss = [a, b];
+      this._memTimer = setTimeout(
+        () => {
+          this.memOpen = [];
+          this.memMiss = [];
+        },
+        this.cur.mem.faceUp ? 700 : 1200
+      );
     },
 
     /* Classify — select an item from the bank */
@@ -1412,6 +2458,99 @@ export function seriesPlayer(exercises, seriesId) {
         });
       }
 
+      if (_e.type === 'broken-calc' && _e.calc) {
+        if (this.calcResult === _e.calc.target) return this._markSolvedAndAdvance();
+        this.calcHint =
+          this.calcResult === null
+            ? 'Tape un calcul, puis appuie sur =.'
+            : `Tu obtiens ${String(this.calcResult).replace('.', ',')}, pas ${_e.calc.target}. Appuie sur C et essaie encore.`;
+        return this._flashError();
+      }
+
+      if (_e.type === 'compte-est-bon' && _e.ceb) {
+        const left = this.cebTiles.filter((t) => !t.used).map((t) => t.v);
+        const ok = _e.ceb.useAll ? left.length === 1 && left[0] === _e.ceb.target : left.includes(_e.ceb.target);
+        if (ok) return this._markSolvedAndAdvance();
+        this.cebHint = _e.ceb.useAll ? `Tu arrives à ${left[0]}, pas à ${_e.ceb.target} : annule une étape.` : '';
+        return this._flashError();
+      }
+
+      if (_e.type === 'target-blocks' && _e.tb) {
+        const { blocks, useAll } = _e.tb;
+        const unused = useAll !== false && this.tbAt.some((a, i) => !this.tbBlocksOf(i).length);
+        if (blocks.every((_, k) => this.tbDone(k)) && !unused) return this._markSolvedAndAdvance();
+        this.tbHint = unused ? 'Place tous les nombres dans les blocs.' : 'Un bloc n’a pas encore son nombre cible.';
+        return this._flashError();
+      }
+
+      if (_e.type === 'strategy-game' && _e.sg) {
+        return this.sgWinner === 'eleve' ? this._markSolvedAndAdvance() : this._flashError();
+      }
+
+      if (_e.type === 'tangram' && _e.tg) {
+        const pb = this.tgProblem();
+        if (!pb) return this._markSolvedAndAdvance();
+        this.tgHint = pb;
+        return this._flashError();
+      }
+
+      if (_e.type === 'picross' && _e.px) {
+        const wrong = [
+          ..._e.px.rows.map((_, i) => !this.pxDone(true, i)),
+          ..._e.px.cols.map((_, j) => !this.pxDone(false, j)),
+        ].filter(Boolean).length;
+        if (!wrong) return this._markSolvedAndAdvance();
+        this.pxHint = 'Des nombres ne sont pas encore justes : compte les cases coloriées.';
+        return this._flashError();
+      }
+
+      if (_e.type === 'bar-model' && _e.bmBuild && !this.bmBuilt) return this._bmCheckModel();
+
+      if (_e.type === 'dice-game' && _e.dg) {
+        return this.dgOver ? this._markSolvedAndAdvance() : this._flashError();
+      }
+
+      if (_e.type === 'hundred-board' && _e.hb) {
+        const hb = _e.hb;
+        if (hb.mode === 'find') {
+          if (this.hbPick === hb.target) return this._markSolvedAndAdvance();
+          const miss = (hb.clues || []).find((c) => !this._hbClue(c, this.hbPick));
+          this.hbHint = miss
+            ? `${this.hbPick} ne va pas : « ${miss.text} »`
+            : hb.path
+              ? 'Ce n’est pas là : suis les flèches une par une.'
+              : `${this.hbPick} ne va pas : relis les indices.`;
+          return this._flashError();
+        }
+        if (hb.mode === 'color') {
+          const extra = this.hbColored.filter((n) => !hb.answer.includes(n));
+          const missing = hb.answer.filter((n) => !this.hbColored.includes(n));
+          if (!extra.length && !missing.length) return this._markSolvedAndAdvance();
+          this.hbHint = extra.length
+            ? `${extra[0]} ne va pas dans le motif.`
+            : `Il manque ${missing.length} nombre${missing.length > 1 ? 's' : ''}.`;
+          return this._flashError();
+        }
+        const wrong = hb.blanks.filter((n, k) => normalizeAnswer(this.hbInputs[k]) !== String(n)).length;
+        if (!wrong) return this._markSolvedAndAdvance();
+        this.hbHint = `${wrong} nombre${wrong > 1 ? 's ne vont' : ' ne va'} pas encore.`;
+        return this._flashError();
+      }
+
+      if (_e.type === 'ten-frame' && _e.tf) {
+        const n = this.tfCells.filter(Boolean).length;
+        // tenFirst: a token in the second box while the first one has a hole
+        const holes =
+          _e.tf.tenFirst && this.tfCells.slice(10).some(Boolean) && this.tfCells.slice(0, 10).some((c) => !c);
+        if (n === _e.tf.target && !holes) return this._markSolvedAndAdvance();
+        this.tfHint = holes ? 'Remplis d’abord la première boîte.' : 'Compte encore les jetons.';
+        return this._flashError();
+      }
+
+      if (_e.type === 'memory' && _e.mem) {
+        return this.memFound.length === this.memDeck.length ? this._markSolvedAndAdvance() : this._flashError();
+      }
+
       if (_e.type === 'money-pay' && _e.mp) {
         const { amount, coins, fewest } = _e.mp;
         if (this.mpTotal !== amount) this.mpHint = 'Ce n’est pas la bonne somme : compte encore.';
@@ -1441,6 +2580,7 @@ export function seriesPlayer(exercises, seriesId) {
         const b = _e.board;
         if (b.mode === 'debug') return;
         if (b.mode === 'draw') return this.gbDrawOk() ? this._markSolvedAndAdvance() : this._flashError();
+        if (b.mode === 'area') return this.gbAreaHint ? this._flashError() : this._markSolvedAndAdvance();
         if (b.mode === 'mirror') {
           // Exactly the mirror image: nothing missing, nothing extra (extra cells flash red)
           const target = this.gbTarget;
@@ -2573,6 +3713,7 @@ export function seriesPlayer(exercises, seriesId) {
 
     kidStart() {
       this.kidStarted = true;
+      this.countShow(); // a quick look (flash, Splat peek) starts once the start screen is gone
       this.sayCurrent();
     },
 
@@ -2692,6 +3833,8 @@ export function seriesPlayer(exercises, seriesId) {
           return eq(this.decompInputs[key], _e.decomp.parts.filter((p) => !p.comma)[key].answer);
         case 'fact-family':
           return eq(this.ffInputs[key], _e.ffEquations[key].answer);
+        case 'hundred-board':
+          return _e.hb.blanks ? eq(this.hbInputs[key], _e.hb.blanks[key]) : undefined;
         case 'jump-line':
           return eq(this.jlInputs[key], jumpLine(_e.jl).fields[key].answer);
         case 'fraction-op': {
@@ -2866,12 +4009,95 @@ export function seriesPlayer(exercises, seriesId) {
     // Show the picture; with `flash` (ms) it hides again — « combien d'un coup d'œil ? »
     countShow() {
       clearTimeout(this._countTimer);
+      clearTimeout(this._peekTimer);
       this.countHidden = false;
+      this.splatPeek = !!(this.cur.svgFull && this.cur.peek > 0 && !this.solved);
+      if (this.splatPeek) this._peekTimer = setTimeout(() => (this.splatPeek = false), this.cur.peek);
       const ms = this.cur.flash;
       if (ms > 0)
         this._countTimer = setTimeout(() => {
           if (!this.solved) this.countHidden = true;
         }, ms);
+    },
+
+    // ── Bar model built by the pupil ──
+    _bmShuffle(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    },
+
+    bmTapChip(i) {
+      if (this.bmBuilt || this.solved) return;
+      this.bmHint = '';
+      this.bmPick = this.bmPick === i ? null : i;
+    },
+
+    // A box: puts the picked chip in it (the chip that was there goes back), or sends its chip back to the tray
+    bmTapCell(key) {
+      if (this.bmBuilt || this.solved) return;
+      this.bmHint = '';
+      const here = this.bmChips.findIndex((c) => c.at === key);
+      if (this.bmPick !== null) {
+        if (here >= 0) this.bmChips[here].at = null;
+        this.bmChips[this.bmPick].at = key;
+        this.bmPick = null;
+      } else if (here >= 0) this.bmChips[here].at = null;
+    },
+
+    bmAt(key) {
+      const c = this.bmChips.find((c) => c.at === key);
+      return c ? c.v : '';
+    },
+
+    get bmFull() {
+      const b = this.cur.bmBuild;
+      return !!b && b.rows.every((r) => r.cells.every((c) => this.bmAt(c.key) !== ''));
+    },
+
+    _bmCheckModel() {
+      const b = this.cur.bmBuild;
+      const n = (v) => normalizeAnswer(String(v));
+      const cells = b.rows.flatMap((r) => r.cells);
+      if (!this.bmFull) {
+        this.bmHint = 'Place un nombre ou le ? dans chaque case.';
+        return this._flashError();
+      }
+      if (cells.every((c) => n(this.bmAt(c.key)) === n(c.want))) {
+        this.bmBuilt = true;
+        this.bmHint = '';
+        this.$nextTick(() => this.$refs.input?.focus());
+        return;
+      }
+      const wants = cells.map((c) => n(c.want));
+      const wrong = (key) => {
+        const c = cells.find((c) => c.key === key);
+        return c && n(this.bmAt(key)) !== n(c.want);
+      };
+      const sameSet = (keys) => {
+        const a = keys.map((k) => n(this.bmAt(k))).sort(),
+          w = keys.map((k) => n(cells.find((c) => c.key === k).want)).sort();
+        return a.join('|') === w.join('|');
+      };
+      if (cells.some((c) => !wants.includes(n(this.bmAt(c.key)))))
+        this.bmHint = "Un nombre de l'énoncé ne sert pas dans ce schéma : lequel ?";
+      else if (b.mode === 'part-whole') {
+        const parts = cells.filter((c) => c.key !== 'whole').map((c) => c.key);
+        this.bmHint = wrong('whole')
+          ? n(cells[0].want) === '?'
+            ? 'Que cherche-t-on : le tout ou une partie ? Le ? va dans la case de ce que l’on cherche.'
+            : 'La grande barre du haut, c’est le tout : quel nombre est le total ?'
+          : sameSet(parts)
+            ? 'Regarde la longueur des cases : le plus grand nombre va dans la plus longue.'
+            : 'Relis l’énoncé : quelles sont les parties ?';
+      } else if (wrong('diff') && !wrong('ref') && !wrong('compared'))
+        this.bmHint = 'La case en pointillés, c’est l’écart entre les deux barres.';
+      else if (sameSet(['ref', 'compared']))
+        this.bmHint = 'La barre la plus longue est pour la plus grande quantité. Relis : qui en a le plus ?';
+      else this.bmHint = 'Relis l’énoncé : quel nombre va dans chaque case ?';
+      return this._flashError();
     },
 
     mcqTap(i) {
@@ -3020,8 +4246,10 @@ export function seriesPlayer(exercises, seriesId) {
       ];
       return p[posFromRight % p.length];
     },
+    // Result field i → its index in answers (after the partial products of a × by 2 digits)
     colOpTrouIdx(i) {
-      return (this.cur.colOp?.result || []).slice(0, i).filter((d) => d === '?').length;
+      const c = this.cur.colOp;
+      return (c?.resultStart || 0) + (c?.result || []).slice(0, i).filter((d) => d === '?').length;
     },
 
     goTo(idx) {

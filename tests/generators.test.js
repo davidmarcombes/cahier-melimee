@@ -1895,7 +1895,12 @@ describe('manipulations GS (boiteDix, jeuOie, balanceGS)', () => {
   });
 
   it('GS series speak the instruction the generator gives', () => {
-    for (const sub of ['numeration/boite-dix-01', 'numeration/jeu-oie-01', 'mesures/balance-01']) {
+    for (const sub of [
+      'numeration/boite-dix-01',
+      'numeration/jeu-oie-01',
+      'mesures/balance-01',
+      'numeration/sous-la-tache-01',
+    ]) {
       const dir = path.join(__dirname, '../src/fr/applications/gs/maths', sub);
       for (const f of fs.readdirSync(dir).filter((f) => f.endsWith('.md'))) {
         const data = yaml.load(fs.readFileSync(path.join(dir, f), 'utf8').split('---')[1]);

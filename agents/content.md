@@ -159,18 +159,21 @@ Quick table — required fields only:
 | `number-line` | `min`, `max`, `answer` | Optional: `step` |
 | `coordinate-grid` | `answer` | mode: read\|place, cols, rows, points[] |
 | `tile-select` (shapes) | `generator: trouverFormes` | Shapes in any orientation — see exercises.md `tile-select` |
+| `mcq` / `number-check` (plan) | `generator: planVille` / `planClasse` | Town map in lettered squares (case, contenu, direction, trajet, chemin + scale) · classroom plan (rang, côté, devant / derrière) |
+| `number-check` / `mcq` (figure) | `generator: proprietesFigure` | Sides, vertices, right angles, parallel sides, triangle class (codes) of one drawn figure |
 | angles (CM) | `generator: trouverAngles` / `comparerAngles` / `rangerAngles` | Angles drawn, no protractor: classify, compare, order — see exercises.md `tile-select`, `mcq`, `drag-sort` |
 | chance (CM) | `generator: hasardPossible` / `hasardComparer` / `hasardChances` / `hasardRanger` | Urn, spinner, special die drawn (donnees.js): impossible → certain, compare A / B, « a chances sur b », order colours — see exercises.md `mcq`, `drag-sort` |
+| solids (CP–CM2) | `generator: trouverSolides` / `compterSolide` / `nommerSolide` | Solids drawn in perspective, hidden edges dashed: find, count faces / vertices / edges, name, faces' shapes, everyday objects — see exercises.md « Solids and drawn geometry » |
+| drawn geometry | `generator: droitesPositions` / `cercleVocabulaire` / `axeSymetrie` / `positionsEspace` | Perpendicular / parallel lines, circle vocabulary, is it an axis of symmetry, positions on shelves (CP–CE1) — same section |
 | GS manipulations | `generator: boiteDix` / `balanceGS` / `jeuOie` | Box of 10 (`count-objects`), balance and game track (`tile-select`), voice via a fixed `say` per file — see exercises.md |
 | `grid-board` | `board{}` OR `generator: robotGrille` / `symetrieGrille` | Robot: mode follow\|write\|debug; symmetry: mode mirror — see exercises.md |
 | `bar-chart` | `labels[]`, `values[]`, `yMax`, `yStep` | |
 | `calc-chain` | `start`, `steps[]` (op, value, answer) | |
 | `base-10` | `answer`, `number` OR `hundreds`+`tens`+`ones` | |
 
-### Types NOT yet usable (no exercises / not wired)
+### Types NOT usable on their own
 
-`base-10`, `click-blocks`, `seq-verify`, `svg-tiles`, `fraction-paint`,
-`number-hunt`, `compare-groups`, `count-objects`, `column-op` (template not wired into series-player).
+`seq-verify` — shared « Vérifier » button of sequence / bounding / convert, not a type. Every other partial in `src/_includes/types/` has live series (2026-11-09); usage and gaps: [docs/exercise-types-landscape.md](../docs/exercise-types-landscape.md).
 
 ---
 

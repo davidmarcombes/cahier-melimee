@@ -67,7 +67,7 @@ const TYPE_SCHEMAS = {
   'number-strip': { required: ['cells', 'choices', 'answers'], arrays: ['cells', 'choices', 'answers'] },
   'drag-sort': { required: ['tiles'], arrays: ['tiles'] },
   'fill-table': { required: ['headers', 'rows', 'answers'], arrays: ['headers', 'rows', 'answers'] },
-  'column-op': { required: ['top', 'operation', 'result'] },
+  'column-op': { required: ['top', 'operation'], requireOneOf: [['result'], ['bottom']] },
   ruler: { required: [] },
   thermometer: { required: [] },
   'number-line': { required: ['min', 'max', 'answer'] },
@@ -118,6 +118,16 @@ const TYPE_SCHEMAS = {
   'jump-line': { required: [], requireOneOf: [['points'], ['generator']], arrays: ['points'] },
   'money-pay': { required: [], requireOneOf: [['amount'], ['generator']] },
   'fraction-op': { required: [], requireOneOf: [['a'], ['generator']] },
+  memory: { required: [], requireOneOf: [['pairs'], ['generator']], arrays: ['pairs'] },
+  'ten-frame': { required: [], requireOneOf: [['target'], ['generator']] },
+  'broken-calc': { required: [], requireOneOf: [['target', 'broken'], ['generator']], arrays: ['broken'] },
+  tangram: { required: ['generator'] },
+  'target-blocks': { required: ['generator'] },
+  'hundred-board': { required: ['generator'] },
+  'dice-game': { required: ['generator'] },
+  'strategy-game': { required: [], requireOneOf: [['total'], ['generator']], arrays: ['moves'] },
+  picross: { required: [], requireOneOf: [['picture', 'name', 'emoji'], ['generator']], arrays: ['picture'] },
+  'compte-est-bon': { required: [], requireOneOf: [['numbers', 'target'], ['generator']], arrays: ['numbers'] },
 };
 
 const COLORS = {
@@ -161,6 +171,28 @@ global.clockSvg = () => '<svg/>'; // svg.js helper called at generation time (br
 const generators = require('../src/assets/js/generators/index.js');
 const { solveGrid } = require('./lib/logic-grid.js');
 const { boardProblems } = require('./lib/grid-board.js');
+const { normalizeCard, checkMemory } = require('./lib/memory.js');
+const { tenFrameProblem } = require('./lib/manipulations.js');
+const { cebProblem } = require('./lib/compte-est-bon.js');
+const { bcProblem } = require('./lib/broken-calc.js');
+const { pxClues, pxProblem } = require('./lib/picross.js');
+const { tgProblem } = require('./lib/tangram.js');
+const { tbProblem } = require('./lib/target-blocks.js');
+const { hbProblem } = require('./lib/hundred-board.js');
+const { dgProblem } = require('./lib/dice-game.js');
+const { sgFirst, sgProblem } = require('./lib/strategy-game.js');
+const { Unparseable } = require('./lib/arith.js');
+
+// A memory deck where a pair does not go together, or two pairs match the same value (a right
+// pair would be turned back). Cards the oracle cannot read are left to the human check.
+function memoryProblem(mem) {
+  try {
+    return checkMemory(mem);
+  } catch (e) {
+    if (e instanceof Unparseable) return null;
+    return e.message;
+  }
+}
 const logicGrids = { checked: 0, unchecked: 0 }; // uniqueness of the solution (see lib/logic-grid.js)
 const svgSource = fs.readFileSync(path.join(__dirname, '../src/assets/js/svg.js'), 'utf8');
 const svgHelperExists = (name) =>
@@ -242,6 +274,49 @@ function validateGenerated(relMd, data, errors, bodyText = '') {
     if (dup) {
       errors.push(`${relMd}: generator "${name}" shows the same choice twice (${dup}) — one of them is refused`);
       return;
+    }
+    if (out.type === 'strategy-game' && sgProblem(out.sg)) {
+      errors.push(`${relMd}: generator "${name}" sets up a bad game — ${sgProblem(out.sg)}`);
+      return;
+    }
+    if (out.type === 'dice-game' && dgProblem(out.dg)) {
+      errors.push(`${relMd}: generator "${name}" sets up a bad dice game — ${dgProblem(out.dg)}`);
+      return;
+    }
+    if (out.type === 'hundred-board' && hbProblem(out.hb)) {
+      errors.push(`${relMd}: generator "${name}" draws a bad hundred board — ${hbProblem(out.hb)}`);
+      return;
+    }
+    if (out.type === 'target-blocks' && tbProblem(out.tb)) {
+      errors.push(`${relMd}: generator "${name}" builds bad blocks — ${tbProblem(out.tb)}`);
+      return;
+    }
+    if (out.type === 'tangram' && tgProblem(out.tg)) {
+      errors.push(`${relMd}: generator "${name}" lays out a bad tangram — ${tgProblem(out.tg)}`);
+      return;
+    }
+    if (out.type === 'picross' && pxProblem(out.px)) {
+      errors.push(`${relMd}: generator "${name}" draws a bad picross — ${pxProblem(out.px)}`);
+      return;
+    }
+    if (out.type === 'broken-calc' && bcProblem(out.calc)) {
+      errors.push(`${relMd}: generator "${name}" builds a bad calculator — ${bcProblem(out.calc)}`);
+      return;
+    }
+    if (out.type === 'compte-est-bon' && cebProblem(out.ceb)) {
+      errors.push(`${relMd}: generator "${name}" deals a bad compte est bon — ${cebProblem(out.ceb)}`);
+      return;
+    }
+    if (out.type === 'ten-frame' && tenFrameProblem(out.tf)) {
+      errors.push(`${relMd}: generator "${name}" draws a bad ten-frame — ${tenFrameProblem(out.tf)}`);
+      return;
+    }
+    if (out.type === 'memory') {
+      const pb = memoryProblem(out.mem);
+      if (pb) {
+        errors.push(`${relMd}: generator "${name}" deals a bad memory deck — ${pb}`);
+        return;
+      }
     }
     if (expected === 'matching' && !data.title && !out.title && !bodyText && !out.body) {
       errors.push(`${relMd}: matching exercise has no title and no statement — say what to link`);
@@ -346,6 +421,39 @@ function validateSeries(seriesDir, errors) {
       const ids = new Set(data.categories.map((c) => String(c.id)));
       for (const it of data.items)
         if (!ids.has(String(it.cat))) errors.push(`${relMd}: classify item "${it.html}" has unknown cat "${it.cat}"`);
+    }
+    if (type === 'strategy-game' && data.total != null) {
+      const sg = { kind: data.kind || 'course', total: data.total, moves: data.moves || [1, 2], misere: !!data.misere };
+      sg.smart = data.smart ?? 1;
+      const pb = sgProblem({ ...sg, first: sgFirst(sg) });
+      if (pb) errors.push(`${relMd}: ${pb}`);
+    }
+    if (type === 'picross' && Array.isArray(data.picture)) {
+      const pb = pxProblem({
+        ...pxClues(data.picture),
+        picture: data.picture,
+        rowLabels: data.rowLabels,
+        colLabels: data.colLabels,
+      });
+      if (pb) errors.push(`${relMd}: ${pb}`);
+    }
+    if (type === 'broken-calc' && Array.isArray(data.broken)) {
+      const pb = bcProblem({ target: data.target, broken: data.broken.map(String), ops: data.ops, max: data.max });
+      if (pb) errors.push(`${relMd}: ${pb}`);
+    }
+    if (type === 'compte-est-bon' && Array.isArray(data.numbers)) {
+      const pb = cebProblem({ numbers: data.numbers, target: data.target, ops: data.ops, useAll: data.useAll });
+      if (pb) errors.push(`${relMd}: ${pb}`);
+    }
+    if (type === 'memory' && Array.isArray(data.pairs)) {
+      let mem;
+      try {
+        mem = { pairs: data.pairs.map((p) => (Array.isArray(p) ? p.map((c) => normalizeCard(c)) : p)), sum: data.sum };
+      } catch (e) {
+        errors.push(`${relMd}: ${e.message}`);
+      }
+      const pb = mem && memoryProblem(mem);
+      if (pb) errors.push(`${relMd}: ${pb}`);
     }
     // A token the story doesn't contain is never tappable: the step can't be done (« 1 h 40 » vs « 1 heure 40 minutes »).
     // Same match as the build (.eleventy.js, case-insensitive), within one run of text: the build
@@ -453,6 +561,26 @@ function validateSeries(seriesDir, errors) {
         );
     }
 
+    // + − × need the result template (« ??? »); ÷ builds its own steps from top ÷ bottom
+    if (type === 'column-op' && data.operation !== '÷' && data.result == null)
+      errors.push(`${relMd}: column-op ${data.operation} needs a result template`);
+
+    // Estimate number line: the number must sit strictly between the two labelled ends,
+    // and the tolerance must still make it an estimate (≤ a quarter of the line)
+    if (type === 'number-line' && data.mode === 'estimate' && !data.generator) {
+      const num = (v) => {
+        const [n, d = 1] = String(v).replace(/\s/g, '').replace(',', '.').split('/');
+        return parseFloat(n) / parseFloat(d);
+      };
+      const [lo, hi, a] = [num(data.min), num(data.max), num(data.answer)];
+      if (!(a > lo && a < hi))
+        errors.push(`${relMd}: number-line estimate answer ${data.answer} not inside ${lo}–${hi}`);
+      if (data.tolerance != null && !(num(data.tolerance) > 0 && num(data.tolerance) <= (hi - lo) / 4))
+        errors.push(
+          `${relMd}: number-line estimate tolerance ${data.tolerance} must be > 0 and ≤ a quarter of the line`
+        );
+    }
+
     // Bar model: the bars must add up once "?" is replaced by the answer
     if (type === 'bar-model' && data.bm && data.answer !== undefined) {
       const bm = data.bm;
@@ -468,6 +596,26 @@ function validateSeries(seriesDir, errors) {
         if (String(bm.ref) === '?') errors.push(`${relMd}: bar-model comparison ref cannot be "?" (use compared)`);
         else if (bm.diff !== undefined && !close(Math.abs(n(bm.ref) - n(bm.compared)), n(bm.diff)))
           errors.push(`${relMd}: bar-model |ref - compared| ≠ diff (${bm.ref}, ${bm.compared}, ${bm.diff})`);
+      }
+      // Built by the pupil: one « ? », every chip is a number of the statement, decoys fit no box,
+      // and no label already says where a number goes
+      if (bm.build) {
+        const boxes =
+          bm.mode === 'part-whole'
+            ? [bm.whole, ...(bm.parts || [])]
+            : [bm.ref, bm.compared, ...(n(bm.ref) === n(bm.compared) ? [] : [bm.diff])];
+        if (boxes.some((v) => v === undefined)) errors.push(`${relMd}: bar-model build needs every box (diff too)`);
+        if (boxes.filter((v) => String(v) === '?').length !== 1)
+          errors.push(`${relMd}: bar-model build needs exactly one "?" box`);
+        const text = (bodyText || '').replace(/\*\*/g, '').replace(/(\d)\s(?=\d{3}\b)/g, '$1');
+        const inText = new Set((text.match(/\d+(?:,\d+)?/g) || []).map((v) => n(v)));
+        for (const v of [...boxes, ...(bm.extra || [])].filter((v) => v !== undefined && String(v) !== '?'))
+          if (!inText.has(n(v))) errors.push(`${relMd}: bar-model build chip ${v} is not in the statement`);
+        for (const v of bm.extra || [])
+          if (boxes.some((b) => String(b) !== '?' && close(n(b), n(v))))
+            errors.push(`${relMd}: bar-model build decoy ${v} is also a box`);
+        for (const k of ['wholeLabel', 'refLabel', 'compLabel'])
+          if (/\d/.test(String(bm[k] || ''))) errors.push(`${relMd}: bar-model build ${k} gives a number away`);
       }
     }
 

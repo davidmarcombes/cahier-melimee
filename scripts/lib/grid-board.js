@@ -392,11 +392,126 @@ function drawProblems(b) {
 }
 
 // Every problem of a board, as text (empty = fine)
+// ─── Area: colour a figure (aire par pavage) ─────────────────────────────────
+// task aire: `area` cells in one piece · perimetre: and a perimeter of `perimeter` sides of squares ·
+// meme-aire: the area of the `model` (drawn, locked), another shape · autre-perimetre: the model's area,
+// another perimeter. A figure has no hole and does not touch the model.
+const AREA_TASKS = ['aire', 'perimetre', 'meme-aire', 'autre-perimetre'];
+const areaKey = (p) => `${p[0]},${p[1]}`;
+const near4 = ([r, c]) => [
+  [r + 1, c],
+  [r - 1, c],
+  [r, c + 1],
+  [r, c - 1],
+];
+function areaConnected(cells) {
+  if (!cells.length) return false;
+  const set = new Set(cells.map(areaKey));
+  const seen = new Set([areaKey(cells[0])]);
+  const todo = [cells[0]];
+  while (todo.length)
+    for (const q of near4(todo.pop()))
+      if (set.has(areaKey(q)) && !seen.has(areaKey(q))) {
+        seen.add(areaKey(q));
+        todo.push(q);
+      }
+  return seen.size === set.size;
+}
+// Sides of squares around the figure (holes count too)
+const areaPerimeter = (cells) => {
+  const set = new Set(cells.map(areaKey));
+  return cells.reduce((n, p) => n + near4(p).filter((q) => !set.has(areaKey(q))).length, 0);
+};
+// An empty square the outside cannot reach without crossing the figure
+function areaHole(cells, rows, cols) {
+  const set = new Set(cells.map(areaKey));
+  const seen = new Set();
+  const todo = [];
+  for (let r = -1; r <= rows; r++)
+    for (let c = -1; c <= cols; c++)
+      if (r < 0 || c < 0 || r === rows || c === cols) {
+        seen.add(areaKey([r, c]));
+        todo.push([r, c]);
+      }
+  while (todo.length)
+    for (const q of near4(todo.pop())) {
+      const k = areaKey(q);
+      if (q[0] < -1 || q[1] < -1 || q[0] > rows || q[1] > cols || seen.has(k) || set.has(k)) continue;
+      seen.add(k);
+      todo.push(q);
+    }
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) if (!set.has(areaKey([r, c])) && !seen.has(areaKey([r, c]))) return true;
+  return false;
+}
+// The shape up to a move, a turn or a flip
+function areaShape(cells) {
+  const forms = [];
+  for (const flip of [false, true])
+    for (let k = 0; k < 4; k++) {
+      let c = cells.map(([r, q]) => (flip ? [r, -q] : [r, q]));
+      for (let i = 0; i < k; i++) c = c.map(([r, q]) => [q, -r]);
+      const r0 = Math.min(...c.map((p) => p[0]));
+      const q0 = Math.min(...c.map((p) => p[1]));
+      forms.push(
+        c
+          .map(([r, q]) => [r - r0, q - q0])
+          .sort((x, y) => x[0] - y[0] || x[1] - y[1])
+          .join(';')
+      );
+    }
+  return forms.sort()[0];
+}
+// null when the pupil's cells answer the board, else what is wrong
+function areaCheck(b, cells) {
+  const model = b.model || [];
+  const modelSet = new Set(model.map(areaKey));
+  if (cells.some((p) => modelSet.has(areaKey(p)))) return 'a square of the model is coloured';
+  const want = b.task === 'meme-aire' || b.task === 'autre-perimetre' ? model.length : b.area;
+  if (cells.length !== want) return `${cells.length} squares, ${want} wanted`;
+  if (!areaConnected(cells)) return 'the squares are not in one piece';
+  if (areaHole(cells, b.rows, b.cols)) return 'the figure has a hole';
+  if (cells.some((p) => near4(p).some((q) => modelSet.has(areaKey(q))))) return 'the figure touches the model';
+  const per = areaPerimeter(cells);
+  if (b.task === 'perimetre' && per !== b.perimeter) return `perimeter ${per}, ${b.perimeter} wanted`;
+  if (b.task === 'meme-aire' && areaShape(cells) === areaShape(model)) return 'the same shape as the model';
+  if (b.task === 'autre-perimetre' && per === areaPerimeter(model)) return `the same perimeter as the model (${per})`;
+  return null;
+}
+function areaProblems(b, inside) {
+  const out = [];
+  if (!AREA_TASKS.includes(b.task)) return [`unknown area task « ${b.task} »`];
+  const model = b.model || [];
+  if (b.task === 'meme-aire' || b.task === 'autre-perimetre') {
+    if (model.length < 3) return ['the model needs 3 squares at least'];
+    if (model.some((p) => !inside(p))) out.push('a square of the model is off the grid');
+    if (!areaConnected(model) || areaHole(model, b.rows, b.cols)) out.push('the model is not one piece without a hole');
+  } else {
+    if (model.length) out.push('a model on a board that does not use it');
+    if (!(Number.isInteger(b.area) && b.area >= 2 && b.area <= (b.rows * b.cols) / 2))
+      out.push(`area ${b.area} out of range`);
+  }
+  if (b.task === 'perimetre') {
+    const A = b.area;
+    let lo = Infinity;
+    for (let w = 1; w <= A; w++) lo = Math.min(lo, 2 * (w + Math.ceil(A / w)));
+    if (!(b.perimeter % 2 === 0 && b.perimeter >= lo && b.perimeter <= 2 * A + 2))
+      out.push(`no figure of ${A} squares has a perimeter of ${b.perimeter}`);
+  }
+  if (!Array.isArray(b.solution)) out.push('no shipped solution');
+  else if (b.solution.some((p) => !inside(p))) out.push('the solution leaves the grid');
+  else {
+    const pb = areaCheck(b, b.solution);
+    if (pb) out.push(`the shipped solution fails: ${pb}`);
+  }
+  return out;
+}
+
 function boardProblems(b) {
   const out = [];
   if (!b || typeof b !== 'object') return ['missing board'];
   const { mode, rows, cols } = b;
-  if (!['follow', 'write', 'debug', 'mirror', 'draw'].includes(mode)) return [`unknown mode « ${mode} »`];
+  if (!['follow', 'write', 'debug', 'mirror', 'draw', 'area'].includes(mode)) return [`unknown mode « ${mode} »`];
   if (!(rows >= 2 && rows <= 10 && cols >= 2 && cols <= 10)) return [`grid ${rows}×${cols} outside 2…10`];
   if (mode === 'draw') return drawProblems(b);
   const inside = (p) =>
@@ -408,6 +523,7 @@ function boardProblems(b) {
     p[0] < rows &&
     p[1] < cols;
   if (mode === 'mirror') return mirrorProblems(b, inside);
+  if (mode === 'area') return areaProblems(b, inside);
   if (!inside(b.start)) return ['start outside the grid'];
   if (b.dir && !ORDER.includes(b.dir)) out.push(`dir « ${b.dir} » is not N, E, S or W`);
   for (const k of b.blocks || []) if (!inside(k)) out.push(`block ${JSON.stringify(k)} outside the grid`);
@@ -445,6 +561,9 @@ function boardProblems(b) {
 }
 
 module.exports = {
+  areaCheck,
+  areaPerimeter,
+  areaShape,
   walk,
   shortest,
   mirrorTarget,

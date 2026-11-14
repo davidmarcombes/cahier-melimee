@@ -83,7 +83,10 @@ const TYPE_SCHEMAS = {
     required: ['columns'],
     desc: 'Place-value blocks — columns[].label, .value, .color, .answer, .max',
   },
-  'number-line': { required: ['min', 'max', 'answer'], desc: 'Number line — place or read a value; step optional' },
+  'number-line': {
+    required: ['min', 'max', 'answer'],
+    desc: 'Number line — read, place, or estimate (ends only, tolerance) a value; step optional',
+  },
   'coordinate-grid': {
     required: ['answer'],
     desc: 'Grid read/place — mode: read|place, cols, rows, points[].x/y/label',
@@ -114,8 +117,48 @@ const TYPE_SCHEMAS = {
   },
   'fraction-paint': { required: [], desc: 'Paint fractions of a shape (not yet in use)' },
   'column-op': {
-    required: ['top', 'operation', 'result'],
-    desc: 'Vertical operation — top[], operation (+/-/×/÷), result; NOT wired into series-player',
+    required: ['top', 'operation'],
+    desc: 'Vertical operation — top, bottom, operation (+/-/×/÷), result "???" (not for ÷: potence built from top ÷ bottom)',
+  },
+  'broken-calc': {
+    required: [],
+    desc: 'Calculatrice cassée — target, broken[] (digits or operation keys, the target must hold a broken digit), ops (keys on the calculator), max; or generator calculatriceCassee',
+  },
+  'strategy-game': {
+    required: [],
+    desc: 'Jeu de stratégie contre l’ordinateur — kind (course | allumettes), total, moves ([1, 2]), misere (allumettes: who takes the last loses), smart (0–1: the computer plays its best move this often); the pupil gets the winning seat; or generator jeuStrategie',
+  },
+  'dice-game': {
+    required: ['generator'],
+    desc: 'Jeu de dés — generator fermeLaBoite only: Ferme la boîte, tiles (9), dice (2), oneDie (one die once the open tiles make 6 or less)',
+  },
+  'hundred-board': {
+    required: ['generator'],
+    desc: 'Tableau des nombres — generator tableauNombres only: mode find (kind mystere: clues; kind deplacements: arrows, hide) | fill (kind trous: blanks; kind morceau: shapes, given) | color (rules: unites, dizaines, pas), start (1, 0, 301…), rows',
+  },
+  'target-blocks': {
+    required: ['generator'],
+    desc: 'Blocs cibles — generator blocsCibles only: layout (un | deux | chaine | trio), op (+ or ×) or ops (one per block), values, perRegion, minTiles, decoys, live',
+  },
+  tangram: {
+    required: ['generator'],
+    desc: 'Tangram — generator tangramFigure only: figures (names), outlines (each place drawn), turn (false: pieces start the right way round)',
+  },
+  picross: {
+    required: [],
+    desc: 'Picross — picture[] (rows of # and .: one solution only), name (« un chat »), emoji, color; rowLabels / colLabels (clues as calculations); or generator picrossImage',
+  },
+  'compte-est-bon': {
+    required: [],
+    desc: 'Le compte est bon — numbers[], target, ops (default + − × ÷), useAll (Mathador: every number used); or generator compteEstBon',
+  },
+  'ten-frame': {
+    required: [],
+    desc: 'Box of 10 (two above 10): tap cells to put tokens in — target, given (red tokens), ask montre / plus / moins, by, show (digit or {dots}), frames, tenFirst; or generator boiteDixRemplir',
+  },
+  memory: {
+    required: [],
+    desc: 'Memory card game — pairs[] of 2 cards (text, {dots}, {fingers}, {emoji, n}, {pie: "3/4"}, {frac}, {clock: "3:15"}, {blocks}), sum (complements), faceUp; or generator memoryPaires',
   },
 };
 
@@ -145,6 +188,16 @@ const TEMPLATES = {
   select: `type: select\ntitle: ""\nchoices: ["plus grand", "plus petit", "égal"]\nstatements:\n  - template: "45 est ___ que 54"\n    answer: "plus petit"`,
   'tile-select': `type: tile-select\ntitle: ""\ntiles:\n  - "12"\n  - "24"\n  - "35"\n  - "48"\ntileAnswers: [1, 3]`,
   'fraction-check': `type: fraction-check\ntitle: ""\nanswers:\n  - "1"\n  - "3"`,
+  'broken-calc': `type: broken-calc\ntitle: "La calculatrice cassée"\ntarget: 47\nbroken: ["7"]\nops: ["+", "−"]`,
+  'strategy-game': `type: strategy-game\ntitle: "La course à 20"\nkind: course\ntotal: 20\nmoves: [1, 2]`,
+  'dice-game': `type: dice-game\ntitle: "Ferme la boîte"\ngenerator: fermeLaBoite\nparams:\n  tiles: 9\n  oneDie: true`,
+  'hundred-board': `type: hundred-board\ntitle: "Qui suis-je ?"\ngenerator: tableauNombres\nparams:\n  mode: find\n  clues: [[dizaines, unites]]`,
+  'target-blocks': `type: target-blocks\ntitle: "Les blocs cibles"\ngenerator: blocsCibles\nparams:\n  layout: deux\n  values: [1, 9]`,
+  tangram: `type: tangram\ntitle: "Le tangram"\ngenerator: tangramFigure\nparams:\n  figures: [bateau, maison]`,
+  picross: `type: picross\ntitle: "Le dessin caché"\nname: "un cœur"\nemoji: "❤️"\ncolor: "#ef4444"\npicture:\n  - ".#.#."\n  - "#####"\n  - "#####"\n  - ".###."\n  - "..#.."`,
+  'compte-est-bon': `type: compte-est-bon\ntitle: "Le compte est bon"\nnumbers: [3, 7, 8, 25]\ntarget: 183`,
+  'ten-frame': `type: ten-frame\ntitle: "Un de plus"\nask: plus\ngiven: 4\ntarget: 5`,
+  memory: `type: memory\ntitle: ""\npairs:\n  - ["3 × 4", "12"]\n  - [{dots: 5}, "5"]`,
   ruler: `type: ruler\ntitle: ""\nmin: 0\nmax: 10\ndivisions: 10\nmarkers:\n  - label: "A"\n    value: 7\nanswer: "7"`,
   'number-line': `type: number-line\ntitle: ""\nmin: 0\nmax: 100\nstep: 10\nanswer: "70"`,
   'coordinate-grid': `type: coordinate-grid\nmode: read\ncols: 4\nrows: 4\ntitle: ""\npoints:\n  - x: 2\n    y: 3\n    label: A\nanswer: "2,3"`,

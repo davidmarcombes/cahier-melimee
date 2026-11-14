@@ -477,7 +477,7 @@ Ces lacunes sont **thématiques** — le format peut exister mais le contenu man
 | **`battleship-math`** | Variante coordonnées | Résoudre des problèmes aux coordonnées pour trouver des navires |
 | **`soroban`** | Japon | Abaque virtuel → visualisation mentale ; très impressionnant visuellement |
 | **`compte-est-bon`** | FR (Mathador) | Combiner N nombres avec +/−/×/÷ pour atteindre une cible — expression builder |
-| **`tangrams`** | Chine | Assembler 7 pièces géométriques en silhouettes — géométrie, décomposition |
+| **`tangrams`** | Chine | Assembler 7 pièces géométriques en silhouettes — géométrie, décomposition. ✅ Implémenté (`tangram`, générateur `tangramFigure`, GS → CM1) |
 | **`subitizing-war`** | US/UK | Comparer des cartes à points, cadres de dix, dés — reconnaissance rapide |
 
 ---

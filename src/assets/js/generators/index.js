@@ -11,6 +11,9 @@ const MODULES = [
   'fractions-decimaux',
   'mesures',
   'geometrie',
+  'solides',
+  'espace',
+  'plans',
   'donnees',
   'logique',
 ];

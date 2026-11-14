@@ -87,6 +87,16 @@ document.addEventListener('alpine:init', () => {
     'jump-line',
     'money-pay',
     'fraction-op',
+    'memory',
+    'ten-frame',
+    'compte-est-bon',
+    'broken-calc',
+    'picross',
+    'tangram',
+    'strategy-game',
+    'target-blocks',
+    'hundred-board',
+    'dice-game',
   ];
   const CSV_CLASSES = [
     'A1.1',

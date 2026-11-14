@@ -63,11 +63,14 @@ test('new GS exercise instructions are generated, built, and playable', async ({
   expect(prompts).toHaveLength(2);
   expect(prompts.every((clip) => typeof clip === 'string' && clip.startsWith('instructions/'))).toBe(true);
 
+  // Each prompt's clip is fetched (by clip, not by count: going to the second exercise may also start
+  // its automatic reading under load, and the 🔊 tap then fetches the same clip again)
+  const fetched = (clip) => responses.some(({ url }) => url.endsWith(`/voice-pilot/${clip}`));
   await page.getByRole('button', { name: 'Commencer, avec le son' }).click();
-  await expect.poll(() => responses.length).toBe(1);
+  await expect.poll(() => fetched(prompts[0])).toBe(true);
   await page.locator('[x-data*="seriesPlayer"]').evaluate((el) => Alpine.$data(el).goTo(1));
   await page.getByRole('button', { name: 'Écouter la consigne' }).click();
-  await expect.poll(() => responses.length).toBe(2);
+  await expect.poll(() => fetched(prompts[1])).toBe(true);
   expect(responses.every(({ status }) => status === 200)).toBe(true);
 });
 
