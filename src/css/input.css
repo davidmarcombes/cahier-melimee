@@ -24,6 +24,19 @@
   --b10-us: var(--b10us);
 }
 
+/* Native scrollbars and form controls follow the site theme, not only the OS (outside the generated block above) */
+@layer base {
+  :root {
+    color-scheme: light;
+    /* Fast taps (picross, hundred-board, memory…) are taps, not a double-tap zoom; pinch-zoom still works.
+       Elements with touch-none (drawing, drag surfaces) keep it: the browser intersects both values */
+    touch-action: manipulation;
+  }
+  :root.dark {
+    color-scheme: dark;
+  }
+}
+
 /* BEGIN:design-tokens */
 @layer base {
   :root {
@@ -386,9 +399,14 @@ body {
 .mem-card.is-up .mem-face {
   transform: rotateY(0);
 }
-.mem-card:not(.is-up):hover .mem-back,
 .mem-card.is-open .mem-face {
   @apply ring-4 ring-primary-300;
+}
+/* Hover ring only with a real mouse: on a tablet it would stay on the last tapped card */
+@media (hover: hover) {
+  .mem-card:not(.is-up):hover .mem-back {
+    @apply ring-4 ring-primary-300;
+  }
 }
 .mem-card.is-found .mem-face {
   @apply border-green-500 bg-green-50 dark:bg-green-900/20;

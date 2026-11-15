@@ -61,7 +61,8 @@
         </template>
       </div>
 
-      <ol x-show="sgLog.length" class="flex flex-wrap justify-center gap-1.5 max-w-md text-sm" aria-label="Coups joués">
+      <p x-show="sgLog.length" class="sr-only">Coups joués :</p>
+      <ol x-show="sgLog.length" class="flex flex-wrap justify-center gap-1.5 max-w-md text-sm">
         <template x-for="(s, k) in sgLog" :key="k">
           <li class="px-2 py-0.5 rounded-full font-semibold tabular-nums"
             :class="s.who === 'eleve' ? 'bg-sky-100 text-sky-900 dark:bg-sky-900/50 dark:text-sky-100' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200'"
@@ -73,7 +74,7 @@
         <div class="flex flex-col items-center gap-3">
           <p class="js-sg-hint text-sm font-semibold text-amber-700 dark:text-amber-300 text-center text-balance max-w-md" x-text="sgHint"></p>
           <button type="button" @click="sgReplay()"
-            class="js-sg-replay px-6 py-2 rounded-xl bg-primary-500 text-white font-bold shadow-md hover:bg-primary-600">🔄 Rejouer</button>
+            class="js-sg-replay px-6 py-2 coarse:py-3 rounded-xl bg-primary-500 text-white font-bold shadow-md hover:bg-primary-600">🔄 Rejouer</button>
         </div>
       </template>
     </div>

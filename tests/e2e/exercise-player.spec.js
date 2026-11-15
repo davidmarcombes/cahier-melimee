@@ -186,16 +186,18 @@ test.describe('Series progress', () => {
     await page.goto(URL);
     await waitForAlpine(page);
 
-    // Progress bar width starts near 0
-    const bar = page.locator('.bg-primary-500.h-full');
-    const widthBefore = await bar.evaluate((el) => el.style.width);
+    // Progress bar starts at 0 solved (exposed to screen readers as a progressbar)
+    const bar = page.getByRole('progressbar', { name: 'Progression' });
+    await expect(bar).toHaveAttribute('aria-valuenow', '0');
+    await expect(bar).toHaveAttribute('aria-valuemax', '5');
 
     await page.locator('button').filter({ hasText: '🔵' }).click();
     await expect(page.locator('text=Bonne réponse !')).toBeVisible();
 
-    const widthAfter = await bar.evaluate((el) => el.style.width);
-    expect(widthAfter).not.toBe(widthBefore);
-    expect(parseFloat(widthAfter)).toBeGreaterThan(0);
+    await expect(bar).toHaveAttribute('aria-valuenow', '1');
+    // The fill grows with a transform (scaleX from the left edge)
+    const fill = bar.locator('div');
+    expect(await fill.evaluate((el) => el.style.transform)).not.toBe('scaleX(0.000)');
   });
 
   test('exercise counter shows 1 / 5', async ({ page }) => {

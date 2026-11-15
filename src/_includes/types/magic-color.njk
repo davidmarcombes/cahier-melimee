@@ -12,7 +12,7 @@
           type="button"
           @click="mcActiveColor = idx"
           :style="`background: ${color}`"
-          class="w-9 h-9 rounded-lg border-2 transition-all"
+          class="w-9 h-9 coarse:w-11 coarse:h-11 rounded-lg border-2 transition-all"
           :class="mcActiveColor === idx
             ? 'border-slate-700 dark:border-white scale-110 shadow-md ring-2 ring-slate-400 ring-offset-1'
             : 'border-slate-300 dark:border-slate-600 hover:scale-105'"

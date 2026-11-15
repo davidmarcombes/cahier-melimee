@@ -176,7 +176,7 @@
 </div>
 <div x-show="cur.type === 'column-op' && cur.colOp && trouInputs.length" class="flex justify-center pt-2 mb-6">
   <button type="button" @click="check()" :disabled="solved || trouInputs.some(v => !v.trim())"
-    class="px-6 py-2 text-sm font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    class="px-6 py-2 coarse:py-3 text-sm font-bold rounded-xl transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
     :class="solved ? 'bg-green-500 text-white' : 'bg-primary-500 text-white hover:bg-primary-600 shadow-md'">
     <span x-show="!solved">Vérifier</span>
     <span x-show="solved">Bravo !</span>

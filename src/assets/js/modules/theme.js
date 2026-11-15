@@ -5,7 +5,11 @@ export function themeToggle() {
     toggle() {
       this.dark = !this.dark;
       document.documentElement.classList.toggle('dark', this.dark);
-      localStorage.setItem('theme', this.dark ? 'dark' : 'light');
+      try {
+        localStorage.setItem('theme', this.dark ? 'dark' : 'light');
+      } catch {
+        /* storage blocked: the choice lasts for this page only */
+      }
     },
   };
 }

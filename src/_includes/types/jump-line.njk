@@ -12,7 +12,7 @@
             <template x-if="cell.j !== undefined">
               <div class="flex flex-col items-center w-full">
                 <div class="h-14 flex flex-col items-center justify-end">
-                  <input type="text" inputmode="decimal" x-model="jlInputs[cell.j]" @keydown.enter="enterField($el, cell.j)" @input="jlErrors = []" :disabled="solved" placeholder="?" :aria-label="'Saut ' + (cell.j + 1)" class="w-14 h-9 text-center rounded-lg border-2 font-bold text-base focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': jlErrors.includes(cell.j), 'border-slate-300 dark:border-slate-600': !solved && !jlErrors.includes(cell.j) }" />
+                  <input type="text" inputmode="decimal" x-model="jlInputs[cell.j]" @keydown.enter="enterField($el, cell.j)" @input="jlErrors = []" :disabled="solved" placeholder="?" :aria-label="'Saut ' + (cell.j + 1)" class="w-14 min-h-9 coarse:min-h-11 text-center rounded-lg border-2 font-bold text-base focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default" :class="{ 'border-green-500': solved, 'border-red-400 bg-red-50 dark:bg-red-900/20': jlErrors.includes(cell.j), 'border-slate-300 dark:border-slate-600': !solved && !jlErrors.includes(cell.j) }" />
                   <span class="text-xs text-content-subtle leading-4" x-text="jlView.unit"></span>
                 </div>
                 {# Arc stretched to the jump's width, landing vertically; head drawn unstretched at its end #}

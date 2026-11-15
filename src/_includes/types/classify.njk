@@ -23,7 +23,7 @@
                   x-show="classifyPlacements[ii] === cat.id"
                   @click.stop="classifyPickBack(ii)"
                   :disabled="solved"
-                  class="js-classify-item inline-flex items-center justify-center rounded-lg border-2 px-2 py-1 transition-all"
+                  class="js-classify-item inline-flex items-center justify-center rounded-lg border-2 px-2 py-1 coarse:min-h-11 coarse:min-w-11 transition-all"
                   :class="classifyErrors.includes(ii)
                     ? 'border-red-400 bg-red-50 dark:bg-red-900/20'
                     : solved
@@ -45,7 +45,7 @@
             x-show="classifyPlacements[ii] === undefined"
             @click="classifySelect(ii)"
             :disabled="solved"
-            class="js-classify-item inline-flex items-center justify-center rounded-xl border-2 px-3 py-2 transition-all font-bold"
+            class="js-classify-item inline-flex items-center justify-center rounded-xl border-2 px-3 py-2 coarse:py-3 transition-all font-bold"
             :class="{
               'border-primary-500 bg-primary-100 dark:bg-primary-900/30 ring-2 ring-primary-300 scale-105': classifySelected === ii,
               'border-red-400 bg-red-50 dark:bg-red-900/20': classifyErrors.includes(ii),

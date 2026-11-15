@@ -9,7 +9,7 @@
       <div class="js-px grid select-none touch-none max-w-full"
         :class="cur.px.rowLabels ? 'text-[0.7rem]' : 'text-sm'"
         :style="`width:max-content;gap:2px;grid-template-columns:auto repeat(${cur.px.cols.length}, minmax(0, 2.6rem))`"
-        @pointerdown="pxDown($event)" @pointermove="pxMove($event)" @pointerup.window="pxUp()" @pointercancel.window="pxUp()">
+        @pointerdown="pxDown($event)" @pointermove="pxMove($event)" @pointerup.window="pxUp($event)" @pointercancel.window="pxUp($event)">
         <div></div>
         <template x-for="(clue, j) in cur.px.cols" :key="currentIndex + '-c' + j">
           <div class="js-px-col flex flex-col items-center justify-end pb-1 font-bold leading-tight tabular-nums transition-opacity"

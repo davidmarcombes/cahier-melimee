@@ -61,7 +61,7 @@
 
       {# Outside zone #}
       <div class="flex justify-center">
-        <div class="px-4 py-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 min-h-[2.5rem] min-w-[140px] flex flex-wrap justify-center items-center gap-1 cursor-pointer"
+        <div class="px-4 py-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 min-h-[2.5rem] coarse:min-h-11 min-w-[140px] flex flex-wrap justify-center items-center gap-1 cursor-pointer"
           @click="vennPlaceZone('out')">
           <span class="text-xs text-content-subtle" x-show="!Object.values(vennPlacements).some(v => v === 'out')">Ni l'un ni l'autre</span>
           <template x-for="(it, i) in cur.venn.items" :key="'po'+i">

@@ -28,7 +28,7 @@ layout: base
           <button
             type="button"
             @click="selectIdentity(identity)"
-            class="p-5 border-2 rounded-xl text-left transition-all hover:border-primary-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 group"
+            class="p-5 border-2 rounded-xl text-left transition-all hover:border-primary-500 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group"
             :class="selectedIdentity?.name === identity.name ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-slate-100 dark:border-slate-700'"
           >
             <span class="text-base font-bold group-hover:text-primary-600 dark:group-hover:text-primary-400" x-text="identity.name"></span>

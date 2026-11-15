@@ -231,13 +231,14 @@ const DECOMP_PLACES = {
   millièmes: 0.001,
 };
 // Each labelled part is the digit of that place in the number
+// Counted in thousandths with integers: rounding n / place instead read 69,997 as 7 tens (6,9997 → 7,000)
 const decompCheck = (e) => {
-  const n = num(e.decomp.number);
+  const n = Math.round(num(e.decomp.number) * 1000);
   for (const p of e.decomp.parts) {
     if (p.comma) continue;
     const place = DECOMP_PLACES[p.label];
     if (!place) throw new Unparseable('place ' + p.label);
-    const digit = Math.floor(Math.round((n / place) * 1000) / 1000) % 10;
+    const digit = Math.floor(n / Math.round(place * 1000)) % 10;
     if (digit !== num(p.answer)) return `${p.label} of ${e.decomp.number} is ${digit}, declared ${p.answer}`;
   }
   return null;

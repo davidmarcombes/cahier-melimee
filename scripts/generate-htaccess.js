@@ -62,6 +62,9 @@ AddDefaultCharset UTF-8
 
   # Security headers
   Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  # No page uses camera, microphone or location (children's site): refuse them outright
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 </IfModule>
 
 # ── Expires Fallback (mod_expires) ────────────────────────────────────────────

@@ -48,6 +48,9 @@
           ":aria-pressed": {},
           ":aria-controls": {},
           ":aria-sort": {},
+          ":aria-valuenow": {},
+          ":aria-valuemax": {},
+          ":aria-valuetext": {},
           ":title": {},
           ":id": {}
         }

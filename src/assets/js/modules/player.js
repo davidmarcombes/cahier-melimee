@@ -304,7 +304,7 @@ export function seriesPlayer(exercises, seriesId) {
 
     tbStory: '', // think-board: story quadrant text
     tbStoryError: false, // think-board: story keyword mismatch
-    _tbDrawing: false, // think-board: canvas pointer down
+    _tbDrawing: false, // think-board: pointerId of the pen while drawing, false otherwise
 
     clkH: 12, // clock set: hour the pupil's hands show (1…12)
     clkM: 0, // clock set: minutes the pupil's hands show
@@ -334,7 +334,7 @@ export function seriesPlayer(exercises, seriesId) {
     tbAt: [], // target-blocks: per tile its centre [x, y] on the board (units), null in the tray
     tbSel: null, // target-blocks: tile picked by a tap (the next tap on the board puts it there)
     tbZ: [], // target-blocks: tiles drawing order, the one moved last on top
-    _tbDrag: null, // target-blocks: { i, cx, cy, x0, y0, moved } while a tile is dragged
+    _tbDrag: null, // target-blocks: { i, cx, cy, x0, y0, moved, id } while a tile is dragged (id = pointerId)
     tbHint: '', // target-blocks: why the last check failed
 
     dgOpen: [], // dice-game: per tile (1…n) true while open
@@ -365,12 +365,12 @@ export function seriesPlayer(exercises, seriesId) {
     tgAt: [], // tangram: per piece [x, y, r, f] (x, y fractional while dragged)
     tgSel: null, // tangram: piece picked last (flip button, keyboard)
     tgZ: [], // tangram: drawing order, the piece picked last on top
-    _tgDrag: null, // tangram: { k, cx, cy, x0, y0, moved } while a piece is dragged
+    _tgDrag: null, // tangram: { k, cx, cy, x0, y0, moved, id } while a piece is dragged (id = pointerId)
     tgHint: '', // tangram: why the last check failed
 
     pxCells: [], // picross: per cell (row by row) 0 empty, 1 coloured, 2 crossed out
     pxMode: 1, // picross: what a tap puts (1 colour, 2 cross)
-    _pxStroke: null, // picross: { from, was, value, axis } while the finger paints
+    _pxStroke: null, // picross: { from, was, value, axis, id } while the finger paints (id = pointerId)
     pxHint: '', // picross: why the last check failed
 
     tfCells: [], // ten-frame: per cell 0 empty, 1 token there at the start (red), 2 token put by the pupil
@@ -1840,17 +1840,17 @@ export function seriesPlayer(exercises, seriesId) {
       this.tbHint = '';
     },
     tbDown(i, ev) {
-      if (this.solved) return;
+      if (this.solved || this._tbDrag || ev.button !== 0) return;
       ev.preventDefault();
       ev.stopPropagation();
       this.$refs.tbBoard.setPointerCapture(ev.pointerId);
       const [x0, y0] = this.tbPos(i);
-      this._tbDrag = { i, cx: ev.clientX, cy: ev.clientY, x0, y0, moved: false };
+      this._tbDrag = { i, cx: ev.clientX, cy: ev.clientY, x0, y0, moved: false, id: ev.pointerId };
       this.tbZ = [...this.tbZ.filter((j) => j !== i), i];
     },
     tbMove(ev) {
       const d = this._tbDrag;
-      if (!d) return;
+      if (!d || ev.pointerId !== d.id) return;
       const u = this.cur.tb.w / this.$refs.tbBoard.getBoundingClientRect().width;
       const [dx, dy] = [(ev.clientX - d.cx) * u, (ev.clientY - d.cy) * u];
       if (!d.moved && Math.abs(dx) + Math.abs(dy) < 0.3) return;
@@ -1859,9 +1859,9 @@ export function seriesPlayer(exercises, seriesId) {
       at[d.i] = [d.x0 + dx, d.y0 + dy];
       this.tbAt = at;
     },
-    tbUp() {
+    tbUp(ev) {
       const d = this._tbDrag;
-      if (!d) return;
+      if (!d || (ev && ev.pointerId !== d.id)) return;
       this._tbDrag = null;
       if (!d.moved) {
         this.tbSel = this.tbSel === d.i ? null : d.i;
@@ -2036,15 +2036,16 @@ export function seriesPlayer(exercises, seriesId) {
       this.tgSel = k;
     },
     tgDown(k, ev) {
-      if (this.solved) return;
+      if (this.solved || this._tgDrag || ev.button !== 0) return;
       ev.preventDefault();
       ev.currentTarget.ownerSVGElement.setPointerCapture(ev.pointerId);
       this._tgTop(k);
-      this._tgDrag = { k, cx: ev.clientX, cy: ev.clientY, x0: this.tgAt[k][0], y0: this.tgAt[k][1], moved: false };
+      const [x0, y0] = this.tgAt[k];
+      this._tgDrag = { k, cx: ev.clientX, cy: ev.clientY, x0, y0, moved: false, id: ev.pointerId };
     },
     tgMove(ev) {
       const d = this._tgDrag;
-      if (!d) return;
+      if (!d || ev.pointerId !== d.id) return;
       const svg = ev.currentTarget;
       const u = this.cur.tg.w / svg.getBoundingClientRect().width; // units per pixel
       const [dx, dy] = [(ev.clientX - d.cx) * u, (ev.clientY - d.cy) * u];
@@ -2054,9 +2055,9 @@ export function seriesPlayer(exercises, seriesId) {
       at[d.k] = [d.x0 + dx, d.y0 + dy, at[d.k][2], at[d.k][3]];
       this.tgAt = at;
     },
-    tgUp() {
+    tgUp(ev) {
       const d = this._tgDrag;
-      if (!d) return;
+      if (!d || (ev && ev.pointerId !== d.id)) return;
       this._tgDrag = null;
       const [x, y, r, f] = this.tgAt[d.k];
       if (d.moved) this._tgPlace(d.k, x, y, r, f);
@@ -2147,20 +2148,22 @@ export function seriesPlayer(exercises, seriesId) {
       return cell ? Number(cell.dataset.px) : null;
     },
     pxDown(ev) {
+      // One finger at a time (a resting hand must not start a second stroke), primary button only
+      if (this._pxStroke || ev.button !== 0) return;
       const i = this._pxIndex(ev);
       if (this.solved || i === null) return;
       ev.preventDefault();
       const was = this.pxCells[i];
-      this._pxStroke = { from: i, was, value: was === this.pxMode ? 0 : this.pxMode, axis: null };
+      this._pxStroke = { from: i, was, value: was === this.pxMode ? 0 : this.pxMode, axis: null, id: ev.pointerId };
       this._pxPaint(i);
     },
     pxMove(ev) {
-      if (!this._pxStroke) return;
+      if (!this._pxStroke || ev.pointerId !== this._pxStroke.id) return;
       const i = this._pxIndex(ev);
       if (i !== null) this._pxPaint(i);
     },
-    pxUp() {
-      if (!this._pxStroke) return;
+    pxUp(ev) {
+      if (!this._pxStroke || (ev && ev.pointerId !== this._pxStroke.id)) return;
       this._pxStroke = null;
       this._pxSolvedYet();
     },
@@ -4379,8 +4382,9 @@ export function seriesPlayer(exercises, seriesId) {
     },
 
     tbDrawStart(e) {
-      if (this.solved) return;
-      this._tbDrawing = true;
+      // One pen at a time: a second finger would draw zig-zags between the two
+      if (this.solved || this._tbDrawing !== false || e.button !== 0) return;
+      this._tbDrawing = e.pointerId;
       const canvas = this.$refs.tbCanvas;
       if (!canvas) return;
       canvas.setPointerCapture(e.pointerId);
@@ -4394,7 +4398,7 @@ export function seriesPlayer(exercises, seriesId) {
     },
 
     tbDrawMove(e) {
-      if (!this._tbDrawing || this.solved) return;
+      if (this._tbDrawing !== e.pointerId || this.solved) return;
       const canvas = this.$refs.tbCanvas;
       if (!canvas) return;
       const { x, y } = this._tbPos(e, canvas);
@@ -4405,7 +4409,8 @@ export function seriesPlayer(exercises, seriesId) {
       ctx.moveTo(x, y);
     },
 
-    tbDrawEnd() {
+    tbDrawEnd(e) {
+      if (e && this._tbDrawing !== e.pointerId) return;
       this._tbDrawing = false;
     },
 

@@ -27,7 +27,7 @@
       {# Board (blocks) and tray, one box #}
       <div x-ref="tbBoard" class="js-tb relative w-full max-w-md select-none touch-none"
         :style="`aspect-ratio:${cur.tb.w} / ${tbFullH}`"
-        @pointermove="tbMove($event)" @pointerup="tbUp()" @pointercancel="tbUp()" @pointerdown="tbTap($event)">
+        @pointermove="tbMove($event)" @pointerup="tbUp($event)" @pointercancel="tbUp($event)" @pointerdown="tbTap($event)">
         <template x-for="(b, k) in cur.tb.blocks" :key="currentIndex + '-b' + k">
           <div class="js-tb-block absolute rounded-xl border-[3px] border-dashed transition-colors"
             :style="`left:${(b.x / cur.tb.w) * 100}%;top:${(b.y / tbFullH) * 100}%;width:${(b.s / cur.tb.w) * 100}%;height:${(b.s / tbFullH) * 100}%;border-color:${b.color};background:${b.color}${tbDone(k) ? '3a' : '1f'}`"

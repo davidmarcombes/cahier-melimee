@@ -10,7 +10,7 @@
         x-text="cur.tg.turn ? 'Fais glisser les pièces sur la silhouette. Touche une pièce pour la tourner.' : 'Fais glisser les pièces sur la silhouette.'"></p>
       <svg class="js-tg w-full max-w-lg select-none touch-none" x-effect="$el.setAttribute('viewBox', `-0.1 -0.1 ${cur.tg.w + 0.2} ${cur.tg.h + 0.2}`)"
         role="group" :aria-label="`Tangram : ${cur.tg.name}`"
-        @pointermove="tgMove($event)" @pointerup="tgUp()" @pointercancel="tgUp()">
+        @pointermove="tgMove($event)" @pointerup="tgUp($event)" @pointercancel="tgUp($event)">
         <rect x="0" :y="cur.tg.boardH" :width="cur.tg.w" :height="cur.tg.h - cur.tg.boardH" rx="0.4" class="fill-slate-100 dark:fill-slate-800"></rect>
         <g x-html="tgSilhouetteSvg"></g>
         {% for n in range(0, 7) %}

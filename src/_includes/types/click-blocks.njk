@@ -17,7 +17,7 @@
           <template x-for="r in col.max" :key="r">
             <div
               @click="blockTap(ci, r)"
-              class="w-12 h-7 flex items-center justify-center text-xs font-semibold select-none cursor-pointer transition-colors border-b border-slate-200 last:border-b-0"
+              class="w-12 min-h-7 coarse:min-h-11 flex items-center justify-center text-xs font-semibold select-none cursor-pointer transition-colors border-b border-slate-200 last:border-b-0"
               :style="(clickBlockLevels[ci] || 0) + r > col.max
                 ? 'background-color:' + col.color + '; color: white;'
                 : solved ? '' : 'background-color: white; color: #94a3b8;'"

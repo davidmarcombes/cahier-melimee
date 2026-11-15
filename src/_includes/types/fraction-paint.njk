@@ -21,9 +21,9 @@
           style="border-color:var(--p)"
           :style="active ? (solved ? 'background:var(--green,#4daa60);opacity:0.75' : 'background:var(--p);opacity:0.6') : ''"
           :data-paint-idx="i"
-          @mousedown.prevent="if(!solved){ paintDragging=true; paintDragValue=!active; paintCells[i]=paintDragValue }"
+          @mousedown.prevent="if(!solved && $event.button === 0){ paintDragging=true; paintDragValue=!active; paintCells[i]=paintDragValue }"
           @mouseenter="if(!solved && paintDragging) paintCells[i]=paintDragValue"
-          @touchstart.prevent="if(!solved){ paintDragging=true; paintDragValue=!active; paintCells[i]=paintDragValue }"
+          @touchstart.prevent="if(!solved && $event.touches.length === 1){ paintDragging=true; paintDragValue=!active; paintCells[i]=paintDragValue }"
         ></div>
       </template>
     </div>
@@ -37,7 +37,7 @@
     <button
       type="button"
       @click="check()"
-      class="px-6 py-2 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95"
+      class="px-6 py-2 coarse:py-3 text-sm font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 transition-all active:scale-95"
     >Vérifier</button>
   </div>
 </div>

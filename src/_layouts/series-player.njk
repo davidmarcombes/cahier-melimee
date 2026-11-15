@@ -45,15 +45,21 @@ isSeriesPage: true
 >
   {# Series header #}
   <div class="flex items-center justify-between mb-4 short:mb-2 text-sm">
-    <a href="{{ '/fr/exercices/' | url }}" class="text-slate-400 hover:text-primary-500 transition-colors" aria-label="Retour au menu des exercices"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <a href="{{ '/fr/exercices/' | url }}" class="relative inline-flex after:absolute after:-inset-[11px] after:content-[''] text-slate-400 hover:text-primary-500 transition-colors" aria-label="Retour au menu des exercices"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
     <span class="text-slate-500 dark:text-slate-400" x-text="(currentIndex + 1) + ' / ' + exercises.length"></span>
   </div>
 
   {# Progress bar #}
-  <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mb-6 short:mb-3 overflow-hidden">
-    <div class="h-full bg-primary-500 rounded-full transition-all duration-500"
-         :style="'width:' + Math.round((solvedCount / exercises.length) * 100) + '%'"></div>
+  <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mb-6 short:mb-3 overflow-hidden"
+       role="progressbar" aria-label="Progression" aria-valuemin="0"
+       :aria-valuemax="exercises.length" :aria-valuenow="solvedCount"
+       :aria-valuetext="solvedCount + ' exercice' + (solvedCount > 1 ? 's' : '') + ' réussi' + (solvedCount > 1 ? 's' : '') + ' sur ' + exercises.length">
+    <div class="h-full w-full origin-left bg-primary-500 rounded-full transition-transform duration-500"
+         :style="'transform:scaleX(' + (solvedCount / exercises.length).toFixed(3) + ')'"></div>
   </div>
+
+  {# Screen-reader announcement of each check result (the visual boxes below are not live regions) #}
+  <p class="sr-only" aria-live="polite" x-text="solved ? 'C’est juste !' : (showError ? 'Ce n’est pas encore ça. Essaie encore !' : '')"></p>
 
   {# Maternelle start screen: says « this exercise talks », and its tap unlocks speech for exercise 1 #}
   {% if kid %}

@@ -188,7 +188,11 @@ async function main() {
               ? await capturePage(browser, sCur.url, page, path.join(reportDir, 'current'))
               : [];
             const baseFiles = fs.existsSync(path.join(baseShots, a.label))
-              ? fs.readdirSync(path.join(baseShots, a.label)).map((f) => path.join(a.label, f))
+              ? fs
+                  .readdirSync(path.join(baseShots, a.label))
+                  // only this page's PNGs: a page folder also holds sub-pages' folders (fr/ → fr/applications/)
+                  .filter((f) => f.endsWith('.png'))
+                  .map((f) => path.join(a.label, f))
               : [];
             for (const f of new Set([...files, ...baseFiles])) {
               const b = path.join(baseShots, f);

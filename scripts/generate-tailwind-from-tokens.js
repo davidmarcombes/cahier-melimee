@@ -115,6 +115,9 @@ module.exports = {
         ]),
   ],
   darkMode: 'class',
+  // hover: styles only on devices that really hover (mouse): on tablets a tapped tile would otherwise
+  // stay highlighted after the finger lifts, which reads as « still selected »
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
       colors: ${JSON.stringify(tailwindColors, null, 2)},
@@ -136,7 +139,13 @@ module.exports = {
   blocklist: ['!dark'],
   // Short screens (laptop 768p at 100 %): tighter vertical spacing, see agents/conventions.md. A variant,
   // not a raw entry in theme.screens: a raw screen turns off every max-* variant (max-sm: …)
-  plugins: [({ addVariant }) => addVariant('short', '@media (max-height: 800px)')]
+  // Touch screens (tablets): coarse: grows tap targets to 44 px without changing the desktop layout
+  plugins: [
+    ({ addVariant }) => {
+      addVariant('short', '@media (max-height: 800px)');
+      addVariant('coarse', '@media (pointer: coarse)');
+    },
+  ]
 };
 `;
 

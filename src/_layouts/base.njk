@@ -10,9 +10,15 @@
     <!-- Path prefix for JS runtime fetches -->
     <script>window.__pathPrefix = '{{ '/' | url }}';</script>
     <!-- Dark mode initialization script — runs before styles so no flash of wrong theme on load -->
+    <!-- color-scheme: native scrollbars and form controls follow the theme; the script pins it to the chosen theme before paint -->
+    <meta name="color-scheme" content="light dark">
     <script>
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches))
-      { document.documentElement.classList.add('dark'); }
+      (function () {
+        var t; try { t = localStorage.theme; } catch (e) {}
+        var dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark');
+        document.querySelector('meta[name=color-scheme]').content = dark ? 'dark' : 'light';
+      })();
     </script>
     {% if preloadCsv %}<script>if(!sessionStorage.getItem('ex4')){var _l=document.createElement('link');_l.rel='preload';_l.as='fetch';_l.crossOrigin='anonymous';_l.href='{{ '/fr/exercices/data.csv' | url }}';document.head.appendChild(_l);}</script>{% endif %}
     <style>[x-cloak] { display: none !important; }</style>
@@ -38,6 +44,9 @@
     <!-- Structured Data (Schema.org) -->
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"{{ site.url }}/#website","url":"{{ site.url }}/","name":"{{ site.title | safe }}","description":"{{ site.description | safe }}","inLanguage":"fr"},{"@type":"EducationalApplication","@id":"{{ site.url }}/#app","name":"{{ site.title }}","url":"{{ site.url }}/fr/","description":"Exercices de mathématiques gratuits pour enfants de la GS au CM2. Sans publicité, sans inscription et 100% libre. Idéal pour s'entraîner en classe ou à la maison.","applicationCategory":"EducationalApplication","operatingSystem":"All","browserRequirements":"Requires JavaScript. Requires HTML5.","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"educationalLevel":["GS","CP","CE1","CE2","CM1","CM2"],"audience":{"@type":"EducationalAudience","educationalRole":"student"},"inLanguage":"fr"}]}</script>
 
+    {# The exercise list is the heavy page (CSV of every series): start loading it as soon as the pointer
+       rests on, or a finger touches, a link to it. Series pages prerender it right away (series-player.njk) #}
+    {% if page.url != '/fr/exercices/' %}<script type="speculationrules">{"prerender":[{"source":"document","where":{"href_matches":"{{ '/fr/exercices/' | url }}"},"eagerness":"moderate"}]}</script>{% endif %}
 
   </head>
   <body class="min-h-screen flex flex-col bg-surface-default text-content-default">
