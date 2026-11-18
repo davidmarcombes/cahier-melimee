@@ -158,8 +158,17 @@ export function jumpLine({ kind = 'temps', points = [], hide = [] }) {
         : num(v).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f')
   );
   const fields = [];
-  for (let i = 1; i < vs.length; i++)
-    fields.push({ role: 'jump', at: i - 1, answer: time ? String(vs[i] - vs[i - 1]) : fmt(vs[i] - vs[i - 1]) });
+  // A time jump of whole hours (21 h → 22 h) is written in hours, the others in minutes
+  for (let i = 1; i < vs.length; i++) {
+    const d = vs[i] - vs[i - 1];
+    const hours = time && d >= 60 && d % 60 === 0;
+    fields.push({
+      role: 'jump',
+      at: i - 1,
+      answer: time ? String(hours ? d / 60 : d) : fmt(d),
+      unit: time ? (hours ? 'h' : 'min') : money ? '€' : '',
+    });
+  }
   const pointField = {};
   for (const i of hide) {
     pointField[i] = fields.length;
@@ -173,10 +182,51 @@ export function jumpLine({ kind = 'temps', points = [], hide = [] }) {
       { role: 'total', answer: String(total % 60), unit: 'min' }
     );
   else fields.push({ role: 'total', answer: fmt(total), unit: money ? '€' : '' });
-  return { time, money, labels, fields, pointField, totalFrom, unit: time ? 'min' : money ? '€' : '' };
+  // sizes: each jump's length, for the to-scale coloured bands (`bands: true`)
+  const sizes = vs.slice(1).map((v, i) => v - vs[i]);
+  return { time, money, labels, fields, pointField, totalFrom, sizes, unit: time ? 'min' : money ? '€' : '' };
 }
 
 // Fewest coins and notes making `amount` (cents) from `coins` (greedy: right for euro denominations)
+// Decimal-blocks: a ± b in a place-value table (10 · 1 | 0,1 · 0,01 · 0,001), each digit drawn as pieces.
+// a, b: decimal strings (« 36,825 »), up to 3 decimals; op '+' or '-' (a ≥ b). Columns from the highest
+// place used by a, b or the result down to the last decimal. Digits per column for a, b and the result r.
+export function decimalBlocks({ a, b, op = '+' }) {
+  const parse = (s) => String(s).replace(/\s/g, '').replace('.', ',');
+  const dec = Math.max(...[a, b].map((s) => (parse(s).split(',')[1] || '').length));
+  const scaled = (s) => {
+    const [i, d = ''] = parse(s).split(',');
+    return Number(i) * 10 ** dec + Number(d.padEnd(dec, '0') || 0);
+  };
+  const A = scaled(a),
+    B = scaled(b);
+  const R = op === '-' ? A - B : A + B;
+  const intLen = Math.max(1, ...[A, B, R].map((v) => String(Math.floor(v / 10 ** dec)).length));
+  const pows = Array.from({ length: intLen + dec }, (_, k) => intLen - 1 - k);
+  const digit = (v, p) => Math.floor(v / 10 ** (p + dec)) % 10;
+  const COLORS = {
+    3: 'bg-orange-400 border-orange-700',
+    2: 'bg-purple-400 border-purple-700',
+    1: 'bg-sky-500 border-sky-800',
+    0: 'bg-lime-500 border-lime-800',
+    '-1': 'bg-teal-300 border-teal-700',
+    '-2': 'bg-pink-400 border-pink-700',
+    '-3': 'bg-yellow-400 border-yellow-700',
+  };
+  const label = (p) => (p >= 0 ? String(10 ** p).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : `0,${'0'.repeat(-p - 1)}1`);
+  const int = Math.floor(R / 10 ** dec),
+    frac = dec ? String(R % 10 ** dec).padStart(dec, '0') : '';
+  return {
+    op,
+    places: pows.map((p) => ({ pow: p, label: label(p), color: COLORS[p] || COLORS[0] })),
+    a: pows.map((p) => digit(A, p)),
+    b: pows.map((p) => digit(B, p)),
+    r: pows.map((p) => digit(R, p)),
+    firstDecimal: intLen, // column index where the decimals start (thick line before it)
+    answer: dec ? `${int},${frac}` : String(int),
+  };
+}
+
 export function fewestPieces(amount, coins) {
   let left = amount,
     n = 0;
@@ -373,6 +423,10 @@ export function seriesPlayer(exercises, seriesId) {
     _pxStroke: null, // picross: { from, was, value, axis, id } while the finger paints (id = pointerId)
     pxHint: '', // picross: why the last check failed
 
+    dbkCounts: [], // decimal-blocks: pieces per column in the result row
+    dbkInput: '', // decimal-blocks: the result written as a number
+    dbkErrors: [], // decimal-blocks: wrong columns after a check
+    dbkHint: '',
     tfCells: [], // ten-frame: per cell 0 empty, 1 token there at the start (red), 2 token put by the pupil
     tfHint: '', // ten-frame: why the last check failed
 
@@ -624,7 +678,7 @@ export function seriesPlayer(exercises, seriesId) {
       this.countWrong = null;
       this.countChoices = this.kid && _e.type === 'count-objects' ? this._nearChoices(Number(_e.answers?.[0])) : [];
       this.countShow();
-      const _blanks = String(_e.operation ?? '').split('?').length - 1;
+      const _blanks = _e.clockMode === 'read24' ? 2 : String(_e.operation ?? '').split('?').length - 1;
       const _colOpBlanks = _e.colOp ? (_e.colOp.blanks ?? (_e.colOp.result || []).filter((d) => d === '?').length) : 0;
       this.trouInputs = _blanks + _colOpBlanks > 0 ? Array(_blanks + _colOpBlanks).fill('') : [];
 
@@ -822,6 +876,15 @@ export function seriesPlayer(exercises, seriesId) {
       this.pxMode = 1;
       this._pxStroke = null;
       this.pxHint = '';
+      // decimal-blocks: subtraction starts from a's pieces (take b away), addition from an empty row
+      this.dbkCounts = _e.dbk
+        ? _e.dbk.op === '-'
+          ? decimalBlocks(_e.dbk).a.slice()
+          : decimalBlocks(_e.dbk).a.map(() => 0)
+        : [];
+      this.dbkInput = '';
+      this.dbkErrors = [];
+      this.dbkHint = '';
       this.tfCells = _e.tf ? Array.from({ length: 10 * (_e.tf.frames || 1) }, (_, i) => (i < _e.tf.given ? 1 : 0)) : [];
       this.tfHint = '';
       this.dgBest = null;
@@ -1037,6 +1100,49 @@ export function seriesPlayer(exercises, seriesId) {
       }
     },
 
+    // Glass (number-line estimate, look: glass): straight sides, so the level is proportional to the amount.
+    // Inside from y = 220 (min, empty) up to y = 40 (max, full); a tap or a slide sets the water level.
+    nlGlassPlace(event) {
+      if (this.solved || !this.cur.nl) return;
+      const rect = event.currentTarget.getBoundingClientRect();
+      const svgY = ((event.clientY - rect.top) / rect.height) * 250;
+      const { min = 0, max = 1 } = this.cur.nl;
+      const range = max - min;
+      const raw = min + ((220 - svgY) / 180) * range;
+      const v = Math.round(Math.max(min, Math.min(max, raw)) / (range / 200)) * (range / 200);
+      this.nlVal = Math.round(v * 1e9) / 1e9;
+      this.nlHint = '';
+    },
+    get nlGlassSvg() {
+      const nl = this.cur.nl;
+      if (!nl || nl.look !== 'glass') return '';
+      const { min = 0, max = 1 } = nl;
+      const y = (v) => 220 - ((v - min) / (max - min)) * 180;
+      let s = '';
+      // water (under the glass outline)
+      if (this.nlVal !== null) {
+        const wy = y(this.nlVal);
+        s += `<path d="M62 ${wy} H158 V212 Q158 220 150 220 H70 Q62 220 62 212 Z" class="fill-sky-300 dark:fill-sky-600" opacity="0.85"/>`;
+        s += `<line x1="62" y1="${wy}" x2="158" y2="${wy}" stroke-width="3" class="stroke-sky-600 dark:stroke-sky-300"/>`;
+      }
+      // once solved: the exact level
+      if (this.solved) {
+        const ay = y(sortValue(this.cur.answers?.[0]));
+        s += `<line x1="52" y1="${ay}" x2="168" y2="${ay}" stroke="#16a34a" stroke-width="3" stroke-dasharray="6 4"/>`;
+      }
+      // glass: open top, straight sides, rounded bottom, a thicker base
+      s += `<path d="M58 34 V212 Q58 224 70 224 H150 Q162 224 162 212 V34" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+      s += `<line x1="70" y1="231" x2="150" y2="231" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>`;
+      // a glint on the left side
+      s += `<line x1="70" y1="60" x2="70" y2="120" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.25"/>`;
+      const [lo, hi] = nl.labels || [];
+      if (lo) s += `<text x="172" y="${y(min) + 5}" font-size="16" font-weight="700" fill="currentColor">${lo}</text>`;
+      if (hi) {
+        s += `<line x1="162" y1="${y(max)}" x2="170" y2="${y(max)}" stroke="currentColor" stroke-width="3"/>`;
+        s += `<text x="174" y="${y(max) + 5}" font-size="16" font-weight="700" fill="currentColor">${hi}</text>`;
+      }
+      return s;
+    },
     nlPlace(event) {
       if (this.solved || !this.cur.nl) return;
       const rect = event.currentTarget.getBoundingClientRect();
@@ -1108,6 +1214,18 @@ export function seriesPlayer(exercises, seriesId) {
       }
     },
 
+    // bands: one colour per jump (no arrows) — the band along the line and its field's border,
+    // as in the « durée du film » pictures
+    jlColor(j, part) {
+      const c = [
+        ['bg-sky-300 dark:bg-sky-600', 'border-sky-400'],
+        ['bg-yellow-300 dark:bg-yellow-600', 'border-yellow-400'],
+        ['bg-pink-400 dark:bg-pink-600', 'border-pink-400'],
+        ['bg-emerald-300 dark:bg-emerald-600', 'border-emerald-400'],
+      ][j % 4];
+      return part === 'band' ? c[0] : c[1];
+    },
+
     get jlView() {
       return this.cur.jl ? jumpLine(this.cur.jl) : null;
     },
@@ -1144,7 +1262,9 @@ export function seriesPlayer(exercises, seriesId) {
       const tol = est ? this.cur.nl.tolerance + 1e-9 : snapStep * 0.51;
       const isCorrect = (this.cur.answers || []).some((a) => Math.abs(sortValue(a) - this.nlVal) <= tol);
       // Estimate mode: say which way to move
-      this.nlHint = est && !isCorrect ? (this.nlVal < sortValue(this.cur.answers?.[0]) ? 'right' : 'left') : '';
+      const below = this.nlVal < sortValue(this.cur.answers?.[0]);
+      this.nlHint =
+        est && !isCorrect ? (this.cur.nl.look === 'glass' ? (below ? 'up' : 'down') : below ? 'right' : 'left') : '';
       if (isCorrect) {
         this.solvedFlags[this.currentIndex] = true;
         this.showError = false;
@@ -2354,6 +2474,38 @@ export function seriesPlayer(exercises, seriesId) {
       if (m === 'color') return this.hbColored.length > 0;
       return this.hbInputs.every((v) => String(v).trim());
     },
+    get dbkView() {
+      return this.cur.dbk ? decimalBlocks(this.cur.dbk) : null;
+    },
+    // + / − one piece in result column i
+    dbkAdd(i, d) {
+      if (this.solved) return;
+      const c = [...this.dbkCounts];
+      c[i] = Math.max(0, Math.min(30, c[i] + d));
+      this.dbkCounts = c;
+      this.dbkErrors = [];
+      this.dbkHint = '';
+    },
+    // 10 pieces → 1 piece of the column on the left
+    dbkExchange(i) {
+      if (this.solved || i < 1 || this.dbkCounts[i] < 10) return;
+      const c = [...this.dbkCounts];
+      c[i] -= 10;
+      c[i - 1] += 1;
+      this.dbkCounts = c;
+      this.dbkErrors = [];
+      this.dbkHint = '';
+    },
+    // 1 piece → 10 pieces of the column on the right (subtraction)
+    dbkBreak(i) {
+      if (this.solved || i >= this.dbkCounts.length - 1 || this.dbkCounts[i] < 1) return;
+      const c = [...this.dbkCounts];
+      c[i] -= 1;
+      c[i + 1] += 10;
+      this.dbkCounts = c;
+      this.dbkErrors = [];
+      this.dbkHint = '';
+    },
     tfTap(i) {
       if (this.solved) return;
       const cells = [...this.tfCells];
@@ -2537,6 +2689,19 @@ export function seriesPlayer(exercises, seriesId) {
         const wrong = hb.blanks.filter((n, k) => normalizeAnswer(this.hbInputs[k]) !== String(n)).length;
         if (!wrong) return this._markSolvedAndAdvance();
         this.hbHint = `${wrong} nombre${wrong > 1 ? 's ne vont' : ' ne va'} pas encore.`;
+        return this._flashError();
+      }
+
+      if (_e.type === 'decimal-blocks' && _e.dbk) {
+        const v = decimalBlocks(_e.dbk);
+        this.dbkErrors = v.r.map((d, i) => (this.dbkCounts[i] !== d ? i : -1)).filter((i) => i >= 0);
+        const numberOk = normalizeAnswer(this.dbkInput) === normalizeAnswer(v.answer);
+        if (!this.dbkErrors.length && numberOk) return this._markSolvedAndAdvance();
+        this.dbkHint = this.dbkCounts.some((n) => n >= 10)
+          ? 'Une colonne a 10 pièces ou plus : échange-les contre 1 pièce de la colonne de gauche.'
+          : this.dbkErrors.length
+            ? 'Compte encore les pièces des colonnes en rouge.'
+            : 'Les pièces sont justes : écris maintenant le nombre.';
         return this._flashError();
       }
 
@@ -4238,6 +4403,13 @@ export function seriesPlayer(exercises, seriesId) {
       if (!this.solved) this.sortPicked = this.sortPicked.slice(0, rank);
     },
 
+    // compare with pictures: « 6/8 » drawn as `c.shape` (fractionShapesSvg, svg.js) next to the fraction
+    cmpPic(c, frac) {
+      const [n, d] = String(frac).split('/').map(Number);
+      if (typeof fractionShapesSvg === 'undefined' || !d) return '';
+      const shapes = fractionShapesSvg({ shape: c.shape, numerator: n, denominator: d, rows: c.rows, cols: c.cols });
+      return shapes[0] ? shapes[0].svg : '';
+    },
     colOpColor(posFromRight) {
       const p = [
         'bg-red-100 border-red-400 text-red-700 dark:bg-red-900/20 dark:border-red-500 dark:text-red-300',

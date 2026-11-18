@@ -685,6 +685,14 @@ function solveAll() {
       steps.forEach(([a, op, b]) => play(a, op, b));
       if (w) p.check();
     },
+    // decimal-blocks: the result row's pieces and the number, from decimalBlocks() in player.js (dbkView);
+    // wrong: one piece too many in the last column
+    'decimal-blocks': (e, w) => {
+      const v = p.dbkView;
+      p.dbkCounts = v.r.map((d, i) => (w && i === v.r.length - 1 ? d + 1 : d));
+      p.dbkInput = v.answer;
+      p.check();
+    },
     'ten-frame': (e, w) => {
       // Tokens from the first cell on (the first box fills first); wrong: one token too many / too few
       const { target, frames = 1 } = e.tf;

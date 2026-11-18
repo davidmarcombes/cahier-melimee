@@ -1834,6 +1834,67 @@
     },
 
     /* ── Function Machine ─────────────────────────────────────────────── */
+    // « Trouve les chiffres manquants » : opération posée (+ ou −) dont quelques chiffres sont cachés,
+    // dans les termes comme dans le résultat. Une seule solution (vérifiée en essayant tous les chiffres).
+    chiffresManquants: {
+      generate: (params = {}) => {
+        const op = params.op === '-' ? '-' : '+';
+        const digits = params.digits ?? 5;
+        const want = Math.min(params.holes ?? 3, 4);
+        const lo = 10 ** (digits - 1),
+          hi = 10 ** digits - 1;
+        for (let tries = 0; tries < 200; tries++) {
+          let a = rand(lo, hi),
+            b = rand(Math.ceil(lo / 10), hi);
+          if (op === '-' && b > a) [a, b] = [b, a];
+          if (op === '-' && a === b) continue;
+          const r = op === '+' ? a + b : a - b;
+          const width = Math.max(String(a).length, String(b).length, String(r).length);
+          const rows = [a, b, r].map((n) => String(n).padStart(width, ' ').split(''));
+          // Digit cells, then a random choice of holes (never two in one column: one unknown per column)
+          const cells = [];
+          rows.forEach((row, ri) => row.forEach((c, ci) => c !== ' ' && cells.push([ri, ci])));
+          const picked = [];
+          for (const [ri, ci] of shuffle(cells)) {
+            if (picked.length === want) break;
+            if (!picked.some(([, c]) => c === ci)) picked.push([ri, ci]);
+          }
+          picked.sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+          const holeDigits = picked.map(([ri, ci]) => rows[ri][ci]);
+          // Unique?
+          const value = (ri, ds) =>
+            Number(
+              rows[ri]
+                .map((c, ci) => (picked.findIndex(([pr, pc]) => pr === ri && pc === ci) >= 0 ? ds.shift() : c))
+                .join('')
+                .trim()
+            );
+          let found = 0;
+          for (let n = 0; n < 10 ** picked.length && found < 2; n++) {
+            const ds = String(n).padStart(picked.length, '0').split('');
+            const x = value(0, ds),
+              y = value(1, ds),
+              z = value(2, ds);
+            if ((op === '+' ? x + y : x - y) === z) found++;
+          }
+          if (found !== 1) continue;
+          let f = 0;
+          const mark = (ri) =>
+            rows[ri].map((c, ci) => (picked.some(([pr, pc]) => pr === ri && pc === ci) ? (ri === 2 ? '?' : f++) : c));
+          const top = mark(0),
+            bottom = mark(1);
+          const resultStart = f;
+          return {
+            type: 'column-op',
+            title: 'Trouve les chiffres manquants',
+            colOp: { operation: op, top, bottom, result: mark(2), resultStart, blanks: picked.length },
+            answers: holeDigits,
+          };
+        }
+        throw new Error('chiffresManquants: no unique puzzle found');
+      },
+    },
+
     functionMachineCompute: {
       generate(params = {}) {
         const ops = [

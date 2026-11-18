@@ -69,6 +69,8 @@ layout: base
 
 <script>
 function onboardingWizard() {
+  // Built in from src/assets/identities.json (src/_data/identities.js): no fetch, no wait after Alpine starts
+  const IDENTITIES = {{ identities | dump | safe }};
   const STICKERS = ['🌻', '🍬', '🌵', '🎈', '🎨', '🚀', '⭐', '⛄', '🧩', '🎸', '⚽', '🎒', '🎃', '⏰', '🎻', '🎩', '🚲', '🛹', '🛸', '🪁'];
 
   return {
@@ -78,19 +80,9 @@ function onboardingWizard() {
     assignedSticker: null,
     slug: '',
 
-    async init() {
+    init() {
       const pick = (pool) => pool.slice().sort(() => Math.random() - 0.5).slice(0, 3).map(name => ({ name }));
-      try {
-        const res = await fetch((window.__pathPrefix || '/') + 'assets/identities.json');
-        const data = await res.json();
-        this.identities = [...pick(data.M || []), ...pick(data.F || [])].sort(() => Math.random() - 0.5);
-      } catch {
-        // Fallback if file unavailable
-        this.identities = [
-          { name: 'petit-renard-roux' }, { name: 'vieux-lion-sage' }, { name: 'vif-dauphin-bleu' },
-          { name: 'grande-chouette-bleue' }, { name: 'petite-souris-verte' }, { name: 'vive-loutre-brillante' }
-        ].sort(() => Math.random() - 0.5);
-      }
+      this.identities = [...pick(IDENTITIES.M), ...pick(IDENTITIES.F)].sort(() => Math.random() - 0.5);
     },
 
     selectIdentity(identity) {

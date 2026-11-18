@@ -13,11 +13,11 @@ questions:
     answer: "4"
 ---
 
-**Légende : 🍎 = 2 élèves**
+**Légende : 🧒 = 2 élèves**
 
 | Fruit | Élèves |
 |---|---|
-| Pomme | 🍎🍎🍎 |
-| Banane | 🍎🍎🍎🍎🍎 |
-| Fraise | 🍎🍎🍎🍎 |
-| Kiwi | 🍎 |
+| 🍎 Pomme | 🧒🧒🧒 |
+| 🍌 Banane | 🧒🧒🧒🧒🧒 |
+| 🍓 Fraise | 🧒🧒🧒🧒 |
+| 🥝 Kiwi | 🧒 |

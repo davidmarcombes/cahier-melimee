@@ -1,7 +1,8 @@
 <header class="border-b bg-surface-chrome print:hidden" x-data="{ mobileOpen: false, cahierUser: (window.localStore && window.localStore.getUser()) || null }">
   <div class="max-w-6xl mx-auto px-4 py-4 short:py-2 flex items-center justify-between">
     <a href="{{ '/fr' | url }}" class="flex items-center gap-2 shrink-0">
-      {% image "src/assets/images/logo.png", site.title + " logo", "2rem", "h-8 w-8", "eager" %}
+      {# Shown at 2rem: 32 px, 64 px for 2× screens (the 256 px source weighed 7 KB AVIF on every page) #}
+      {% image "src/assets/images/logo.png", site.title + " logo", "2rem", "h-8 w-8", "eager", [32, 64] %}
       <span class="font-semibold text-sm sm:text-base">{{ site.title }}</span>
     </a>
 

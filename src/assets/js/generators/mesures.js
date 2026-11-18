@@ -697,6 +697,7 @@
     //         step (5 — minutes / cents granularity), notes ([1000, 2000, 5000] cents, money),
     //         bonds (false — money: extra 5 / 10 / 20 € landmarks), target (100 | 1000, nombre),
     //         tens (true — nombre 1000: start off the tens, 368 → 370 → 400 → 1000)
+    //         bands (false — jumps drawn to scale as colour bands instead of arrows, same stops)
     compterEnAvancant: {
       generate(params = {}) {
         const kind = ['monnaie', 'nombre'].includes(params.kind) ? params.kind : 'temps';
@@ -727,7 +728,7 @@
                 : n % 10
                   ? 'Arrête-toi d’abord à la dizaine, puis à la centaine suivante, puis va jusqu’à 1&nbsp;000.'
                   : 'Arrête-toi d’abord à la centaine suivante, puis va jusqu’à 1&nbsp;000.',
-            jl: { kind, points: marks.map(String), hide },
+            jl: { kind, points: marks.map(String), hide, ...(params.bands ? { bands: true } : {}) },
           };
         }
         if (kind === 'temps') {
@@ -752,7 +753,7 @@
             type: 'jump-line',
             title: `${randItem(ACTS)} va de <strong>${say(start)}</strong> à <strong>${say(end)}</strong>. Combien de temps dure-t-il&nbsp;?`,
             body: `${say(start).replace(/&nbsp;/g, ' ')} pour aller à ${say(end).replace(/&nbsp;/g, ' ')}&nbsp;: arrête-toi d’abord à l’heure pile.`,
-            jl: { kind, points, hide },
+            jl: { kind, points, hide, ...(params.bands ? { bands: true } : {}) },
           };
         }
         const ITEMS = ['un livre', 'une trousse', 'un jeu de cartes', 'une gourde', 'un ballon', 'une casquette'];
@@ -779,7 +780,7 @@
           type: 'jump-line',
           title: `Tu achètes ${randItem(ITEMS)} à <strong>${eur(price)}&nbsp;€</strong> et tu payes avec un billet de <strong>${note / 100}&nbsp;€</strong>. Combien te rend-on&nbsp;?`,
           body: `Compte en avançant, comme le marchand. ${like}`,
-          jl: { kind, points: marks.map(eur), hide },
+          jl: { kind, points: marks.map(eur), hide, ...(params.bands ? { bands: true } : {}) },
         };
       },
     },

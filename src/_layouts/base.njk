@@ -21,8 +21,14 @@
       })();
     </script>
     {% if preloadCsv %}<script>if(!sessionStorage.getItem('ex4')){var _l=document.createElement('link');_l.rel='preload';_l.as='fetch';_l.crossOrigin='anonymous';_l.href='{{ '/fr/exercices/data.csv' | url }}';document.head.appendChild(_l);}</script>{% endif %}
-    <style>[x-cloak] { display: none !important; }</style>
+    {# The x-cloak player has no height until Alpine starts: the footer would show, then jump down when the player
+       appears (CLS ~0.06). Hidden-but-placed until then, its move is not a shift and the page keeps its height #}
+    <style>[x-cloak] { display: none !important; } body:has(.js-player[x-cloak]) > footer { visibility: hidden; }</style>
     <link rel="stylesheet" href="{{ '/css/styles.css' | url }}?v={{ site.version }}">
+    {# Player pages: the player module (player.js ~28 KB gzip) sits behind its entry file, constants.js one level
+       deeper: preload both so they start with the page. URLs must equal the imports minify.js rewrites (?v=) — dev
+       imports carry none. playerEntry / playerModule are set by series-player.njk and timed-player.njk #}
+    {% if playerModule and not site.devMode %}<link rel="modulepreload" href="{{ '/assets/js/modules/' | url }}{{ playerModule }}.js?v={{ site.version }}"><link rel="modulepreload" href="{{ '/assets/js/modules/constants.js' | url }}?v={{ site.version }}">{% endif %}
 
     <meta name="description" content="{{ description or site.description }}" />
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
@@ -61,6 +67,8 @@
     {% include "components/footer.njk" %}
 
     <script defer type="module" src="{{ '/assets/js/app.js' | url }}?v={{ site.version }}"></script>
+    {# Before Alpine: deferred scripts and modules run in document order, so the player is on window when Alpine starts #}
+    {% if playerEntry %}<script defer type="module" src="{{ '/assets/js/' | url }}{{ playerEntry }}.js?v={{ site.version }}"></script>{% endif %}
     <script defer src="{{ '/assets/js/alpine.min.js' | url }}?v={{ site.version }}"></script>
     <script>
       if ('serviceWorker' in navigator) {

@@ -4,7 +4,7 @@
   <div class="prose dark:prose-invert text-center text-sm max-w-none mb-4 text-content-subtle"
        x-show="cur.body" x-html="cur.body"></div>
 
-  <p x-show="cur.nl && cur.nl.mode !== 'read'"
+  <p x-show="cur.nl && cur.nl.mode !== 'read' && cur.nl.look !== 'glass'"
      class="text-center text-base font-semibold mb-4 text-content-default">
     <span x-text="cur.nl && cur.nl.mode === 'estimate' ? 'Place à peu près le nombre' : 'Place le nombre'"></span>
     <span class="text-primary-600 dark:text-primary-400 font-bold"
@@ -12,7 +12,20 @@
     <span x-text="cur.nl && cur.nl.mode === 'estimate' ? 'sur la droite.' : 'sur la droite graduée.'"></span>
   </p>
 
-  <div class="relative"
+  {# look: glass — tap or slide on the glass to set the water level #}
+  <template x-if="cur.nl && cur.nl.look === 'glass'">
+    <div class="flex justify-center" x-data="{ pouring: false }">
+      <svg viewBox="0 0 220 250" class="w-48 sm:w-56 text-content-default touch-none select-none"
+           :class="!solved ? 'cursor-pointer' : ''"
+           @pointerdown="pouring = true; $el.setPointerCapture($event.pointerId); nlGlassPlace($event)"
+           @pointermove="pouring && nlGlassPlace($event)"
+           @pointerup="pouring = false" @pointercancel="pouring = false"
+           role="img" aria-label="Récipient à remplir : touche ou glisse pour choisir le niveau de l’eau"
+           x-html="nlGlassSvg"></svg>
+    </div>
+  </template>
+
+  <div class="relative" x-show="!cur.nl || cur.nl.look !== 'glass'"
        @click="cur.nl && cur.nl.mode !== 'read' && !solved && nlPlace($event)"
        :class="cur.nl && cur.nl.mode !== 'read' && !solved ? 'cursor-crosshair' : ''">
     <svg viewBox="0 0 500 90" class="w-full text-content-default" x-html="numberLineSvg"></svg>

@@ -125,6 +125,7 @@ const LLM_TYPES = new Set([
   'target-blocks',
   'hundred-board',
   'dice-game',
+  'decimal-blocks',
 ]);
 
 // ─── ANSI colours ────────────────────────────────────────────────────────────
@@ -948,6 +949,19 @@ function buildPrompt({ data, body }) {
         `Touches d'opération présentes: ${(bc.ops || ['+', '−', '×', '÷']).join(' ')}`,
         bc.solution && `Une solution: ${bc.solution.join(' ')} = ${bc.target}`,
         `Vérifie que le nombre ne peut pas être tapé directement et que la solution est juste.`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    case 'decimal-blocks': {
+      const dbk = data.dbk;
+      if (!dbk) return null;
+      return [
+        `Type: tableau de numération décimal (dizaines, unités | dixièmes, centièmes, millièmes) — ${dbk.a} ${dbk.op === '-' ? '−' : '+'} ${dbk.b} dessiné avec des pièces de couleur ; l'élève construit la ligne du résultat, échange 10 pièces contre 1 de la colonne de gauche${dbk.op === '-' ? ', casse 1 pièce en 10 de la colonne de droite' : ''}, puis écrit le nombre.`,
+        title && `Consigne: ${title}`,
+        (data.body || body) && `Énoncé: ${strip(data.body || body)}`,
+        `Résultat attendu: ${dbk.op === '-' ? `${dbk.a} − ${dbk.b}` : `${dbk.a} + ${dbk.b}`}. Vérifie le calcul et que la consigne convient au niveau.`,
       ]
         .filter(Boolean)
         .join('\n');

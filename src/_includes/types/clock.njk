@@ -1,9 +1,14 @@
 {# Analog Clock Display — read mode: type the time; set mode (clockMode 'set'): the pupil places the hands #}
 <div x-show="cur.type === 'clock'" class="flex flex-col items-center mb-8">
   <div class="relative w-48 h-48 sm:w-64 sm:h-64">
-    <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm" @click="cur.clockMode === 'set' && clkTap($event)" :class="cur.clockMode === 'set' && !solved ? 'cursor-pointer' : ''">
+    <svg :view-box.camel="cur.minuteRing ? '-13 -13 126 126' : '0 0 100 100'" viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm" @click="cur.clockMode === 'set' && clkTap($event)" :class="cur.clockMode === 'set' && !solved ? 'cursor-pointer' : ''">
       <!-- Clock Face -->
       <circle cx="50" cy="50" r="48" fill="white" stroke="currentColor" stroke-width="2" class="fill-white dark:fill-slate-900 text-slate-400 dark:text-slate-600" />
+      <!-- Minutes ring: 5 … 60 outside the face (after the face, so the first circle stays the face) -->
+      <g x-show="cur.minuteRing">
+        <circle cx="50" cy="50" r="55" fill="none" stroke-width="8" class="stroke-sky-100 dark:stroke-sky-900/60" />
+        <g font-size="6" text-anchor="middle" dominant-baseline="central" class="fill-sky-800 dark:fill-sky-200"><text x="77.0" y="3.2">5</text><text x="96.8" y="23.0">10</text><text x="104.0" y="50.0">15</text><text x="96.8" y="77.0">20</text><text x="77.0" y="96.8">25</text><text x="50.0" y="104.0">30</text><text x="23.0" y="96.8">35</text><text x="3.2" y="77.0">40</text><text x="-4.0" y="50.0">45</text><text x="3.2" y="23.0">50</text><text x="23.0" y="3.2">55</text><text x="50.0" y="-4.0">60</text></g>
+      </g>
       
       <!-- Hour Markers (Simplified Path) -->
       <path d="M50 6V12 M72 11.9L69 17.1 M88.1 28L82.9 31 M94 50H88 M88.1 72L82.9 69 M72 88.1L69 82.9 M50 94V88 M28 88.1L31 82.9 M11.9 72L17.1 69 M6 50H12 M11.9 28L17.1 31 M28 11.9L31 17.1" 
@@ -52,6 +57,26 @@
         <span x-show="!solved">Vérifier</span>
         <span x-show="solved">Bravo !</span>
       </button>
+    </div>
+  </template>
+
+  {# read24: the same time in the morning, then in the afternoon / evening #}
+  <template x-if="cur.clockMode === 'read24'">
+    <div class="mt-4 flex flex-col items-center gap-3">
+      <template x-for="(lab, k) in ['Le matin, il est', 'L’après-midi ou le soir, il est']" :key="'r24'+k">
+        <label class="flex items-center gap-3 text-lg text-content-default">
+          <span class="sm:w-56 text-right" x-text="lab"></span>
+          <input type="text" inputmode="numeric" autocomplete="off"
+                 :value="trouInputs[k] || ''"
+                 @input="trouInputs[k] = $event.target.value"
+                 @keydown.enter="enterField($el, k)"
+                 :disabled="solved"
+                 placeholder="… h …"
+                 class="w-28 h-12 text-xl text-center rounded-xl border-2 font-bold focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800"
+                 :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : showError ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : 'border-slate-300 dark:border-slate-600'" />
+        </label>
+      </template>
+      <button type="button" @click="check()" x-show="!solved" class="px-6 py-3 text-lg font-bold rounded-xl bg-primary-500 text-white hover:bg-primary-600 shadow-md transition-all active:scale-95">Vérifier</button>
     </div>
   </template>
 

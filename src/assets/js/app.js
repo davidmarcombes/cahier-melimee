@@ -1,16 +1,13 @@
 import { localStore } from './modules/store.js';
 import { themeToggle } from './modules/theme.js';
 import { voiceSpeed } from './modules/voice-speed.js';
-import { seriesPlayer } from './modules/player.js';
-import { timedPlayer } from './modules/timed-player.js';
 import { renderOpShorthands } from './modules/utils.js';
 
-// Expose to window for Alpine.js and global access
+// Expose to window for Alpine.js and global access.
+// The players are not here: series-entry.js / timed-entry.js load them on player pages only (~28 KB gzip)
 window.localStore = localStore;
 window.themeToggle = themeToggle;
 window.voiceSpeed = voiceSpeed;
-window.seriesPlayer = seriesPlayer;
-window.timedPlayer = timedPlayer;
 window.renderOpShorthands = renderOpShorthands;
 
 /* Exercise store — loads CSV on demand, caches in sessionStorage */
@@ -97,6 +94,7 @@ document.addEventListener('alpine:init', () => {
     'target-blocks',
     'hundred-board',
     'dice-game',
+    'decimal-blocks',
   ];
   const CSV_CLASSES = [
     'A1.1',

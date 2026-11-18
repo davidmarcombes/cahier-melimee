@@ -99,6 +99,7 @@ import {
   seriesPlayer,
   sortValue,
   jumpLine,
+  decimalBlocks,
   fewestPieces,
   fractionOp,
   fractionOpCheck,
@@ -217,11 +218,31 @@ describe('seriesPlayer Logic', () => {
     expect(p.trouInputs).toEqual([]); // Initial state before init()/_setupCurrentExercise()
   });
 
+  describe('decimalBlocks', () => {
+    it('addition: columns 10 → 0,001, digits of a, b and the result', () => {
+      const v = decimalBlocks({ a: '36,825', b: '11,496', op: '+' });
+      expect(v.places.map((p) => p.label)).toEqual(['10', '1', '0,1', '0,01', '0,001']);
+      expect(v.a).toEqual([3, 6, 8, 2, 5]);
+      expect(v.b).toEqual([1, 1, 4, 9, 6]);
+      expect(v.r).toEqual([4, 8, 3, 2, 1]);
+      expect(v.answer).toBe('48,321');
+      expect(v.firstDecimal).toBe(2);
+    });
+
+    it('subtraction with fewer decimals in a; a hundreds column when the sum needs one', () => {
+      const v = decimalBlocks({ a: '42,07', b: '25,331', op: '-' });
+      expect(v.a).toEqual([4, 2, 0, 7, 0]);
+      expect(v.answer).toBe('16,739');
+      expect(decimalBlocks({ a: '64,5', b: '38,7' }).places[0].label).toBe('100');
+    });
+  });
+
   describe('jumpLine', () => {
-    it('times: one field per jump in minutes, then the total in h and min', () => {
+    it('times: one field per jump (whole hours in h, else min), then the total in h and min', () => {
       const v = jumpLine({ kind: 'temps', points: ['8:45', '9:00', '10:00', '10:20'] });
       expect(v.labels).toEqual(['8 h 45', '9 h', '10 h', '10 h 20']);
-      expect(v.fields.map((f) => f.answer)).toEqual(['15', '60', '20', '1', '35']);
+      expect(v.fields.map((f) => f.answer)).toEqual(['15', '1', '20', '1', '35']);
+      expect(v.fields.slice(0, 3).map((f) => f.unit)).toEqual(['min', 'h', 'min']);
     });
 
     it('money: jumps and total in euros; a hidden point is a field too', () => {

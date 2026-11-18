@@ -11,10 +11,10 @@ questions:
     answer: "65"
 ---
 
-**Légende : 🚲 = 5 élèves**
+**Légende : 🧒 = 5 élèves**
 
 | Moyen | Élèves |
 |---|---|
-| Vélo | 🚲🚲🚲🚲 |
-| Car | 🚲🚲🚲🚲🚲🚲 |
-| À pied | 🚲🚲🚲 |
+| 🚲 Vélo | 🧒🧒🧒🧒 |
+| 🚌 Car | 🧒🧒🧒🧒🧒🧒 |
+| 🚶 À pied | 🧒🧒🧒 |

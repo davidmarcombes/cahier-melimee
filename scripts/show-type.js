@@ -152,6 +152,10 @@ const TYPE_SCHEMAS = {
     required: [],
     desc: 'Le compte est bon — numbers[], target, ops (default + − × ÷), useAll (Mathador: every number used); or generator compteEstBon',
   },
+  'decimal-blocks': {
+    required: [],
+    desc: 'Place-value table 10 · 1 | 0,1 · 0,01 · 0,001: a ± b drawn as pieces, the pupil builds the result row (exchange 10 → 1, break 1 → 10), then writes it — a, b, operation (+ / -); or generator tableauDecimauxOp',
+  },
   'ten-frame': {
     required: [],
     desc: 'Box of 10 (two above 10): tap cells to put tokens in — target, given (red tokens), ask montre / plus / moins, by, show (digit or {dots}), frames, tenFirst; or generator boiteDixRemplir',
@@ -196,6 +200,7 @@ const TEMPLATES = {
   tangram: `type: tangram\ntitle: "Le tangram"\ngenerator: tangramFigure\nparams:\n  figures: [bateau, maison]`,
   picross: `type: picross\ntitle: "Le dessin caché"\nname: "un cœur"\nemoji: "❤️"\ncolor: "#ef4444"\npicture:\n  - ".#.#."\n  - "#####"\n  - "#####"\n  - ".###."\n  - "..#.."`,
   'compte-est-bon': `type: compte-est-bon\ntitle: "Le compte est bon"\nnumbers: [3, 7, 8, 25]\ntarget: 183`,
+  'decimal-blocks': `type: decimal-blocks\ntitle: "Calcule avec le tableau"\noperation: "+"\na: "36,825"\nb: "11,496"`,
   'ten-frame': `type: ten-frame\ntitle: "Un de plus"\nask: plus\ngiven: 4\ntarget: 5`,
   memory: `type: memory\ntitle: ""\npairs:\n  - ["3 × 4", "12"]\n  - [{dots: 5}, "5"]`,
   ruler: `type: ruler\ntitle: ""\nmin: 0\nmax: 10\ndivisions: 10\nmarkers:\n  - label: "A"\n    value: 7\nanswer: "7"`,

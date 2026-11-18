@@ -1,6 +1,8 @@
 ---
 layout: base
 isSeriesPage: true
+playerEntry: timed-entry
+playerModule: timed-player
 ---
 {% set exercises = collections.defis | seriesExercises(series) %}
 {% set usedTypes = exercises | extractTypes %}

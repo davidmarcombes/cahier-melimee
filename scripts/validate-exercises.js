@@ -120,6 +120,7 @@ const TYPE_SCHEMAS = {
   'fraction-op': { required: [], requireOneOf: [['a'], ['generator']] },
   memory: { required: [], requireOneOf: [['pairs'], ['generator']], arrays: ['pairs'] },
   'ten-frame': { required: [], requireOneOf: [['target'], ['generator']] },
+  'decimal-blocks': { required: [], requireOneOf: [['a', 'b'], ['generator']] },
   'broken-calc': { required: [], requireOneOf: [['target', 'broken'], ['generator']], arrays: ['broken'] },
   tangram: { required: ['generator'] },
   'target-blocks': { required: ['generator'] },
@@ -496,6 +497,8 @@ function validateSeries(seriesDir, errors) {
 
     // Check required fields
     for (const field of schema.required) {
+      // clock read24: both answers come from hour / minute
+      if (type === 'clock' && data.mode === 'read24' && field === 'answer') continue;
       if (data[field] === undefined || data[field] === null) {
         errors.push(`${relMd}: type "${type}" requires "${field}"`);
       }
@@ -669,7 +672,13 @@ function validateSeries(seriesDir, errors) {
           `${relMd}: title "${data.title}" is a number in words — it may give away the answer, use a generic title`
         );
       const answer = data.answer != null ? String(data.answer).trim() : '';
-      if (/^[0-9]{2,}$/.test(answer) && new RegExp(`(^|[^0-9])${answer}([^0-9]|$)`).test(data.title.replace(/\s/g, '')))
+      // number-line place / estimate: the answer is the number to place — the pupil must read it
+      const toPlace = type === 'number-line' && (data.mode === 'place' || data.mode === 'estimate');
+      if (
+        !toPlace &&
+        /^[0-9]{2,}$/.test(answer) &&
+        new RegExp(`(^|[^0-9])${answer}([^0-9]|$)`).test(data.title.replace(/\s/g, ''))
+      )
         errors.push(`${relMd}: title "${data.title}" contains the answer ${answer}`);
     }
 

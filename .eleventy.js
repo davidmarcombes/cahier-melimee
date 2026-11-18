@@ -232,13 +232,13 @@ module.exports = async function (eleventyConfig) {
   // Shortcode for responsive images
   eleventyConfig.addNunjucksAsyncShortcode(
     'image',
-    async function (src, alt = '', sizes = '100vw', cls = '', loading = 'lazy') {
+    async function (src, alt = '', sizes = '100vw', cls = '', loading = 'lazy', widths = [320, 640, 1024, 1600]) {
       if (!alt) {
         throw new Error(`Missing "+alt+" on image from: ${src}`);
       }
 
       let metadata = await Image(src, {
-        widths: [320, 640, 1024, 1600],
+        widths,
         formats: ['avif', 'webp', 'png'],
         outputDir: `./${process.env.SITE_OUT || '_site'}/assets/images/`,
         urlPath: `${pathPrefix}/assets/images/`,
@@ -625,10 +625,22 @@ module.exports = async function (eleventyConfig) {
           item.clockMode = 'set';
           item.clkStep = Number(ex.data.step || 5);
         }
+        // Clock « read24 »: the same face read twice, the morning time then the afternoon / evening one
+        // (1 h 20 and 13 h 20). Answers computed from hour / minute.
+        if (ex.data.type === 'clock' && ex.data.mode === 'read24') {
+          item.clockMode = 'read24';
+          const h12 = item.hour % 12,
+            mm = String(item.minute).padStart(2, '0');
+          item.answers = [`${h12}:${mm}`, `${h12 + 12}:${mm}`];
+        }
+        // Outer ring of minutes 5, 10 … 60 around the face (clock.njk)
+        if (ex.data.type === 'clock' && ex.data.minuteRing) item.minuteRing = true;
 
         // Jump line: open line of times / amounts, answers computed by jumpLine() in player.js
         if (ex.data.type === 'jump-line' && Array.isArray(ex.data.points)) {
           item.jl = { kind: ex.data.kind || 'temps', points: ex.data.points.map(String), hide: ex.data.hide || [] };
+          // bands: jumps drawn to scale, each with its own colour (band along the line + arc)
+          if (ex.data.bands) item.jl.bands = true;
         }
 
         // Fraction answer: any equivalent fraction accepted (calculation results)
@@ -698,6 +710,11 @@ module.exports = async function (eleventyConfig) {
           ceb.solution = cebSolve(ceb.numbers, ceb.target, ceb);
           if (!ceb.solution) throw new Error(`compte-est-bon ${ex.inputPath}: ${ceb.target} cannot be reached`);
           item.ceb = ceb;
+        }
+
+        // Decimal-blocks: a ± b drawn in a place-value table, columns computed by decimalBlocks() in player.js
+        if (ex.data.type === 'decimal-blocks' && ex.data.a != null && ex.data.b != null) {
+          item.dbk = { a: String(ex.data.a), b: String(ex.data.b), op: ex.data.operation === '-' ? '-' : '+' };
         }
 
         // Ten-frame: tap cells to put tokens in (target), `given` red tokens at the start
@@ -941,11 +958,16 @@ module.exports = async function (eleventyConfig) {
             if (c.answer) {
               answer = c.answer.trim();
             } else {
-              const nl = Number(l);
-              const nr = Number(r);
+              // « 6/8 » compares as a fraction
+              const val = (v) => (/^\d+\/\d+$/.test(v) ? Number(v.split('/')[0]) / Number(v.split('/')[1]) : Number(v));
+              const nl = val(l);
+              const nr = val(r);
               answer = nl < nr ? '<' : nl > nr ? '>' : '=';
             }
-            return { left: l, right: r, answer };
+            // shape (+ rows / cols): each side drawn as that fraction (cmpPic in player.js)
+            return c.shape
+              ? { left: l, right: r, answer, shape: c.shape, ...(c.rows ? { rows: c.rows, cols: c.cols } : {}) }
+              : { left: l, right: r, answer };
           });
         }
 
@@ -1156,6 +1178,12 @@ module.exports = async function (eleventyConfig) {
               ex.data.tolerance != null
                 ? Number(interpolate(String(ex.data.tolerance)))
                 : (item.nl.max - item.nl.min) * 0.05;
+            // look: glass — fill a straight glass up to the level instead of placing a point on a line;
+            // labels: [bottom, top] written beside it (« 0 cL », « 1 L »), none by default
+            if (ex.data.look === 'glass') {
+              item.nl.look = 'glass';
+              if (Array.isArray(ex.data.labels)) item.nl.labels = ex.data.labels.map(String);
+            }
           }
         }
 
@@ -1331,7 +1359,24 @@ module.exports = async function (eleventyConfig) {
           };
           item.answers = answers;
         } else if (ex.data.type === 'column-op') {
-          const clean = (s) => String(s).replace(/\s+/g, '');
+          const clean = (s) => String(s).replace(/[\s[\]]+/g, '');
+          // Missing digits (« Trouve les nombres manquants »): a digit in [brackets] in top / bottom / result
+          // becomes a field. Positions are counted in the cleaned string (no spaces, no brackets).
+          const holesOf = (s) => {
+            const out = [];
+            let k = 0,
+              open = false;
+            for (const ch of String(s ?? '').replace(/\s+/g, '')) {
+              if (ch === '[') open = true;
+              else if (ch === ']') open = false;
+              else {
+                if (open) out.push(k);
+                k++;
+              }
+            }
+            return out;
+          };
+          const holes = { top: holesOf(ex.data.top), bottom: holesOf(ex.data.bottom), result: holesOf(ex.data.result) };
           const isDecSep = (c) => c === ',' || c === '.';
           const top = clean(ex.data.top || '');
           const bottom = ex.data.bottom != null ? clean(ex.data.bottom) : null;
@@ -1409,6 +1454,57 @@ module.exports = async function (eleventyConfig) {
                 item.answers.push(resDigits[pos] || '0');
               }
             }
+          }
+          if (holes.top.length + holes.bottom.length + holes.result.length) {
+            const op = item.colOp.operation;
+            if (op !== '+' && op !== '-')
+              throw new Error(`column-op: missing digits need + or - (got ${op}) in ${ex.inputPath}`);
+            if (ex.data.answers) throw new Error(`column-op: missing digits take no answers: list in ${ex.inputPath}`);
+            const toNum = (s) => parseFloat(s.replace(',', '.'));
+            const T = toNum(top),
+              B = toNum(bottom || '0'),
+              R = toNum(result);
+            if (Math.abs((op === '+' ? T + B : T - B) - R) > 1e-9)
+              throw new Error(`column-op: ${top} ${op} ${bottom} ≠ ${result} in ${ex.inputPath}`);
+            // Clean index → padded index: padding only adds spaces on the left (zeros on the right)
+            const place = (row, list, mark) => {
+              const cells = item.colOp[row];
+              const off = cells.findIndex((c) => c !== ' ');
+              return list.map((k) => {
+                const d = cells[off + k];
+                cells[off + k] = mark();
+                return d;
+              });
+            };
+            let f = 0;
+            const ansTop = place('top', holes.top, () => f++);
+            const ansBot = place('bottom', holes.bottom, () => f++);
+            const ansRes = place('result', holes.result, () => '?');
+            // One answer only: try every digit in the fields, the operation must hold for the given digits alone
+            const fields = [...ansTop, ...ansBot, ...ansRes].length;
+            if (fields > 6) throw new Error(`column-op: at most 6 missing digits (${fields}) in ${ex.inputPath}`);
+            const fill = (cells, ds) =>
+              toNum(
+                cells
+                  .map((c) => (typeof c === 'number' || c === '?' ? ds.shift() : c))
+                  .join('')
+                  .trim()
+              );
+            let found = 0;
+            for (let n = 0; n < 10 ** fields && found < 2; n++) {
+              const ds = String(n).padStart(fields, '0').split('');
+              const t = fill(item.colOp.top, ds),
+                b = fill(item.colOp.bottom || [], ds),
+                r = fill(item.colOp.result, ds);
+              if (Math.abs((op === '+' ? t + b : t - b) - r) < 1e-9) found++;
+            }
+            if (found !== 1)
+              throw new Error(
+                `column-op: missing digits have ${found > 1 ? 'several' : 'no'} solutions in ${ex.inputPath}`
+              );
+            item.answers = [...ansTop, ...ansBot, ...ansRes];
+            item.colOp.resultStart = ansTop.length + ansBot.length;
+            item.colOp.blanks = fields;
           }
           // × by 2 digits or more: one partial product per digit of the multiplier, its shifted 0s written in,
           // then the sum. Their fields come first in `answers` (result fields from resultStart on).
@@ -1779,6 +1875,7 @@ module.exports = async function (eleventyConfig) {
       'target-blocks',
       'hundred-board',
       'dice-game',
+      'decimal-blocks',
     ];
     const CSV_CLASSES = [
       'A1.1',

@@ -7,6 +7,98 @@
     typeof module !== 'undefined' && module.exports ? require('./_core.js') : root.GenCore;
 
   const generators = {
+    // Compare deux fractions dessinées (même forme de chaque côté) : < > ou =.
+    // mode `same-d` (même dénominateur : on compte les parts) ou `same-n` (même numérateur : la part la plus
+    // grande gagne — disques et carrés seulement, pour que les parts se voient). `count` comparaisons par écran.
+    // a ± b dans le tableau de numération décimal (decimal-blocks) : `op` '+' | '-', `intDigits` (2),
+    // `decimals` (3), `exchange` (true : au moins une colonne avec échange / retenue, au plus deux).
+    tableauDecimauxOp: {
+      generate: (params = {}) => {
+        const op = params.op === '-' ? '-' : '+';
+        const intDigits = params.intDigits ?? 2,
+          decimals = params.decimals ?? 3;
+        const n = intDigits + decimals;
+        const fmt = (digits) => {
+          const s = digits.join('');
+          const int = String(Number(s.slice(0, intDigits)));
+          return decimals ? `${int},${s.slice(intDigits)}` : int;
+        };
+        for (let tries = 0; tries < 200; tries++) {
+          const a = Array.from({ length: n }, (_, i) => (i === 0 ? rand(1, op === '+' ? 6 : 9) : rand(0, 9)));
+          const b = Array.from({ length: n }, (_, i) =>
+            i === 0 ? rand(1, op === '+' ? 3 : Math.max(1, a[0] - 1)) : rand(0, 9)
+          );
+          if (op === '-' && Number(b.join('')) >= Number(a.join(''))) continue;
+          // last decimal not 0 for both, so every column is used
+          if (decimals && (!a[n - 1] || !b[n - 1])) continue;
+          let carry = 0,
+            exchanges = 0;
+          for (let i = n - 1; i >= 0; i--) {
+            const v = op === '+' ? a[i] + b[i] + carry : a[i] - b[i] - carry;
+            carry = op === '+' ? (v >= 10 ? 1 : 0) : v < 0 ? 1 : 0;
+            exchanges += carry;
+          }
+          if (params.exchange !== false && (exchanges < 1 || exchanges > 2)) continue;
+          if (params.exchange === false && exchanges) continue;
+          return {
+            type: 'decimal-blocks',
+            title: op === '+' ? 'Ajoute avec le tableau' : 'Soustrais avec le tableau',
+            dbk: { a: fmt(a), b: fmt(b), op },
+          };
+        }
+        throw new Error('tableauDecimauxOp: no draw found');
+      },
+    },
+
+    comparerFractionsDessin: {
+      generate: (params = {}) => {
+        const mode = params.mode === 'same-n' ? 'same-n' : 'same-d';
+        const count = params.count ?? 3;
+        const grids = { 6: [2, 3], 8: [2, 4], 9: [3, 3], 10: [2, 5], 12: [3, 4], 15: [3, 5] };
+        // shape → denominators it cuts into equal parts
+        const kinds =
+          mode === 'same-n'
+            ? { circle: [2, 3, 4, 5, 6, 8, 10], square: [2, 3, 4, 5, 6] }
+            : {
+                polygon: [5, 6, 8, 9, 10],
+                flower: [5, 6, 7, 8],
+                star: [8],
+                triangles: [8, 12],
+                circle: [6, 8, 10, 12],
+                square: [6, 8, 9, 10, 12, 15],
+              };
+        const comparisons = [];
+        const used = new Set();
+        for (let tries = 0; comparisons.length < count && tries < 100; tries++) {
+          const fresh = Object.keys(kinds).filter((k) => !used.has(k));
+          const shape = randItem(fresh.length ? fresh : Object.keys(kinds));
+          let left, right, answer;
+          if (mode === 'same-d') {
+            const d = randItem(kinds[shape]);
+            const a = rand(1, d - 1);
+            let b = rand(1, d - 1);
+            if (b === a && rand(0, 3)) b = a === 1 ? 2 : a - 1; // « = » now and then
+            [left, right] = [`${a}/${d}`, `${b}/${d}`];
+            answer = a < b ? '<' : a > b ? '>' : '=';
+          } else {
+            const ds = shuffle(kinds[shape]).slice(0, 2);
+            const n = rand(1, Math.min(...ds) - 1);
+            [left, right] = [`${n}/${ds[0]}`, `${n}/${ds[1]}`];
+            answer = ds[0] > ds[1] ? '<' : '>';
+          }
+          const d = Number(left.split('/')[1]),
+            d2 = Number(right.split('/')[1]);
+          // A grid square needs the same rows × cols on both sides
+          if (shape === 'square' && (d !== d2 || !grids[d]) && mode === 'same-d') continue;
+          used.add(shape);
+          const c = { left, right, answer, shape };
+          if (shape === 'square' && mode === 'same-d') [c.rows, c.cols] = grids[d];
+          comparisons.push(c);
+        }
+        return { type: 'compare', title: 'Compare les fractions coloriées', comparisons };
+      },
+    },
+
     egalitesFractions: {
       generate: (params = {}) => {
         const frac = (n, d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;

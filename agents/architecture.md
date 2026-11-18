@@ -55,7 +55,8 @@ project-root/
     ├── css/input.css    # Tailwind entry point + custom prose styles + design-token CSS vars
     ├── assets/          # Images, fonts, JS
     │   └── js/
-    │       ├── app.js           # Alpine components (seriesPlayer, themeToggle, localStore, exercises store)
+    │       ├── app.js           # Alpine components on every page (themeToggle, localStore, exercises store)
+    │       ├── series-entry.js  # player pages only: window.seriesPlayer (timed-entry.js: window.timedPlayer)
     │       ├── svg.js           # SVG generation helpers (embedSvg, slicedPieSvg, clockSvg, partagerSvg, etc.)
     │       ├── grid-draw.js     # grid-board draw mode (tracer sur quadrillage), loaded by draw pages only
     │       ├── generators/      # Exercise generators by topic (Node.js + browser): _core.js (helpers),

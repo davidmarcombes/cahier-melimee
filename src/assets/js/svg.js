@@ -783,7 +783,85 @@ function describeArc(x, y, radius, startAngle, endAngle) {
   return ['M', x, y, 'L', start.x, start.y, 'A', radius, radius, 0, largeArcFlag, 0, end.x, end.y, 'Z'].join(' ');
 }
 
-// fractionShapesSvg — fraction shape renderer (circle/square) used by fraction type
+// Other cut-outs for fractionShapesSvg (CM « compare les fractions » pictures): each part is one path,
+// the first `filled` parts coloured. Shapes whose parts would not be equal fall back to nothing.
+//   polygon    regular d-gon cut from its centre (pentagon 5, octagon 8, 9-gon…)
+//   flower     d petals
+//   star       square cut by its diagonals and medians (d = 8) or diagonals only (d = 4)
+//   triangles  equilateral triangles: two rows making a trapezoid when d is a multiple of 4 (12 = 5 + 7),
+//              else one row
+function fractionPartsSvg(shape, d, filled) {
+  const f = (v) => Math.round(v * 100) / 100;
+  const paths = [];
+  const rad = (deg) => (deg * Math.PI) / 180;
+  if (shape === 'polygon' && d >= 3) {
+    const pt = (i) => [50 + 48 * Math.cos(rad(-90 + (360 * i) / d)), 50 + 48 * Math.sin(rad(-90 + (360 * i) / d))];
+    for (let i = 0; i < d; i++) {
+      const [x0, y0] = pt(i),
+        [x1, y1] = pt(i + 1);
+      paths.push(`M50 50L${f(x0)} ${f(y0)}L${f(x1)} ${f(y1)}Z`);
+    }
+  } else if (shape === 'flower' && d >= 3) {
+    const L = 47,
+      w = Math.min(20, L * Math.tan(Math.PI / d) * (d > 6 ? 0.6 : 0.8));
+    for (let i = 0; i < d; i++) {
+      const petal = `M50 50C${f(50 - w)} ${f(50 - 0.45 * L)} ${f(50 - w)} ${f(50 - L)} 50 ${f(50 - L)}C${f(50 + w)} ${f(50 - L)} ${f(50 + w)} ${f(50 - 0.45 * L)} 50 50Z`;
+      paths.push({ d: petal, rot: (360 * i) / d });
+    }
+  } else if (shape === 'star' && (d === 8 || d === 4)) {
+    const ring = [
+      [2, 2],
+      [50, 2],
+      [98, 2],
+      [98, 50],
+      [98, 98],
+      [50, 98],
+      [2, 98],
+      [2, 50],
+    ];
+    const pts = d === 8 ? ring : ring.filter((_, i) => i % 2 === 0);
+    for (let i = 0; i < d; i++) {
+      const [x0, y0] = pts[i],
+        [x1, y1] = pts[(i + 1) % d];
+      // diagonals only: each part is a quarter triangle centre → corner → next corner
+      paths.push(`M50 50L${x0} ${y0}L${x1} ${y1}Z`);
+    }
+  } else if (shape === 'triangles' && d >= 2) {
+    const rows = d % 4 === 0 && d >= 8 ? [d / 2 - 1, d / 2 + 1] : [d];
+    // Number of triangles in a row of base b (b up-triangles): 2b − 1
+    const bases = rows.map((n) => (n + 1) / 2);
+    const side = Math.min(96 / Math.max(...bases), 96 / rows.length / (Math.sqrt(3) / 2), 60);
+    const h = (side * Math.sqrt(3)) / 2;
+    const top = 50 - (h * rows.length) / 2;
+    rows.forEach((n, r) => {
+      const y0 = top + r * h,
+        y1 = y0 + h;
+      // each row centred: the lower row is one side wider (trapezoid widening downwards)
+      const width = ((n + 1) / 2) * side;
+      const x0 = 50 - width / 2;
+      for (let k = 0; k < n; k++) {
+        const up = k % 2 === 0;
+        const xb = x0 + Math.floor(k / 2) * side;
+        paths.push(
+          up
+            ? `M${f(xb)} ${f(y1)}L${f(xb + side)} ${f(y1)}L${f(xb + side / 2)} ${f(y0)}Z`
+            : `M${f(xb + side / 2)} ${f(y0)}L${f(xb + side * 1.5)} ${f(y0)}L${f(xb + side)} ${f(y1)}Z`
+        );
+      }
+    });
+  }
+  return paths
+    .map((p, i) => {
+      const dAttr = typeof p === 'string' ? p : p.d;
+      const tr = typeof p === 'string' ? '' : ` transform="rotate(${f(p.rot)} 50 50)"`;
+      return i < filled
+        ? `<path d="${dAttr}"${tr} class="fill-primary-500 stroke-primary-700" stroke-width="1" />`
+        : `<path d="${dAttr}"${tr} fill="white" stroke="currentColor" stroke-width="1.5" class="fill-white dark:fill-slate-900 text-slate-400 dark:text-slate-500" />`;
+    })
+    .join('');
+}
+
+// fractionShapesSvg — fraction shape renderer (circle, square, then fractionPartsSvg) used by fraction type
 function fractionShapesSvg(fraction) {
   if (!fraction) return [];
   const { numerator, denominator, shape, rows, cols } = fraction;
@@ -821,7 +899,7 @@ function fractionShapesSvg(fraction) {
           }
         }
       }
-    }
+    } else svgContent += fractionPartsSvg(shape, denominator, filledInThisShape);
     shapes.push({
       idx: sIdx,
       svg: `<svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm">${svgContent}</svg>`,
@@ -1065,12 +1143,13 @@ function rowsOfSvg(rows, cols, emoji = '●', color = 'var(--p)') {
 // emoji: any emoji char, or '●' for filled dot
 // color: CSS color/var for dots and packet border
 function packetsOfSvg(packets, perPacket, emoji = '●', color = 'var(--p)') {
-  const ITEM = 22,
-    IGAP = 5,
-    IPAD = 8,
+  const useEmoji = emoji !== '●';
+  // an emoji glyph is wider than its font size: give it a bigger cell and more room in the packet
+  const ITEM = useEmoji ? 26 : 22,
+    IGAP = useEmoji ? 6 : 5,
+    IPAD = useEmoji ? 10 : 8,
     PGAP = 14,
     PAD = 8;
-  const useEmoji = emoji !== '●';
   const pCols = perPacket <= 3 ? perPacket : Math.ceil(Math.sqrt(perPacket));
   const pRows = Math.ceil(perPacket / pCols);
   const pW = pCols * ITEM + (pCols - 1) * IGAP + IPAD * 2;
@@ -1085,14 +1164,15 @@ function packetsOfSvg(packets, perPacket, emoji = '●', color = 'var(--p)') {
     const pRow = Math.floor(p / maxPerRow);
     const px = PAD + pCol * (pW + PGAP);
     const py = PAD + pRow * (pH + PGAP);
-    g += `<rect x="${px}" y="${py}" width="${pW}" height="${pH}" rx="10" fill="var(--sf)" stroke="${color}" stroke-width="2"/>`;
+    // the packet: a soft grey bag with a light dashed outline (the objects stay the eye-catchers)
+    g += `<rect x="${px + 0.75}" y="${py + 0.75}" width="${pW - 1.5}" height="${pH - 1.5}" rx="12" fill="var(--sc)" stroke="var(--cs)" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="5 4"/>`;
     for (let i = 0; i < perPacket; i++) {
       const ic = i % pCols;
       const ir = Math.floor(i / pCols);
       const ix = px + IPAD + ic * (ITEM + IGAP) + ITEM / 2;
       const iy = py + IPAD + ir * (ITEM + IGAP) + ITEM / 2;
       if (useEmoji) {
-        g += `<text x="${ix}" y="${iy + 1}" text-anchor="middle" font-size="${ITEM}" font-family="system-ui,sans-serif">${emoji}</text>`;
+        g += `<text x="${ix}" y="${iy}" text-anchor="middle" dominant-baseline="central" font-size="22" font-family="system-ui,sans-serif">${emoji}</text>`;
       } else {
         g += `<circle cx="${ix}" cy="${iy}" r="${ITEM / 2 - 2}" fill="${color}"/>`;
       }
@@ -1320,18 +1400,28 @@ function numberLineSvg(nl) {
 
   let s = '';
 
-  // Horizontal line with right arrowhead
-  s += `<line x1="${PAD}" y1="${LY}" x2="${PAD + W + 8}" y2="${LY}" stroke="currentColor" stroke-width="2"/>`;
-  s += `<polygon points="${PAD + W + 14},${LY} ${PAD + W + 5},${LY - 5} ${PAD + W + 5},${LY + 5}" fill="currentColor"/>`;
+  const est = nl.mode === 'estimate';
+  // Estimate mode: a plain bar from one end to the other (no arrow), its ends marked by tall ticks
+  if (est) {
+    s += `<line x1="${PAD}" y1="${LY}" x2="${PAD + W}" y2="${LY}" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>`;
+  } else {
+    // Horizontal line with right arrowhead
+    s += `<line x1="${PAD}" y1="${LY}" x2="${PAD + W + 8}" y2="${LY}" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>`;
+    s += `<polygon points="${PAD + W + 15},${LY} ${PAD + W + 5},${LY - 6} ${PAD + W + 5},${LY + 6}" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/>`;
+  }
 
   // Major ticks and labels
   for (let v = min, i = 0; v <= max + 1e-9; v = Math.round((v + step) * 1e9) / 1e9, i++) {
     const x = PAD + (v - min) * uw;
-    s += `<line x1="${x}" y1="${LY - 10}" x2="${x}" y2="${LY + 6}" stroke="currentColor" stroke-width="2"/>`;
+    const end = v <= min + 1e-9 || v >= max - 1e-9;
+    s +=
+      est && end
+        ? `<line x1="${x}" y1="${LY - 12}" x2="${x}" y2="${LY + 12}" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>`
+        : `<line x1="${x}" y1="${LY - 10}" x2="${x}" y2="${LY + 7}" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>`;
     const lbl = Number.isInteger(v) ? String(v) : String(Math.round(v * 1000) / 1000).replace('.', ',');
-    // Estimate mode: inner ticks stay as landmarks, only the two ends carry a number
-    if (nl.mode !== 'estimate' || v <= min + 1e-9 || v >= max - 1e-9)
-      s += `<text x="${x}" y="${LY + 21}" text-anchor="middle" fill="currentColor" font-size="12" font-weight="500">${lbl}</text>`;
+    // Estimate mode: inner ticks stay as landmarks, only the two ends carry a number (bigger: only two of them)
+    if (!est || end)
+      s += `<text x="${x}" y="${est ? LY + 28 : LY + 24}" text-anchor="middle" fill="currentColor" font-size="${est ? 16 : 14}" font-weight="700">${lbl}</text>`;
 
     // Minor ticks (subdivisions) between this major tick and the next
     if (subs > 0 && v < max - 1e-9) {

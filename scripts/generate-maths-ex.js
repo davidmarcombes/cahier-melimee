@@ -89,6 +89,10 @@ const TYPE_CHOICES = [
   },
   { name: 'memory          — Memory : retrouver les paires de cartes qui vont ensemble', value: 'memory' },
   { name: 'ten-frame       — Boîte de 10 : mettre ou enlever des jetons', value: 'ten-frame' },
+  {
+    name: 'decimal-blocks  — Tableau de numération décimal : ajouter / soustraire avec des pièces, échanges',
+    value: 'decimal-blocks',
+  },
   { name: 'compte-est-bon  — Le compte est bon : atteindre la cible avec les nombres', value: 'compte-est-bon' },
   { name: 'broken-calc     — Calculatrice cassée : afficher un nombre sans les touches cassées', value: 'broken-calc' },
   { name: 'strategy-game   — Jeu de stratégie contre l’ordinateur (course à 20, allumettes)', value: 'strategy-game' },
@@ -149,6 +153,7 @@ const TEMPLATES = {
   picross: 'name: "un cœur"\nemoji: "❤️"\npicture:\n  - ".#.#."\n  - "#####"\n  - "#####"\n  - ".###."\n  - "..#.."',
   'compte-est-bon': 'numbers: [3, 7, 8, 25]\ntarget: 183\nuseAll: false',
   'ten-frame': 'ask: plus\ngiven: 4\ntarget: 5',
+  'decimal-blocks': 'operation: "+"\na: "36,825"\nb: "11,496"',
   memory:
     'pairs:\n  - ["3 × 4", "12"]\n  - [{dots: 5}, "5"]\n  - [{pie: "1/4"}, {frac: "1/4"}]\n  - [{clock: "3:15"}, "3 h 15"]',
   ruler: 'min: 0\nmax: 10\ndivisions: 10\nmarkers:\n  - label: "A"\n    value: ',

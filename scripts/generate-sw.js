@@ -47,7 +47,7 @@ const SHELL = [
   /^\/assets\/js\/.+\.js$/,
   /^\/css\/.+\.css$/,
   /^\/assets\/fonts\/.+\.woff2$/,
-  /^\/assets\/images\/IJYXr3zhT1-256\.avif$/, // header logo
+  /^\/assets\/images\/IJYXr3zhT1-(32|64)\.avif$/, // header logo, 1× and 2× (widths in header.njk)
   /^\/favicon\.ico$/,
   /^\/manifest\.json$/,
 ];

@@ -13,9 +13,21 @@
             <td class="w-7"></td>
             <template x-for="(d, i) in cur.colOp.top" :key="'t'+i">
               <td>
+                <template x-if="typeof d === 'number'">
+                  <input type="text" inputmode="numeric" maxlength="2"
+                         :value="trouInputs[d] || ''"
+                         @input="trouInputs[d] = $event.target.value.replace(/[^0-9]/g,'').slice(-1); $event.target.value = trouInputs[d]"
+                         @keydown.enter="enterField($el, d)"
+                         :disabled="solved"
+                         class="w-11 h-11 text-center rounded-lg border-2 text-xl font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+                         :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : showError ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : colOpColor(cur.colOp.top.length - 1 - i)"
+                         placeholder="?" />
+                </template>
+                <template x-if="typeof d !== 'number'">
                 <div class="w-11 h-11 flex items-center justify-center rounded-lg border-2 text-xl font-bold select-none"
                      :class="d === ' ' ? 'border-transparent' : d === ',' || d === '.' ? 'border-transparent text-content-default' : colOpColor(cur.colOp.top.length - 1 - i)"
                      x-text="d === ' ' ? '' : d"></div>
+                </template>
               </td>
             </template>
           </tr>
@@ -26,9 +38,21 @@
               <td class="text-center text-2xl font-bold text-content-default align-middle" x-text="cur.colOp.operation"></td>
               <template x-for="(d, i) in cur.colOp.bottom" :key="'b'+i">
                 <td>
+                <template x-if="typeof d === 'number'">
+                  <input type="text" inputmode="numeric" maxlength="2"
+                         :value="trouInputs[d] || ''"
+                         @input="trouInputs[d] = $event.target.value.replace(/[^0-9]/g,'').slice(-1); $event.target.value = trouInputs[d]"
+                         @keydown.enter="enterField($el, d)"
+                         :disabled="solved"
+                         class="w-11 h-11 text-center rounded-lg border-2 text-xl font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-800 text-content-default"
+                         :class="solved ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : showError ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : colOpColor(cur.colOp.bottom.length - 1 - i)"
+                         placeholder="?" />
+                </template>
+                <template x-if="typeof d !== 'number'">
                   <div class="w-11 h-11 flex items-center justify-center rounded-lg border-2 text-xl font-bold select-none"
                        :class="d === ' ' ? 'border-transparent' : d === ',' || d === '.' ? 'border-transparent text-content-default' : colOpColor(cur.colOp.bottom.length - 1 - i)"
                        x-text="d === ' ' ? '' : d"></div>
+                </template>
                 </td>
               </template>
             </tr>

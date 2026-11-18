@@ -74,6 +74,10 @@ scale('L', [
   ['ml', 0.001],
 ]);
 scale('s', [
+  ['semaines', 604800],
+  ['semaine', 604800],
+  ['jours', 86400],
+  ['jour', 86400],
   ['j', 86400],
   ['h', 3600],
   ['min', 60],
@@ -195,8 +199,9 @@ const CHECKS = {
       const r = c.remainder ? digits(c.remainder) : digits(c.rows.at(-1)?.cells.filter((x) => x !== ' ') ?? []);
       return q * d + r === D && r < d ? null : `${D} ÷ ${d}: quotient ${q}, remainder ${r}`;
     }
-    const top = num(c.top.join('')),
-      bottom = num((c.bottom || []).join(''));
+    // Missing digits: field indices in top / bottom (answers before resultStart)
+    const top = digits(c.top),
+      bottom = digits(c.bottom || []);
     // × by 2 digits: partial row k = top × k-th digit from the right, shifted
     for (const [k, row] of (c.partials || []).entries()) {
       const want =
@@ -264,6 +269,12 @@ const CHECKS = {
     return e.answers.some((a) => same(num(a), v)) ? null : `blocks show ${v}, declared ${e.answers.join(' / ')}`;
   },
   clock: (e) => {
+    // read24: morning time first, then 12 h later
+    if (e.clockMode === 'read24') {
+      const [a, b] = e.answers.map((x) => clean(x).match(/^([0-9]{1,2}) ?[:h] ?([0-9]{2})$/));
+      if (!a || !b || Number(a[1]) > 11 || Number(b[1]) !== Number(a[1]) + 12 || a[2] !== b[2])
+        return `read24: ${e.answers.join(' / ')} is not a morning time and the same 12 h later`;
+    }
     const ok = e.answers.some((a) => {
       const m = clean(a).match(/^([0-9]{1,2}) ?[:h] ?([0-9]{2})$/);
       return m && Number(m[1]) % 12 === e.hour % 12 && Number(m[2]) === e.minute;
@@ -359,6 +370,14 @@ CHECKS['compare-expressions'] = CHECKS.compare;
 // Every pair goes together, no two pairs match the same value (scripts/lib/memory.js)
 CHECKS.memory = (e) => checkMemory(e.mem);
 CHECKS['ten-frame'] = (e) => tenFrameProblem(e.tf);
+// decimal-blocks: decimals ≤ 3, a ≥ b for a subtraction (the drawing and the answer come from decimalBlocks())
+CHECKS['decimal-blocks'] = (e) => {
+  const { a, b, op } = e.dbk;
+  const ok = (s) => /^\d+(,\d{1,3})?$/.test(String(s).replace(/\s/g, ''));
+  if (!ok(a) || !ok(b)) return `decimal-blocks: ${a} and ${b} must be decimals with 3 decimals at most`;
+  if (op === '-' && num(a) < num(b)) return `decimal-blocks: ${a} − ${b} is negative`;
+  return null;
+};
 // The target can be reached, and the solution shipped with the exercise does it (scripts/lib/compte-est-bon.js)
 CHECKS['compte-est-bon'] = (e) => cebProblem(e.ceb);
 // The target holds a broken digit, one operation reaches it, the shipped solution works (scripts/lib/broken-calc.js)

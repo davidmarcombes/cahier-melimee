@@ -4,6 +4,8 @@
     ".eleventy.js",
     "tailwind.config.js",
     "src/assets/js/app.js",
+    "src/assets/js/series-entry.js",
+    "src/assets/js/timed-entry.js",
     "src/assets/js/svg.js",
     "src/assets/js/dev.js",
     "src/assets/js/generators/*.js",

@@ -15,7 +15,8 @@
         'border-slate-200 dark:border-slate-700 bg-surface-subtle': !cmpErrors.includes(i) && !solved
       }"
     >
-      <span class="text-lg font-mono text-content-default flex-1 text-right" x-text="groupDigits(c.left)"></span>
+      <template x-if="!c.shape"><span class="text-lg font-mono text-content-default flex-1 text-right" x-text="groupDigits(c.left)"></span></template>
+      <template x-if="c.shape"><span class="flex-1 flex items-center justify-end gap-2 text-2xl text-content-default"><span class="w-20 h-20 sm:w-24 sm:h-24" x-html="cmpPic(c, c.left)"></span><span class="frac" x-html="'<span class=fn>' + c.left.split('/')[0] + '</span><span class=fd>' + c.left.split('/')[1] + '</span>'"></span></span></template>
 
       <button
         type="button"
@@ -32,7 +33,8 @@
         x-text="cmpInputs[i] || '?'"
       ></button>
 
-      <span class="text-lg font-mono text-content-default flex-1 text-left" x-text="groupDigits(c.right)"></span>
+      <template x-if="!c.shape"><span class="text-lg font-mono text-content-default flex-1 text-left" x-text="groupDigits(c.right)"></span></template>
+      <template x-if="c.shape"><span class="flex-1 flex items-center justify-start gap-2 text-2xl text-content-default"><span class="frac" x-html="'<span class=fn>' + c.right.split('/')[0] + '</span><span class=fd>' + c.right.split('/')[1] + '</span>'"></span><span class="w-20 h-20 sm:w-24 sm:h-24" x-html="cmpPic(c, c.right)"></span></span></template>
     </div>
   </template>
 
